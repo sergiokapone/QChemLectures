@@ -1,0 +1,117 @@
+%%============================ Compiler Directives =======================%%
+%%                                                                        %%
+% !TeX program = pdflatex							    	
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+%%                                                                        %%
+%%============================== Клас документа ==========================%%
+%%                                                                        %%
+\documentclass[12pt]{article}
+%%                                                                        %%
+%%============================= Мови та кодування ========================%%
+%%                                                                        %%
+\usepackage[utf8]{inputenc}
+\usepackage[T2A,T1]{fontenc}
+\usepackage[ukrainian]{babel}
+%%                                                                        %%
+%%=========================== Киририличні корекції =======================%%   
+\usepackage{indentfirst}
+\usepackage{misccorr}
+\usepackage{cmap}
+\usepackage{mhchem}
+%%                                                                        %%
+%%============================= Геометрія сторінки =======================%%
+%%                                                                        %%        
+\usepackage[%
+	a4paper,%
+	footskip=1cm,%
+	headsep=0.3cm,% 
+	top=2cm, %поле сверху
+	bottom=2cm, %поле снизу
+	left=2cm, %поле ліворуч
+	right=2cm, %поле праворуч
+    ]{geometry}
+%%                                                                        %%
+%%                                                                        %%
+%%============================== Інтерліньяж  ============================%%
+%%                                                                        %%
+\renewcommand{\baselinestretch}{1}
+%-------------------------  Подавление висячих строк  --------------------%%
+\clubpenalty =10000
+\widowpenalty=10000
+%---------------------------------Інтервали-------------------------------%%
+\setlength{\parskip}{0.5ex}%
+\setlength{\parindent}{2.5em}%
+%%                                                                        %%
+%%                                                                        %%
+%%=========================== Математичні пакети і графіка ===============%%
+%%                                                                        %%
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{floatflt}
+\usepackage{ifthen}
+%%                                                                        %%
+%%========================== Гіперпосилення (href) =======================%%
+%%                                                                        %% 
+\usepackage[%colorlinks=true,
+	%urlcolor = blue, %Colour for external hyperlinks
+	%linkcolor  = malina, %Colour of internal links
+	%citecolor  = green, %Colour of citations
+	bookmarks = true,
+	bookmarksnumbered=true,
+	unicode,
+	linktoc = all,
+	hypertexnames=false,
+	pdftoolbar=false,
+	pdfpagelayout=TwoPageRight,
+	pdfauthor={Ponomarenko S.M. aka sergiokapone},
+	pdfdisplaydoctitle=true,
+	pdfencoding=auto
+	]%
+	{hyperref}
+		\makeatletter
+	\AtBeginDocument{
+	\hypersetup{
+		pdfinfo={
+		Title={\@title},
+		}
+	}
+	}
+	\makeatother
+\newread\readquastions
+\newcommand{\loaditemsfromfile}[2][enumerate]{%
+\IfFileExists{#2}{%
+  \openin\readquastions=#2
+  \begin{#1}  % Use an itemize enviroment with #1 as name of the env. 
+    \loop\unless\ifeof\readquastions%
+    \read\readquastions to \localvariable
+    \ifeof\readquastions
+    \else
+  \item \localvariable
+    \fi
+    \repeat
+  \end{#1} % close the environment
+  \closein\readquastions%  \close the file
+}{}%
+}
+	
+%%============================== Оформлення списків=======================%%
+%%                                                                        %%
+\usepackage{enumitem}
+\setlist{label=\arabic*., labelindent =0\parindent, align = right, leftmargin =2.5em , labelsep=!}
+%%                                                                        %%
+%%============================ Заголовок та автори =======================%%
+%%                                                                        %%
+\title{\bfseries Перелік питань які виносяться на екзамен \\ <<Квантова хімія>> }
+\author{}
+\date{}                                   
+%%                                                                        %%
+%%========================================================================%%
+
+
+\begin{document}
+\maketitle
+\loaditemsfromfile[enumerate]{Qchem.dat}
+\end{document}
+
+

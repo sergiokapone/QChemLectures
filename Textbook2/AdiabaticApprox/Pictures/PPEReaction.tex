@@ -1,0 +1,51 @@
+\documentclass[tikz, border=0.25cm]{standalone}
+\usepackage{pgfplots}
+\usetikzlibrary{shapes.misc}
+
+\begin{document}
+
+\begin{tikzpicture}
+  \begin{axis}[
+    colormap={whitered}{color(0cm)=(white); color(1cm)=(orange!75!red)},
+    colormap name=whitered,
+%    3d box,
+    width=15cm,
+    view={0}{90},
+    enlargelimits=false,
+    domain=-0.5:4.7,
+    y domain=-2:2,
+    samples=21,
+    xlabel=\empty,
+    xtick = \empty,
+    ylabel=\empty,
+    ytick = \empty,
+    zlabel={$E_\mathrm{el}$},
+    ztick = \empty,
+    declare function = 
+    {
+        f(\x) = 4*exp(-0.5*(\x+3))*(3*cos(3*\x*180/pi));
+        g(\y) = 2*\y^2;
+    },
+    ]
+
+
+
+    \coordinate (min1) at (axis cs:0.992148+2.0944*0,0,0);
+    \coordinate (min2) at (axis cs:0.992148+2.0944*1,0,0);
+    \coordinate (max1) at (axis cs:-0.0550496+2.0944*1,0,0);
+
+
+    \node[circle, fill, inner sep=2pt] at (min1) {};
+    \node[circle, fill, inner sep=2pt] at (min2) {};
+    \node[cross out, draw, inner sep=5pt] at (max1) {};
+
+    \addplot3 [contour gnuplot = {number=14, labels={false}, draw color=black},
+        samples=100,z filter/.code={\def\pgfmathresult{25}}]
+        {f(x) + g(y)};
+
+    \draw[dashed] (min1) -- (min2);
+
+  \end{axis}
+\end{tikzpicture}
+
+\end{document}

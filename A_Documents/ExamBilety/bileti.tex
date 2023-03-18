@@ -1,0 +1,156 @@
+%%============================ Compiler Directives =======================%%
+%%                                                                        %%
+% !TeX program = pdflatex							    	
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+%%                                                                        %%
+%%============================== Клас документа ==========================%%
+%%                                                                        %%
+\documentclass[12pt,oneside]{book}
+%%                                                                        %%
+%%============================= Мови та кодування ========================%%
+%%                                                                        %%
+\usepackage[utf8]{inputenc}
+\usepackage[T2A,T1]{fontenc}
+\usepackage[ukrainian]{babel}
+%%                                                                        %%
+%%=========================== Киририличні корекції =======================%%   
+\usepackage{indentfirst}
+\usepackage{misccorr}
+\usepackage{cmap}
+%%                                                                        %%
+%%============================= Геометрія сторінки =======================%%
+%%                                                                        %%        
+\usepackage[a4paper,
+			top=1cm, %поле сверху
+			bottom=1cm, %поле снизу
+			left=1cm, %поле справа
+			right=1cm]{geometry}%поле слева
+
+%%============================== Додаткові пакети ========================%%
+%%                                                                        %%
+\usepackage[version=4]{mhchem}
+\usepackage{amsmath}
+\usepackage{pifont}
+%\usepackage{pscyr}
+\usepackage[many]{tcolorbox}
+\usepackage{amsmath}
+\usepackage{readarray}
+%%                                                                        %%
+%%========================================================================%%
+
+\renewcommand\labelenumi{\theenumi.}
+\newcounter{bilets}
+\setcounter{bilets}{1}
+\def\textbfc#1{\color{black}{\textbf{#1}}}
+
+\newcommand{\signature}[5]{%
+	% #1 = total width
+	% #2 = padding on the right
+	% #3 = text on the left
+	% #4 = text above the rule
+	% #5 = text below the rule
+	\par\noindent
+	\makebox[#1][s]{#3\ \lowrule{\fill}\makebox[0pt]{#4}\lowrule{#2}}\\*
+	\makebox[#1][s]{\hphantom{#3}\ \hfill\makebox[0pt]{\scriptsize#5}\hspace{#2}}%
+}
+
+\newcommand*\signline[3]{\tikz[baseline]{
+    \node[inner sep=#3] (char) {#1};
+    \draw[](char.base west)--(char.base east);
+    \node[below] (char) {\footnotesize #2};
+    }%
+    }
+    
+\newcommand{\lowrule}[1]{%
+	\leaders\hrule height \dimexpr-\dp\strutbox+0.4pt\relax depth \dp\strutbox\hskip#1\relax
+}
+
+\def\Cut{%
+\vskip1ex
+\noindent\dotfill%
+\vfill
+}
+
+\def\signatureline#1#2#3{
+	\raisebox{0.25\baselineskip}{$\overset{\text{\normalsize #1}}{\underset{\text{\scriptsize #2}}{\underline{\hspace{#3}}}}$}
+}
+\newcommand{\signat}{ \raisebox{-\baselineskip}{\shortstack{\underline{\hspace{5cm}}\\ \scriptsize (підпис)}}}
+\def\zatv#1{\hbox{\small \texttt{Затверджено на засіданні кафедри\, #1}}} 
+\def\protocol#1#2#3#4{\hbox{\small \texttt{Протокол №#1 від <<#2>> #3 #4 р.}}}
+\def\zavkaf{\footnotesize \textbf{Завідувач кафедри:} \signatureline{}{(підпис)}{2cm} \signatureline{\footnotesize Халатов А.~А.}{(прізвище, ініціали)}{3cm} \textbf{Екзаменатор:} \signatureline{}{(підпис)}{2cm} \signatureline{\footnotesize Пономаренко С.~М.}{(прізвище, ініціали)}{3cm} }
+
+
+%------------------------------------------------------------------------------------------
+
+
+	\newtcolorbox{bilety}
+	{   enhanced,
+		%watermark tikz={\draw[color=black!10!white,line width=2mm] circle (1cm)
+		%	node{\fontseries{b}\fontsize{20mm}{20mm}\selectfont ?};},
+		space to upper,
+		height=13.1cm,
+		%borderline={0.3mm}{0mm}{black!75, dashed},
+		segmentation style={black, solid, opacity=0, line width=0pt},
+		colback =  white,
+		colframe = black!15!white,
+		sharpish corners,
+	}
+
+%%================================================== Верстка білета (begin) ======================================================%%
+\newenvironment{bilet}{%
+	\noindent
+	\begin{bilety}			
+		\signatureline{\footnotesize \bfseries КПІ ім. Ігоря Сікорського}{(назва вищого навчального закладу)}{10cm} \hfill \signatureline{\footnotesize \bfseries Форма \No У -- 5.09}{}{5cm}  		\\
+		\signature{\linewidth}{.4\linewidth}{Спеціальність: }{105 Прикладна фізика та наноматеріали}{}
+		\signature{\linewidth}{.4\linewidth}{Семестр: }{10}{}
+		\signature{\linewidth}{.4\linewidth}{Навчальний предмет: }{Квантова хімія}{}
+		\bigskip
+	\begin{center}
+		\large\textbf{Екзаменаційний білет № \thebilets}
+	\end{center}
+		\begin{enumerate}}
+		{\end{enumerate}
+		\vbox{\vfill}
+		%\hrule
+		\tcblower
+		\zatv{фізики енергетичних систем}
+		\protocol{4/2021}{26}{травня}{2021}
+		\smallskip
+		\hbox{\zavkaf}
+	\end{bilety}%
+	\ifodd\thebilets\Cut\fi%
+	\addtocounter{bilets}{1}%
+}%
+%%================================================== Верстка білета (end) ======================================================%%
+
+\AtBeginDocument{\pagestyle{empty}}
+
+\newcounter{rand}
+\def\RandData#1{
+\readrecordarray{#1}\data
+\setcounter{rand}{\pdfuniformdeviate\dataROWS{}}
+\ifnum\therand=0\stepcounter{rand}\fi
+\data[\arabic{rand}]
+}
+
+
+\newcommand\Repeat[2]{
+ \newcounter{i}
+  \loop \ifnum\value{i} < #1
+    #2%
+    \stepcounter{i}%
+  \repeat
+}
+
+\begin{document}
+	
+\Repeat{10}{
+\begin{bilet}
+\item \RandData{Qchem.dat}
+\item \RandData{Qchem.dat}
+\end{bilet}
+}					
+						
+						
+\end{document}

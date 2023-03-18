@@ -1,0 +1,1170 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.2 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nty/global//global/global}
+    \entry{Atkins}{book}{}
+      \name{author}{2}{}{%
+        {{hash=1a3d20037747a74f26783ac158aa22ea}{%
+           family={Atkins},
+           familyi={A\bibinitperiod},
+           given={P.\bibnamedelimi W.},
+           giveni={P\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
+        {{hash=ad8bf2e656fbaed63ae78eecf9c1a66f}{%
+           family={De\bibnamedelima Paula},
+           familyi={D\bibinitperiod\bibinitdelim P\bibinitperiod},
+           given={J},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {W.H. Freeman, W. H. Freeman}%
+      }
+      \strng{namehash}{ed7a7ac1526a94233d3a99f45acd4ca7}
+      \strng{fullhash}{ed7a7ac1526a94233d3a99f45acd4ca7}
+      \strng{bibnamehash}{ed7a7ac1526a94233d3a99f45acd4ca7}
+      \strng{authorbibnamehash}{ed7a7ac1526a94233d3a99f45acd4ca7}
+      \strng{authornamehash}{ed7a7ac1526a94233d3a99f45acd4ca7}
+      \strng{authorfullhash}{ed7a7ac1526a94233d3a99f45acd4ca7}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{9}
+      \field{isbn}{1-4292-1812-6,978-1-429-21812-2}
+      \field{pagetotal}{1139}
+      \field{title}{Physical chemistry}
+      \field{year}{2010}
+      \true{nocite}
+      \verb{urlraw}
+      \verb http://gen.lib.rus.ec/book/index.php?md5=291846AF28913B3F23D0283C99A4BAFA
+      \endverb
+      \verb{url}
+      \verb http://gen.lib.rus.ec/book/index.php?md5=291846AF28913B3F23D0283C99A4BAFA
+      \endverb
+    \endentry
+    \entry{Boys}{article}{}
+      \name{author}{1}{}{%
+        {{hash=b1ab968acae867ab1df542b1a512b501}{%
+           family={Boys},
+           familyi={B\bibinitperiod},
+           given={S.\bibnamedelimi F.},
+           giveni={S\bibinitperiod\bibinitdelim F\bibinitperiod}}}%
+      }
+      \strng{namehash}{b1ab968acae867ab1df542b1a512b501}
+      \strng{fullhash}{b1ab968acae867ab1df542b1a512b501}
+      \strng{bibnamehash}{b1ab968acae867ab1df542b1a512b501}
+      \strng{authorbibnamehash}{b1ab968acae867ab1df542b1a512b501}
+      \strng{authornamehash}{b1ab968acae867ab1df542b1a512b501}
+      \strng{authorfullhash}{b1ab968acae867ab1df542b1a512b501}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proc. R. Soc.}
+      \field{title}{Electronic Wave Functions. I. A General Method of Calculation for the Stationary States of Any Molecular System}
+      \field{year}{1950}
+      \true{nocite}
+      \field{pages}{542\bibrangedash 554}
+      \range{pages}{13}
+      \field{volume}{A200 (1063)}
+      \range{volume}{-1}
+      \verb{doi}
+      \verb 110.1098/rspa.1950.0036
+      \endverb
+      \keyw{Quantum Chemisctry}
+    \endentry
+    \entry{ChemCraft}{online}{}
+      \list{language}{1}{%
+        {english}%
+      }
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{labeltitlesource}{title}
+      \field{langid}{english}
+      \field{title}{Chemcraft: a graphical program for working with quantum chemistry computations}
+      \true{nocite}
+      \verb{urlraw}
+      \verb http://www.chemcraftprog.com
+      \endverb
+      \verb{url}
+      \verb http://www.chemcraftprog.com
+      \endverb
+    \endentry
+    \entry{ArxivCh}{online}{}
+      \list{language}{1}{%
+        {english}%
+      }
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{labeltitlesource}{title}
+      \field{langid}{english}
+      \field{title}{Chemical Physics}
+      \true{nocite}
+      \verb{urlraw}
+      \verb https://arxiv.org/list/physics.chem-ph/recent
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/list/physics.chem-ph/recent
+      \endverb
+    \endentry
+    \entry{ArxivPh}{online}{}
+      \list{language}{1}{%
+        {english}%
+      }
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{labeltitlesource}{title}
+      \field{langid}{english}
+      \field{title}{Computational Physics}
+      \true{nocite}
+      \verb{urlraw}
+      \verb https://arxiv.org/list/physics.comp-ph/recent
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/list/physics.comp-ph/recent
+      \endverb
+    \endentry
+    \entry{Coosky}{book}{}
+      \name{author}{1}{}{%
+        {{hash=2906274f960251695afa7fd5a3c04e20}{%
+           family={Coosky},
+           familyi={C\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {english}%
+      }
+      \list{publisher}{1}{%
+        {Pearson}%
+      }
+      \strng{namehash}{2906274f960251695afa7fd5a3c04e20}
+      \strng{fullhash}{2906274f960251695afa7fd5a3c04e20}
+      \strng{bibnamehash}{2906274f960251695afa7fd5a3c04e20}
+      \strng{authorbibnamehash}{2906274f960251695afa7fd5a3c04e20}
+      \strng{authornamehash}{2906274f960251695afa7fd5a3c04e20}
+      \strng{authorfullhash}{2906274f960251695afa7fd5a3c04e20}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{978-0321814166}
+      \field{pagetotal}{603}
+      \field{title}{Physical Chemistry: Quantum Chemistry and Molecular Interactions}
+      \field{year}{2014}
+      \true{nocite}
+      \keyw{Quantum and Computational Chemistry}
+    \endentry
+    \entry{VoicuDolocan}{article}{}
+      \name{author}{1}{}{%
+        {{hash=19e74eb464c2031e3eaceb5cf5a7aeb8}{%
+           family={Dolocan},
+           familyi={D\bibinitperiod},
+           given={Voicu},
+           giveni={V\bibinitperiod}}}%
+      }
+      \strng{namehash}{19e74eb464c2031e3eaceb5cf5a7aeb8}
+      \strng{fullhash}{19e74eb464c2031e3eaceb5cf5a7aeb8}
+      \strng{bibnamehash}{19e74eb464c2031e3eaceb5cf5a7aeb8}
+      \strng{authorbibnamehash}{19e74eb464c2031e3eaceb5cf5a7aeb8}
+      \strng{authornamehash}{19e74eb464c2031e3eaceb5cf5a7aeb8}
+      \strng{authorfullhash}{19e74eb464c2031e3eaceb5cf5a7aeb8}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Evaluation of the Coulomb and exchange integrals for higher excited states of helium atom, taking into account the interaction between magnetic moments of the electrons}
+      \field{year}{2013}
+      \true{nocite}
+      \verb{eprint}
+      \verb arXiv:1304.2988
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/ftp/arxiv/papers/1304/1304.2988.pdf
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/ftp/arxiv/papers/1304/1304.2988.pdf
+      \endverb
+    \endentry
+    \entry{Gaussian}{online}{}
+      \list{language}{1}{%
+        {english}%
+      }
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labeltitlesource}{title}
+      \field{langid}{english}
+      \field{title}{Gaussian \& GaussView Tutorial Videos}
+      \true{nocite}
+      \verb{urlraw}
+      \verb https://gaussian.com/videos/
+      \endverb
+      \verb{url}
+      \verb https://gaussian.com/videos/
+      \endverb
+    \endentry
+    \entry{Lide}{book}{}
+      \name{editor}{1}{}{%
+        {{hash=8aef460b7c62f1a8de32cfacf4503425}{%
+           family={Lide},
+           familyi={L\bibinitperiod},
+           given={D.\bibnamedelimi R.},
+           giveni={D\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {english}%
+      }
+      \list{publisher}{1}{%
+        {CRC Press}%
+      }
+      \strng{editorbibnamehash}{8aef460b7c62f1a8de32cfacf4503425}
+      \strng{editornamehash}{8aef460b7c62f1a8de32cfacf4503425}
+      \strng{editorfullhash}{8aef460b7c62f1a8de32cfacf4503425}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labeltitlesource}{title}
+      \field{edition}{90}
+      \field{pagetotal}{2760}
+      \field{title}{Handbook of Chemistry and Physics}
+      \field{year}{2009}
+      \true{nocite}
+      \verb{urlraw}
+      \verb http://gen.lib.rus.ec/book/index.php?md5=B86B897713181D05237CFCAAE2BCCA90
+      \endverb
+      \verb{url}
+      \verb http://gen.lib.rus.ec/book/index.php?md5=B86B897713181D05237CFCAAE2BCCA90
+      \endverb
+    \endentry
+    \entry{Hartree1957}{book}{}
+      \name{author}{1}{}{%
+        {{hash=ef83d4dc8a30fe4456be4321cd8ad41b}{%
+           family={Hartree},
+           familyi={H\bibinitperiod},
+           given={D.\bibnamedelimi R.},
+           giveni={D\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {english}%
+      }
+      \list{publisher}{1}{%
+        {Wiley}%
+      }
+      \strng{namehash}{ef83d4dc8a30fe4456be4321cd8ad41b}
+      \strng{fullhash}{ef83d4dc8a30fe4456be4321cd8ad41b}
+      \strng{bibnamehash}{ef83d4dc8a30fe4456be4321cd8ad41b}
+      \strng{authorbibnamehash}{ef83d4dc8a30fe4456be4321cd8ad41b}
+      \strng{authornamehash}{ef83d4dc8a30fe4456be4321cd8ad41b}
+      \strng{authorfullhash}{ef83d4dc8a30fe4456be4321cd8ad41b}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{english}
+      \field{title}{The Calculation of Atomic Structures}
+      \field{year}{1957}
+      \true{nocite}
+    \endentry
+    \entry{Levine}{book}{}
+      \name{author}{1}{}{%
+        {{hash=130883256e427f96b30d10c503cbfc8f}{%
+           family={Levine},
+           familyi={L\bibinitperiod},
+           given={Ira.\bibnamedelimi N.},
+           giveni={I\bibinitperiod\bibinitdelim N\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {english}%
+      }
+      \list{publisher}{1}{%
+        {Pearson}%
+      }
+      \strng{namehash}{130883256e427f96b30d10c503cbfc8f}
+      \strng{fullhash}{130883256e427f96b30d10c503cbfc8f}
+      \strng{bibnamehash}{130883256e427f96b30d10c503cbfc8f}
+      \strng{authorbibnamehash}{130883256e427f96b30d10c503cbfc8f}
+      \strng{authornamehash}{130883256e427f96b30d10c503cbfc8f}
+      \strng{authorfullhash}{130883256e427f96b30d10c503cbfc8f}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{7}
+      \field{isbn}{978-0321803450}
+      \field{langid}{english}
+      \field{pagetotal}{714}
+      \field{title}{Quantum Chemistry}
+      \field{year}{2014}
+      \true{nocite}
+      \keyw{Quantum and Computational Chemistry}
+    \endentry
+    \entry{Multiwfn}{online}{}
+      \list{language}{1}{%
+        {english}%
+      }
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labeltitlesource}{title}
+      \field{langid}{english}
+      \field{title}{Multiwfn: program for realizing electronic wavefunction analysis}
+      \true{nocite}
+      \verb{urlraw}
+      \verb http://sobereva.com/multiwfn/
+      \endverb
+      \verb{url}
+      \verb http://sobereva.com/multiwfn/
+      \endverb
+    \endentry
+    \entry{ORCA}{online}{}
+      \list{language}{1}{%
+        {english}%
+      }
+      \field{sortinit}{O}
+      \field{sortinithash}{2cd7140a07aea5341f9e2771efe90aae}
+      \field{labeltitlesource}{title}
+      \field{langid}{english}
+      \field{title}{ORCA: An ab initio, DFT and semiempirical SCF-MO package}
+      \true{nocite}
+      \verb{urlraw}
+      \verb https://kofo.mpg.de/media/2/D19114521/4329011608/orca_manual-opt.pdf
+      \endverb
+      \verb{url}
+      \verb https://kofo.mpg.de/media/2/D19114521/4329011608/orca_manual-opt.pdf
+      \endverb
+    \endentry
+    \entry{ClementiRoetti}{article}{}
+      \name{author}{2}{}{%
+        {{hash=cd93e138fbcc3d97ccb6e9e471976eef}{%
+           family={Roetti},
+           familyi={R\bibinitperiod},
+           given={C.},
+           giveni={C\bibinitperiod}}}%
+        {{hash=5bd2651c87c55c62b615727042c6d0ac}{%
+           family={Clementi},
+           familyi={C\bibinitperiod},
+           given={E.},
+           giveni={E\bibinitperiod}}}%
+      }
+      \strng{namehash}{ae06c0a1dbaefe6381f5e6c49c997aa8}
+      \strng{fullhash}{ae06c0a1dbaefe6381f5e6c49c997aa8}
+      \strng{bibnamehash}{ae06c0a1dbaefe6381f5e6c49c997aa8}
+      \strng{authorbibnamehash}{ae06c0a1dbaefe6381f5e6c49c997aa8}
+      \strng{authornamehash}{ae06c0a1dbaefe6381f5e6c49c997aa8}
+      \strng{authorfullhash}{ae06c0a1dbaefe6381f5e6c49c997aa8}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{J. Chem. Phys.}
+      \field{title}{Simple basis sets for molecular wavefunctions containing atoms from $Z = 2$ to $Z = 54$}
+      \field{year}{1974}
+      \true{nocite}
+      \field{pages}{4725\bibrangedash 4729}
+      \range{pages}{5}
+      \field{volume}{60}
+      \range{volume}{1}
+      \verb{doi}
+      \verb 10.1063/1.1680973
+      \endverb
+      \verb{urlraw}
+      \verb https://aip.scitation.org/doi/abs/10.1063/1.1680973
+      \endverb
+      \verb{url}
+      \verb https://aip.scitation.org/doi/abs/10.1063/1.1680973
+      \endverb
+      \keyw{Quantum Chemisctry}
+    \endentry
+    \entry{Slater1930}{article}{}
+      \name{author}{1}{}{%
+        {{hash=2680effb67f4c8cd7c73443f7af7dbe9}{%
+           family={Slater},
+           familyi={S\bibinitperiod},
+           given={J.\bibnamedelimi C.},
+           giveni={J\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+      }
+      \strng{namehash}{2680effb67f4c8cd7c73443f7af7dbe9}
+      \strng{fullhash}{2680effb67f4c8cd7c73443f7af7dbe9}
+      \strng{bibnamehash}{2680effb67f4c8cd7c73443f7af7dbe9}
+      \strng{authorbibnamehash}{2680effb67f4c8cd7c73443f7af7dbe9}
+      \strng{authornamehash}{2680effb67f4c8cd7c73443f7af7dbe9}
+      \strng{authorfullhash}{2680effb67f4c8cd7c73443f7af7dbe9}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{In analogy with the method of Zener for the atoms from Li to F, simple rules are set up giving approximate analytic atomic wave functions for all the atoms, in any stage of ionization. These are applied to x-ray levels, sizes of atoms and ions, diamagnetic susceptibility, etc. In connection with ferromagnetism it is shown that if this really depends on the existence of incomplete shells within the atoms, rather far apart in the crystal, then the metals most likely to show it would be Fe, Co, Ni, and alloys of Mn and Cu (Heusler alloys).}
+      \field{journaltitle}{Phys. Rev.}
+      \field{title}{Atomic Shielding Constants}
+      \field{year}{1930}
+      \true{nocite}
+      \field{pages}{57\bibrangedash 64}
+      \range{pages}{8}
+      \field{volume}{36}
+      \range{volume}{1}
+      \verb{doi}
+      \verb 10.1103/PhysRev.36.57
+      \endverb
+      \verb{urlraw}
+      \verb https://journals.aps.org/pr/abstract/10.1103/PhysRev.36.57
+      \endverb
+      \verb{url}
+      \verb https://journals.aps.org/pr/abstract/10.1103/PhysRev.36.57
+      \endverb
+      \keyw{Quantum Chemisctry}
+    \endentry
+    \entry{Szabo}{book}{}
+      \name{author}{2}{}{%
+        {{hash=189b70825c6310d6f8bcf86f550e6be7}{%
+           family={Szabo},
+           familyi={S\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+        {{hash=763a8cd45e3748d60cce2c1c8f8633ed}{%
+           family={Ostlund},
+           familyi={O\bibinitperiod},
+           given={N.S.},
+           giveni={N\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {english}%
+      }
+      \list{publisher}{1}{%
+        {Dover}%
+      }
+      \strng{namehash}{89c782d19e75a9186a101e69b327f3b7}
+      \strng{fullhash}{89c782d19e75a9186a101e69b327f3b7}
+      \strng{bibnamehash}{89c782d19e75a9186a101e69b327f3b7}
+      \strng{authorbibnamehash}{89c782d19e75a9186a101e69b327f3b7}
+      \strng{authornamehash}{89c782d19e75a9186a101e69b327f3b7}
+      \strng{authorfullhash}{89c782d19e75a9186a101e69b327f3b7}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{english}
+      \field{pagetotal}{481}
+      \field{title}{Modern Quantum Chemistry: Intro to Advanced Electronic Structure Theory}
+      \field{year}{1996}
+      \true{nocite}
+    \endentry
+    \entry{Butyrskaja}{book}{}
+      \name{author}{1}{}{%
+        {{hash=9f56c589707b6a13ba7a0ee06bca9efd}{%
+           family={Бутырская},
+           familyi={Б\bibinitperiod},
+           given={Е.\bibnamedelimi В.},
+           giveni={Е\bibinitperiod\bibinitdelim В\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {М.}%
+      }
+      \list{publisher}{1}{%
+        {Солон-пресс}%
+      }
+      \strng{namehash}{9f56c589707b6a13ba7a0ee06bca9efd}
+      \strng{fullhash}{9f56c589707b6a13ba7a0ee06bca9efd}
+      \strng{bibnamehash}{9f56c589707b6a13ba7a0ee06bca9efd}
+      \strng{authorbibnamehash}{9f56c589707b6a13ba7a0ee06bca9efd}
+      \strng{authornamehash}{9f56c589707b6a13ba7a0ee06bca9efd}
+      \strng{authorfullhash}{9f56c589707b6a13ba7a0ee06bca9efd}
+      \field{sortinit}{Б}
+      \field{sortinithash}{5261f8dfa92113358b76bb09b8629977}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{978-5-91359-095-4}
+      \field{series}{Библиотека студента}
+      \field{title}{Компьютерная химия основы теории и работа с программами Gaussian и GaussView}
+      \field{year}{2011}
+      \true{nocite}
+      \verb{urlraw}
+      \verb http://gen.lib.rus.ec/book/index.php?md5=44DE6811D010F852F457A7FD434A2378
+      \endverb
+      \verb{url}
+      \verb http://gen.lib.rus.ec/book/index.php?md5=44DE6811D010F852F457A7FD434A2378
+      \endverb
+      \keyw{Quantum and Computational Chemistry}
+    \endentry
+    \entry{Vakarchuk}{book}{}
+      \name{author}{1}{}{%
+        {{hash=16676d1d1256f2395cb8da4314bd29a1}{%
+           family={Вакарчук},
+           familyi={В\bibinitperiod},
+           given={І.\bibnamedelimi О.},
+           giveni={І\bibinitperiod\bibinitdelim О\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {ukrainian}%
+      }
+      \list{publisher}{1}{%
+        {ЛНУ}%
+      }
+      \strng{namehash}{16676d1d1256f2395cb8da4314bd29a1}
+      \strng{fullhash}{16676d1d1256f2395cb8da4314bd29a1}
+      \strng{bibnamehash}{16676d1d1256f2395cb8da4314bd29a1}
+      \strng{authorbibnamehash}{16676d1d1256f2395cb8da4314bd29a1}
+      \strng{authornamehash}{16676d1d1256f2395cb8da4314bd29a1}
+      \strng{authorfullhash}{16676d1d1256f2395cb8da4314bd29a1}
+      \field{sortinit}{В}
+      \field{sortinithash}{769561dacf0468c568f33adb4926797c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{У пiдручнику подано послiдовний виклад фiзичних основ i математичного апарату квантової механiки та її застосування до рiзних задач. Матерiал книжки вiдповiдає стандартнiй унiверситетськiй програмi курсу квантової механiки й охоплює всi її роздiли. Фактично --- це пiдручник з канонiчного курсу “Квантова механiка”, який є частиною загального курсу “Теоретична фiзика” й читається студентам III–IV курсiв фiзичних спецiальностей унiверситетiв. Особливу увагу придiлено численним iлюстрацiям зв’язку фiзичних явищ iз фундаментальною величиною --- хвильовою функцiєю та її фазою, принциповi суперпозицiї, фiлософському трактуванню ймовiрнiсної концепцiї квантової механiки, квантовiй iнформацiї. Подано також багато прикладiв–задач, серед яких поряд iз традицiйними є ориґiнальнi та такi, що їх звичайно не включають до пiдручникiв. Розв’язки цих невеличких проблем дадуть змогу читачевi глибше зрозумiти основний матерiал i контролювати його засвоєння. Нарис творення квантової механiки та iсторичнi екскурси, що супроводжують основний матерiал, мiстять знання, якi є необхiдним елементом культури фiзика. Невiд’ємною частиною пiдручника є вiдступи та виноски, де подано цiкавi задачi, часом, може, несподiванi, наве- дено аналогiї з класичної механiки, теорiї музики, мистецтва. . . Мета цього --- звернути увагу читача на зв’язки мiж рiзними явищами, що охоплюють i людську дiяльнiсть, та продемонструвати силу й унiверсальнiсть математи- ки в їх аналiзi. Для студентiв, аспiрантiв, науковцiв. Буде корисний для викладачiв i всiх, хто цiкавиться квантовою фiзикою.}
+      \field{edition}{4}
+      \field{isbn}{978-966-613-921-7}
+      \field{langid}{ukrainian}
+      \field{title}{Квантова механіка}
+      \field{year}{2012}
+      \true{nocite}
+      \keyw{Quantum mechanics}
+    \endentry
+    \entry{Veselov}{book}{}
+      \name{author}{1}{}{%
+        {{hash=887a9011f2ca7fb890b0495c4e069770}{%
+           family={Веселов},
+           familyi={В\bibinitperiod},
+           given={М.\bibnamedelimi Г.},
+           giveni={М\bibinitperiod\bibinitdelim Г\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {russian}%
+      }
+      \list{location}{1}{%
+        {М.}%
+      }
+      \list{publisher}{1}{%
+        {Физматлит}%
+      }
+      \strng{namehash}{887a9011f2ca7fb890b0495c4e069770}
+      \strng{fullhash}{887a9011f2ca7fb890b0495c4e069770}
+      \strng{bibnamehash}{887a9011f2ca7fb890b0495c4e069770}
+      \strng{authorbibnamehash}{887a9011f2ca7fb890b0495c4e069770}
+      \strng{authornamehash}{887a9011f2ca7fb890b0495c4e069770}
+      \strng{authorfullhash}{887a9011f2ca7fb890b0495c4e069770}
+      \field{sortinit}{В}
+      \field{sortinithash}{769561dacf0468c568f33adb4926797c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{russian}
+      \field{pagetotal}{216}
+      \field{title}{Элементарная квантовая теория атомов и молекул}
+      \field{year}{1962}
+      \true{nocite}
+    \endentry
+    \entry{Gelman}{book}{}
+      \name{author}{1}{}{%
+        {{hash=375b6d87784c928d2b5c4819ce16261d}{%
+           family={Гельман},
+           familyi={Г\bibinitperiod},
+           given={Г.\bibnamedelimi Г.},
+           giveni={Г\bibinitperiod\bibinitdelim Г\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {russian}%
+      }
+      \list{location}{1}{%
+        {М.}%
+      }
+      \list{publisher}{1}{%
+        {БИНОМ. Лаборатория знаний}%
+      }
+      \strng{namehash}{375b6d87784c928d2b5c4819ce16261d}
+      \strng{fullhash}{375b6d87784c928d2b5c4819ce16261d}
+      \strng{bibnamehash}{375b6d87784c928d2b5c4819ce16261d}
+      \strng{authorbibnamehash}{375b6d87784c928d2b5c4819ce16261d}
+      \strng{authornamehash}{375b6d87784c928d2b5c4819ce16261d}
+      \strng{authorfullhash}{375b6d87784c928d2b5c4819ce16261d}
+      \field{sortinit}{Г}
+      \field{sortinithash}{c5a772f362f759c048c1f27b275f0dbf}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{2}
+      \field{isbn}{ISBN 978-5-94774-768-3}
+      \field{langid}{russian}
+      \field{pagetotal}{533}
+      \field{title}{Квантовая химия}
+      \field{year}{2012}
+      \true{nocite}
+      \keyw{Quantum and Computational Chemistry}
+    \endentry
+    \entry{Dmitriev2}{book}{}
+      \name{author}{1}{}{%
+        {{hash=744e0850f3bc3b474698df30f3e17d79}{%
+           family={Дмитриев},
+           familyi={Д\bibinitperiod},
+           given={И.\bibnamedelimi С.},
+           giveni={И\bibinitperiod\bibinitdelim С\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {russian}%
+      }
+      \list{location}{1}{%
+        {Л.}%
+      }
+      \list{publisher}{1}{%
+        {Химия}%
+      }
+      \strng{namehash}{744e0850f3bc3b474698df30f3e17d79}
+      \strng{fullhash}{744e0850f3bc3b474698df30f3e17d79}
+      \strng{bibnamehash}{744e0850f3bc3b474698df30f3e17d79}
+      \strng{authorbibnamehash}{744e0850f3bc3b474698df30f3e17d79}
+      \strng{authornamehash}{744e0850f3bc3b474698df30f3e17d79}
+      \strng{authorfullhash}{744e0850f3bc3b474698df30f3e17d79}
+      \field{extraname}{1}
+      \field{sortinit}{Д}
+      \field{sortinithash}{1acf1490327dfefb00e074ab043a2e03}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{russian}
+      \field{pagetotal}{128}
+      \field{title}{Симметрия в мире молекул}
+      \field{year}{1976}
+      \true{nocite}
+    \endentry
+    \entry{Dmitriev1}{book}{}
+      \name{author}{1}{}{%
+        {{hash=744e0850f3bc3b474698df30f3e17d79}{%
+           family={Дмитриев},
+           familyi={Д\bibinitperiod},
+           given={И.\bibnamedelimi С.},
+           giveni={И\bibinitperiod\bibinitdelim С\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {russian}%
+      }
+      \list{location}{1}{%
+        {Л.}%
+      }
+      \list{publisher}{1}{%
+        {Химия}%
+      }
+      \strng{namehash}{744e0850f3bc3b474698df30f3e17d79}
+      \strng{fullhash}{744e0850f3bc3b474698df30f3e17d79}
+      \strng{bibnamehash}{744e0850f3bc3b474698df30f3e17d79}
+      \strng{authorbibnamehash}{744e0850f3bc3b474698df30f3e17d79}
+      \strng{authornamehash}{744e0850f3bc3b474698df30f3e17d79}
+      \strng{authorfullhash}{744e0850f3bc3b474698df30f3e17d79}
+      \field{extraname}{2}
+      \field{sortinit}{Д}
+      \field{sortinithash}{1acf1490327dfefb00e074ab043a2e03}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{2}
+      \field{langid}{russian}
+      \field{pagetotal}{228}
+      \field{title}{Электрон глазами химика}
+      \field{year}{1986}
+      \true{nocite}
+    \endentry
+    \entry{Dmitriev3}{book}{}
+      \name{author}{2}{}{%
+        {{hash=744e0850f3bc3b474698df30f3e17d79}{%
+           family={Дмитриев},
+           familyi={Д\bibinitperiod},
+           given={И.\bibnamedelimi С.},
+           giveni={И\bibinitperiod\bibinitdelim С\bibinitperiod}}}%
+        {{hash=3de9da5f3f4a107ce65f23a6fbc6b5b5}{%
+           family={Семенов},
+           familyi={С\bibinitperiod},
+           given={С.\bibnamedelimi Г.},
+           giveni={С\bibinitperiod\bibinitdelim Г\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {russian}%
+      }
+      \list{location}{1}{%
+        {М.}%
+      }
+      \list{publisher}{1}{%
+        {Атомиздат}%
+      }
+      \strng{namehash}{3de12311e3dc2b430c55a56fde941bba}
+      \strng{fullhash}{3de12311e3dc2b430c55a56fde941bba}
+      \strng{bibnamehash}{3de12311e3dc2b430c55a56fde941bba}
+      \strng{authorbibnamehash}{3de12311e3dc2b430c55a56fde941bba}
+      \strng{authornamehash}{3de12311e3dc2b430c55a56fde941bba}
+      \strng{authorfullhash}{3de12311e3dc2b430c55a56fde941bba}
+      \field{sortinit}{Д}
+      \field{sortinithash}{1acf1490327dfefb00e074ab043a2e03}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{russian}
+      \field{pagetotal}{160}
+      \field{title}{Квантовая химия --- ее прошлое и настоящее. Развитие электронных представлений о природе химической связи}
+      \field{year}{1980}
+      \true{nocite}
+      \verb{urlraw}
+      \verb http://chemlib.ru/books/item/f00/s00/z0000021/index.shtml
+      \endverb
+      \verb{url}
+      \verb http://chemlib.ru/books/item/f00/s00/z0000021/index.shtml
+      \endverb
+    \endentry
+    \entry{Koulson}{book}{}
+      \name{author}{1}{}{%
+        {{hash=c8e9d5646f226ffb013c26394ef8019b}{%
+           family={Коулсон},
+           familyi={К\bibinitperiod},
+           given={Ч.},
+           giveni={Ч\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {russian}%
+      }
+      \list{location}{1}{%
+        {М.}%
+      }
+      \list{publisher}{1}{%
+        {Мир}%
+      }
+      \strng{namehash}{c8e9d5646f226ffb013c26394ef8019b}
+      \strng{fullhash}{c8e9d5646f226ffb013c26394ef8019b}
+      \strng{bibnamehash}{c8e9d5646f226ffb013c26394ef8019b}
+      \strng{authorbibnamehash}{c8e9d5646f226ffb013c26394ef8019b}
+      \strng{authornamehash}{c8e9d5646f226ffb013c26394ef8019b}
+      \strng{authorfullhash}{c8e9d5646f226ffb013c26394ef8019b}
+      \field{sortinit}{К}
+      \field{sortinithash}{007824ff2af181c6f6762379475efd5a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{russian}
+      \field{pagetotal}{426}
+      \field{title}{Валентность}
+      \field{year}{1965}
+      \true{nocite}
+      \keyw{Quantum and Computational Chemistry}
+    \endentry
+    \entry{Mayer}{book}{}
+      \name{author}{1}{}{%
+        {{hash=d6465dd797aa5ab2fa290997ccfd74af}{%
+           family={Майер},
+           familyi={М\bibinitperiod},
+           given={И.},
+           giveni={И\bibinitperiod}}}%
+      }
+      \name{editor}{1}{}{%
+        {{hash=337809ad30c77f5012d1b8aa5360624a}{%
+           family={Чугреев},
+           familyi={Ч\bibinitperiod},
+           given={А.\bibnamedelimi Л.},
+           giveni={А\bibinitperiod\bibinitdelim Л\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {russian}%
+      }
+      \list{publisher}{1}{%
+        {БИНОМ. Лаборатория знаний}%
+      }
+      \strng{namehash}{d6465dd797aa5ab2fa290997ccfd74af}
+      \strng{fullhash}{d6465dd797aa5ab2fa290997ccfd74af}
+      \strng{bibnamehash}{d6465dd797aa5ab2fa290997ccfd74af}
+      \strng{authorbibnamehash}{d6465dd797aa5ab2fa290997ccfd74af}
+      \strng{authornamehash}{d6465dd797aa5ab2fa290997ccfd74af}
+      \strng{authorfullhash}{d6465dd797aa5ab2fa290997ccfd74af}
+      \strng{editorbibnamehash}{337809ad30c77f5012d1b8aa5360624a}
+      \strng{editornamehash}{337809ad30c77f5012d1b8aa5360624a}
+      \strng{editorfullhash}{337809ad30c77f5012d1b8aa5360624a}
+      \field{sortinit}{М}
+      \field{sortinithash}{3750e8e5bcd54966a663076166442576}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{В учебном издании, написанном специалистом из Венгрии, рассмотрены основные результаты и точные утверждения квантовой химии с выводами и доказательствами. Приведены примеры применения квантово-химических утверждений при анализе конкретных систем. Для студентов, аспирантов, преподавателей и научных работников в области теоретической химии, молекулярной физики и квантовой механики.}
+      \field{isbn}{978-5-9963-2313-5}
+      \field{langid}{russian}
+      \field{title}{Избранные главы квантовой химии. Доказательства теорем и вывод формул}
+      \field{year}{2014}
+      \true{nocite}
+      \keyw{Quantum and Computational Chemistry}
+    \endentry
+    \entry{Poling2}{book}{}
+      \name{author}{1}{}{%
+        {{hash=6bd96a3025c1a8bfff026812ba4f4f6a}{%
+           family={Паулинг},
+           familyi={П\bibinitperiod},
+           given={Л.},
+           giveni={Л\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {М.}%
+      }
+      \list{publisher}{1}{%
+        {Государственное научно-техническое издательство химической литературы}%
+      }
+      \strng{namehash}{6bd96a3025c1a8bfff026812ba4f4f6a}
+      \strng{fullhash}{6bd96a3025c1a8bfff026812ba4f4f6a}
+      \strng{bibnamehash}{6bd96a3025c1a8bfff026812ba4f4f6a}
+      \strng{authorbibnamehash}{6bd96a3025c1a8bfff026812ba4f4f6a}
+      \strng{authornamehash}{6bd96a3025c1a8bfff026812ba4f4f6a}
+      \strng{authorfullhash}{6bd96a3025c1a8bfff026812ba4f4f6a}
+      \field{sortinit}{П}
+      \field{sortinithash}{b60c3989b0a91e15e157f5b4997c35c7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{2}
+      \field{title}{Природа химической связи}
+      \field{year}{1947}
+      \true{nocite}
+      \verb{urlraw}
+      \verb http://gen.lib.rus.ec/book/index.php?md5=BF206F2AA9D80DA10E038ECCC33F9E4B
+      \endverb
+      \verb{url}
+      \verb http://gen.lib.rus.ec/book/index.php?md5=BF206F2AA9D80DA10E038ECCC33F9E4B
+      \endverb
+      \keyw{Quantum and Computational Chemistry}
+    \endentry
+    \entry{Pimentel}{book}{}
+      \name{author}{2}{}{%
+        {{hash=af2fd0e8f501db58f8b1c66ae55d085e}{%
+           family={Пиментел},
+           familyi={П\bibinitperiod},
+           given={Г.},
+           giveni={Г\bibinitperiod}}}%
+        {{hash=ff5839f4e784c1743b8c9c240230f9d0}{%
+           family={Спартли},
+           familyi={С\bibinitperiod},
+           given={\bibnamedelima Р.},
+           giveni={\bibinitperiod\bibinitdelim Р\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {russian}%
+      }
+      \list{location}{1}{%
+        {М.}%
+      }
+      \list{publisher}{1}{%
+        {Мир}%
+      }
+      \strng{namehash}{c49182055a21017e6da7be073121e3a0}
+      \strng{fullhash}{c49182055a21017e6da7be073121e3a0}
+      \strng{bibnamehash}{c49182055a21017e6da7be073121e3a0}
+      \strng{authorbibnamehash}{c49182055a21017e6da7be073121e3a0}
+      \strng{authornamehash}{c49182055a21017e6da7be073121e3a0}
+      \strng{authorfullhash}{c49182055a21017e6da7be073121e3a0}
+      \field{sortinit}{П}
+      \field{sortinithash}{b60c3989b0a91e15e157f5b4997c35c7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{russian}
+      \field{pagetotal}{331}
+      \field{title}{Как квантовая механика объясняет химическую связь}
+      \field{year}{1973}
+      \true{nocite}
+      \keyw{Quantum and Computational Chemistry}
+    \endentry
+    \entry{Poling}{book}{}
+      \name{author}{1}{}{%
+        {{hash=a7ae69da909e6bd49adaf0be4c0b9ec2}{%
+           family={Полинг},
+           familyi={П\bibinitperiod},
+           given={Л.},
+           giveni={Л\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {russian}%
+      }
+      \list{location}{1}{%
+        {М.}%
+      }
+      \list{publisher}{1}{%
+        {Мир}%
+      }
+      \strng{namehash}{a7ae69da909e6bd49adaf0be4c0b9ec2}
+      \strng{fullhash}{a7ae69da909e6bd49adaf0be4c0b9ec2}
+      \strng{bibnamehash}{a7ae69da909e6bd49adaf0be4c0b9ec2}
+      \strng{authorbibnamehash}{a7ae69da909e6bd49adaf0be4c0b9ec2}
+      \strng{authornamehash}{a7ae69da909e6bd49adaf0be4c0b9ec2}
+      \strng{authorfullhash}{a7ae69da909e6bd49adaf0be4c0b9ec2}
+      \field{sortinit}{П}
+      \field{sortinithash}{b60c3989b0a91e15e157f5b4997c35c7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{russian}
+      \field{pagetotal}{846}
+      \field{title}{Общая химия}
+      \field{year}{1974}
+      \true{nocite}
+    \endentry
+    \entry{Popl:2002}{article}{}
+      \name{author}{1}{}{%
+        {{hash=0521e41a1785fd187970f06bbf32520a}{%
+           family={Попл},
+           familyi={П\bibinitperiod},
+           given={Дж.\bibnamedelimi А.},
+           giveni={Д\bibinitperiod\bibinitdelim А\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Успехи физических наук}%
+      }
+      \strng{namehash}{0521e41a1785fd187970f06bbf32520a}
+      \strng{fullhash}{0521e41a1785fd187970f06bbf32520a}
+      \strng{bibnamehash}{0521e41a1785fd187970f06bbf32520a}
+      \strng{authorbibnamehash}{0521e41a1785fd187970f06bbf32520a}
+      \strng{authornamehash}{0521e41a1785fd187970f06bbf32520a}
+      \strng{authorfullhash}{0521e41a1785fd187970f06bbf32520a}
+      \field{sortinit}{П}
+      \field{sortinithash}{b60c3989b0a91e15e157f5b4997c35c7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Усп. физ. наук}
+      \field{title}{Квантово-химические модели}
+      \field{year}{2002}
+      \true{nocite}
+      \field{number}{3}
+      \range{number}{1}
+      \field{pages}{349}
+      \range{pages}{1}
+      \field{volume}{172}
+      \range{volume}{1}
+      \verb{doi}
+      \verb 10.3367/UFNr.0172.200203f.0349
+      \endverb
+      \verb{urlraw}
+      \verb https://ufn.ru/ru/articles/2002/3/f/
+      \endverb
+      \verb{url}
+      \verb https://ufn.ru/ru/articles/2002/3/f/
+      \endverb
+    \endentry
+    \entry{Sleta}{book}{}
+      \name{author}{2}{}{%
+        {{hash=c3b0df6c962b7ac4c6358a307e59cb50}{%
+           family={Слєта},
+           familyi={С\bibinitperiod},
+           given={Л.\bibnamedelimi О.},
+           giveni={Л\bibinitperiod\bibinitdelim О\bibinitperiod}}}%
+        {{hash=48cb184ff3f332c2c5e222e6daaa6504}{%
+           family={Іванов},
+           familyi={І\bibinitperiod},
+           given={В.\bibnamedelimi В.},
+           giveni={В\bibinitperiod\bibinitdelim В\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {ukrainian}%
+      }
+      \list{location}{1}{%
+        {Х.}%
+      }
+      \list{publisher}{1}{%
+        {Фоліо}%
+      }
+      \strng{namehash}{c04b476ef64b6713f603735070bacfb8}
+      \strng{fullhash}{c04b476ef64b6713f603735070bacfb8}
+      \strng{bibnamehash}{c04b476ef64b6713f603735070bacfb8}
+      \strng{authorbibnamehash}{c04b476ef64b6713f603735070bacfb8}
+      \strng{authornamehash}{c04b476ef64b6713f603735070bacfb8}
+      \strng{authorfullhash}{c04b476ef64b6713f603735070bacfb8}
+      \field{sortinit}{С}
+      \field{sortinithash}{e581ee5e052c6c8e9beb0cf2da905808}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{978-966-8319-93-8}
+      \field{langid}{ukrainian}
+      \field{pagetotal}{443}
+      \field{title}{Квантова хімія}
+      \field{year}{2007}
+      \true{nocite}
+      \keyw{Quantum and Computational Chemistry}
+    \endentry
+    \entry{Stepanov}{book}{}
+      \name{author}{1}{}{%
+        {{hash=e77116ee9b902d9555f4639e907dbd2e}{%
+           family={Степанов},
+           familyi={С\bibinitperiod},
+           given={Н.\bibnamedelimi Ф.},
+           giveni={Н\bibinitperiod\bibinitdelim Ф\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {russian}%
+      }
+      \list{location}{1}{%
+        {М.}%
+      }
+      \list{publisher}{1}{%
+        {Мир}%
+      }
+      \strng{namehash}{e77116ee9b902d9555f4639e907dbd2e}
+      \strng{fullhash}{e77116ee9b902d9555f4639e907dbd2e}
+      \strng{bibnamehash}{e77116ee9b902d9555f4639e907dbd2e}
+      \strng{authorbibnamehash}{e77116ee9b902d9555f4639e907dbd2e}
+      \strng{authornamehash}{e77116ee9b902d9555f4639e907dbd2e}
+      \strng{authorfullhash}{e77116ee9b902d9555f4639e907dbd2e}
+      \field{sortinit}{С}
+      \field{sortinithash}{e581ee5e052c6c8e9beb0cf2da905808}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{russian}
+      \field{pagetotal}{519}
+      \field{title}{Квантовая механика и квантовая химия}
+      \field{year}{2001}
+      \true{nocite}
+      \keyw{Quantum and Computational Chemistry}
+    \endentry
+    \entry{Fano}{book}{}
+      \name{author}{2}{}{%
+        {{hash=bd52704cf7795c83aaec1982efca170a}{%
+           family={Фано},
+           familyi={Ф\bibinitperiod},
+           given={У.},
+           giveni={У\bibinitperiod}}}%
+        {{hash=372919e3d9aa48640f4db17c44c54efa}{%
+           family={Фано},
+           familyi={Ф\bibinitperiod},
+           given={Л.},
+           giveni={Л\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {russian}%
+      }
+      \list{location}{1}{%
+        {М.}%
+      }
+      \list{publisher}{1}{%
+        {Наука}%
+      }
+      \strng{namehash}{540c0b7e471c08eafcb51bfc26ae4253}
+      \strng{fullhash}{540c0b7e471c08eafcb51bfc26ae4253}
+      \strng{bibnamehash}{540c0b7e471c08eafcb51bfc26ae4253}
+      \strng{authorbibnamehash}{540c0b7e471c08eafcb51bfc26ae4253}
+      \strng{authornamehash}{540c0b7e471c08eafcb51bfc26ae4253}
+      \strng{authorfullhash}{540c0b7e471c08eafcb51bfc26ae4253}
+      \field{sortinit}{Ф}
+      \field{sortinithash}{b428a16bb8d154b256b1e6c39440f4f9}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{russian}
+      \field{pagetotal}{656}
+      \field{title}{Физика атомов и молекул}
+      \field{year}{1980}
+      \true{nocite}
+    \endentry
+    \entry{Cirelson}{book}{}
+      \name{author}{1}{}{%
+        {{hash=66d8d7afe124eebc44a3e16fdbae4386}{%
+           family={Цирельсон},
+           familyi={Ц\bibinitperiod},
+           given={В.\bibnamedelimi Г.},
+           giveni={В\bibinitperiod\bibinitdelim Г\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {russian}%
+      }
+      \list{location}{1}{%
+        {М.}%
+      }
+      \list{publisher}{1}{%
+        {БИНОМ. Лаборатория знаний}%
+      }
+      \strng{namehash}{66d8d7afe124eebc44a3e16fdbae4386}
+      \strng{fullhash}{66d8d7afe124eebc44a3e16fdbae4386}
+      \strng{bibnamehash}{66d8d7afe124eebc44a3e16fdbae4386}
+      \strng{authorbibnamehash}{66d8d7afe124eebc44a3e16fdbae4386}
+      \strng{authornamehash}{66d8d7afe124eebc44a3e16fdbae4386}
+      \strng{authorfullhash}{66d8d7afe124eebc44a3e16fdbae4386}
+      \field{sortinit}{Ц}
+      \field{sortinithash}{3f01c092520703ab3ccf737b3f40d905}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{978-5-9963-0080-8}
+      \field{langid}{russian}
+      \field{pagetotal}{496}
+      \field{title}{Квантовая химия. Молекулы, молекулярные системы и твердые тела}
+      \field{year}{2010}
+      \true{nocite}
+      \keyw{Quantum and Computational Chemistry}
+    \endentry
+    \entry{Yatsimirsij}{book}{}
+      \name{author}{2}{}{%
+        {{hash=d1ba0f8ec77f019ec4f5fbd2aaa087d5}{%
+           family={Яцимирский},
+           familyi={Я\bibinitperiod},
+           given={К.\bibnamedelimi Б.},
+           giveni={К\bibinitperiod\bibinitdelim Б\bibinitperiod}}}%
+        {{hash=572a90e82665a31724c1a45162415be8}{%
+           family={Яцимирский},
+           familyi={Я\bibinitperiod},
+           given={В.\bibnamedelimi К.},
+           giveni={В\bibinitperiod\bibinitdelim К\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {russian}%
+      }
+      \list{location}{1}{%
+        {К.}%
+      }
+      \list{publisher}{1}{%
+        {Вища школа}%
+      }
+      \strng{namehash}{92b0edd3692bbf695e6906887a712872}
+      \strng{fullhash}{92b0edd3692bbf695e6906887a712872}
+      \strng{bibnamehash}{92b0edd3692bbf695e6906887a712872}
+      \strng{authorbibnamehash}{92b0edd3692bbf695e6906887a712872}
+      \strng{authornamehash}{92b0edd3692bbf695e6906887a712872}
+      \strng{authorfullhash}{92b0edd3692bbf695e6906887a712872}
+      \field{sortinit}{Я}
+      \field{sortinithash}{4d045f53699e0133749592603a9059cb}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{russian}
+      \field{pagetotal}{303}
+      \field{title}{Химическая связь}
+      \field{year}{1975}
+      \true{nocite}
+      \keyw{Quantum and Computational Chemistry}
+    \endentry
+    \entry{YatsimirsijQChem}{book}{}
+      \name{author}{2}{}{%
+        {{hash=df60a200a1fd64ec01b9edda2fae389c}{%
+           family={Яцимирський},
+           familyi={Я\bibinitperiod},
+           given={В.К.},
+           giveni={В\bibinitperiod}}}%
+        {{hash=88a05df2e7a1263159e04555b52ed5d6}{%
+           family={Яцимирський},
+           familyi={Я\bibinitperiod},
+           given={А.В.},
+           giveni={А\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {ukrainian}%
+      }
+      \list{location}{1}{%
+        {К.}%
+      }
+      \list{publisher}{1}{%
+        {ВПЦ <<Київський університет>>}%
+      }
+      \strng{namehash}{0208919c85ced46426f77211d7db8a0c}
+      \strng{fullhash}{0208919c85ced46426f77211d7db8a0c}
+      \strng{bibnamehash}{0208919c85ced46426f77211d7db8a0c}
+      \strng{authorbibnamehash}{0208919c85ced46426f77211d7db8a0c}
+      \strng{authornamehash}{0208919c85ced46426f77211d7db8a0c}
+      \strng{authorfullhash}{0208919c85ced46426f77211d7db8a0c}
+      \field{sortinit}{Я}
+      \field{sortinithash}{4d045f53699e0133749592603a9059cb}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{978-966-439-160-0}
+      \field{langid}{ukrainian}
+      \field{pagetotal}{479}
+      \field{title}{Квантова хімія}
+      \field{year}{2009}
+      \true{nocite}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

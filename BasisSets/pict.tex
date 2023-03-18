@@ -1,0 +1,41 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+% !BIB program = biber
+
+\documentclass[]{QChemPresent}
+\usetikzlibrary{calligraphy}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage{tabularray}
+
+\date{}
+\let\vphi\varphi
+\def\vxi{\vec{\xi}}
+\begin{document}
+%==============================================================================================
+
+\begin{frame}[fragile]
+	\begin{center}
+		\begin{tblr}{
+			colspec={|Q[l, valign=m, font=\scriptsize]|Q[c, valign=m,  font=\scriptsize]|Q[c, valign=m, font=\scriptsize]|X[j, font=\tiny, valign=m]|},
+			row{1}={font=\scriptsize},
+			%        row{2}={font=\scriptsize},
+			%        row{2-Z}={font=\scriptsize},
+			}
+			\hline
+			\SetCell[r=2]{c}{Базиси} & \SetCell[c=2]{c} Число базисних функцій &   & \SetCell[r=2]{c}{Опис}                            \\ \cline{2-3}
+			                         & {Неводневі \\ атоми} &  Водень  &                                                               \\ \hline
+			STO-3G                   & 5  & 1 & Економічний з точки зору витрат часу та машинних ресурсів. Краще підходить для атомів. \\ \hline
+			3-21G                    & 9  & 2 & Двоекспоненційний базис. Точніше описує валентні орбіталі і системи без поляризації.   \\ \hline
+			6-31G*  або  6-31G(d)    & 15 & 2 & Системи з анізотропією заряду                                                          \\ \hline
+			6-31G**  або 6-31G(d,p)  & 15 & 5 & Там де є водневий зв'язок                                                              \\ \hline
+			6-31+G*  або 6-31+G(d)   & 19 & 2 & Молекули з неподіленими парами, молекулярні аніони, збуджені стани.                    \\ \hline
+			6-31+G** або 6-31+G(d,p) & 19 & 5 & Уточнення для попереднього базису                                                      \\ \hline
+		\end{tblr}
+	\end{center}
+\end{frame}
+%============================================================================
+
+\end{document}

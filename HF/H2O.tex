@@ -1,0 +1,163 @@
+\documentclass[12pt]{article}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\newcommand{\Bond}[6]%
+% start, end, thickness, incolor, outcolor, iterations
+{ \begin{pgfonlayer}{background}
+        \colorlet{InColor}{#4}
+        \colorlet{OutColor}{#5}
+        \foreach \I in {#6,...,1}
+        {   \pgfmathsetlengthmacro{\r}{#3/#6*\I}
+            \pgfmathsetmacro{\C}{sqrt(1-\r*\r/#3/#3)*100}
+            \draw[InColor!\C!OutColor, line width=\r] (#1.center) -- (#2.center);
+        }
+    \end{pgfonlayer}
+}
+
+\newcommand{\SingleBond}[2]%
+% start, end
+{   \Bond{#1}{#2}{1mm}{white}{gray!50}{10}
+}
+
+\newcommand{\RedBond}[2]%
+% start, end
+{   \Bond{#1}{#2}{1mm}{orange!70}{red!75!black}{10}
+}
+
+\newcommand{\BlueBond}[2]%
+% start, end
+{   \Bond{#1}{#2}{2mm}{cyan}{blue!50!black}{10}
+}
+
+\newcommand{\GreenBond}[2]%
+% start, end
+{   \Bond{#1}{#2}{0.7071mm}{green!25}{green!25!black}{10}
+}
+
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+\usepackage{pgfplotstable}
+\pgfplotstableread[]{
+  10.00000000 -75.72140214 
+  12.21518987 -75.72167462 
+  14.43037975 -75.72213796 
+  16.64556962 -75.72444485 
+  18.86075949 -75.72792149 
+  21.07594937 -75.73229440 
+  23.29113924 -75.73760908 
+  25.50632911 -75.74394170 
+  27.72151899 -75.75140118 
+  29.93670886 -75.76012548 
+  32.15189873 -75.77029540 
+  34.36708861 -75.78213417 
+  36.58227848 -75.79515500 
+  38.79746835 -75.80769229 
+  41.01265823 -75.81955287 
+  43.22784810 -75.83070926 
+  45.44303797 -75.84118601 
+  47.65822785 -75.85102766 
+  49.87341772 -75.86028279 
+  52.08860759 -75.86899663 
+  54.30379747 -75.87720832 
+  56.51898734 -75.88495029 
+  58.73417722 -75.89224869 
+  60.94936709 -75.89912421 
+  63.16455696 -75.90559319 
+  65.37974684 -75.91166842 
+  67.59493671 -75.91736005 
+  69.81012658 -75.92267624 
+  72.02531646 -75.92762371 
+  74.24050633 -75.93220822 
+  76.45569620 -75.93643497 
+  78.67088608 -75.94030881 
+  80.88607595 -75.94383453 
+  83.10126582 -75.94701703 
+  85.31645570 -75.94986148 
+  87.53164557 -75.95237338 
+  89.74683544 -75.95455875 
+  91.96202532 -75.95642412 
+  94.17721519 -75.95797660 
+  96.39240506 -75.95922394 
+  98.60759494 -75.96017449 
+ 100.82278481 -75.96083723 
+ 103.03797468 -75.96122171 
+ 105.25316456 -75.96133810 
+ 107.46835443 -75.96119709 
+ 109.68354430 -75.96080990 
+ 111.89873418 -75.96018826 
+ 114.11392405 -75.95934440 
+ 116.32911392 -75.95829102 
+ 118.54430380 -75.95704133 
+ 120.75949367 -75.95560900 
+ 122.97468354 -75.95400824 
+ 125.18987342 -75.95225375 
+ 127.40506329 -75.95036077 
+ 129.62025316 -75.94834507 
+ 131.83544304 -75.94622298 
+ 134.05063291 -75.94401135 
+ 136.26582278 -75.94172757 
+ 138.48101266 -75.93938955 
+ 140.69620253 -75.93701563 
+ 142.91139241 -75.93462457 
+ 145.12658228 -75.93223548 
+ 147.34177215 -75.92986766 
+ 149.55696203 -75.92754056 
+ 151.77215190 -75.92527361 
+ 153.98734177 -75.92308604 
+ 156.20253165 -75.92099675 
+ 158.41772152 -75.91902410 
+ 160.63291139 -75.91718570 
+ 162.84810127 -75.91549825 
+ 165.06329114 -75.91397726 
+ 167.27848101 -75.91263695 
+ 169.49367089 -75.91148995 
+ 171.70886076 -75.91054721 
+ 173.92405063 -75.90981780 
+ 176.13924051 -75.90930877 
+ 178.35443038 -75.90908808 
+ 180.56962025 -75.90897709 
+ 182.78481013 -75.90932265 
+ 185.00000000 -75.91011645 
+
+}\mytable
+
+\begin{document}
+
+\begin{tikzpicture}[   oxygen/.style={circle, ball color=red, minimum size=6mm, inner sep=0},
+    hydrogen/.style={circle, ball color=white, minimum size=2.5mm, inner sep=0},
+    carbon/.style={circle, ball color=black!75, minimum size=7mm, inner sep=0}
+]
+\begin{axis}[%
+xlabel = {Valence HOH angle, $\theta$},
+ylabel = {Energy, $Eh$},
+tick label style={font=\tiny},
+xtick distance={10},
+xticklabel style = {rotate=45,anchor=east},
+width=5cm,
+height=5cm,
+scale only axis,
+enlargelimits=false,
+line join=round,
+%ymax=-74.9,
+% === Налаштування сітки ===
+grid = both,
+grid style={line width=.1pt, draw=gray!10},
+major grid style={line width=.2pt,draw=gray!50},
+minor tick num = 4,
+minor grid style = {line width=.1pt,draw=gray!10},
+]
+\addplot [color=red,line width=1pt, mark=none]
+  table {\mytable};
+\end{axis}
+\begin{scope}[xshift=1.5cm, yshift=3cm]
+    \node[oxygen] (O1) at (0,0) {};
+    \node[hydrogen] (H1) at (55:1) {};
+    \node[hydrogen] (H2) at ({180-55}:-1) {};
+    \draw[] (O1)  ++(-55:0.5) arc (-55:55:0.5) node[right, pos=0.5] {$\theta$};
+    \SingleBond{O1}{H1}
+    \SingleBond{O1}{H2}
+\end{scope}
+\end{tikzpicture}%
+
+
+\end{document}

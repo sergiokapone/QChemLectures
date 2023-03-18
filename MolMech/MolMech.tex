@@ -1,0 +1,529 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+
+\documentclass[]{beamer}
+\usetheme{QuantumChemistry}
+\usepackage{QuantumChemistry}
+\addbibresource{\jobname.bib}
+\usepackage{unicode-math-luatex}
+\usepackage{makecell, booktabs, pgf}
+\usepackage{minted, xcolor}
+
+\graphicspath{{pictures/}}
+
+\newcommand{\lenitem}[2][.5\linewidth]{\parbox[t]{#1}{\strut #2\strut}}
+
+\newcommand{\mol}{
+\tikz[baseline]{
+    %\node[trapezium, draw, minimum width=3cm, trapezium left angle=135, trapezium right angle=45, minimum height=1.65cm, fill=cyan!10] at (0.25,0) {};
+
+	\node[atom] (A) at (-1,0) {};
+	\node[atom] (B) at (1,0) {};
+	\node[atomH] (H1) at ($ (A) + (135:1) $) {};
+	\node[atomH] (H2) at ($ (A) + (180:1) $) {};
+	\node[atomH] (H3) at ($ (A) + (225:1) $) {};
+
+	\node[atomH] (H4) at ($ (B) + (65:1) $) {};
+	\node[atomH] (H5) at ($ (B) + (0:1) $) {};
+	\node[atomH] (H6) at ($ (B) + (-45:1) $) {};
+
+	\draw[bound] (A) -- (B);
+	\draw[boundH] (A) -- (H1); \draw[boundH] (A) -- (H2); \draw[boundH] (A) -- (H3);
+	\draw[boundH] (B) -- (H4); \draw[boundH] (B) -- (H5); \draw[boundH] (B) -- (H6);
+	\draw[gray!50] (A) -- ++(-90:0.5) coordinate[pos=0.5] (A1);
+	\draw[gray!50] (B) -- ++(-90:0.5) coordinate[pos=0.5] (B1);
+	\draw[<->, gray] (A1) -- node[below, sloped, font=\scriptsize] {bond length} (B1);
+	\draw[<->, gray] (A) ++(125:0.5) arc(125:30:0.5) node[pos=0.5, anchor=south] {$\alpha$};
+}
+}
+
+\title[Лекції з квантової хімії]{{\bfseries\huge Молекулярна механіка} \\ {Оптимізація структури молекули}}
+
+\subtitle{\bfseries Лекції з квантової хімії}
+\author{Пономаренко С. М.}
+\date{}
+\begin{document}
+%============================================================================
+
+
+\begin{frame}
+	\titlepage
+\end{frame}
+
+%============================================================================
+
+
+
+
+%============================================================================
+\begin{frame}{Будова молекули}{}
+	\begin{itemize}
+		\item Просторовою \emphs{будовою молекули} називають рівноважне розташування ядер атомів, що її утворюють. Енергія взаємодії атомів залежить від розташування ядер та стану електронної підсистеми.
+		\item Рівноважні відстані у молекулах та розташування атомних ядер (геометрію молекули) визначаються методами \emphs{спектроскопії}, \emphs{рентгенівського структурного аналізу}, \emphs{електронографії} та \emphs{нейтронографії}. Ці методи також дозволяють отримати інформацію про розподіл електронів (електронну густину) в молекулі.
+		\item Теоретично, геометрію молекули можна визначити методами \emphs[red]{молекулярної механіки} та \emphs[red]{квантової хімії}.
+	\end{itemize}
+\end{frame}
+%============================================================================
+
+
+
+
+
+%============================================================================
+\begin{frame}{Моделювання структури та властивостей молекул}{}
+	\begin{block}{}\justifying
+		\emphs[red]{Молекулярна механіка} --- метод розрахунку геометрії та енергетичних характеристик молекулярних частинок з використанням емпіричних потенціальних функцій, вид яких взято з класичної механіки.
+	\end{block}
+	\hfill\raisebox{-2\height}[0pt][0pt]{\mol}
+	\vspace{-1.5em}
+
+	Припущення:
+	\begin{itemize}\small
+		\item кожен атом симулюється як одна окрема частинка;
+		\item \lenitem{кожній частинці присвоюється радіус (зазвичай радіус Ван дер Ваальса\footnote{\scriptsize Характеристика атома, радіус уявної твердої сфери, якою можна було б замінити атом для опису властивостей газів та рідин із цих атомів за допомогою рівняння ван дер Ваальса.}), поляризовність та електричний заряд (виведений з квантово-хімічних розрахунків та/або експерименту);}
+		\item взаємодії розглядаються як <<пружини>> із рівноважною довжиною рівною експериментальній чи розрахованій довжині хімічного зв'язку.
+	\end{itemize}
+
+
+
+
+\end{frame}
+%============================================================================
+
+
+\begin{frame}{Способи опису структури хімічної системи}{}
+	Для опису атомно-молекулярних систем існує кілька способів задавання координат, кожен з яких має свої переваги і
+	недоліки:
+	\begin{enumerate}
+		\item декартові координати;
+		\item внутрішні координати.
+		      %\item координати $Z$-матриці;
+		      %\item дробні координати.
+	\end{enumerate}
+\end{frame}
+%============================================================================
+
+
+
+
+
+%============================================================================
+\begin{frame}[fragile, t]{Декартові координати}{}
+	\begin{columns}
+		\begin{column}{0.3\linewidth}\scriptsize
+			\begin{center}
+				\includegraphics[width=\linewidth]{cart}
+			\end{center}
+		\end{column}
+		\begin{column}{0.7\linewidth}\scriptsize
+			Одиниці виміру координат $X$, $Y$, $Z$ можуть бути а ангстремах (\AA) або в атомних одиниці довжини (а.о., бори) (a.u., Bohr).
+			\\~\\
+			Приклад задавання декартових координат атомів етану \ce{C2H6}
+			\begin{minted}[mathescape,
+        gobble=8,
+        %        breaklines,
+        fontsize=\scriptsize,
+        ]
+        {ruby}
+        %coords
+        CTyp xyz   # the type of coordinates = xyz or internal
+        Charge 0   # the total charge of the molecule
+        Mult 1     # the multiplicity = 2S+1 S = 0
+        Units Angs # the unit of length = angs or bohrs
+        coords
+           C       -4.61712        0.67819        0.00000
+           C       -3.27135        1.38303        0.00000
+           H       -5.41470        1.38930        0.30192
+           H       -4.59746       -0.17109        0.71505
+           H       -4.84008        0.29216       -1.01697
+           H       -3.04839        1.76906        1.01697
+           H       -3.29101        2.23231       -0.71505
+           H       -2.47377        0.67192       -0.30192
+        end
+        end
+        \end{minted}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+%============================================================================
+\begin{frame}[fragile, t]{Внутрішні координати}{}
+	\begin{alertblock}{}
+		Число внутрішніх координат дорівнює числу ступенів свободи молекули
+		\begin{equation*}
+			3N - 6
+		\end{equation*}
+	\end{alertblock}
+	\begin{overprint}
+		\onslide<1>
+		\begin{columns}
+			\begin{column}{0.3\linewidth}
+				\begin{center}
+					\begin{center}
+						\begin{tikzpicture}[scale=0.8]
+							\draw[fill=cyan, opacity=0.3] (-1.5, 0) rectangle (1.5, 1.5);
+							\draw[fill=cyan, opacity=0.3] (-1.5, 0) -- ++(-135:1.5) -- ++ (0:3) -- ++(45:1.5) -- cycle;
+							\node[atom] (A) at (-1, 0) {}; \node[below=5pt] at (A) {$A$};
+							\node[atom] (B) at (1, 0) {}; \node[above=5pt] at (B) {$B$};
+							\node[atom] (C) at (-1, 1) {}; \node[right=5pt] at (C) {$C$};
+							\node[atom] (D) at (0.3, -0.7) {}; \node[left=5pt] at (D) {$D$};
+							\draw[double] (C) -- (A) -- (B) -- (D);
+							\draw[<->] (A) ++(0, 0.5) arc(90:0:0.5) node[pos=0.5, anchor=south west] {$\alpha$};
+							\draw[<->] (-1.5,1) arc(90:210:0.5 and 1) node[pos=0.5, left] {$\phi$};
+						\end{tikzpicture}
+					\end{center}
+				\end{center}
+				\[
+					N = 4
+				\]
+				\[
+					3 \cdot 4 - 6 = 3 + 2 + 1
+				\]
+			\end{column}
+			\begin{column}{0.75\linewidth}
+				\begin{itemize}
+					\item Міжатомні відстані
+					      \begin{block}{}\scriptsize\justifying
+						      Прообраз координати --- \emphs[red]{довжина хімічного зв'язку} між двома атомами молекулі. Необхідно вказати два атоми, між якими координати вказує відстань. Значення лежить у діапазоні від $0 \ldots +\infty$.
+					      \end{block}
+					\item Міжатомний кут
+					      \begin{block}{}\scriptsize\justifying
+						      Кут між трьома атомами. Змінюється в межах $\alpha = 0 \ldots \pi $.  Прообразом та природною реалізацією цього типу координат є кути між двома хімічними зв'язками -- \emphs[red]{валентні кути}.
+					      \end{block}
+					\item Диедральні (або торсіонні) кути
+					      \begin{block}{}\scriptsize\justifying
+						      Для обраних чотирьох атомів $A$, $B$, $C$, $D$ треба всього лише порахувати кут між площинами, утвореними атомами $C$, $A$, $B$ та $A$, $B$, $D$.
+					      \end{block}
+				\end{itemize}
+			\end{column}
+		\end{columns}
+		\onslide<2>
+		Приклад задавання внутрішніх координат атомів етану \ce{C2H6}
+		\begin{minted}[mathescape,
+        gobble=8,
+        %        breaklines,
+        fontsize=\scriptsize,
+        ]
+        {ruby}
+        %coords
+        CTyp internal # the type of coordinates = xyz or internal
+        Charge 0      # the total charge of the molecule
+        Mult 1        # the multiplicity = 2S+1 S = 0
+        Units Angs    # the unit of length = angs or bohrs
+        coords
+           C     0     0     0        0.00000        0.00000        0.00000
+           C     1     0     0        1.51920        0.00000        0.00000
+           H     1     2     0        1.11038      109.82535        0.00000
+           H     1     2     3        1.11038      109.82535      240.00000
+           H     1     2     3        1.11038      109.82535      120.00000
+           H     2     1     3        1.11038      109.82535       60.00000
+           H     2     1     3        1.11038      109.82535      300.00000
+           H     2     1     3        1.11038      109.82535      180.00000
+        end
+        end
+        \end{minted}
+	\end{overprint}
+\end{frame}
+%============================================================================
+
+%============================================================================
+\begin{frame}{Сили та потенціальна енергія}{}
+	\begin{overprint}
+		\onslide<1>
+		\mol \hspace*{2cm}
+		$
+			\tcbhighmath{\vec{F} = - \vec{\nabla} U}%(x_1, y_1, y_1, \ldots, x_i, y_i, y_i, \ldots, x_N, y_N, y_N)
+		$
+		\vspace*{0.5cm}
+		\begin{equation*}
+			U_\text{chem} = \overbrace{
+				\sum\limits_\text{bond} \frac{k_i}{2} (x_i - x_{0_i})^2}^{
+			\tikz[]{
+				\node[atom] (A) at (-2,0) {}; \node[atom] (B) at (-0.5,0) {};
+				\draw[boundH] (A) -- node[above] {$x$} (B);
+			}
+			}
+			+
+			\overbrace{
+				\sum\limits_\text{angle}\frac{b_i}{2} (\alpha_i - \alpha_{0_i})^2
+			}^{
+			\tikz[xshift=-1cm]{
+				\node[atom] (O) at (0,0) {}; 	\node[atom] (A) at (135:1) {}; \node[atom] (B) at (45:1) {};
+				\draw[] (O) -- (A) (O) -- (B); \draw[<->] (135:0.5) arc(135:45:0.5) node[above=-1pt, pos=0.5] {$\alpha$};
+
+			}
+			}
+			+
+			\overbrace{
+				\sum\limits_\text{torsion} + \frac{V_i}{2} (1 - \cos\phi_i)
+			}^{
+			\tikz[xshift=-2cm]{
+				\node[atom] (A) at (-0.5,-0.5) {}; \node[atom] (B) at (0,0) {}; \node[atom] (C) at (1,0) {}; \node[atom] (D) at (1.5,0.5) {};
+				\draw[] (A) -- (B) -- (C) -- (D);
+				\draw[->, thick] (0.5,-0.2) arc (-150:150:0.15 and 0.5) node[left] {$\phi$};
+			}
+			}
+		\end{equation*}
+
+		\vspace*{0.5cm}
+
+		\begin{equation*}
+			U_\text{phys} =
+			\overbrace{
+				\frac{q_iq_j}{r_{ij}}
+			}^{
+				\tikz[xshift=-2cm]{
+					\node[atom, font=\scriptsize, inner sep=0pt] (A) at (-1,0) {$+$}; \node[atom, font=\scriptsize, inner sep=0.5pt] (B) at (-0.5,0) {$-$};
+				}
+			}
+			+
+			\overbrace{
+				\sum\limits_i\sum\limits_j 4\epsilon_{ij}\left[ \left( \frac{\sigma_{ij}}{r_{ij}} \right)^{12} - \left( \frac{\sigma_{ij}}{r_{ij}} \right)^6 \right]
+			}^{
+				\tikz[xshift=-2cm]{
+					\node[atom, font=\scriptsize] (A) at (0.5,0) {}; \node[atom, font=\scriptsize] (B) at (1.5,0) {};
+					\draw[dashed] (A) circle (0.5); \draw[dashed] (B) circle (0.5);
+				}
+			}
+		\end{equation*}
+
+		\onslide<2>
+
+		\framesubtitle<2>{Потенціал Морзе}
+
+		\bigskip
+
+		Потенціал Морзе --- модельна формула, що описує потенціальну енергію міжатомної взаємодії.
+
+		\bigskip
+
+		\begin{block}{}\scriptsize\justifying
+			Наближення Морзе для визначення коливальної структури молекули краще, ніж квантовий осцилятор, оскільки воно точно враховує ефекти розриву зв'язків у молекулі, такі, як наприклад, існування незв'язаних станів. Також враховується ангармонізм для реальних зв'язків в молекулі і ненульова ймовірність переходу для вищих гармонік та комбінаційних частот.
+		\end{block}
+
+		\begin{columns}
+			\begin{column}{0.4\linewidth}
+				\begin{equation*}
+					\tcbhighmath{U_\text{Morse} = D_e ( 1-e^{-a(r-r_e)} )^2}
+				\end{equation*}
+			\end{column}
+			\begin{column}{0.6\linewidth}
+				\begin{center}
+					\begin{tikzpicture}[scale=2.5]
+						\message{^^JMorse potential}
+						\def\xmax{2} % max x axis
+						\def\A{1}
+						\def\b{2.3}
+						\def\a{(0.26*\xmax)}
+
+						\def\ymax{1.0}  % max y axis
+						\draw[->,thick] (0,-0.2*\ymax) -- (0,1.1*\ymax) node[left] {$U$};
+						\draw[->,thick] (-0.2*\ymax,0) -- (\xmax,0) node[below] {$r$};
+						\draw[red, densely dashed,samples=100,smooth, variable=\x,domain=0.24*\a:1.76*\a]     plot(\x,{\A*\b^2*(\x-\a)^2});
+						\node[below] at ({\a}, 0) {$r_0$};
+						\draw[blue, samples=100,smooth,variable=\x,domain=0.1*\xmax:0.95*\xmax]
+						plot(\x,{\A*(1-exp(-\b*(\x-\a)))^2});
+						\node[atom] (A) at ({\a - \a/3}, {0.95*\ymax}) {};
+						\node[atom] (B) at ({\a + \a/3}, {0.95*\ymax}) {};
+						\draw[boundH] (A) -- node[above] {} (B);
+					\end{tikzpicture}
+				\end{center}
+			\end{column}
+		\end{columns}
+
+		\onslide<3>
+
+		\framesubtitle<3>{\href{https://avogadro.cc/docs/optimizing-geometry/molecular-mechanics/}{Molecular Mechanics \& Force Fields}}
+
+		\bigskip
+		\begin{enumerate}\small
+			\item \href{https://en.wikipedia.org/wiki/Force_field_(chemistry)}{\emphz{UFF (Universal Force Field)}}
+			      \begin{block}{}\footnotesize\justifying
+				      Аналітичні вирази та силові константи вибираються таким чином, що цей метод може оптимізувати геометрію для всіх елементів і добре працює з неорганічними та металоорганічними матеріалами.
+			      \end{block}
+			\item \emphz{MMFF94 \& MMFF94s} (designed by Merck).
+			      \begin{columns}
+				      \begin{column}{0.5\linewidth}
+					      \begin{block}{}\footnotesize\justifying
+						      Особливо добре підходить для органічних сполук.
+						      \emphs{MMFF94 і MMFF94s моделюють водневий зв'язок на відміну від інших методів}.
+					      \end{block}
+				      \end{column}
+				      \begin{column}{0.5\linewidth}
+					      \begin{center}
+						      \includegraphics[height=2.25cm]{Hbond}
+					      \end{center}
+				      \end{column}
+			      \end{columns}
+
+			\item \href{https://en.wikipedia.org/wiki/AMBER}{\emphz{GAFF}} (General AMBER Force Field)
+			      \begin{block}{}\footnotesize\justifying
+				      Використовується для оптимізації геометрії молекул лікарських засобів. AMBER (Assisted Model Building with Energy Refinement) --- силове поле в білках.
+			      \end{block}
+		\end{enumerate}
+	\end{overprint}
+\end{frame}
+
+%============================================================================
+
+\begin{frame}[t]{Поверхня потенціальної енергії (ППЕ)}\small%
+	\framesubtitle<1>{Стаціонарні точки}%
+	\framesubtitle<2>{Матриця Гессе}%
+	\framesubtitle<3>{Оптимізація геометрії}%
+	\framesubtitle<4>{Частоти коливань молекули}%
+	\vspace{-1.5em}
+	\begin{overprint}
+		\onslide<1>
+		\begin{block}{}
+			Стаціонарна точка на ППЕ --- точка, в якій градієнт потенціальної енергії дорівнює нулю:
+			\begin{equation*}
+				\vec{F} = -\vec{\nabla}U = 0.
+			\end{equation*}
+		\end{block}
+		\onslide<2>
+		\begin{block}{}\justifying
+			Тип стаціонарної точки визначається матрицею других похідних функцій --- матрицею Гессе (визначник матриці наз. гесіаном).
+		\end{block}
+		\onslide<3>
+		\begin{alertblock}{}
+			Оптимізація молекулярної геометрії --- мінімізація енергії молекули  $U$ при варіації координат атомів.
+		\end{alertblock}
+		\onslide<4>
+		\begin{alertblock}{}
+			Матриця Гессе --- матриця силових констант. Діагоналізація матриці визначає нормальні частоти коливань молекули.
+		\end{alertblock}
+	\end{overprint}
+	\begin{columns}
+		\begin{column}{0.5\linewidth}
+			\begin{overprint}
+				\onslide<1>
+				\begin{itemize}
+					\item локальні мінімуми на потенціальної поверхні --- відповідають метастабільним конфігураціям молекули.
+					\item абсолютний мінімум --- найстійкішою (стабільною) конфігурацією --- основного стану системи.
+					\item сідлові точки --- відповідають перехідним станам.
+				\end{itemize}
+				\onslide<2>
+				\begin{equation*}\label{}
+					\begin{bmatrix}
+						\dfrac{\partial^2 U}{\partial q_1^2}               & \dfrac{\partial^2 U_e}{\partial q_1\,\partial q_2} & \cdots & \dfrac{\partial^2 U_e}{\partial q_1\,\partial q_n} \\
+						\dfrac{\partial^2 U_e}{\partial q_2\,\partial q_1} & \dfrac{\partial^2 U_e}{\partial q_2^2}             & \cdots & \dfrac{\partial^2 U_e}{\partial q_2\,\partial q_n} \\
+						\vdots                                             & \vdots                                             & \ddots & \vdots                                             \\
+						\dfrac{\partial^2 U_e}{\partial q_n\,\partial q_1} & \dfrac{\partial^2 U_e}{\partial q_n\,\partial q_2} & \cdots & \dfrac{\partial^2 U_e}{\partial q_n^2}
+					\end{bmatrix}
+				\end{equation*}
+				\onslide<3>
+				\begin{block}\justifying
+					Залежність $U$ від координат ядер є поверхнею потенціальної енергії (ППЕ), оптимізація геометрії є пошуком точок локальних мінімумів на ППЕ.
+
+					\bigskip
+
+					Фактично алгоритми шукають рівноважні значення внутрішніх координат $x_{0_i}$, $\alpha_{0_i}$ та $\phi$ на основі емпіричних значень $k_i$, $b_i$ та $V_i$ варіюючи $x$, $\alpha$ та $\phi$.
+				\end{block}
+				\onslide<4>
+				\begin{equation*}
+					\begin{bmatrix}
+						\dfrac{\partial^2 U}{\partial q_1^2} & 0                                      & \cdots & 0                                      \\
+						0                                    & \dfrac{\partial^2 U_e}{\partial q_2^2} & \cdots & 0                                      \\
+						\vdots                               & \vdots                                 & \ddots & \vdots                                 \\
+						0                                    & 0                                      & \cdots & \dfrac{\partial^2 U_e}{\partial q_n^2}
+					\end{bmatrix}
+				\end{equation*}
+				\[
+					E_n = \left(n + \frac12\right)\hbar \omega
+				\]
+
+			\end{overprint}
+		\end{column}
+		\begin{column}{0.5\linewidth}
+			\begin{center}
+				\includegraphics[width=\linewidth]{ppe}
+			\end{center}
+		\end{column}
+	\end{columns}
+\end{frame}
+%============================================================================
+
+
+%============================================================================
+\begin{frame}{Алгоритми пошуку стаціонарних точок на ППЕ}{Чисельні методи}
+	\begin{enumerate}\small
+		\item Градієнтний спуск (англ. \emphz{Steepest Descent}) --- це ітераційний алгоритм оптимізації першого порядку, в якому для знаходження локального мінімуму функції здійснюються кроки, пропорційні протилежному значенню градієнту (або наближеного градієнту) функції в поточній точці.
+		\item Метод спряженого градієнта (англ. \emphz{Conjugate Gradient}) -- ітераційний метод для безумовної оптимізації у багатовимірному просторі Основною перевагою методу є те, що він вирішує квадратичну задачу оптимізації за кінцеве число кроків.
+	\end{enumerate}
+	\begin{center}
+		\includegraphics[width=0.4\linewidth]{Gradient_descent}
+	\end{center}
+\end{frame}
+%============================================================================
+
+%============================================================================
+\begin{frame}{\href{https://avogadro.cc/docs/tools/auto-optimize-tool/}{Оптимізація геометрії в Avogadro}}{\url{https://avogadro.cc/docs/tools/auto-optimize-tool/}}
+
+	\tikz[remember picture,overlay] \node[opacity=0.3,inner sep=0pt, anchor=north east] at (current page.north east){\includegraphics[width=2cm]{avogadro_logo}};
+	\begin{alertblock}{}\centering
+		Інструмент Auto Optimize --- оптимізує молекулярну геометрію за допомогою молекулярної механіки.
+	\end{alertblock}
+
+	\begin{center}
+		\includegraphics[width=0.6\linewidth]{Avogadro_Opt}
+	\end{center}
+\end{frame}
+%============================================================================
+
+
+
+
+%============================================================================
+\begin{frame}[t]{Ізомери, таутомери та конформери}{}
+	\begin{itemize}
+		\item Одному і тому ж набору атомів можуть відповідати кілька мінімумів на ППЕ. Такі структури називаються \emphs[red]{ізомерами}.
+		      \begin{onlyenv}<1>
+			      \begin{center}
+				      \includegraphics[width=0.65\linewidth]{isomers}\\
+				      {\scriptsize Ізомери молекули азотистої кислоти }
+				      \begin{block}{}\scriptsize\centering
+					      \fullcite{Pradhan2017}
+				      \end{block}
+			      \end{center}
+		      \end{onlyenv}
+		\item<2-> \emphs[red]{Конформери} --- частковий випадок ізомерів, які отримуються один з одного без розриву хімічного зв'язку.
+			\begin{onlyenv}<2>
+				\begin{center}
+					\includegraphics[width=0.75\linewidth]{conformers}\\
+					{\scriptsize Поворотні конформери бутану}
+				\end{center}
+			\end{onlyenv}
+		\item<3> \emphs[red]{Таутомери} ---ізомери, які легко переходять один в одного. Найчастіше це відбувається за рахунок переносу атома водню.
+			\begin{onlyenv}<3>
+				\begin{center}
+					\includegraphics[width=0.5\linewidth]{Ethanal_Ethenol_Tautomerie}\\
+					{\scriptsize Таутомерія етаналь—етенол}
+				\end{center}
+			\end{onlyenv}
+	\end{itemize}
+	\begin{center}
+		\emphs[red]{Чим глибший мінімум на ППЕ, тим стабільніший ізомер.}
+	\end{center}
+\end{frame}
+%============================================================================
+
+%============================================================================
+\begin{frame}{Недоліки методів молекулярної механіки}{}\small
+	\emphs[red]{Переваги}:
+	\begin{itemize}
+		\item Прості методи і швиді розрахунки.
+		\item Можуть працювати з доволі складними системами.
+	\end{itemize}
+
+	\emphs[red]{Недоліки}:
+	\begin{itemize}
+		\item Засновані на класичній фізиці систем багатьох частинок та не здатні описувати квантові ефекти (збуджені стани молекул).
+		\item Розрахунок ППЕ заснований на формулах та параметрах, що мають емпіричну природу.
+		\item Для врахування міжмолекулярних взаємодій необхідно знати ефективні заряди атомів, дипольні моменти груп атомів та хімічних зв'язків. \emphs[red]{Їх знаходження є самостійною задачею і може бути здійснено тільки квантово-хімічним методам}.
+		\item Не застосовуються для моделювання систем, властивості яких визначаються електронними ефектами та у випадку розриву хімічних зв'язків.
+	\end{itemize}
+\end{frame}
+%============================================================================
+
+\end{document}

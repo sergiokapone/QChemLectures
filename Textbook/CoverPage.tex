@@ -1,0 +1,178 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+% !TeX root =../EMProblems.tex
+
+%========================================================================================================
+%
+%									      Палітурка
+%
+%========================================================================================================
+
+\newcommand{\CoverPage}{
+	\begin{tikzpicture}
+	[
+	remember picture,
+	overlay,
+	font=\sffamily\bfseries\huge,
+	inner sep=0pt,
+	outer sep=0pt,
+	]
+%	\node at (current page.center) {
+%	\includegraphics[height=\paperheight]{Title}
+%	};
+	\foreach \i in {0,1,...,10}
+	{
+	\path (current page.west) to coordinate [pos=\i/10] (c\i) (current page.east);
+	%\filldraw [red] (c\i) circle (1pt);
+	}
+	%\draw[fill=white,opacity=0.4] (current page.west |- 0,0) rectangle (current page.east |- 0,1);
+	%\node [scale=0.7, anchor=west] at (c1 |- 0,0.4) {Кафедра фізики енергетичних систем};
+	\draw[fill=olive,opacity=0.4] (current page.west |- 0,-10) rectangle (current page.east |- 0,-15);
+	\node [text width=1\linewidth, anchor=west] at (c1 |- 0,-20) {\realtitle};
+	\node [anchor=west] at (c1 |- 0,-22) {\LARGE \authors};
+	\end{tikzpicture} 
+}
+
+%========================================================================================================
+%
+%									      Титульна сторінка
+%
+%========================================================================================================
+
+\renewcommand\maketitle{
+	\begin{alwayssingle}
+		\begin{center}
+			\begin{flushright}\bfseries\sffamily
+				\MakeUppercase{Міністерство освіти і науки України}\\
+				КПІ ім. Ігоря Сікорського\\
+			\end{flushright}
+			\begin{tcolorbox}[titlepagestyle,
+					toprule=0.10cm,
+					bottomrule=0.10cm,
+					overlay={%
+						\node (picture) at ([xshift=4cm]frame.west) {\includegraphics{logo_PTI}};
+					}
+			]%
+			\begin{flushright}
+				\large\bfseries\color{white}Фізико-технічний інститут
+			\end{flushright}
+			\end{tcolorbox}
+%			\vspace*{-2em}
+%		 	\begin{Large}\color{themecolordark!90!black}
+%			\begin{equation}
+%				\vect{\nabla}&\times&&\Efield &&= -\dfrac{1}{c}\dfrac{\partial\Bfield}{\partial t} \\
+%				\vect{\nabla}&\,\cdot&&\Bfield &&= 0 \\
+%				\vect{\nabla}&\,\cdot&&\Dfield &&= 4\pi\rho \\ 
+%				\vect{\nabla}&\times&&\Hfield &&= \dfrac{4\pi}{c} \vect{j}+\dfrac{1}{c}\dfrac{\partial\Dfield}{\partial t} 
+%			\end{equation}
+%			\end{Large}
+			\vspace*{10em}
+			\begin{tcolorbox}[
+				titlepagestyle,
+				toprule=0.15cm,
+				bottomrule=0.15cm,
+				top=1.3cm,
+				bottom=0.7cm,
+				overlay={%
+				\node[%
+							fill=white,
+							rounded corners = 15pt,	
+							draw=themecolorlight,
+							line width=0.15cm,
+							inner sep=0pt,
+							text width=8cm,
+							minimum height=2cm,
+							align=center,
+							%anchor=east,
+							font=\sffamily\bfseries\Large
+						] (title) at (frame.north) {\authors};
+				}
+			]
+			\centering
+			\Huge\sffamily\bfseries\textcolor{white}{\realtitle}
+			\end{tcolorbox}	
+			\vfill 
+			{\large\sffamily\bfseries{Навчальний посібник}\par}
+			\vfill
+			\ifelectronic \noindent Електронне видання \fi
+			%\par {Версія від~\href{http://www.istpravda.com.ua/dates}{\today}} \par\else \par  \fi
+			\vfill
+			\begin{tcolorbox}[titlepagestyle,
+					toprule=0.10cm,
+					bottomrule=0.10cm]
+				\begin{center}
+					\color{white}\bfseries\normalsize\MakeUppercase{Київ~\the\year}
+				\end{center}			       	
+			\end{tcolorbox}
+		\end{center}
+		\clearpage
+	\end{alwayssingle}	
+}
+
+
+%========================================================================================================
+%
+%									      Друга сторінка
+%
+%========================================================================================================
+\newcommand\makeinfopage{
+	\begin{alwayssingle}
+		\noindent%	
+		\begin{minipage}[t]{0.5\textwidth}
+				\begin{flushleft}
+					УДК  537\\
+					ББК  22.3\\
+					П 563
+				\end{flushleft}
+		\end{minipage}
+		\hfill
+		\begin{minipage}[t]{0.5\textwidth}
+				\begin{flushleft}
+					Рекомендовано Вченою радою ФТІ\\
+					Протокол № 5/\the\year~від  25.04.\the\year~р.
+				\end{flushleft}
+		\end{minipage}
+		
+		\bigskip\noindent%
+		\begin{flushleft}
+			\begin{tabular}{p{4cm}p{0.65\textwidth}}
+				\makecell[l]{Автор\\та укладач:}                   & \makecell[l]{\href{http://phes.ipt.kpi.ua/ponomarenko-sergij-mikolajovich}{\authors}, к.ф.-м.н., доцент \\кафедри фізики енергетичних систем ФТІ} \\
+				                         &                                                                             \\
+				\makecell[l]{Рецензент:}               & \makecell[l]{В.~О.~Кондаков, к.ф.-м.н., доцент кафедри прикладної\\фізики ФТІ}                 \\
+				                         &                                                                             \\
+				\makecell[l]{Відповідальний\\редактор:} & \makecell[l]{Т.~В.~Литвинова, к.т.н., доцент, в.~о. директора\\ФТІ}
+			\end{tabular}
+		\end{flushleft}
+		
+		\noindent%
+		\begin{flushleft}
+			\begin{tabular}{lp{0.9\textwidth}}
+				     & \textbf{\href{http://phes.ipt.kpi.ua/ponomarenko-sergij-mikolajovich}{\authors}}                                                                                                                                                                        \\
+				П 563 & \hspace*{3ex} \inlinetitle : навчальний посібник / \href{http://phes.ipt.kpi.ua/ponomarenko-sergij-mikolajovich}{\authors} --- К.:~КПІ ім. Ігоря Сікорського, \the\year. --~\pageref{LastPage}~с. -- Бібліогр.: с.~\pageref{BibPage}. \ifelectronic\relax\else-- 80~прим.\fi
+			\end{tabular}
+		\end{flushleft} 
+		\vfill		 
+
+		Для студентів фізико-технічного інституту КПІ ім. Ігоря Сікорського, які навчаються за спеціальністю 105~<<Прикладна фізика та наноматеріали>>.
+		
+		\vfill
+				
+		\begin{flushleft}\small
+			Ілюстративний матеріал підручника підготовлений за допомогою пакету \href{http://pgf.sourceforge.net}{TikZ/Pgf}. Верстка тексту проведена в видавничій системі \LaTeXe{} (компілятор Lua\LaTeX) на базі системи комп'ютерної верстки \TeX{} (Збірка  \href{https://www.tug.org/texlive/}{\TeX Live~\the\year}) з використанням оболонки \href{https://www.texstudio.org}{\TeX Studio}.
+		\end{flushleft}	
+		\vfill
+		
+		\begin{flushleft}
+			\begin{tabular}{p{\textwidth - 45ex}l}
+				& \small\textcopyright\quad \authors, \the\year~р. \\
+				& \small \textcopyright\quad КПІ ім. Ігоря Сікорського (ФТІ), \the\year~р.           
+			\end{tabular}
+		\end{flushleft}
+		\newpage%
+	\end{alwayssingle}
+}
+
+
+
+

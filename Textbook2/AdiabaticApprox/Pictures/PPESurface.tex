@@ -1,0 +1,52 @@
+\documentclass[tikz, border=0.25cm]{standalone}
+\usepackage{pgfplots}
+
+\begin{document}
+
+\begin{tikzpicture}
+  \begin{axis}[
+    colormap={whitered}{color(0cm)=(white); color(1cm)=(orange!75!red)},
+    colormap name=whitered,
+    3d box,
+    width=15cm,
+    view={25}{20},
+    enlargelimits=false,
+    domain=-0.5:4.7,
+    y domain=-2:2,
+    samples=21,
+    xlabel=\empty,
+    xtick = \empty,
+    ylabel=\empty,
+    ytick = \empty,
+    zlabel={$E_\mathrm{el}$},
+    ztick = \empty,
+    declare function = 
+    {
+        f(\x) = 4*exp(-0.5*(\x+3))*(3*cos(3*\x*180/pi));
+        g(\y) = 2*\y^2;
+    },
+    ]
+
+
+
+    \addplot3 [domain = -0.5:4.7, samples = 31, samples y = 0, thick, smooth]
+        (x,-2,{-0.6+f(x)});
+
+    \addplot3 [contour gnuplot = {number=14, labels={false}, draw color=black},
+        samples=100,z filter/.code={\def\pgfmathresult{25}}]
+        {-0.7 + f(x) + g(y)};
+
+    \addplot3 [y domain=0:2,surf, shader=interp] { -0.7 + f(x) + g(y)};
+
+    \addplot3 [y domain = 0:2, contour gnuplot = {number=14, labels={false},
+      draw color = black}, samples = 100, ] { -0.7 + f(x) + g(y)};
+
+    \addplot3 [y domain=-2:0,surf, shader=interp, opacity=0.9] { -0.7 + f(x) + g(y)};
+
+    \addplot3 [y domain = -2:0, contour gnuplot = {number=14, labels={false},
+      draw color = black!30!white}, samples = 100] { -0.7 + f(x) + g(y)};
+
+  \end{axis}
+\end{tikzpicture}
+
+\end{document}

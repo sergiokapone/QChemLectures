@@ -1,0 +1,233 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+
+\documentclass[]{beamer}
+\usetheme{QuantumChemistry}
+\usepackage{QuantumChemistry}
+\graphicspath{{pictures/}}
+\addbibresource{../Bibliography/QuantumChemistry.bib}
+\title[Лекції з квантової хімії]{\bfseries\huge Властивості молекул}
+\subtitle{\bfseries Лекції з квантової хімії}
+\author{Пономаренко С. М.}
+\date{}
+% https://www.youtube.com/watch?v=zv9Y7YmHyBk
+\def\stext#1{\text{
+        \makebox[0pt]{
+            \tikz[baseline] {\node[text width=50pt, align=center, execute at begin node=\setlength{\baselineskip}{-0.5ex}, blue] {#1};}
+        }
+}}
+
+
+\begin{document}
+
+%============================================================================
+\begin{frame}
+	\titlepage
+\end{frame}
+%============================================================================
+
+\section{Електричні властивості}
+
+%============================================================================
+\begin{frame}{Розкладання за мультиполями}{}
+	\begin{itemize}\small
+		\item Молекули породжують електричне поле.
+		\item Електричне поле молекули описується потенціалом $\phi^{\rho}(\vec R)$.
+		\item Електростатичний потенціал $\phi^{\rho}(\vec R)$ створюється розподілом заряду $\rho(\vec r)$:
+		      \begin{equation*}
+			      \phi^{\rho}(\vec R) = \int\limits_{\vec r} \frac{\rho(\vec r)d\vec r}{|\vec R - \vec r|}
+		      \end{equation*}
+		\item Розкладемо в ряд потенціал навколо точки $\vec R_O$ в середині $\rho(\vec r)$:
+		      \begin{align*}\label{}
+			      \phi^{\rho}(\vec R) = & \frac{1}{|\vec R - \vec R_O|} \int\limits_{\vec r} \rho(\vec r)d\vec r +                                                                                                                                                                \\
+			                            & + \sum_\alpha\left( \frac{\partial }{\partial r_\alpha} \frac{1}{|\vec R - \vec r|}\right)_{\vec R = \vec R_o} \int\limits_{\vec r} \rho(\vec r)(r_\alpha - R_{O,\alpha})d\vec r   +                                                    \\
+			                            & + \frac12\sum_{\alpha\beta}\left( \frac{\partial^2 }{\partial r_\alpha\partial_\beta} \frac{1}{|\vec R - \vec r|}\right)_{\vec R = \vec R_o} \int\limits_{\vec r} \rho(\vec r)(r_\alpha - R_{O,\alpha})(r_\beta - R_{O,\beta})d\vec r + \\
+			                            & + \ldots
+		      \end{align*}
+	\end{itemize}\end{frame}
+%============================================================================
+
+
+
+
+
+%============================================================================
+\tikzstyle{every picture}+=[remember picture]
+\begin{frame}{Розкладання за мультиполями}{}
+	\begin{itemize}\small
+		\item Інтеграли $\int x^n f(x) dx $ -- момент $n$-го порядку функції $f(x)$.
+		\item Електричні моменти функції розподілу заряду $\rho(\vec r)$:
+		      \begin{align*}\label{}
+			      \mk[]{q}{}q                         & = \int\limits_{\vec r}  \rho(\vec r) d\vec r                                               \\
+			      \mk[]{mu}{}\mu_\alpha(\vec R_O)     & = \int\limits_{\vec r}  \rho(\vec r) (r_\alpha - R_{O,\alpha}) d\vec r                     \\
+			      \mk[]{Q}{}Q_{\alpha\beta}(\vec R_O) & = \int\limits_{\vec r} \rho(\vec r)(r_\alpha - R_{O,\alpha})(r_\beta - R_{O,\beta})d\vec r
+		      \end{align*}
+		      \vspace*{-2em}
+		      \begin{multline*}\label{}
+			      \phi^{\rho}(\vec R) = \frac{q}{|\vec R - \vec R_O|}
+			      + \sum_\alpha\left( \frac{\partial }{\partial r_\alpha} \frac{1}{|\vec R - \vec r|}\right)_{\vec R = \vec R_o} \mu_\alpha(\vec R_O)   + \\
+			      + \frac12\sum_{\alpha\beta}\left( \frac{\partial^2 }{\partial r_\alpha\partial_\beta} \frac{1}{|\vec R - \vec r|}\right)_{\vec R = \vec R_o} Q_{\alpha\beta}(\vec R_O) + \ldots
+		      \end{multline*}
+		\item Знаючи мультипольні моменти функції $\rho(\vec r)$ можна розрахувати потенціал $\phi^{\rho}(\vec R) $ в довільній точці $\vec{R}$.
+	\end{itemize}
+	\begin{tikzpicture}[overlay]
+		\node[left=45pt of q, font=\scriptsize] {Електричний заряд};
+		\node[left=19pt of mu, font=\scriptsize] {Дипольний момент};
+		\node[left=10pt of Q, font=\scriptsize] {Момент 2-го порядку};
+	\end{tikzpicture}
+\end{frame}
+%============================================================================
+
+
+
+
+
+%============================================================================
+\begin{frame}{Потенціальна енергія в електричному полі}{}
+	\begin{itemize}\small
+		\item Потенціальна енергія зарядів $\rho(\vec r)$ в електричному полі:
+		      \begin{equation*}
+			      E(\vec{\mathcal{E}}) = \int\limits_{\vec r} \rho(\vec r) \phi^{\mathcal{E}}(\vec r) d\vec r
+		      \end{equation*}
+		\item Розкладемо потенціал в ряд навколо точки $\vec R_O$:
+		      \begin{multline*}
+			      \phi^{\mathcal{E}}(\vec r) = \phi^{\mathcal{E}}(\vec R_O) + \sum_\alpha (r_\alpha - R_{O, \alpha}) \left.\frac{\partial \phi^{\mathcal{E}}(\vec r)}{\partial r_\alpha}\right|_{\vec r = \vec R_O} + \\
+			      +  \frac12\sum_{\alpha\beta} (r_\alpha - R_{O, \alpha})(r_\beta - R_{O, \beta}) \left.\frac{\partial^2 \phi^{\mathcal{E}}(\vec r)}{\partial r_\alpha \partial r_\beta}\right|_{\vec r = \vec R_O} + \ldots
+		      \end{multline*}
+		\item Похідні потенціалу $\phi^{\mathcal{E}}(\vec r)$ в точці $\vec R_O$:
+		      \begin{align*}\label{}
+			      \mathcal{E}_\alpha(\vec R_O)                                                           & = -\left.\frac{\partial \phi^{\mathcal{E}}(\vec r)}{\partial r_\alpha}\right|_{\vec r = \vec R_O}                    \\
+			      (\vec{\nabla}\mathcal{E}_\alpha)_\beta(\vec R_O) = \mathcal{E}_{\alpha\beta}(\vec R_O) & = -\left.\frac{\partial^2 \phi^{\mathcal{E}}(\vec r)}{\partial r_\alpha \partial r_\beta}\right|_{\vec r = \vec R_O}
+		      \end{align*}
+	\end{itemize}
+\end{frame}
+%============================================================================
+
+
+
+
+
+%============================================================================
+\begin{frame}{Потенціальна енергія в електричному полі}{}\small
+	\begin{overprint}
+		\onslide<1>
+		\begin{multline*}
+			E(\vec{\mathcal{E}}) = \int\limits_{\vec r} \rho(\vec r) \phi^{\mathcal{E}}(\vec r) d\vec r = \\
+			=  \phi^{\mathcal{E}}(\vec R_O) \int\limits_{\vec r} \rho(\vec r) d\vec r - \sum_\alpha \mathcal{E}_\alpha(\vec R_O) \int\limits_{\vec r} \rho(\vec r)  (r_\alpha - R_{O, \alpha}) d\vec r  - \\
+			-  \frac12\sum_{\alpha\beta}\mathcal{E}_{\alpha\beta}(\vec R_O)  \int\limits_{\vec r} \rho(\vec r) (r_\alpha - R_{O, \alpha})(r_\beta - R_{O, \beta}) d\vec r  + \ldots
+		\end{multline*}
+		\onslide<2>
+		\vspace*{2em}
+		Мультипольні моменти розподілу заряду $\rho (\vec r) $ можна використати для:
+		\begin{itemize}
+			\item знаходження потенціалу $\phi^{\rho}$, що створюється цим розподілом $\rho (\vec r) $;
+			\item для розрахунку енергії взаємодії зарядів $\rho (\vec r) $ із зовнішнім полем $\phi^{\mathcal{E}}$.
+		\end{itemize}
+	\end{overprint}
+	\begin{alertblock}{}\centering
+		Інтеграли --- мультипольні моменти.
+	\end{alertblock}
+	\vspace*{-1em}
+	\begin{multline*}
+		E(\vec{\mathcal{E}}) = \int\limits_{\vec r} \rho(\vec r) \phi^{\mathcal{E}}(\vec r) d\vec r = \\
+		=  q \phi^{\mathcal{E}}(\vec R_O)  - \sum_\alpha \mathcal{E}_\alpha(\vec R_O) \mu_\alpha(\vec R_O)  - \\
+		-  \frac12\sum_{\alpha\beta}\mathcal{E}_{\alpha\beta}(\vec R_O)  Q_{\alpha\beta}(\vec R_O)  + \ldots
+	\end{multline*}
+\end{frame}
+%============================================================================
+
+
+
+
+
+%============================================================================
+\begin{frame}{Потенціальна енергія в електричному полі}{}\small
+	Вираз для енергії взаємодії
+	\begin{equation*}
+		E(\vec{\mathcal{E}})
+		=  q \phi^{\mathcal{E}}(\vec R_O)  - \sum_\alpha \mathcal{E}_\alpha(\vec R_O) \mu_\alpha(\vec R_O)  -  \frac12\sum_{\alpha\beta}\mathcal{E}_{\alpha\beta}(\vec R_O)  Q_{\alpha\beta}(\vec R_O)  + \ldots
+	\end{equation*}
+	дає альтернативні означення для мультипольних моментів:
+	\begin{align*}
+		\mu_\alpha(\vec R_O)      & = -\frac{dE(\mathcal{E})}{d \mathcal{E}_\alpha(\vec R_O)}           \\
+		Q_{\alpha\beta}(\vec R_O) & =  -2\frac{d E(\mathcal{E})}{d \mathcal{E}_{\alpha\beta}(\vec R_O)}
+	\end{align*}
+	разом з
+	\begin{align*}
+		\mu_\alpha(\vec R_O)      & = \int\limits_{\vec r}  \rho(\vec r) (r_\alpha - R_{O,\alpha}) d\vec r                     \\
+		Q_{\alpha\beta}(\vec R_O) & = \int\limits_{\vec r} \rho(\vec r)(r_\alpha - R_{O,\alpha})(r_\beta - R_{O,\beta})d\vec r
+	\end{align*}
+\end{frame}
+%============================================================================
+
+
+
+
+
+%============================================================================
+\begin{frame}{Квантово-механічні вирази для властивостей}{}\small
+    Перехід від класичних виразів до квантово-механічних можна здійснити трьома шляхами:
+    \begin{itemize}
+        \item Якщо електричні моменти виражаються через густину розподілу заряду $\rho(\vec r)$ $\Rightarrow$ необхідно квантово-механічний вираз для $\rho(\vec r)$.
+        \item Якщо електричні моменти виражені як похідні енергії взаємодії із зовнішнім полем $\Rightarrow$ необхідно квантово-механічний вираз для енергії.
+        \item Теорема Гельмана-Фейнмана: похідні енергії --- очікувана величина похідної гамільтоніана  $\Rightarrow$ необхідно квантово-механічний оператор відповідної властивості.
+    \end{itemize}
+Іншими словами, для розрахунок молекулярних властивостей можна здійснити один з трьох підходів:
+\begin{itemize}
+    \item На основі розподілу заряду.
+    \item Як похідні енергії по відповідній властивості.
+    \item Як похідні очікуваного значення оператора, часто називають методами пропагаторів.
+\end{itemize}
+\end{frame}
+%============================================================================
+
+
+
+
+
+%============================================================================
+\begin{frame}{Індуковані електричні моменти}{}
+\begin{itemize}
+    \item Електрони легкі і рухливі тому заряд молекули буде перерозподілятись в присутності зовнішнього електричного поля таким чином, що загальна енергія буде зведена до мінімуму --- розподіл заряду буде поляризованим.
+    \item В результаті електричні моменти розподілу заряду зміняться і їх значення залежатимуть від напруженості поля:
+   \begin{align*}
+       \mu_\alpha(\vec{\mathcal{E}}) &= \mu_\alpha + \mu_\alpha^\text{ind}(\vec{\mathcal{E}}) \\
+       Q_{\alpha\beta}(\vec{\mathcal{E}}) &= Q_{\alpha\beta} + Q_{\alpha\beta}^\text{ind}(\vec{\mathcal{E}})
+      \end{align*}
+  \item
+\end{itemize}
+\end{frame}
+%============================================================================
+
+%============================================================================
+\begin{frame}{}{}
+        \begin{block}{}\centering\large
+        {властивість} = \highlight[][red][c1]{відгук} молекули на \highlight[][blue][c2]{збурення ($\lambda$)}
+    \end{block}
+    \begin{tikzpicture}[overlay]
+        \draw[->, red, font=\scriptsize] (c1.south) -- ++(0,-0.5) node[below] {зміна енергії};
+        \draw[<-, blue] (c2.south) -- ++(0,-0.5) node[pos=1, below, text width=5.5cm, font=\scriptsize, align=center] {зміна геометрії молекули, \\ вплив електричного \\ або магнітного поля, тощо};
+    \end{tikzpicture}
+
+    \vspace{1.5em}
+
+    %	Розкладання енергії в ряд Тейлора:
+    \tikzset{prop/.style={fill=gray!15, draw=red}}
+    \begin{equation*}
+        E(\lambda) = E(0) +
+        \highlight[math][prop][d1]{\left(\frac{\partial E}{\partial \lambda}\right)_{0}}\lambda +
+        \frac{1}{2!}\highlight[math][prop][d2]{\left(\frac{\partial^2 E}{\partial \lambda^2}\right)_0}\lambda^2 +
+        \frac{1}{3!}\highlight[math][prop][d3]{\left(\frac{\partial^3 E}{\partial \lambda^3}\right)_0}\lambda^3 +
+        \ldots
+    \end{equation*}
+    \begin{tikzpicture}[overlay]
+        \node[below=10pt of d2, blue] (p) {властивості};
+        \draw[->] (d1.south) to[out=-90, in=90] (p.north west);
+        \draw[->] (d2.south) to[out=-90, in=90] (p);
+        \draw[->] (d3.south) to[out=-90, in=90] (p.north east);
+    \end{tikzpicture}
+\end{frame}
+%============================================================================
+
+\end{document}

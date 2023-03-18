@@ -1,0 +1,130 @@
+%%============================ Compiler Directives =======================%%
+%%                                                                        %%
+% !TeX program = lualatex							    	
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+%%                                                                        %%
+%%============================== Клас документа ==========================%%
+%%                                                                        %%
+\documentclass[14pt]{extarticle}
+\IfFileExists{ukrcorr.sty}{\usepackage{ukrcorr}}{}
+\usepackage{ifluatex}
+%%                                                                        %%
+%%========================== Мови, шрифти та кодування ===================%%
+%%
+\ifluatex                                                                        %%
+	\usepackage{fontspec}
+	\setsansfont{CMU Sans Serif}%{Arial}
+	\setmainfont{CMU Serif}%{Times New Roman}
+	\setmonofont{CMU Typewriter Text}%{Consolas}
+	\defaultfontfeatures{Ligatures={TeX}}
+	\usepackage[math-style=TeX]{unicode-math}
+\else
+	\usepackage[utf8]{inputenc}
+	\usepackage[T2A,T1]{fontenc}
+	\usepackage{amsmath}
+	%\usepackage{pscyr}
+	\usepackage{cmap}
+\fi
+\usepackage[english, russian, ukrainian]{babel}
+%%                                                                        %%
+%%============================= Геометрія сторінки =======================%%
+%%                                                                        %%
+\usepackage[%
+	a4paper,%
+	footskip=1cm,%
+	headsep=0.3cm,% 
+	top=2cm, %поле сверху
+	bottom=2cm, %поле снизу
+	left=2cm, %поле ліворуч
+	right=2cm, %поле праворуч
+    ]{geometry}                          
+%%                                                                        %%        
+%%============================== Інтерліньяж  ============================%%
+%%                                                                        %%
+\renewcommand{\baselinestretch}{1}
+%-------------------------  Подавление висячих строк  --------------------%%
+\clubpenalty =10000
+\widowpenalty=10000
+%---------------------------------Інтервали-------------------------------%%
+\setlength{\parskip}{0.5ex}%
+\setlength{\parindent}{2.5em}%
+%%                                                                        %%
+%%=========================== Математичні пакети і графіка ===============%%
+%%                                                                        %%
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{positioning}
+%%                                                                        %%
+%%========================== Гіперпосилення (href) =======================%%
+%%                                                                        %%
+\usepackage[%colorlinks=true,
+	%urlcolor = blue, %Colour for external hyperlinks
+	%linkcolor  = malina, %Colour of internal links
+	%citecolor  = green, %Colour of citations
+	bookmarks = true,
+	bookmarksnumbered=true,
+	unicode,
+	linktoc = all,
+	hypertexnames=false,
+	pdftoolbar=false,
+	pdfpagelayout=TwoPageRight,
+	pdfauthor={Ponomarenko S.M. aka sergiokapone},
+	pdfdisplaydoctitle=true,
+	pdfencoding=auto
+	]%
+	{hyperref}
+		\makeatletter
+	\AtBeginDocument{
+	\hypersetup{
+		pdfinfo={
+		Title={\@title},
+		}
+	}
+	}
+	\makeatother 
+%%                                                                        %%
+%%============================ Заголовок та автори =======================%%
+%%                                                                        %%
+\title{}
+\author{}                                   
+%%                                                                        %%
+%%========================================================================%%
+
+
+\begin{document}
+
+
+  \begin{tikzpicture}[
+    info/.style={font=\small\ttfamily, text width=5cm},
+    tharrow/.style={thick, arrows=-Stealth},
+    startstop/.style={rectangle, rounded corners, text width=7cm,  text centered, draw=black, fill=red!30},
+    process/.style={rectangle, text width=11cm, minimum height=1cm, text centered, draw=black, fill=orange!30},
+    io/.style={trapezium, trapezium left angle=70, trapezium right angle=110, text width=6.7cm, text centered, draw=black, fill=blue!30},
+    decision/.style={diamond,  aspect=2, text width=6cm, text centered, draw=black, fill=green!30},
+    ]
+
+    \node (basis) [io]  {$\{\chi_q(\vec{r})\}$}; \node[right=1cm of basis, info] {Вибір базисних функцій};
+    \node (coeff) [startstop,below = 0.5cm of basis] {$c^{(n)}_{kq}$}; \node[right=1cm of coeff, info] {Вибір початкових коефіцієнтів};
+    \node (integ) [process,below = 0.5cm of coeff]   {$F^{(n)}_{pq}$, $S^{(n)}_{pq}$}; \node[right=1cm of integ, info] {Обчислення інтегралів та формування матриць};
+    \node (HFR)   [process,below = 0.5cm of integ]   {$\sum\limits_{q = 1}^{N_b}  c^{(n + 1)}_{kq} \left(F^{(n)}_{pq} - \varepsilon^{(n + 1)}_k   S^{(n)}_{pq} \right) = 0$};  \node[right=1cm of HFR, info] {Розв'язок рівнянь Хартрі-Фока};
+    \node (Energy) [process,below = 0.5cm of HFR]  { $E^{(n + 1)} = \sum\limits_{k = 1}^{N_e} \varepsilon_k^{(n+1)} - \frac12\sum\limits_{k = 1}^{N_e}\sum\limits_{j = 1, j \neq i}^{N_e} \left( {J}^{(n)}_{kj} - {K}^{(n)}_{kj}\right)$}; \node[right=1cm of Energy, info] {Розрахунок енегрії};
+    \node (Condition) [decision,below = 0.5cm of Energy] {$|E^{(n)} - E^{(n)}| \le \delta $};
+
+    \draw [tharrow] (basis) -- (coeff) ;
+    \draw [tharrow] (coeff) -- (integ);
+    \draw [tharrow] (integ) -- (HFR);
+    \draw [tharrow] (HFR) -- (Energy);
+    \draw [tharrow] (Energy) -- (Condition);
+    \draw [tharrow] (Condition.west)  -| node[above, pos=0.25] {no} ++(-2,0) |- (coeff.west);
+
+  \end{tikzpicture}
+
+
+\end{document}
+
+

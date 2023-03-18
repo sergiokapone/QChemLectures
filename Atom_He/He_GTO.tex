@@ -1,0 +1,276 @@
+%%============================ Compiler Directives =======================%%
+%%                                                                        %%
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+%%                                                                        %%
+%%============================== Клас документа ==========================%%
+%%                                                                        %%
+\documentclass[14pt]{extarticle}
+%%                                                                        %%
+%%========================== Мови, шрифти та кодування ===================%%
+%%                                                                        %%
+\usepackage{fontspec}
+\setsansfont{CMU Sans Serif}%{Arial}
+\setmainfont{CMU Serif}%{Times New Roman}
+\setmonofont{CMU Typewriter Text}%{Consolas}
+\defaultfontfeatures{Ligatures={TeX}}
+\usepackage[math-style=TeX]{unicode-math}
+\usepackage[russian, ukrainian, english]{babel}
+\usepackage{biblatex}
+\usepackage{xurl}
+\usepackage{hyperref}
+\addbibresource{d:/Projects/LaTeX/QChem/A_Documents/Syllabus_QChem/Syllabus_QChem.bib}
+
+%%                                                                        %%
+%%============================= Геометрія сторінки =======================%%
+%%                                                                        %%
+\usepackage[%
+	a4paper,%
+	footskip=1cm,%
+	headsep=0.3cm,%
+	top=2cm, %поле сверху
+	bottom=2cm, %поле снизу
+	left=2cm, %поле ліворуч
+	right=2cm, %поле праворуч
+    ]{geometry}
+%%                                                                        %%
+%%============================== Інтерліньяж  ============================%%
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepgfplotslibrary{units}
+\pgfplotsset{compat=newest}
+\usepackage{pgfplotstable}
+\usepgfplotslibrary{groupplots}
+
+\title{Basis sets for Helium}
+\date{}
+
+%===============================================================================
+\begin{document}
+\maketitle
+
+\section{What is basis?}
+
+One of the three major decisions for the scientist is which basis set to use. There are two general categories of basis sets:
+
+\textbf{Minimal basis sets}: a basis set that describes only the most basic aspects of the orbitals.
+
+\textbf{Extended basis sets}: a basis set with a much more detailed description
+
+\section{Slater Type Orbital and Gaussian Type Orbital}
+
+Slater Type Orbital (STO) equation is:
+
+\begin{equation}\label{STO}
+	\mathrm{STO} = \frac{(2\zeta)^{n+\frac12}}{\sqrt{(2n)!}} r^{n - 1}e^{-\zeta r}.
+\end{equation}
+
+Gaussian Type Orbital (GTO) equation:
+
+\begin{equation}\label{GTO}
+	\mathrm{GTO}(x,y,z;\alpha,i,j,k) = \left(\frac{2\alpha}{\pi}\right)^{3/4}\sqrt{\frac{(8\alpha)^{i + j + k} i!j!k!}{(2i)!(2j)!(2k)!}} x^{i} y^{j} z^{k} e^{-\alpha r^2}
+\end{equation}
+
+When $i + j + k = 0$ (that is, $i = 0$, $j = 0$, $k = 0$), the GTF is called an s-type
+Gaussian. When $i + j + k = 1$, we have a p-type Gaussian, which contains the factor $x$,
+$y$, or $z$. When $i + j + k = 2$, we have a d-type Gaussian.
+
+Notice that the difference between the STO and GTO is in the $r$-expotetnt The GTO squares the $r$ so that the product of the gaussian <<primitives>> (original gaussian equations) is another gaussian. By doing this, we have an equation we can work with and so the equation is much easier. However, the price we pay is loss of accuracy. To compensate for this loss, we find that the more gaussian equations we combine, the more accurate our equation.
+
+All basis set equations in the form STO-nG (where n represents the number of GTOs combined to approximate the STO) are considered to be <<minimal>> basis sets. The <<extended>> basis sets, then, are the ones that consider the higher orbitals of the molecule and account for size and shape of molecular charge distributions.
+
+\section{Helium Basis}
+
+
+Basis
+
+	{\small \begin{verbatim}
+%basis
+ NewGTO He
+ S 3
+   1      38.3549367370      0.0401838903
+   2       5.7689081479      0.2613913445
+   3       1.2399407035      0.7930391578
+ S 1
+   1       0.2975781595      1.0000000000
+  end
+end
+\end{verbatim}}
+
+ORCA orbitals
+
+	{\small \begin{verbatim}
+                      0         1
+                  -0.91413   1.39986
+                   2.00000   0.00000
+                  --------  --------
+  0He  1s         0.592081 -1.149818
+  0He  2s         0.513586  1.186959
+\end{verbatim}}
+
+So I have
+
+\[
+	\phi_{1s} = 0.592081 \cdot \sum_{i = 1}^3 C_i GTO(\alpha_i)  + 0.513586 \cdot C_j  GTO(\alpha_j),
+\]
+where $\alpha_i$, $C_i$ and $\alpha_j$, $C_j$ presented in basis (first column for $\alpha$'s and second one for $C$'s).
+
+%=================== Побудова засобами pgfplots ===================
+
+\tikzset{
+	declare function ={
+			a11  = 38.421634000000; C11  =  0.0401397393;
+			a21  =  5.778030000000; C21  =  0.2612460970;
+			a31  =  1.241774000000; C31  =  0.7931846246;
+			%            a51  =    3.564152000; C51  =  0.16336284;
+			%            a61  =    1.240443000; C61  =  0.33133146;
+			%            a71  =     0.44731600; C71  =  0.41429728;
+			%            a81  =     0.16420600; C81  =  0.18903228;
+			%            a91  =     0.05747200; C91  =  0.00515606;
+			%
+			a12  =    0.2979640000; C12  =    1.0000000000;
+			%            a22  =  5.778030000000; C22  =    0.300385478532;
+			%            a32  =  1.241774000000; C32  =    0.912018000393;
+			%            a42  =  0.297964000000; C42  =   -1.186958795989;
+			%
+			zeta1 = 1.45363;
+			zeta2 = 2.91093;
+			%            zeta2 = 1.45;
+			c1 = 0.592081;
+			c2 = 0.513586;
+			sto1s(\x) = sqrt(zeta1^3/pi)*exp(-zeta1*\x);
+			sto2s(\x) = sqrt(zeta2^3/pi)*exp(-zeta2*\x);
+			%
+			g1s1(\x) = C11*(2*a11/pi)^(3/4)*exp(-a11*\x^2);
+			g1s2(\x) = C21*(2*a21/pi)^(3/4)*exp(-a21*\x^2);
+			g1s3(\x) = C31*(2*a31/pi)^(3/4)*exp(-a31*\x^2);
+			g1s4(\x) = C41*(2*a41/pi)^(3/4)*exp(-a41*\x^2);
+			g1s5(\x) = C51*(2*a51/pi)^(3/4)*exp(-a51*\x^2);
+			g1s6(\x) = C61*(2*a61/pi)^(3/4)*exp(-a61*\x^2);
+			g1s7(\x) = C71*(2*a71/pi)^(3/4)*exp(-a71*\x^2);
+			g1s8(\x) = C81*(2*a81/pi)^(3/4)*exp(-a81*\x^2);
+			g1s9(\x) = C91*(2*a91/pi)^(3/4)*exp(-a91*\x^2);
+			%
+			g2s1(\x) = C12*(2*a12/pi)^(3/4)*exp(-a12*\x^2);
+			g2s2(\x) = C22*(2*a22/pi)^(3/4)*exp(-a22*\x^2);
+			g2s3(\x) = C32*(2*a32/pi)^(3/4)*exp(-a32*\x^2);
+			g2s4(\x) = C42*(2*a42/pi)^(3/4)*exp(-a42*\x^2);
+			%
+			phi(\x) =  c1*(g1s1(\x) + g1s2(\x) + g1s3(\x)) + c2*(g2s1(\x));
+		},
+}
+\begin{center}
+	\begin{tikzpicture}
+		\begin{axis}[
+				ymax=2.2,
+				ymin=-0,
+				xmax=4,
+				axis lines=left,
+				xlabel={$r$, bohr},
+				ylabel=$\phi$,
+			]
+			%			\addplot [dashed, domain={0:4}, smooth]     {sto1s(x)};
+
+			%			\addplot [cyan, domain={0:4}, smooth]       {g1s1(x)} ;
+			%			\addplot [magenta, domain={0:4}, smooth]    {g1s2(x)}  ;
+			%			\addplot [green, domain={0:4}, smooth]      {g1s3(x) } ;
+			%			\addplot [green, domain={0:4}, smooth]      {g1s4(x) } ;
+
+			%            \addplot [thick, domain={0:4}, smooth, dashed, samples=1500] {-0.592081*(g1s1(x) + g1s2(x) + g1s3(x) + g1s4(x))} ;
+			%            \addplot [thick, domain={0:4}, smooth, dashed, samples=1500] {- 0.513586*(g2s1(x) + g2s2(x) + g2s3(x) + g2s4(x))} ;
+			\addplot [thick, domain={0:4}, smooth, red, samples=1500] {phi(x)} ;
+			\addplot [thick, domain={0:4}, smooth, dashed, samples=1500] {c1 * sto1s(x) + c2 * sto2s(x)} ;
+			%			\legend{STO,STO-4G}
+		\end{axis}
+	\end{tikzpicture}
+	%%--------------------------------------------------------------------------------------------------
+	\begin{tikzpicture}
+		\begin{axis}[
+				ymax=1.8,
+				xmax=7,
+				axis lines=left,
+				xlabel={$r$, bohr},
+				ylabel=$4\pi r^2 \rho(r)^2$,
+			]
+			%			\addplot [dashed, domain={0:4}, smooth]     {sto2s(x)};
+			%
+			%%			\addplot [cyan, domain={0:4}, smooth]       {g1s1(x)} ;
+			%%			\addplot [magenta, domain={0:4}, smooth]    {g1s2(x)}  ;
+			%%			\addplot [green, domain={0:4}, smooth]      {g1s3(x) } ;
+			%%			\addplot [green, domain={0:4}, smooth]      {g1s4(x) } ;
+
+			\addplot [thick, domain={0:7}, smooth, red] {4*pi*x^2*2*(phi(x))^2} ;
+		\end{axis}
+	\end{tikzpicture}
+\end{center}
+%
+%\begin{multline*}\label{}
+%	\chi_{1s} = \sqrt{\frac{\zeta_1^3}{\pi}} e^{-\zeta_1 r} \approx \\ \approx  C_1 \left(\frac{2\alpha_1}{\pi}\right)^{3/4}e^{-\alpha_1 r^2} +
+%	C_2 \left(\frac{2\alpha_2}{\pi}\right)^{3/4}e^{-\alpha_2 r^2} +
+%	C_3 \left(\frac{2\alpha_3}{\pi}\right)^{3/4}e^{-\alpha_3 r^2}
+%\end{multline*}
+%
+%\begin{center}
+%	\begin{tikzpicture}
+%		\begin{axis}[
+%				ymax=0.3,
+%				xmax=6,
+%				axis lines=left,
+%				xlabel=$r$,
+%				ylabel=$2s$,
+%			]
+%			\addplot [dashed, domain={0:4}, smooth]     {sto2s(x)} ;
+%
+%			\addplot [cyan, domain={0:6}, smooth]       {g2s4(x)} ;
+%			\addplot [magenta, domain={0:6}, smooth]    {g2s5(x)} ;
+%			\addplot [green, domain={0:6}, smooth]      {g2s6(x) } ;
+%
+%			\addplot [thick, domain={0:6}, smooth, red] {g2s4(x) + g2s5(x) + g2s6(x) };
+%
+%			\legend{STO,,,,STO-3G}
+%		\end{axis}
+%	\end{tikzpicture}
+%\end{center}
+%
+%\begin{multline*}\label{}
+%	\chi_{2s} = \sqrt{\frac{\zeta_2^5}{3\pi}} r e^{-\zeta_2 r} \approx \\ \approx C_4 \left(\frac{2\alpha_1}{\pi}\right)^{3/4}e^{-\alpha_4 r^2} +
+%	C_5 \left(\frac{2\alpha_2}{\pi}\right)^{3/4}e^{-\alpha_5 r^2} +
+%	C_6 \left(\frac{2\alpha_3}{\pi}\right)^{3/4}e^{-\alpha_6 r^2}
+%\end{multline*}
+%
+%\begin{center}
+%	\begin{tikzpicture}
+%		\begin{axis}[
+%				ymax=0.3,
+%				xmax=6,
+%				axis lines=left,
+%				xlabel=$r$,
+%				ylabel=$2p$,
+%			]
+%			\addplot [dashed, domain={0:6}, smooth]     {sto2p(x)} ;
+%
+%			\addplot [cyan, domain={0:6}, smooth]       {g2p1(x)} ;
+%			\addplot [magenta, domain={0:6}, smooth]    {g2p2(x)}  ;
+%			\addplot [green, domain={0:6}, smooth]      {g2p3(x) };
+%
+%			\addplot [thick, domain={0:6}, smooth, red] {g2p1(x) + g2p2(x) + g2p3(x) };
+%
+%			\legend{STO,,,,STO-3G}
+%		\end{axis}
+%	\end{tikzpicture}
+%\end{center}
+%
+%\begin{multline*}
+%	\chi_{2p} = \sqrt{\frac{\zeta_2^5}{\pi}} x e^{-\zeta_2 r} \approx \\ D_1 \left(\frac{128\alpha_4^5}{\pi^3}\right)^{1/4} xe^{-\alpha_4 r^2} +
+%	D_2 \left(\frac{128\alpha_5^5}{\pi^3}\right)^{1/4} xe^{-\alpha_5 r^2} +
+%	D_3 \left(\frac{128\alpha_6^5}{\pi^3}\right)^{1/4} xe^{-\alpha_6 r^2}
+%\end{multline*}
+
+
+\nocite{BSE, ORCAInput}
+\printbibliography
+
+
+\end{document}

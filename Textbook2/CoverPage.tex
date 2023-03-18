@@ -1,0 +1,264 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+% !TeX root =../FTProblems.tex
+\def\methodcomdate{}
+\def\methodcomnum{}
+\def\iptmethodcomdate{}
+\def\iptmethodcomnum{}
+%========================================================================================================
+%
+%									      Палітурка
+%
+%========================================================================================================
+
+\newcommand{\CoverPage}{
+	\begin{alwayssingle}
+		\begin{center}
+			\begin{flushright}\bfseries\sffamily
+				\MakeUppercase{Міністерство освіти і науки України}\\
+				КПІ ім. Ігоря Сікорського\\
+			\end{flushright}
+			\begin{tcolorbox}[titlepagestyle,
+					toprule=0.10cm,
+					bottomrule=0.10cm,
+					overlay={%
+						\node (picture) at ([xshift=4cm]frame.west) {\includegraphics{logo_PTI}};
+					}
+			]%
+			\begin{flushright}
+				\large\bfseries\color{white}Фізико-технічний інститут
+			\end{flushright}
+			\end{tcolorbox}
+			\vspace*{-2em}
+		 	\begin{Large}\color{themecolordark!90!black}
+			\begin{align*}
+                \hat{F}\psi_n &= \epsilon_n\psi_n \\
+                \hat{F} &= \hat{h} + \sum\limits_{i = 1}^N (\hat{J}_i - \hat{K}_i)
+			\end{align*}
+			\end{Large}
+			\vspace*{2em}
+			\begin{tcolorbox}[
+				titlepagestyle,
+				toprule=0.15cm,
+				bottomrule=0.15cm,
+				top=1.3cm,
+				bottom=0.7cm,
+				overlay={%
+				\node[%
+							fill=white,
+							rounded corners = 15pt,	
+							draw=themecolorlight,
+							line width=0.15cm,
+							inner sep=0pt,
+							text width=17cm,
+							minimum height=2cm,
+							align=center,
+							%anchor=east,
+							font=\sffamily\bfseries\large
+						] (title) at (frame.north) {С.~М. Пономаренко
+					};
+				}
+			]
+			\centering
+			\Huge\sffamily\bfseries\textcolor{white}{\realtitle}\\
+			\huge\sffamily\bfseries\textcolor{white}{\subtitle}
+			\end{tcolorbox}	
+			\vfill
+		 	\begin{Large}\color{themecolordark!90!black}
+			\begin{equation*}
+                \hat{H}_\mathrm{el} = -\frac12 \sum\limits_{i = 1}^N  \nabla^2_i
+                + \frac12 \sum\limits_{\alpha \neq \beta}^K \frac{Z_\alpha Z_\beta}{R_{\alpha\beta}}
+                - \sum\limits_{\alpha = 1}^K  \sum\limits_{i = 1}^N \frac{Z_\alpha}{R_{\alpha i}}
+                + \frac12 \sum\limits_{i = 1}^N \sum\limits_{j \neq j}^N \frac{1}{r_{ij}} 
+			\end{equation*}
+			\end{Large}
+			\vfill
+			\begin{tcolorbox}[titlepagestyle,
+					toprule=0.10cm,
+					bottomrule=0.10cm]
+				\begin{center}\color{white}\bfseries\normalsize
+					\MakeUppercase{Київ~\the\year} \\
+%					КПІ ім. Ігоря Сікорського \\
+%					\the\year
+				\end{center}			       	
+			\end{tcolorbox}
+		\end{center}
+		\clearpage
+	\end{alwayssingle}
+\setcounter{page}{1}	
+}
+
+
+%========================================================================================================
+%
+%									      Титульна сторінка
+%
+%========================================================================================================
+
+\renewcommand\maketitle{
+	\begin{alwayssingle}
+		\begin{center}
+				\MakeUppercase{Міністерство освіти і науки України}
+				
+				\bigskip
+				\MakeUppercase{Національний технічний університет України}\\
+				<<КИЇВСЬКИЙ ПОЛІТЕХНІЧНИЙ ІНСТИТУТ \\ імені ІГОРЯ СІКОРСЬКОГО>>
+				\vspace*{100pt}
+		
+				{\large С.~М.~Пономаренко}
+				\vspace*{50pt}
+			
+				{\Huge\sffamily\bfseries\realtitle}\\[1em]
+				{\huge\sffamily\bfseries\subtitle}	
+			
+			\vspace*{50pt}
+			\begin{center}\itshape
+			Рекомендовано Методичною радою КПІ ім. Ігоря Сікорського як навчальний посібник для здобувачів ступеня бакалавра за спеціальностями 105 <<Прикладна фізика та наноматеріали>>
+			\end{center}
+
+			\vfill
+			\begin{center}
+				\MakeUppercase{Київ} \\
+				КПІ ім. Ігоря Сікорського \\
+				\the\year
+			\end{center}			       	
+		\end{center}
+		\clearpage
+	\end{alwayssingle}	
+}
+
+
+%========================================================================================================
+%
+%									      Друга сторінка
+%
+%========================================================================================================
+\newcommand\makeinfopage{
+	\begin{alwayssingle}
+		\noindent%	
+		\begin{minipage}[t]{0.5\textwidth}
+				\begin{flushleft}
+					УДК  544.18\\
+					П 563
+				\end{flushleft}
+		\end{minipage}
+
+
+		\bigskip\noindent%
+        \begin{minipage}[t]{0.2\linewidth}
+            	\begin{flushleft}
+                    Рецензенти:
+                \end{flushleft}
+        \end{minipage}\hfill
+        \begin{minipage}[t]{0.78\linewidth}
+%                \href{http://www.nas.gov.ua/UA/PersonalSite/Pages/default.aspx?PersonID=0000006576}{В.~О.~Кочелап}, д.ф.-м.н., професор, член-кореспондент НАН України, завідувач відділу теоретичної фізики Інституту фізики напівпровідників ім. В.~Є. Лашкарьова\\[1ex]
+%                \href{http://apd.ipt.kpi.ua/blog/author/19}{Я.~Д.~Кривенко-Еметов}, к.ф.-м.н., доцент кафедри прикладної фізики, Фізико-технічного інституту КПІ ім. Ігоря Сікорського
+        \end{minipage}
+
+		\bigskip\noindent%
+        \begin{minipage}[t]{0.2\linewidth}
+            	\begin{flushleft}
+                    Відповідальний редактор:
+                \end{flushleft}
+        \end{minipage}\hfill
+        \begin{minipage}[t]{0.78\linewidth}
+                \href{http://ipt.kpi.ua/litvinova}{С.~О.~Смирнов}, к.ф.-м.н., доцент
+        \end{minipage}
+
+		\begin{center}\itshape\small
+				Гриф надано Методичною радою КПІ ім. Ігоря Сікорського (протокол №~\methodcomnum~від \methodcomdate~р.) за поданням Вченої ради Фізико-технічного інституту (протокол №~\iptmethodcomnum від \iptmethodcomdate~р.)
+		\end{center}
+		\begin{center}
+			\ifelectronic Електронне мережне навчальне видання \fi
+			%\par {Версія від~\href{http://www.istpravda.com.ua/dates}{\today}} \par\else \par  \fi
+		\end{center}
+		\begin{center}
+			\href{http://phes.ipt.kpi.ua/ponomarenko-sergij-mikolajovich}{\itshape Пономаренко Сергій Миколайович}, к.ф.-м.н., доцент 
+		\end{center}
+%			\vspace*{1em}%
+		\begin{center}\bfseries
+			\LARGE\sffamily\realtitle \\
+			\Large\sffamily\subtitle
+		\end{center}
+        \noindent%
+        \begin{minipage}[t]{\textwidth}\small
+                \realtitle: \subtitle\ [Електронний ресурс] : навч. посіб. для студ. спеціальностей
+                105 <<Прикладна фізика та наноматеріали>> /  С.~М. Пономаренко ; КПІ ім. Ігоря Сікорського.~--- Електронні текстові дані
+            (1 файл: 570~кБ). – Київ : КПІ ім. Ігоря Сікорського, \the\year. --- \the\numexpr\getpagerefnumber{LastPage}-1\relax~с.
+        \end{minipage}
+
+%		\noindent%
+%		\begin{flushleft}
+%			\begin{tabular}{lp{0.9\textwidth}}
+%				     & В.~І. Жданов, С.~М. Пономаренко, В.~Б. Долгошей                                                                                                                                                                        \\
+%				Ж 42 & \hspace*{3ex} \realtitle : \subtitle{} [Електронний ресурс] : навчальний посібник / %
+%				В.~І. Жданов, %
+%				С.~М. Пономаренко%,
+%				В.~Б. Долгошей %
+%				--- К.:~КПІ ім. Ігоря Сікорського, \the\year. --~\the\numexpr\getpagerefnumber{LastPage}-1\relax~с. -- Бібліогр.: с.~\pageref{BibPage}\relax. \ifelectronic\relax\else-- 80~прим.\fi
+%			\end{tabular}
+%		\end{flushleft} 
+		\vfill
+
+		Квантова використовує засади квантової механіки для інтерпретації всіх явищ, що протікають в атомах, молекулах та твердих тілах і є  фундаментом теоретичних уявлень сучасної хімії. Методи, розроблені в квантовій хімії є універсальним і застосовується для опису будови речовин та пояснення їх властивостей і в наш час використовуються не лише в хімії, а і в прикладній науці в цілому. 
+
+        Даний навчальний посібник має на меті донесення знань про принципи і методи квантової хімії до фахівця в галузі прикладної фізики, що дасть йому змогу застосовувати їх при створенні речовин і матеріалів з наперед заданими властивостями та у інших наукоємних технологіях. 
+
+		Для студентів фізико-технічного інституту КПІ ім. Ігоря Сікорського, які навчаються за спеціальностями 105~<<Прикладна фізика та наноматеріали>>.
+		
+		\vfill
+				
+%		\begin{flushleft}\small
+%			Ілюстративний матеріал підручника підготовлений за допомогою пакету \href{http://pgf.sourceforge.net}{TikZ/Pgf}. Верстка тексту проведена в видавничій системі \LaTeXe{} (компілятор Lua\LaTeX) на базі системи комп'ютерної верстки \TeX{} (Збірка  \href{https://www.tug.org/texlive/}{\TeX Live~\the\year}) з використанням оболонки \href{https://www.texstudio.org}{\TeX Studio}.
+%		\end{flushleft}	
+	\hfill
+	\begin{minipage}[t]{0.45\linewidth}\small
+        \textcopyright{} С.~М. Пономаренко \the\year\,р. \\
+        \textcopyright{} КПІ ім. Ігоря Сікорського (ФТІ), \the\year~р.
+    \end{minipage}
+		\newpage%
+	\end{alwayssingle}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                        %%
+%%                              Last Page                                 %%
+%%                                                                        %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 	
+\newcommand{\makelastpage}{%
+\clearpage%
+\thispagestyle{empty}%
+\vspace*{0.4\textheight}
+\begin{center}
+	    \textbf{Пономаренко} Сергій Миколайович
+\end{center}
+
+\begin{center}\bfseries
+    \Large\sffamily\realtitle \\
+    \large\sffamily\subtitle
+\end{center}
+
+\begin{center}\itshape
+    Комп'ютерне верстання в системі \LaTeXe{} С.\ М. Пономаренко
+\end{center}
+
+\vspace*{1em}
+\begin{center}\small
+Національний технічний університет України \\
+<<Київський політехнічний інститут імені Ігоря Сікорського>> \\
+Свідоцтво про державну реєстрацію: серія ДК № 5354 від 25.05.2017 р.\\
+просп. Перемоги, 37, м. Київ, 03056
+\end{center}
+
+%\vfill
+%
+%\begin{center}
+%    Видавництво <<Політехніка>> \kpishort \\
+%    вул. Політехнічна, 14, корп. 15 \\
+%    м. Київ, 03056 \\
+%    Тел. (044) 204-81-78
+%\end{center}
+}	
+
+

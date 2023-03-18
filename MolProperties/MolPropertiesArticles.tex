@@ -1,0 +1,303 @@
+%%============================ Compiler Directives =======================%%
+%%                                                                        %%
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+%%                                                                        %%
+%%============================== Клас документа ==========================%%
+%%                                                                        %%
+\documentclass[14pt]{extarticle}
+%%                                                                        %%
+%%========================== Мови, шрифти та кодування ===================%%
+%%                                                                        %%
+\usepackage{fontspec}
+\setsansfont{CMU Sans Serif}%{Arial}
+\setmainfont{CMU Serif}%{Times New Roman}
+\setmonofont{CMU Typewriter Text}%{Consolas}
+\defaultfontfeatures{Ligatures={TeX}}
+\usepackage[math-style=TeX]{unicode-math}
+\usepackage[english, russian, ukrainian]{babel}
+\usepackage[most]{tcolorbox}
+\usepackage{microtype}
+\usepackage{lua-widow-control}
+%%                                                                        %%
+%%============================= Геометрія сторінки =======================%%
+%%                                                                        %%
+\usepackage[%
+	a4paper,%
+	footskip=1cm,%
+	headsep=0.3cm,%
+	top=2cm, %поле сверху
+	bottom=2cm, %поле снизу
+	left=2cm, %поле ліворуч
+	right=2cm, %поле праворуч
+    ]{geometry}
+%%                                                                        %%
+%%============================== Інтерліньяж  ============================%%
+%%                                                                        %%
+\renewcommand{\baselinestretch}{1}
+%-------------------------  Подавление висячих строк  --------------------%%
+\clubpenalty =10000
+\widowpenalty=10000
+%---------------------------------Інтервали-------------------------------%%
+\setlength{\parskip}{0.5ex}%
+\setlength{\parindent}{2.5em}%
+%%                                                                        %%
+%%=========================== Математичні пакети і графіка ===============%%
+%%                                                                        %%
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{floatflt}
+%%                                                                        %%
+%%========================== Гіперпосилення (href) =======================%%
+%%                                                                        %%
+\usepackage[colorlinks=true,
+	%urlcolor = blue, %Colour for external hyperlinks
+	%linkcolor  = malina, %Colour of internal links
+	%citecolor  = green, %Colour of citations
+	bookmarks = true,
+	bookmarksnumbered=true,
+	unicode,
+	linktoc = all,
+	hypertexnames=false,
+	pdftoolbar=false,
+	pdfpagelayout=TwoPageRight,
+	pdfauthor={Ponomarenko S.M. aka sergiokapone},
+	pdfdisplaydoctitle=true,
+	pdfencoding=auto
+	]%
+	{hyperref}
+		\makeatletter
+	\AtBeginDocument{
+	\hypersetup{
+		pdfinfo={
+		Title={\@title},
+		}
+	}
+	}
+	\makeatother
+%%                                                                        %%
+%%============================ Заголовок та автори =======================%%
+%%                                                                        %%
+\title{Coupled-perturbed SCF}
+\author{}
+\date{}
+%%                                                                        %%
+%%========================================================================%%
+
+\def\JK#1#2#3#4{ \left\langle \phi_{#1} \phi_{#2} | \phi_{#3} \phi_{#4} \right\rangle }
+
+\begin{document}
+\maketitle
+\section{Standard HF SFC}
+
+We consider standard closed-shell Hartree-Fock Self-Consistent-Field (HF-SCF) calculations.
+
+MO LCAO orbitals \footnote{Greek indices are used here and in the following to denote AOs.}
+\begin{equation}\label{MO}
+	\phi_i = \sum_{\nu} c_{\nu i} \chi_{\nu}.
+\end{equation}
+
+Standard HF equations:
+\begin{equation}\label{HFE}
+	\sum_{\nu} c_{\nu i} (f_{\mu\nu} - S_{\mu\nu} \varepsilon_i ) = 0,
+\end{equation}
+where
+\begin{equation}\label{FM}
+	f_{\mu\nu} =  h_{\mu\nu} + \sum_{\rho\sigma} D_{\rho\sigma}\left( \left\langle \mu\sigma | \nu\rho \right\rangle  - \frac12\left\langle \mu\sigma | \rho\nu \right\rangle \right),
+\end{equation}
+as the closed-shell AO density matrix, $h_{\mu\nu}$ as the one-electron integrals, and $\left\langle \mu\sigma | \nu\rho \right\rangle$ as the two-electron integrals in Dirac notation.
+
+The following energy expression is obtained for this case:
+\begin{equation}\label{EHF}
+	E_{HF} = \sum_{\mu\nu} D_{\mu\nu} h_{\mu\nu} + \frac12 \sum_{\mu\nu\,\rho\sigma} D_{\mu\nu} D_{\rho\sigma}\left( \left\langle \mu\sigma | \nu\rho \right\rangle  - \left\langle \mu\sigma | \rho\nu \right\rangle \right),
+\end{equation}
+where $ D_{\mu\nu}$ is the the density matrix
+\begin{equation}\label{DM}
+	D_{\mu\nu} = 2\sum_i c_{\mu i}^* c_{\nu i},
+\end{equation}
+
+
+%\section{How to obtain molecular properties?}
+%
+%Time-independent electronic ground-state quantum properties can be expressed as expectation values of the electronic wave function and an operator, typically defined via the quantum-classical correspondence principle:
+%\begin{equation}\label{Prop}
+%    \hat{P} \Phi = p \Phi
+%\end{equation}
+
+\section{Properties as a response}
+
+
+Properties can be described as a \emph{response of the molecular system to an external
+	perturbation $\vec{P}$}.
+
+A Taylor expansion of system energy around the the <<perturbation-free>> ($\vec{P} = 0$) yields:
+
+\begin{equation*}
+	E = E_0 +
+	\left.
+	\frac{d E}{d \vec{P}}\right|_{\vec{P}=0}
+	\vec{P} +
+	\frac{1}{2}
+	\left.\frac{d^2 E}{d \vec{P}^2}\right|_{\vec{P}=0} \vec{P}^2  +
+	\ldots
+\end{equation*}
+
+Let us consider as an example a molecule in an external electrical field $\vec{\mathcal{E}}$. If we treat the field as a weak perturbation, a Taylor expansion around the the <<field-free>> ($\vec{\mathcal{E}} = 0$) case is a good description and yields for the energy:
+
+\begin{equation*}
+	E = E_0 +
+	\sum_i^3
+	\left.
+	\frac{d E}{d \mathcal{E}_i}\right|_{\vec{\mathcal{E}}=0}
+	\mathcal{E}_i +
+	\frac{1}{2}\sum_i^3\sum_j^3
+	\left.\frac{d^2 E}{d \mathcal{E}_i d \mathcal{E}_j}\right|_{\vec{\mathcal{E}}=0} \mathcal{E}_i \mathcal{E}_j +
+	\ldots,
+\end{equation*}
+where dipole moment
+
+\[
+	\mu_i = - \left(\frac{\partial E}{\partial \mathcal{E}_i}\right)_{\vec{\mathcal{E}}=0},
+\]
+and polarizability tensor
+\[
+	\alpha_{ij} = - \left(\frac{\partial^2 E}{\partial \mathcal{E}_i\mathcal{E}_j}\right)_{\vec{\mathcal{E}}=0}.
+\]
+
+So, to determine the properties of a molecule in the ground state, we need to somehow find the energy derivatives with respect to the corresponding fields. Common examples include derivatives of the energy with respect to the nuclear displacement or charge displacement, an external electric field, an external magnetic field, or nuclear magnetic moments.
+
+To find the properties of the system, we need to know the dependence of energy on external conditions:
+\begin{equation}\label{BHF}
+	E(\vec{P}) = \frac{\left\langle \Phi(\vec{P}) \right|\hat{H}(\vec{P})\left|\Phi(\vec{P})\right\rangle}{\left\langle \Phi(\vec{P}) |\Phi(\vec{P})\right\rangle},
+\end{equation}
+where $\hat{H} = \hat{H}_0 + \hat{H}^{(1)}(\vec{P}) + \ldots$ . $\hat{H}_0$ is unperturbed Hamiltonian.
+
+Routine and efficient computation of the various atomic and molecular properties \emph{requires techniques which go beyond} the solution of the HF SFC equation.
+
+\begin{tcolorbox}[blanker,breakable,left=5mm,right=5mm,
+		before skip=10pt,after skip=10pt, parbox=true,
+		borderline west={1mm}{0pt}{gray!50}]\itshape
+
+	Clearly, energy and wavefunctions obtained from the solution of the (electronic)
+	HF SFC equation are not sufficient for this purpose, and it is necessary to
+	compute further quantities which characterize the atomic or molecular system of
+	interest.
+
+\end{tcolorbox}
+
+To calculate analytical derivatives of the energy $E(\vec{P})$, it is necessary to evaluate
+the derivatives of the one- and two-electron integrals; this in turn requires
+evaluation of derivatives of the basis set functions with respect to $\vec{P}$:
+
+\begin{equation}\label{DMO}
+	\frac{d \phi_i(\vec{P})}{d\vec{P}} = \sum_{\nu} \left( \frac{d c_{\nu i}}{d\vec{P}}\chi_{\nu} + c_{\nu i} \frac{d \chi_{\nu}}{d\vec{P}}  \right)
+\end{equation}
+
+Thus in order to calculate the energy derivatives, it is necessary to know the
+quantities $\displaystyle \frac{d c_{\nu i}}{d\vec{P}} $ and $ \displaystyle\frac{d \chi_{\nu}}{d\vec{P}} $.
+
+%The first term arises from the fact that the coefficients which define the MO's in terms of the basis functions may also depend on $\vec{P}$.
+
+%The second term in \eqref{DMO} arises from the fact that the one-electron basis functions $\chi_{\nu}$ will generally be defined in such a way that they move with the atoms (in fact they are generally taken to be approximate atomic orbitals);
+
+%The logic of quantum mechanics tells us that it is convenient to represent the wave function $\Phi(k)$ in exponential form:
+%\begin{equation}\label{PWF}
+%    \Phi = e^{\hat{k}} \Phi_0,
+%\end{equation}
+%\begin{equation}\label{PWF}
+%    \Phi =  \Phi_0 + k_{ar}\Phi_a^r + k_{ar}k_{ks} \Phi_a^r,
+%    \end{equation}
+%where $ e^{\hat{k}}$ is a unitary operator, representing the physical influence on the system by perturbation $\vec{P}$ and performs rotations or swaps between occupied and virtual spin orbitals in the HF single determinant function $\Phi_0$.
+
+\section{Coupled-Perturbed Hartree–Fock}
+
+In the coupled-perturbed Hartree–Fock method (CPHF), which was probably derived the
+first time by Peng (1941) and rederived many times (Stevens et al., 1963; Gerratt and
+Mills, 1968), second- and higher-order static properties are obtained by solving the
+Hartree–Fock equations:
+\begin{equation}\label{CPHF}
+    \hat{f}(\vec{P}) \phi_i(\vec{P}) = \varepsilon_i(\vec{P}) \phi_i(\vec{P}),
+\end{equation}
+self-consistently in the presence of a perturbing field $\vec{P}$ under the condition that the perturbed occupied spin orbitals $\left\langle \phi_{i}(\vec{P}) | \phi_{j}(\vec{P})\right\rangle = \delta_{ij} $ remain orthonormal.
+
+Contrary to the unperturbed Hartree–Fock theory, where the molecular orbitals are
+expanded in atomic one-electron basis functions \eqref{MO}, one normally expands the
+perturbed occupied spin orbitals in the set of orthonormalized \emph{\color{red} unperturbed} molecular
+spin orbitals $\{\phi_p\}$:
+\begin{equation}\label{MOlMO}
+    \phi_i(\vec{P}) = \sum_q^\text{all} U_{qi}(\vec{P}) \phi_p.
+\end{equation}
+
+Inserting this ansatz in the perturbed Hartree–Fock equations, \eqref{MOlMO} and \eqref{CPHF}, multiplying the perturbed Hartree–Fock equations from the left with
+another basis function, an unperturbed molecular orbital $\phi_r$, followed by integration
+one obtains a matrix form of the perturbed Hartree–Fock equations:
+\begin{equation}\label{CPHF1}
+    \sum_p^\text{all} U_{qi}(\vec{P}) \left(F_{rq}(\vec{P}) - \varepsilon_i(\vec{P})\delta_{rq} \right) =0,
+\end{equation}
+where an element of the perturbed Fock matrix $F_{pq}(\vec{P}) = \left\langle \phi_p | \hat{f}(\vec{P}) |\phi_q \right\rangle$:
+\begin{multline}\label{FP}
+    F_{pq}(\vec{P}) = \left\langle \phi_p | \hat{h}(\vec{P}) |\phi_q \right\rangle + \\
+    + \sum_j^\text{occ}\sum_s^\text{all}\sum_t^\text{all} U^*_{sj}(\vec{P}) \{ \JK{p}{k}{s}{t} - \JK{p}{t}{s}{q} \} U_{tj}(\vec{P})
+\end{multline}
+
+
+\section{Derivatives}
+
+\subsection{First derivative}
+
+In the most general approach of quantum chemical methods, the total energy is calculated by optimizing the parameters $c = \{c_1, c_2, \ldots, c_n\}$ as a function of energy $E = E(\vec{P}, c(\vec{P}))$ for each fixed perturbation value $\vec{P}$. As a result, the total energy for the optimized parameters $c_0(\vec{P})$ is a function of $\vec{P}$:
+\begin{equation}\label{}
+	E = E(\vec{P}, c_0(\vec{P})).
+\end{equation}
+
+We now write the first derivative of the energy with respect to the perturbation parameter $\vec{P}$:
+\begin{equation}\label{}
+	\frac{dE}{d\vec{P}} = \frac{\partial E(\vec{P}, c_0)}{\partial \vec{P}}  + \sum_i \left.\frac{\partial E(\vec{P}, c)}{\partial c_i}\right|_{c = c_0} \frac{\partial c_{0_i}}{\partial \vec{P}}
+\end{equation}
+
+Derivative $\frac{\partial c_{0_i}}{\partial \vec{P}}$ contains information about
+how the electronic structure changes under perturbation. It is impossible to apply the formula "on the forehead", since the explicit dependence $c_{0_i}(\vec{P})$ is unknown. However, when all parameters are variational, then the calculations are significantly simplified since in this case:
+\begin{equation}\label{Grad}
+	\left.\frac{\partial E(\vec{P}, c)}{\partial c_i}\right|_{c = c_0} = 0
+\end{equation}
+due to the fact that the calculations are carried out at a stationary point, then
+\begin{equation}\label{}
+	\frac{dE}{d\vec{P}} = \frac{\partial E(\vec{P}, c_0)}{\partial \vec{P}},
+\end{equation}
+therefore, it is not necessary to know the $\frac{\partial c_{0_i}}{\partial \vec{P}}$.
+
+\begin{tcolorbox}[blanker,breakable,left=5mm,right=5mm,
+		before skip=10pt,after skip=10pt, parbox=true,
+		borderline west={1mm}{0pt}{gray!50}]\itshape
+	A good example is the calculation of the molecular gradient at the level of HF theory,
+	where we only need to know the explicit dependence of the Hamiltonian and the wave
+	functions of nuclear coordinates, but not in the knowledge of the implicit dependence of the orbital coefficients on nuclear coordinates, since all these parameters are variable.
+\end{tcolorbox}
+
+\subsection{Second derivative}
+
+\begin{equation}\label{SD}
+	\frac{d^2E}{d\vec{P}^2} = \frac{\partial^2 E(\vec{P}, c_0)}{\partial \vec{P}^2}  + \sum_i \left.\frac{\partial^2 E(\vec{P}, c)}{\partial\vec{P}\partial c_i}\right|_{c = c_0} \frac{\partial c_{0_i}}{\partial \vec{P}},
+\end{equation}
+where $\displaystyle\left.\frac{\partial^2 E(\vec{P}, c)}{\partial\vec{P}\partial c_i}\right|_{c = c_0} \neq 0$, we need to know the $\displaystyle\frac{\partial c_{0_i}}{\partial \vec{P}}$.
+
+\section{Response equation}
+
+Take the derivative from \eqref{Grad} by $\vec{P}$, we get
+\begin{equation}\label{}
+	\sum_j \left.\frac{\partial^2 E(\vec{P}, c)}{\partial c_j \partial c_i}\right|_{\vec{P} = 0 \atop c = c_0}  \frac{\partial c_{0_i}}{\partial \vec{P}} =-
+	\left.\frac{\partial^2 E(\vec{P}, c)}{\partial\vec{P}\partial c_i}\right|_{c = c_0} .
+\end{equation}
+Solution of this system will lead to the calculation $\displaystyle\frac{\partial c_{0_i}}{\partial \vec{P}}$.
+
+\begin{tcolorbox}[blanker,breakable,left=5mm,right=5mm,
+		before skip=10pt,after skip=10pt, parbox=true,
+		borderline west={1mm}{0pt}{gray!50}]\itshape
+	Aber, meine Herren, das ist keine Physik!
+\end{tcolorbox}
+
+
+\end{document}
+
+

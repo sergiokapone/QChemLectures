@@ -1,0 +1,36 @@
+\documentclass[]{beamer}
+\usepackage{tikz, nicematrix}
+\usetikzlibrary{fit}
+
+\begin{document}
+
+\begin{frame}\scriptsize
+\begin{NiceTabular}{llccccc}
+         &     &     0      &     1      &     2      &     3      &     4      \\
+         &     &  -0.91415  &  1.39733   &  1.98729   &  1.98729   &  1.98729   \\
+         &     & \ 2.00000  &  0.00000   &  0.00000   &  0.00000   &  0.00000   \\
+         &     &  --------  &  --------  &  --------  &  --------  &  --------  \\
+    0He  & 1s  & -0.592633  & -1.149540  & \ 0.000000 & \ 0.000000 & -0.000000  \\
+    0He  & 2s  & -0.513015  & \ 1.187212 & -0.000000  & -0.000000  & \ 0.000000 \\
+    0He  & 1pz & -0.000000  & -0.000000  & -0.300180  & -0.953879  & -0.002418  \\
+    0He  & 1px & \ 0.000000 & -0.000000  & -0.007525  & -0.000167  & \ 0.999972 \\
+    0He  & 1py & \ 0.000000 & \ 0.000000 & -0.953853  & \ 0.300190 & -0.007128  \\
+\CodeAfter
+\begin{tikzpicture}
+    \node (oe)  [draw=red,fit=(2-7)(2-3)] {} ;
+    \draw[<-] (oe.east) -- ++(0.25,0) node[right] {orb. energ.};
+    \node (pop) [draw=red,fit=(3-7)(3-3)] {} ;
+    \draw[<-] (pop.east) -- ++(0.25,0) node[right] {population};
+    \node (sto) [draw=red,fit=(5-2)(9-2)] {} ;
+    \draw[<-]  (sto.north) -- ++(90:1.7) node[above] {$\chi_\text{STO}$};
+    \foreach \i[count=\o] in {3,...,7} {\node (o\o) [fit=(1-\i)(1-\i)] {} ;}
+    \foreach \i[count=\c] in {3,...,7} {\node (c\c) [draw=blue,fit=(5-\i)(9-\i)] {} ;}
+    \foreach \i in {1,2}   {\draw[<-]  (o\i) -- ++(90:0.5) node[above] {$\phi_{\i s}$};}
+    \foreach \i/\j in {3/x,4/y,5/z} {\draw[<-]  (o\i) -- ++(90:0.5) node[above] {$\phi_{1p_{\j}}$};}
+    \path (c3) -- ++(0,-1.75) node[] (C) {$c_i$};
+    \foreach \i in {1,...,5}  {\draw[<-]  (c\i.south) -- (C);}
+\end{tikzpicture}
+\end{NiceTabular}
+\end{frame}
+
+\end{document}

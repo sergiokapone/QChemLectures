@@ -1,0 +1,65 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+% !BIB program = biber
+
+\documentclass[]{QChemPresent}
+\usetikzlibrary{calligraphy}
+
+\date{}
+\let\vphi\varphi
+\def\vxi{\vec{\xi}}
+\begin{document}
+%==============================================================================================
+
+\begin{frame}
+
+\begin{center}
+	\begin{tikzpicture}[scale=0.75, every node/.style={scale=0.75}]
+
+		\coordinate (N1) at (-0.75,0);
+		\coordinate (N2) at (+0.75,0);
+        \def\s{4.5}
+		\coordinate (N1s) at (\s-0.75,0);
+		\coordinate (N2s) at (\s+0.75,0);
+
+		\coordinate (N1ss) at (2*\s-0.75,0);
+		\coordinate (N2ss) at (2*\s+0.75,0);
+
+		\shade[even odd rule, inner color=red,outer color=red!20 ,fill opacity=0.3] (0,0) ellipse (2 and 1);
+		\shade[ball color=blue!60!white,opacity=0.80] (N1) circle (0.15cm);
+		\path[updown={0,0}];
+		\shade[ball color=blue!60!white,opacity=0.80] (N2)  circle (0.15cm);
+        \node[dashed, cyan, draw, minimum size=4cm] (cov) at (0,0) {};
+        \node[anchor=north] at (cov.south) {covalent};
+
+
+
+			\shade[even odd rule, inner color=red,outer color=red!20 ,fill opacity=0.3] (N1s) ellipse (1 and 1);
+			\shade[ball color=blue!60!white,opacity=0.80] (N1s) circle (0.15cm);
+			\shade[ball color=blue!60!white,opacity=0.80] (N2s) circle (0.15cm);
+			\path[updown=N1s];
+            \node[dashed, cyan, draw, minimum size=4cm] (a1) at (2*\s,0) {};
+            \node[anchor=north] at (a1.south) {ionic};
+
+
+
+
+%		\begin{scope}[xshift=12cm]
+			\shade[even odd rule, inner color=red,outer color=red!20 ,fill opacity=0.3] (N2ss) ellipse (1 and 1);
+			\shade[ball color=blue!60!white,opacity=0.80] (N1ss) circle (0.15cm);
+			\shade[ball color=blue!60!white,opacity=0.80] (N2ss) circle (0.15cm);
+			\path[updown=N2ss];
+            \node[dashed, cyan, draw, minimum size=4cm] (a2) at (\s,0) {};
+            \node[anchor=north] at (a2.south) {ionic};
+%		\end{scope}
+	\end{tikzpicture}
+\end{center}
+
+\end{frame}
+
+\end{document}
+
+%            \ifnum\i<4
+%            pic[pos=0.35] {upspinarrow}  pic[pos=0.65] {downspinarrow}
+%            \fi

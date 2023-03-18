@@ -1,0 +1,183 @@
+
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+% !BIB program = bibtex8
+
+
+\documentclass[]{article}
+\usepackage[%
+	a4paper,%
+	footskip=1cm,%
+	headsep=0.3cm,%
+	top=1cm, %поле сверху
+	bottom=2cm, %поле снизу
+	left=2cm, %поле ліворуч
+	right=2cm, %поле праворуч
+    ]{geometry}
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage[fontsize=12pt]{fontsize}
+\usepackage{fontspec}
+\setsansfont{CMU Sans Serif}%{Arial}
+\setmainfont{CMU Serif}%{Times New Roman}
+\setmonofont{CMU Typewriter Text}%{Consolas}
+\defaultfontfeatures{Ligatures={TeX}}
+\usepackage[math-style=ISO]{unicode-math}
+\setmathfont{STIX Two Math}
+\usepackage{amsmath}
+\usepackage[english, russian, ukrainian]{babel}
+
+
+\allowdisplaybreaks
+\usepackage{cancel}
+
+\def\ket#1{\left| #1 \right\rangle }
+\def\bra#1{\left\langle #1 \right| }
+\def\bracket#1#2{\left\langle #1\left| #2 \right. \right\rangle }
+\def\opbracket#1#2#3{\left\langle #1\left| \textcolor{OliveGreen}{#2}\right|  #3 \right\rangle}
+\def\eff{e\kern-2.4pt{f\kern-2.65pt f}}
+\def\vxi{\vec{\xi}}
+\def\vr{\vec{r}}
+\let\vphi\varphi
+\let\ve\varepsilon
+
+\def\f{(\textcolor{red}{1})}
+\def\s{(\textcolor{blue}{2})}
+
+\def\F{\textcolor{red}{\mathbf{1}}}
+\def\S{\textcolor{blue}{\mathbf{2}}}
+
+\def\oa{\textcolor{red}{ \vphi_{\mathbf{1}}} }
+\def\ob{\textcolor{blue}{ \vphi_{\mathbf{2}}} }
+\def\cPhi{\oa\f \ob\s - \oa\s \ob\f} % лінійна Комбінація
+\def\h{\hat{h}}
+\def\ha{\h\f}
+\def\hb{\h\s}
+\def\V{\frac{1}{r_{12}}}
+\def\a{\oa\f \ob\s}
+\def\b{\ob\f \oa\s}
+\def\dt{\,.\,}
+%\def\sp{\textvisiblespace}
+
+\def\hr{\hrulefill\\*[10pt]}
+\def\hhr{\hrulefill\\[-0.9\baselineskip]\hrulefill\\*[10pt]}
+
+\begin{document}
+
+\begin{equation*}
+	\Phi(1, 2) ={1}/{\sqrt2}\left[\cPhi\right]
+\end{equation*}
+
+\begin{equation*}
+    \hat{H} = \ha + \hb + \V \quad E = \opbracket{\Phi(1, 2)}{\hat{H}}{\Phi(1, 2)}
+\end{equation*}
+\hrulefill
+\begin{multline*}
+    E = \frac12 \opbracket{\cPhi}{\ha + \hb + \V}{\cPhi} = \\
+    = \frac12\opbracket{\cPhi}{\ha}{\cPhi} + \\
+    + \frac12\opbracket{\cPhi}{\hb}{\cPhi} + \\
+    + \frac12\opbracket{\cPhi}{\V}{\cPhi} = \\[10pt]
+    \hhr
+    % for h1
+    = \frac12\opbracket{\a}{\ha}{\a} + \frac12\opbracket{\b}{\ha}{\b} - \\
+    - \frac12\opbracket{\a}{\ha}{\b} - \frac12\opbracket{\b}{\ha}{\a} + \\
+    \hr
+    % for h2
+    + \frac12\opbracket{\a}{\hb}{\a} + \frac12\opbracket{\b}{\hb}{\b} - \\
+    - \frac12\opbracket{\a}{\hb}{\b} - \frac12\opbracket{\b}{\hb}{\a} + \\
+    \hr
+    % for V
+    + \frac12\opbracket{\a}{\V}{\a} + \frac12\opbracket{\b}{\V}{\b} - \\
+    - \frac12\opbracket{\a}{\V}{\b} - \frac12\opbracket{\b}{\V}{\a} = \\
+    \hhr
+    % for h1
+    = \frac12\opbracket{\oa\f}{\ha}{\oa\f} + \frac12\opbracket{\ob\f}{\ha}{\ob\f} + \\
+    % for h2
+    + \frac12\opbracket{\oa\s}{\hb}{\oa\s} + \frac12\opbracket{\ob\s}{\hb}{\ob\s} + \\
+    \hr
+    % for J
+    + \frac12\opbracket{\a}{\V}{\a} + \frac12\opbracket{\b}{\V}{\b} - \\
+    % for K
+    - \frac12\opbracket{\a}{\V}{\b} - \frac12\opbracket{\b}{\V}{\a} =  \\
+    \hhr
+    % for h
+    = \opbracket{\F}{\h}{\F} + \opbracket{\S}{\h}{\S}
+    % for J
+    + \frac12\opbracket{\F\S}{\V}{\F\S} + \frac12\opbracket{\S\F}{\V}{\S\F} -
+    % for K
+    \frac12\opbracket{\F\S}{\V}{\S\F} - \frac12\opbracket{\S\F}{\V}{\F\S}
+\end{multline*}
+
+
+\begin{equation*}
+    E = \ve_1 + \ve_2 + J - K = \sum_{i = 1}^{2}\ve_i + \frac12 \sum_{i = 1}^{2} \sum_{j = 1}^{2} (J_{ij} - K_{ij}), \quad J_{ii} = K_{ii} = 0
+\end{equation*}
+
+\begin{equation*}
+    F = E - \sum_{i = 1}^{2} \sum_{j = 1}^{2} (\ve_{ij} \bracket{\vphi_i}{\vphi_j} - \delta_{ij})
+\end{equation*}
+
+
+\begin{multline*}
+    \delta F =  \opbracket{\delta\F}{\h}{\F} + \opbracket{\delta\S}{\h}{\S} + \\
+    % for J
+    + \frac12\opbracket{\delta\F\S}{\V}{\F\S} + \frac12\opbracket{\F\delta\S}{\V}{\F\S} +
+    \frac12\opbracket{\delta\S\F}{\V}{\S\F} + \frac12\opbracket{\S\delta\F}{\V}{\S\F} - \\
+    % for K
+    - \frac12\opbracket{\delta\F\S}{\V}{\S\F} - \frac12\opbracket{\delta\S\F}{\V}{\F\S}
+    - \frac12\opbracket{\F\delta\S}{\V}{\S\F} - \frac12\opbracket{\S\delta\F}{\V}{\F\S} - \\
+    - \ve_{11} \bracket{\delta\F}{\F}
+    - \ve_{12} \bracket{\delta\F}{\S}
+    - \ve_{21} \bracket{\delta\S}{\F}
+    - \ve_{22} \bracket{\delta\S}{\S} + \\
+    + \text{c. c.} = 0
+\end{multline*}
+
+\begin{align*}
+    \left( \h + \frac12\opbracket{\dt\S}{\V}{\dt\S} + \frac12\opbracket{\S\dt}{\V}{\S\dt}
+    - \frac12 \opbracket{\dt\S}{\V}{\S\dt} - \frac12\opbracket{\S\,.}{\V}{\dt\S}
+    \right) \ket{\F} &= \ve_{11} \ket{\F} + \ve_{12}\ket{\S}
+    \\[1.1\baselineskip]%
+    \left( \h + \frac12\opbracket{.\,\F}{\V}{.\,\F} + \frac12\opbracket{\F\dt}{\V}{\F\dt}
+    - \frac12 \opbracket{\dt\F}{\V}{\F\dt} - \frac12\opbracket{\F\dt}{\V}{\dt\F}
+    \right) \ket{\S} &= \ve_{21} \ket{\F} + \ve_{22}\ket{\S}
+\end{align*}
+
+Canonical HF-Equations
+
+\begin{align*}
+    \left( \h + \opbracket{\dt\S}{\V}{\dt\S}
+    - \opbracket{\dt\S}{\V}{\S\dt}
+    \right) \ket{\F} &= \ve_{11} \ket{\F}
+    \\[1.1\baselineskip]%
+    \left( \h + \opbracket{\dt\F}{\V}{\dt\F}
+    -  \opbracket{\dt\F}{\V}{\F\dt}
+    \right) \ket{\S} &= \ve_{22} \ket{\S}
+\end{align*}
+
+Columb operator
+
+\begin{equation*}
+   \hat{J}_{\S}\ket{\F} = \opbracket{\dt\S}{\V}{\dt\S} \ket{\F} = \int \frac{\dt\ob\s\dt\ob\s}{r_{12}} d\s \cdot \oa\f =  \int \frac{\dt\ob\s\oa\f\ob\s}{r_{12}} d\s
+\end{equation*}
+
+Columb integral
+
+\begin{equation*}
+   \bra{\F}\hat{J}_{\S}\ket{\F} = \bra{\F}\opbracket{\dt\S}{\V}{\dt\S} \ket{\F} = \iint \frac{\oa\f\ob\s\oa\f\ob\s}{r_{12}} d\s d\f
+\end{equation*}
+
+Exchange operator
+
+\begin{equation*}
+    \hat{K}_{\S}\ket{\F} = \opbracket{\dt\S}{\V}{\S\dt}\ket{\F} = \int \frac{\dt\ob\s \ob\f\dt}{r_{12}} d\s \cdot \oa\f = \int \frac{\dt\ob\s \ob\f\oa\s}{r_{12}} d\s
+\end{equation*}
+
+Exchange integral
+
+\begin{equation*}
+    \bra{\F}\hat{K}_{\S}\ket{\F} = \bra{\F}\opbracket{\dt\S}{\V}{\S\dt}\ket{\F} = \iint \frac{\oa\f\ob\s \ob\f\oa\s}{r_{12}} d\s d\f
+\end{equation*}
+
+\end{document}

@@ -1,0 +1,12 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{o}{\PYGZpc{}}\PYG{n}{coords}
+\PYG{n+no}{CTyp} \PYG{n}{xyz}   \PYG{c+c1}{\PYGZsh{} the type of coordinates = xyz or internal}
+\PYG{n+no}{Charge} \PYG{l+m+mi}{0}   \PYG{c+c1}{\PYGZsh{} the total charge of the molecule}
+\PYG{n+no}{Mult} \PYG{l+m+mi}{1}     \PYG{c+c1}{\PYGZsh{} the multiplicity = 2S+1 S = 0}
+\PYG{n+no}{Units} \PYG{n+no}{Angs} \PYG{c+c1}{\PYGZsh{} the unit of length = angs or bohrs}
+\PYG{n}{coords}
+    \PYG{n}{H}    \PYG{l+m+mi}{0}\PYG{o}{.}\PYG{l+m+mo}{00000}    \PYG{l+m+mi}{0}\PYG{o}{.}\PYG{l+m+mo}{00000}    \PYG{l+m+mi}{0}\PYG{o}{.}\PYG{l+m+mo}{00000}
+    \PYG{n}{H}    \PYG{l+m+mi}{0}\PYG{o}{.}\PYG{l+m+mi}{74000}    \PYG{l+m+mi}{0}\PYG{o}{.}\PYG{l+m+mo}{00000}    \PYG{l+m+mi}{0}\PYG{o}{.}\PYG{l+m+mo}{00000}
+\PYG{k}{end}
+\PYG{k}{end}
+\end{Verbatim}

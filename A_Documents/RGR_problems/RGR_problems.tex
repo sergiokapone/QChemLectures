@@ -1,0 +1,118 @@
+%%============================ Compiler Directives =======================%%
+%%                                                                        %%
+% !TeX program = pdflatex							    	
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+%%                                                                        %%
+%%============================== Клас документа ==========================%%
+%%                                                                        %%
+\documentclass[12pt]{article}
+%%                                                                        %%
+%%============================= Мови та кодування ========================%%
+%%                                                                        %%
+\usepackage[utf8]{inputenc}
+\usepackage[T2A,T1]{fontenc}
+\usepackage[english, russian, ukrainian]{babel}
+%%                                                                        %%
+%%=========================== Киририличні корекції =======================%%   
+\usepackage{indentfirst}
+\usepackage{cmap}
+\IfFileExists{ukrcorr.sty}{\usepackage{ukrcorr}}{}
+%%                                                                        %%
+%%============================= Геометрія сторінки =======================%%
+%%                                                                        %%        
+\usepackage[%
+	a4paper,%
+	footskip=1cm,%
+	headsep=0.3cm,% 
+	top=2cm, %поле сверху
+	bottom=2cm, %поле снизу
+	left=2cm, %поле ліворуч
+	right=2cm, %поле праворуч
+    ]{geometry}
+%%                                                                        %%
+%%================================= Шрифти ===============================%%   
+%%                                                                        %%
+%\fontsize{12pt}{13pt}\selectfont                                         %%
+%%============================== Інтерліньяж  ============================%%
+%%                                                                        %%
+\renewcommand{\baselinestretch}{1}
+%-------------------------  Подавление висячих строк  --------------------%%
+\clubpenalty =10000
+\widowpenalty=10000
+%---------------------------------Інтервали-------------------------------%%
+\setlength{\parskip}{0.5ex}%
+\setlength{\parindent}{2.5em}%
+%%                                                                        %%
+%%                                                                        %%
+%%=========================== Математичні пакети і графіка ===============%%
+%%                                                                        %%
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{mhchem, chemfig}
+\usepackage{enumitem}
+%%                                                                        %%
+%%================================ Інші пакети ===========================%%   
+%%                                                                        %%
+%%========================== Гіперпосилення (href) =======================%%
+%%                                                                        %% 
+\usepackage[%colorlinks=true,
+	%urlcolor = blue, %Colour for external hyperlinks
+	%linkcolor  = malina, %Colour of internal links
+	%citecolor  = green, %Colour of citations
+	bookmarks = true,
+	bookmarksnumbered=true,
+	unicode,
+	linktoc = all,
+	hypertexnames=false,
+	pdftoolbar=false,
+	pdfpagelayout=TwoPageRight,
+	pdfauthor={Ponomarenko S.M. aka sergiokapone},
+	pdfdisplaydoctitle=true,
+	pdfencoding=auto
+	]%
+	{hyperref}
+		\makeatletter
+	\AtBeginDocument{
+	\hypersetup{
+		pdfinfo={
+		Title={\@title},
+		}
+	}
+	}
+	\makeatother
+%%                                                                        %%	
+%%============================== Оформлення списків=======================%%
+%%                                                                        %%
+\usepackage{enumitem}
+\setlist{nolistsep, leftmargin=0cm,itemindent=.5cm}
+%%                                                                        %%
+%%============================ Заголовок та автори =======================%%
+%%                                                                        %%
+\title{Індивідуальні завдання для комп'ютерного розрахунку}
+\author{}
+\date{}                                   
+%%                                                                        %%
+%%========================================================================%%
+
+
+\begin{document}
+\maketitle
+
+
+Виконання індивідуального завдання, передбаченого навчальним планом, мають на меті набуття студентами уміння та навичок опанувати та застосовувати застосовувати програмні пакети для здійснення квантово-механічних обчислень. 
+
+В якості рекомендації для індивідуального завдання студентам надається перелік сполук які для комп'ютерного розрахнку в програмі \texttt{Gaussian}.
+\begin{enumerate}
+	\item Розрахуйте структуру та властивостей молекули \ce{H2O}, \ce{CH4}, \ce{CO2}. За розрахованими даними коливального спектра визначити енергію дисоціації.
+    \item Дослідіть залежність повної енергії молекули гідразину \ce{N2H4} від кута внутрішнього обертання і вкажіть для неї найбільш стійку конфігурацію. 
+    \item Обчисліть величину переносу заряду від атома азоту до молекули \ce{BF3}. Яка частина заряду локалізована на атомах бору і фтору?
+    \item Обчисліть силову константу та енергію нульових коливань для молекули \ce{HI}.
+    \item 	Побудуйте графік потенціальної функції $U(\varphi)$ у молекулі \href{https://en.wikipedia.org/wiki/1,2-Dibromoethane}{1,2-диброметану}:
+    \begin{center}
+        \chemfig{H-C(-[:90]H)(-[:-90]Br)-C(-[:90]Br)(-[:-90]H)-H}
+    \end{center}
+
+\end{enumerate}
+
+\end{document}

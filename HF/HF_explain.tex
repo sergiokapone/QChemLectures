@@ -1,0 +1,267 @@
+%%============================ Compiler Directives =======================%%
+%%                                                                        %%
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+%%                                                                        %%
+%%============================== Клас документа ==========================%%
+%%                                                                        %%
+\documentclass[14pt]{extarticle}
+\IfFileExists{ukrcorr.sty}{\usepackage{ukrcorr}}{}
+%%                                                                        %%
+%%========================== Мови, шрифти та кодування ===================%%
+%%                                                                        %%
+\usepackage{fontspec}
+\setsansfont{CMU Sans Serif}%{Arial}
+\setmainfont{CMU Serif}%{Times New Roman}
+\setmonofont{CMU Typewriter Text}%{Consolas}
+\defaultfontfeatures{Ligatures={TeX}}
+\usepackage[math-style=TeX]{unicode-math}
+\usepackage[english, russian, ukrainian]{babel}
+
+%%                                                                        %%
+%%============================= Геометрія сторінки =======================%%
+%%                                                                        %%
+\usepackage[%
+	a4paper,%
+	footskip=1cm,%
+	headsep=0.3cm,%
+	top=2cm, %поле сверху
+	bottom=2cm, %поле снизу
+	left=2cm, %поле ліворуч
+	right=2cm, %поле праворуч
+    ]{geometry}
+%%                                                                        %%
+%%============================== Інтерліньяж  ============================%%
+%%                                                                        %%
+\renewcommand{\baselinestretch}{1}
+%-------------------------  Подавление висячих строк  --------------------%%
+\clubpenalty =10000
+\widowpenalty=10000
+%---------------------------------Інтервали-------------------------------%%
+\setlength{\parskip}{0.5ex}%
+\setlength{\parindent}{2.5em}%
+%%                                                                        %%
+%%=========================== Математичні пакети і графіка ===============%%
+%%
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+\usepackage{enumerate}
+\usepackage{pgffor}                                                   %%
+%%                                                                        %%
+%%========================== Гіперпосилення (href) =======================%%
+%%                                                                        %%
+\usepackage[%colorlinks=true,
+	%urlcolor = blue, %Colour for external hyperlinks
+	%linkcolor  = malina, %Colour of internal links
+	%citecolor  = green, %Colour of citations
+	bookmarks = true,
+	bookmarksnumbered=true,
+	unicode,
+	linktoc = all,
+	hypertexnames=false,
+	pdftoolbar=false,
+	pdfpagelayout=TwoPageRight,
+	pdfauthor={Ponomarenko S.M. aka sergiokapone},
+	pdfdisplaydoctitle=true,
+	pdfencoding=auto
+	]%
+	{hyperref}
+		\makeatletter
+	\AtBeginDocument{
+	\hypersetup{
+		pdfinfo={
+		Title={\@title},
+		}
+	}
+	}
+	\makeatother
+%%                                                                        %%
+%%============================ Заголовок та автори =======================%%
+%%                                                                        %%
+\title{}
+\author{}
+%%                                                                        %%
+%%========================================================================%%
+\usepackage{xurl}
+
+\newcommand{\mat}[1]{\boldsymbol{\mathbf{#1}}}
+\begin{document}
+%The concept of linear combination of atomic orbitals (LCAO) to form molecular orbitals (MO) is probably best understood, while digging a little deeper into quantum chemistry. The method is an approximation that was introduced for <<ab initio>> methods like Hartree-Fock. I don not want to go into too much detail, but there a some points that need to be considered before understanding what LCAO actually does.
+
+%The time independent Schrödinger equation can was postulated as
+Стаціонерне рівняння Шредінгера
+\begin{equation}\label{}
+	\hat{H}\Phi=E\Phi,
+\end{equation}
+%with the Hamilton operator $\hat{H}$, the wave function $\Phi$ and the corresponding energy eigenvalue(s) $E$. I will just note that we are working in the framework of the Born-Oppenheimer approximation and refer to many textbooks for more details.
+з оператором Гамільтона $\hat{H}$, хвильовою функцією $\Phi$ та відповідними власними значеннями енергії $E$. Зазначу лише, що ми працюємо в рамках апроксимації Борна-Оппенгеймера і звертаюся до багатьох підручників для більш детальної інформації.
+
+%There is a set of rules, the wave function has to obey.
+Існує набір правил, яким повинна підкорятися хвильова функція:
+
+\begin{enumerate}
+	\item  %It is a scalar, that can be real or complex, but the product of itself with its complex conjugated version is always positive and real.
+    Це скаляр, який може бути дійсним або комплексним, але добуток сам по собі з його комплексно спряженою версією завжди додатний і дійсний:
+	      \begin{equation*}\label{}
+		      0\leq \Phi^*\Phi=|\Phi|^2
+	      \end{equation*}
+
+	\item  %The probability of finding all $N$ electrons in all space $\mathbb{V}$ is one, hence to function is normed.
+    Імовірність знаходження всіх $n$ електронів у всьому просторі $\mathbb{V}$ дорівнює одиниці, отже, функція нормована:
+	      \begin{equation*}\label{}
+		      n = \int\limits_{\mathbb{V}} |\Phi(\mathbf{x}_1,\mathbf{x}_2,\dots,\mathbf{x}_n)|^2 d(\mathbf{x}_1,\mathbf{x}_2,\dots,\mathbf{x}_n)
+	      \end{equation*}
+
+	\item  %The value of the wave function has to vanish at infinity.
+            Значення хвильової функції має занулятись в нуль на нескінченності:
+	      \begin{equation*}\label{}
+		      0 = \lim_{\mathbf{x}\to\infty}|\Phi(\mathbf{x})|
+	      \end{equation*}
+
+	\item %The wave function has to be continuous and continuously differentiable, due to the second order differential operator for the kinetic energy $\hat{T}_c$ included in $\hat{H}$.
+        Хвильова функція має бути неперервною та двічі диференційованою через диференціальний оператор другого порядку для кінетичної енергії $\hat{T}_c$, що входить до $\hat{H}$.
+
+	\item  %The Pauli Principle has to be obeyed.
+            Хвильова функція підкоряється принципу Паулі (антисиметрична по відношенню до перестановки пар електронів місцями):
+	      \begin{equation*}\label{}
+		      \Phi(\mathbf{x}_1,\mathbf{x}_2,\dots,\mathbf{x}_n) = -\Phi(\mathbf{x}_2,\mathbf{x}_1,\dots,\mathbf{x}_n)
+	      \end{equation*}
+\end{enumerate}
+
+%Also the variational principle should hold for this approximation, stating that the expectation value for the energy of any trial wave function is larger that the energy eigenvalue of the true ground state. One of the most basic methods to approximately solve this problem is Hartree Fock. In it the trial wave function $\Phi$ is set up as a Slater determinant.
+Одним з найпростіших методів наближеного розв'язання цієї проблеми є метод Хартрі-Фока. У ньому пробна хвильова функція $\Phi$ встановлюється як визначник Слейтера:
+\begin{equation*}\label{}
+	\Phi(\mathbf{x}_1, \mathbf{x}_2, \ldots, \mathbf{x}_n) =
+	\frac{1}{\sqrt{n!}}
+	\left|
+	\begin{matrix}
+		\phi_1(\mathbf{x}_1) & \phi_2(\mathbf{x}_1) & \cdots & \phi_n(\mathbf{x}_1) \\
+		\phi_1(\mathbf{x}_2) & \phi_2(\mathbf{x}_2) & \cdots & \phi_n(\mathbf{x}_2) \\
+		\vdots               & \vdots               & \ddots & \vdots               \\
+		\phi_1(\mathbf{x}_n) & \phi_2(\mathbf{x}_n) & \cdots & \phi_n(\mathbf{x}_n)
+	\end{matrix} \right|
+\end{equation*}
+
+
+
+%The expectation value of the energy in the Hartree Fock formalism is set up, using [bra-ket notation] as
+Очікуване значення енергії у формалізмі Хартрі-Фока встановлюється, використовуючи як
+\begin{equation*}\label{}
+	E =\langle\Phi|\hat{H}|\Phi\rangle.
+\end{equation*}
+При чому, варіаційний принцип стверджує, що очікуване значення енергії для будь-якої пробної хвильової функції більше, ніж власне значення енергії справжнього основного стану.
+
+%Skipping through some major parts of the deviation of HF, well end up at an expression for the energy:
+Пропускаючи деякі основні частини виведення, приходимо до виразу для енергії:
+\begin{equation*}\label{}
+	E=\sum_i^n \langle\phi_i|\hat{H}^c|\phi_i\rangle +\frac12 \sum_i^n\sum_j^n \langle\phi_i|\hat{J}_j-\hat{K}_j|\phi_i\rangle
+\end{equation*}
+%where
+де
+\begin{equation*}\label{}
+    \begin{aligned}
+        \hat{J}_j(1) f(1) &= f(1) \int \frac{|\phi_j(2)|^2}{r_{12}} dV_2, \\
+        \hat{K}_j(1) f(1) &= \phi_j(1) \int \frac{\phi_j^*(2) f(2)}{r_{12}} dV_2,
+    \end{aligned}
+\end{equation*}
+%where $f$ is an arbitrary function and the integrals are definite integrals over all space.
+де $f$ --- довільна функція, а інтеграли --- по всьому простору.
+
+%To find the best one-electron wave functions $\phi_i$ we introduce [Lagrange multiplicators] $\lambda$ minimising the energy with respect to our chosen conditions. These conditions include that the molecular orbitals are ortho normal.
+Щоб знайти найкраще наближення для одноелектронних хвильових функцій $\phi_i$, ми вводимо множники Лагранжа $\lambda$, мінімізуючи енергію щодо вибраних нами умов. Ці умови включають, що молекулярні орбіталі ортонормовані:
+\begin{equation*}\label{}
+	\langle\phi_i|\phi_j\rangle =\delta_{ij} =\left\{
+	\begin{matrix}  0 & , \text{for}~i \neq j\\ 1 & , \text{for}~i = j\\\end{matrix}\right.
+\end{equation*}
+
+%I will again skip through most of it and just show you the end expression.
+Я знову пропускаю більшу частину і просто покажу вам кінцевий вираз:
+\begin{equation*}\label{}
+	\sum_j\lambda_{ij}|\phi_j\rangle = \hat{F}_i|\phi_i\rangle
+\end{equation*}
+%with the Fock operator set up as
+з оператором Фока, визначеним як
+\begin{equation*}\label{}
+	\hat{F}_i = \hat{H}^c +\sum_j (\hat{J}_j - \hat{K}_j)
+\end{equation*}
+%with $i\in1\cdots{}n$, the total number of electrons.
+%We can transform these trial wavefunctions $\phi_i$ to canonical orbitals $\phi_i'$ (molecular orbitals) and obtain the pseudo eigenwertproblem
+з $i = 1\ldots n$, загальна кількість електронів.
+
+Ми можемо перетворити ці пробні хвильові функції $\phi_i$ на канонічні орбіталі $\phi_i'$ (молекулярні орбіталі) і отримати задачу на знаходження (псевдо)власних значень $\varepsilon_i$ та (псевдо)власних функцій $\phi_i'$:
+\begin{equation}\label{Fock}
+	\hat{F}_i\phi_i' = \varepsilon_i\phi_i'.\tag{Fock}
+\end{equation}
+%This equation is actually only well defined for occupied orbitals and these are the orbitals that give the lowest energy. In practice this formalism can be extended to include virtual (unoccupied) molecular orbitals as well.
+Це рівняння насправді добре визначено лише для зайнятих орбіталей, і це орбіталі, які дають найменшу енергію\footnote{На практиці цей формалізм можна розширити, включивши також віртуальні (незайняті) молекулярні орбіталі (наприклад, в методі конфігураційної взаємодії)}.
+
+%Until now we did not use any atomic orbitals at all. This is the next step to find an approximation to actually solve these still pretty complicated systems.
+%LCAO a superposition method. In this approach we map a finite set of $k$ atomic (spin) orbitals $\chi_a$ onto another finite set of $l$ molecular (spin) orbitals $\phi_i'$. They are related towards each other via the expression
+До цього часу ми взагалі не використовували жодних атомних орбіталей. Це наступний крок, щоб знайти наближення для розв'язання цих все ще досить складних рівнянь.
+ЛКАО --- метод суперпозиції. У цьому підході ми відображаємо скінченну множину $k$ атомних (спін-) орбіталей $\chi_a$ на іншу скінченну множину $n$ молекулярних (спін-) орбіталей $\phi_i'$. Вони пов’язані один з одним за допомогою виразу:
+\begin{equation}\label{LCAO}
+	\begin{aligned}
+		\phi_i'(\mathbf{x}) & = c_{i,1}\chi_1(\mathbf{x}) + c_{i,2}\chi_2(\mathbf{x}) + \cdots + c_{i,m}\chi_m(\mathbf{x}) \\
+		\phi_i'(\mathbf{x}) & = \sum_{a=1}^m c_{i, a}\chi_a(\mathbf{x})
+	\end{aligned}\tag{LCAO}
+\end{equation}
+
+%From \eqref{Fock} you can see, that there will be $l$ possible equations depending on the chosen set of orbitals, in the form of
+Підставимо \eqref{LCAO} в \eqref{Fock} і домножимо зліва на $\left\langle\chi_a\right|$:
+\begin{equation*}\label{}
+    \sum_{b = 1}^m  c_{ib} \langle\chi_a|\hat{F}_i|\chi_b\rangle = \varepsilon_i \sum_{b=1}^m c_{ib} \langle\chi_a|\chi_b\rangle.
+\end{equation*}
+\begin{equation}\label{sys}
+    \begin{cases}
+        c_{i,1} (F_{11} - \varepsilon_i S_{11})  + c_{i,2} (F_{12} - \varepsilon_i S_{12})  +  \ldots + c_{i,m} (F_{1m} - \varepsilon_i S_{1m})  = 0, \\
+        c_{i,1} (F_{21} - \varepsilon_i S_{21})  + c_{i,2} (F_{22} - \varepsilon_i S_{22})  +  \ldots + c_{i,m} (F_{2m} - \varepsilon_i S_{2m})  = 0, \\
+         \vdotswithin{=}  \hfill  \vdotswithin{=}  \hfill \vdotswithin{=} \\
+        c_{i,1} (F_{m1} - \varepsilon_i S_{m1})  + c_{i,2} (F_{m2} - \varepsilon_i S_{m2})   + \ldots + c_{i,m} (F_{mm} - \varepsilon_i S_{mm})  = 0.
+    \end{cases}
+\end{equation}
+
+
+
+Невідомими тепер будуть коефіцієнти $c_{ib}$, число яких $m$ штук. Але ж у нас ще залишились невідомими $\varepsilon_i$. Для їх знаходження, треба використати той факт, що для нетривіальних коренів треба виконання умови:
+\begin{equation}\label{}
+	\left|
+	\begin{matrix}
+		F_{11} - \varepsilon_i S_{11} & F_{12} - \varepsilon_i S_{12} & \cdots & F_{1m} - \varepsilon_i S_{1m} \\
+		F_{21} - \varepsilon_i S_{21} & F_{22} - \varepsilon_i S_{22} & \cdots & F_{2m} - \varepsilon_i S_{2m} \\
+		\vdots               & \vdots               & \ddots & \vdots               \\
+		F_{m1} - \varepsilon_i S_{m1} & F_{m2} - \varepsilon_i S_{m2} & \cdots & F_{mm} - \varepsilon_i S_{mm}
+	\end{matrix} \right| = 0
+\end{equation}
+
+Це рівняння $m$-ї степені відносно $\varepsilon_i$-х, тому і розв'язків має бути $m$ штук $\varepsilon = \{\varepsilon_1, \varepsilon_2, \ldots , \varepsilon_m\}$. Підставляючи одне із цих значень в рівняння  \eqref{sys} (наприклад $\varepsilon_2$), отримуємо в якості розв'язка коефіцієнти $\{c_{21}, c_{22}, \ldots, c_{2m}\}$. А знаючи ці коефіцієнти, з формули \eqref{LCAO} отримуємо орбіталь $\phi_2$. Аналогічно, отримуємо всі $m$-штук орбіталей. Тобто, якщо у нас було $n$ електронів, а заодно мало бути і $n$ орбіталей, то ввівши $m$ штук базисних функцій, ми розширили число орбіталей до $m$, а отже деяке число з цих орбіталей ($m-n$) не будуть зайнятими. Ці орбіталі і називаються віртуальними.
+
+%or for short there are $l$ equations
+%В скороченій формі маємо $n$ рівнянь:
+%\begin{equation}\label{}
+%	C_{ab}F_{ab}=\varepsilon_i C_{ab}S_{ab}.
+%\end{equation}
+
+%Since $a,b \in [1,k]$ you can gather $C_{ab}$ in a $k\times k$ matrix $\mathbb{C}$. Since $i\in[1,l]$, there will only be $l$ $\varepsilon_i$ and therefore the matrix of the Fock elements $F_{ab}$ has to be a $l\times l$ matrix $\mathbb{F}$. The whole problem reduces a matrix equation
+%Оскільки $a,b \in [1,k]$ ви можете зібрати $C_{ab}$ у $k\times k$ матриці $\mathbb{C}$. Оскільки $i\in[1,n]$, буде лише $l$ $\varepsilon_i$ і тому матриця елементів Фока $F_{ab}$ має бути $n\times n$ матрицею $\hat{F}$. Вся задача зводиться до матричного рівняння
+%\begin{equation}\label{work}
+%	\mathbb{F}\mathbb{C}=\mathbb{S}\mathbb{C}\epsilon\!\!\varepsilon,\tag{work}
+%\end{equation}
+%from which it is obvious, that the dimension of the involved matrices have to be the same. Hence $k=l$.
+%з чого очевидно, що розмірність задіяних матриць має бути однаковою. Отже, $k=n$.
+%
+%Too long, didn't read
+%
+%The total number of elements in the finite set of atomic orbitals is equal to the total number of elements in the finite set of molecular orbitals. Any linear combination is possible, but only the orbitals that minimise the energy will be occupied.
+%
+%The coefficients $c$ from \eqref{LCAO} will be chosen to minimise the energy of the wave function. This will always be constructive interference. This is also independent of the "original" phase of the orbital that is combined with another orbital. In other words, from \eqref{LCAO}
+%$$\phi_i'(\mathbf{x}) = c_{1,i}\chi_1(\mathbf{x}) + c_{2,i}\chi_2(\mathbf{x}) \equiv c_{1,i}\chi_1(\mathbf{x}) - c_{2,i}[-\chi_2(\mathbf{x})].$$
+
+
+\begin{enumerate}
+\item \url{https://chemistry.stackexchange.com/questions/16175/what-is-the-point-of-introducing-virtual-orbitals-in-hartree-fock-calculations?rq=1}
+\item  \url{https://chemistry.stackexchange.com/questions/6580/lcao-linear-combination-of-atomic-orbitals-and-phases/15117#15117}
+\item \url{https://chemistry.stackexchange.com/questions/143776/origin-of-virtual-molecular-orbitals-in-hartree-fock-equations}
+\end{enumerate}
+\end{document}

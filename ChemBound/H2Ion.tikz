@@ -1,0 +1,15 @@
+\begin{tikzpicture}
+	%coordinates
+	\node (N1) at (-1,0) {};
+	\node (N2) at (2,-0.5) {};
+	\node (e) at (2,2) {};
+	%Vectors
+	\draw[latex-latex] (N1) -- node[circle, fill=white] {$R_{ab}$} (N2);
+	\draw[-latex] (N1) -- node[circle, fill=white] {$r_{a}$} (e);
+	\draw[-latex] (N2) -- node[circle, fill=white] {$r_{b}$} (e);
+	%Nuclei
+	\shade[ball color=blue!60!white] (N1) node[below=0.1cm]  {$a$} circle (0.2cm);
+	\shade[ball color=blue!60!white] (N2) node[below=0.1cm]  {$b$} circle (0.2cm);
+	%Electrons
+	\shade[ball color=red!60!white]  (e) node[above=0.1cm]  {$e$} circle (0.1cm);
+\end{tikzpicture}

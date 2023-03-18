@@ -1,0 +1,139 @@
+%%============================ Compiler Directives =======================%%
+%%                                                                        %%
+% !TeX program = xelatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+%%                                                                        %%
+%%============================== Клас документа ==========================%%
+%%                                                                        %%
+\documentclass[14pt]{article}
+\IfFileExists{ukrcorr.sty}{\usepackage{ukrcorr}}{}
+\usepackage{ifxetex}
+%%                                                                        %%
+%%========================== Мови, шрифти та кодування ===================%%
+%%
+\ifxetex                                                                        %%
+	\usepackage{fontspec}
+	\setsansfont{CMU Sans Serif}%{Arial}
+	\setmainfont{CMU Serif}%{Times New Roman}
+	\setmonofont{CMU Typewriter Text}%{Consolas}
+	\defaultfontfeatures{Ligatures={TeX}}
+	\usepackage[math-style=TeX]{unicode-math}
+\else
+	\usepackage[utf8]{inputenc}
+	\usepackage[T2A,T1]{fontenc}
+	\usepackage{amsmath}
+	%\usepackage{pscyr}
+	\usepackage{cmap}
+\fi
+\usepackage[english, russian, ukrainian]{babel}
+%%                                                                        %%
+%%============================= Геометрія сторінки =======================%%
+%%                                                                        %%
+\usepackage[%
+	a4paper,%
+	footskip=1cm,%
+	headsep=0.3cm,%
+	top=2cm, %поле сверху
+	bottom=2cm, %поле снизу
+	left=2cm, %поле ліворуч
+	right=2cm, %поле праворуч
+    ]{geometry}
+%%                                                                        %%
+%%============================== Інтерліньяж  ============================%%
+%%                                                                        %%
+\renewcommand{\baselinestretch}{1}
+%-------------------------  Подавление висячих строк  --------------------%%
+\clubpenalty =10000
+\widowpenalty=10000
+%---------------------------------Інтервали-------------------------------%%
+\setlength{\parskip}{0.5ex}%
+\setlength{\parindent}{2.5em}%
+%%                                                                        %%
+%%=========================== Математичні пакети і графіка ===============%%
+%%                                                                        %%
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{decorations.pathreplacing}
+
+%%                                                                        %%
+%%========================== Гіперпосилення (href) =======================%%
+%%                                                                        %%
+\usepackage[%colorlinks=true,
+	%urlcolor = blue, %Colour for external hyperlinks
+	%linkcolor  = malina, %Colour of internal links
+	%citecolor  = green, %Colour of citations
+	bookmarks = true,
+	bookmarksnumbered=true,
+	unicode,
+	linktoc = all,
+	hypertexnames=false,
+	pdftoolbar=false,
+	pdfpagelayout=TwoPageRight,
+	pdfauthor={Ponomarenko S.M. aka sergiokapone},
+	pdfdisplaydoctitle=true,
+	pdfencoding=auto
+	]%
+	{hyperref}
+		\makeatletter
+	\AtBeginDocument{
+	\hypersetup{
+		pdfinfo={
+		Title={\@title},
+		}
+	}
+	}
+	\makeatother
+%%                                                                        %%
+%%============================ Заголовок та автори =======================%%
+%%                                                                        %%
+\title{}
+\author{}
+%%                                                                        %%
+%%========================================================================%%
+
+
+\begin{document}
+
+\begin{tikzpicture}[
+spin/.pic = {
+                \draw[-stealth] (0,-0.25) -- (0,0.25);
+            }
+]
+
+
+    \draw[-latex] (-1.5,-4.5) -- ++(0,{2*8}) node[left] {$E$};
+
+%    \draw[ultra thick, red] foreach \i [count=\ni] in {-4,-3,...,4} {(-1,\i) coordinate(a\ni) node[left, black] { $\left|\phi_0\right\rangle_\ni$} -- (1,\i) coordinate(A\ni) };
+
+%    \foreach \i in {1,2,...,9} {\pic at ([xshift=0.9cm]a\i) {spin}; \pic[rotate=180] at ([xshift=1.1cm]a\i) {spin};}
+
+    \draw[ultra thick, blue] foreach \i [count=\ni] in {-4.5,-3.5,...,3.5} {(-1,\i)  coordinate(B\ni) -- (1,\i) coordinate(b\ni)  node[right, black] { $\phi_\ni$}};
+
+    \foreach \i in {1,2,...,9} {\pic at ([xshift=0.9cm]B\i) {spin}; \pic[rotate=180] at ([xshift=1.1cm]B\i) {spin};}
+
+    \draw[ultra thick, dashed, blue] foreach \i [count=\ni] in {4.5,5.5,...,10.5} {(-1,\i)   -- (1,\i) coordinate(V\ni) };
+
+    \node [right] at (V1) {$\phi_{10}$};    \node [right] at (V7) {$|\phi_{\infty}$};
+
+%    \draw[dashed] foreach \i in {1,...,9} {(A\i) -- (B\i) };
+
+    \draw [decorate,decoration={brace,amplitude=5pt,mirror,raise=8ex}]       (V1) -- (V7)  node[midway, right=2cm, text width = 5cm]{Virtual orbitals as an eigenvectors of final\\ $\hat F_{n}$ operator};
+
+%    \draw [decorate,decoration={brace,amplitude=5pt,mirror,raise=4ex}]       (a1) --  (A1)
+%    node[below=1cm, midway, text width=6cm, align=center]{ Initial RHF equations \\
+%    $\hat F_{0n} \left|\phi_0\right\rangle_n = \varepsilon_n \left|\phi_0\right\rangle_n $};
+
+    \draw [decorate,decoration={brace,amplitude=5pt,mirror,raise=4ex}]       (B1) --  (b1)
+    node[below=1cm, midway, text width=6cm, align=center]{
+    $\hat F_{n} \phi_n = \varepsilon_n \phi_n $};
+
+%    \draw [decorate,decoration={brace,amplitude=5pt,raise=8ex}] (A9|-B9) -- node[above=10ex] {Iteration procedure} (B9);
+
+\end{tikzpicture}
+
+
+\end{document}
+
+

@@ -1,0 +1,156 @@
+[0] Config.pm:306> INFO - This is Biber 2.18
+[0] Config.pm:309> INFO - Logfile is 'QChemBook.blg'
+[161] biber-MSWIN32:340> INFO - === 
+[216] Biber.pm:418> INFO - Reading 'QChemBook.bcf'
+[431] Biber.pm:975> INFO - Using all citekeys in bib section 0
+[459] Biber.pm:4401> INFO - Processing section 0
+[477] Biber.pm:4592> INFO - Looking for bibtex file 'QchemBook.bib' for section 0
+[555] bibtex.pm:1713> INFO - LaTeX decoding ...
+[619] bibtex.pm:1518> INFO - Found BibTeX data source 'QchemBook.bib'
+[863] UCollate.pm:68> INFO - Overriding locale 'uk-UA' defaults 'variable = shifted' with 'variable = non-ignorable'
+[877] UCollate.pm:68> INFO - Overriding locale 'uk-UA' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[877] Biber.pm:4221> INFO - Sorting list 'nty/global//global/global' of type 'entry' with template 'nty' and locale 'uk-UA'
+[936] bbl.pm:654> INFO - Writing 'QChemBook.bbl' with encoding 'UTF-8'
+[955] bbl.pm:757> INFO - Output to QChemBook.bbl
+[955] Biber.pm:130> WARN - ISBN '1-4292-1812-6,978-1-429-21812-2' in entry 'Atkins' is invalid - run biber with '--validate_datamodel' for details.
+[955] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[955] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[955] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[955] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[955] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[955] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[955] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[955] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[955] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[955] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[955] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[955] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[955] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[956] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[956] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[956] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[956] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[956] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[956] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[956] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[956] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[956] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[956] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[956] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[956] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[956] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[956] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[956] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[956] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[956] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[956] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[956] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[956] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[956] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[957] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[957] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[957] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[957] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[957] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[957] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[957] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[957] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[957] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[957] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[957] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[957] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[957] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[957] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[957] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[957] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[957] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[957] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[957] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[957] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[957] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[958] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[958] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[958] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[958] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[958] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[958] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[958] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[958] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[958] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[958] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[958] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[958] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[958] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[958] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[958] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[958] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[958] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[958] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[958] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[958] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[958] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[958] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[959] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[959] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[959] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[959] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[959] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[959] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[959] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[959] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[959] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[959] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[959] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[959] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[959] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[959] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[959] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[959] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[959] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[959] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[959] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[959] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[960] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[960] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[960] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[960] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[960] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[960] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[960] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[960] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[960] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[960] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[960] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[960] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[960] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[960] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[960] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[960] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[960] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[960] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[960] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[960] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[960] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[960] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[961] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[961] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[961] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[961] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[961] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[961] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[961] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[961] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[961] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[961] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[961] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[961] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[961] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[961] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[961] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[961] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[961] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[961] Biber.pm:130> WARN - Field 'volume' in sorting template is not a sortable field
+[961] Biber.pm:130> WARN - Field 'book' in sorting template is not a sortable field
+[961] Biber.pm:130> WARN - Field 'part' in sorting template is not a sortable field
+[961] Biber.pm:130> WARN - Field 'issue' in sorting template is not a sortable field
+[962] Biber.pm:132> INFO - WARNINGS: 141

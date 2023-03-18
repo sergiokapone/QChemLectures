@@ -1,0 +1,172 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+% !BIB program = biber
+
+\documentclass[]{beamer}
+\usetheme{QuantumChemistry}
+\usepackage{QuantumChemistry}
+\colorlet{colexam}{red!75!black}
+\newtcolorbox[use counter=example]{myexample}{%
+empty,title={Example \thetcbcounter},attach boxed title to top left,
+boxed title style={empty,size=minimal,toprule=2pt,top=4pt,
+overlay={\draw[colexam,line width=2pt]
+([yshift=-1pt]frame.north west)--([yshift=-1pt]frame.north east);}},
+coltitle=colexam,fonttitle=\Large\bfseries,
+before=\par\medskip\noindent,parbox=false,boxsep=0pt,left=0pt,right=3mm,top=4pt,
+breakable,pad at break*=0mm,vfill before first,
+overlay unbroken={\draw[colexam,line width=1pt]
+([yshift=-1pt]title.north east)--([xshift=-0.5pt,yshift=-1pt]title.north-|frame.east)
+--([xshift=-0.5pt]frame.south east)--(frame.south west); },
+overlay first={\draw[colexam,line width=1pt]
+([yshift=-1pt]title.north east)--([xshift=-0.5pt,yshift=-1pt]title.north-|frame.east)
+--([xshift=-0.5pt]frame.south east); },
+overlay middle={\draw[colexam,line width=1pt] ([xshift=-0.5pt]frame.north east)
+--([xshift=-0.5pt]frame.south east); },
+overlay last={\draw[colexam,line width=1pt] ([xshift=-0.5pt]frame.north east)
+--([xshift=-0.5pt]frame.south east)--(frame.south west);},%
+}
+
+\begin{document}
+
+%==============================================================================================
+
+%\begin{frame}
+%
+%\begin{center}
+%	\begin{tikzpicture}
+%        \draw[->] (0,0) -- (1,0);
+%        \draw[->] (0,0) -- (0,1,0);
+%        \draw[->] (0,0) -- (0,0,1);
+%        \node [circle, ball color=red, minimum size=10pt, inner sep=0pt] (Li) at (1,2) {};
+%        \node [circle, ball color=blue, minimum size=5pt, inner sep=0pt] (H) at (4,2) {};
+%		\shade[even odd rule, inner color=red,outer color=red!20 ,fill opacity=0.3] (3,2) ellipse (3 and 1);
+%        \coordinate (e) at (3,2);
+%        \draw [->] (0,0) -- node[left, pos=0.65] {$\vec R_{\ce{Li}}$} (Li);
+%        \draw [->] (0,0) -- node[right, anchor=north west] {$\vec R_{\ce{H}}$} (H);
+%        \draw [-stealth] (Li) -- node[above] {$\vec r_{\ce{Li}}$} (e);
+%        \draw [-stealth] (H) -- node[above] {$\vec r_{\ce{H}}$} (e);
+%        \draw [-stealth] (0,0) -- node[above] {$\vec{r}$} (e);
+%	\end{tikzpicture}
+%\end{center}
+%
+%\end{frame}
+
+
+%============================================================================
+%\begin{frame}{}{}
+%      				\begin{center}
+%					\begin{tikzpicture}[scale=2.5, >=latex]
+%						\message{^^JMorse potential}
+%						\def\xmax{2} % max x axis
+%						\def\A{1}
+%						\def\b{3.3}
+%						\def\a{(0.26*\xmax)}
+%
+%						\def\ymax{1.50}  % max y axis
+%						\draw[->,thick] (0,-0.1*\ymax) -- (0,1.1*\ymax) node[left, pos=0.8] {$E_e$};
+%						\draw[->,thick] (-0.1*\ymax,0) -- (1.2*\xmax,0) node[below, pos=0.6, font=\tiny] {Міжмолекулярна відстань};
+%						\draw[red, samples=100,smooth, name path=parabola, variable=\x,domain=0.34*\a:1.66*\a]     plot(\x,{\A*\b^2*(\x-\a)^2});
+%                        \foreach \i[count=\j] in {0.1,0.2,...,1}%
+%                        {
+%                            \path[name path={E\j}] (0, \i) -- ({1.2*\xmax},\i);
+%                            \draw[red,name intersections={of={E\j} and parabola}] (intersection-1) -- (intersection-2);
+%                        }
+%						\node[below] at ({\a}, 0) {$R_0$};
+%						\draw[blue, name path=morse, samples=100,smooth,variable=\x,domain=0.145*\xmax:1.2*\xmax]
+%						plot(\x,{\A*(1-exp(-\b*(\x-\a)))^2});
+%                        \foreach \i[count=\j from 0] in {0.12,0.24,0.36,...,0.92}%
+%                        {
+%                            \path[name path={E\j}] (0, \i) -- ({1.2*\xmax},\i);
+%                            \draw[blue,name intersections={of={E\j} and morse}] (intersection-1) -- (intersection-2) node[right, font=\tiny, black] {$n = \j$};
+%                        }
+%                        \draw[dashed] (0, {\A+0.05}) -- (1.2*\xmax, {\A+0.05}) node[above, font=\tiny, pos=0.6] {Дисоціаційна межа};
+%						\node[atom] (A) at ({\a - \a/3}, {0.95*\ymax}) {};
+%						\node[atom] (B) at ({\a + \a/3}, {0.95*\ymax}) {};
+%						\draw[boundH] (A) -- node[above] {} (B);
+%					\end{tikzpicture}
+%				\end{center}
+%\end{frame}
+%============================================================================
+
+%============================================================================
+%\begin{frame}{}{}
+%    \begin{center}
+%				\begin{tikzpicture}[scale=0.6,
+%						every node/.style={scale=0.6},
+%						nucleus/.style={ball color=blue, circle},
+%						electron/.style={ball color=red, circle, inner sep=1pt},
+%						fw/.style={fill=white, inner sep=1pt},
+%					]
+%					\node[nucleus] (Z1) at (-1,0) {}; \node[below=5pt] at (Z1) {$Z_1$};
+%					\node[nucleus] (Z2) at (5,4) {}; \node[right=5pt] at (Z2) {$Z_2$};
+%					\node[nucleus] (Z3) at (3,-1) {}; \node[below=5pt] at (Z3) {$Z_3$};
+%
+%					\node[electron] (e1) at (-3,3) {}; \node[left=5pt] at (e1) {$e_1$};
+%					\node[electron] (e2) at (1,6) {}; \node[left=5pt] at (e2) {$e_2$};
+%					\node[electron] (e3) at (7,0.5) {}; \node[below=5pt] at (e3) {$e_3$};
+%
+%					\draw[blue] (Z1) -- node[fw] {$R_{12}$} (Z2) -- node[fw] {$R_{32}$} (Z3) -- node[fw] {$R_{13}$} (Z1);
+%					\draw[green!50!black]   (Z1) -- node[fw]            {$r_{1_{Z_1}}$} (e1)
+%					(Z2) -- node[pos=0.7,fw]      {$r_{1_{Z_2}}$} (e1)
+%					(Z3) -- node[fw,pos=0.6]            {$r_{1_{Z_3}}$} (e1)
+%					%
+%					(Z1) -- node[fw,pos=0.6]           {$r_{2_{Z_1}}$}  (e2)
+%					(Z2) -- node[fw]          {$r_{2_{Z_2}}$}  (e2)
+%					(Z3) -- node[fw, pos=0.75] {$r_{2_{Z_3}}$}  (e2)
+%					%
+%					(Z1) -- node[fw,pos=0.7]   {$r_{3_{Z_1}}$} (e3)
+%					(Z2) -- node[fw]           {$r_{3_{Z_2}}$} (e3)
+%					(Z3) -- node[fw]           {$r_{3_{Z_3}}$} (e3)
+%					;
+%					\draw[dashed,red]       (e1) -- node[fw]           {$r_{12}$}     (e2)
+%					(e1) -- node[fw,pos=0.6]           {$r_{13}$}     (e3)
+%					(e2) --  node[fw,pos=0.3] {$r_{23}$}     (e3)
+%					;
+%				\end{tikzpicture}
+%			\end{center}
+%\end{frame}
+%============================================================================
+
+%============================================================================
+%\begin{frame}{}{}
+%           \begin{center}
+%				\begin{tikzpicture}[scale=0.6,
+%						every node/.style={scale=0.6},
+%						nucleus/.style={ball color=blue, circle, inner sep=5pt},
+%						electron/.style={ball color=red, circle, inner sep=1pt},
+%						fw/.style={fill=white, inner sep=1pt},
+%					]
+%					\node[nucleus] (Z1) at (-1,0) {};  %\node[below=5pt] at (Z1) {$Z_1$};
+%					\node[nucleus] (Z2) at (1,-0.5) {};   %\node[right=5pt] at (Z2) {$Z_2$};
+%					\node[nucleus] (Z3) at (0,1) {};  %\node[below=5pt] at (Z3) {$Z_3$};
+%
+%%                    \clip (0,0) circle (4);
+%                    \pgfmathsetseed{4}
+%                    \foreach \p in {1,...,20}
+%                    { \node[electron] at (2*rand,2*rand) {};
+%                    }
+%
+%				\end{tikzpicture}
+%			\end{center}
+%\end{frame}
+%============================================================================
+
+%============================================================================
+\begin{frame}{}{}
+
+\begin{myitemize}
+sadsadf
+safsdf
+asdfadsf
+
+\end{myitemize}
+
+\end{frame}
+%============================================================================
+
+\end{document}
+
+%            \ifnum\i<4
+%            pic[pos=0.35] {upspinarrow}  pic[pos=0.65] {downspinarrow}
+%            \fi

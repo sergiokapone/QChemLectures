@@ -1,0 +1,24 @@
+\documentclass[tikz, border=0.25cm]{standalone}
+\usepackage{pgfplots, chemfig}
+\usetikzlibrary{shapes.misc}
+
+\begin{document}
+
+\begin{tikzpicture}
+    \begin{axis}[
+        axis lines = middle,
+        xtick = \empty,
+%        xticklabels={0, $120$, $240$, $360$ },
+        ytick = \empty,
+        enlarge x limits=0.1,
+        enlarge y limits=0.1,
+        xlabel= {$\alpha$},
+        ylabel= {$E$},
+        width=\linewidth,
+        height=0.7 5\linewidth,
+        ]
+            \addplot[domain=-1.05*pi:1.05*pi, samples=100] {3 + cos(deg(x + pi))- 2*cos(2*deg(x + pi)) - 2*cos(3*deg(x + pi) )  };
+    \end{axis}
+\end{tikzpicture}
+
+\end{document}
