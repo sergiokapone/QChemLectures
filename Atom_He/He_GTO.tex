@@ -6,7 +6,8 @@
 %%                                                                        %%
 %%============================== Клас документа ==========================%%
 %%                                                                        %%
-\documentclass[14pt]{extarticle}
+\documentclass[]{article}
+\usepackage[fontsize=14pt]{fontsize}
 %%                                                                        %%
 %%========================== Мови, шрифти та кодування ===================%%
 %%                                                                        %%
@@ -16,10 +17,23 @@
 \setmonofont{CMU Typewriter Text}%{Consolas}
 \defaultfontfeatures{Ligatures={TeX}}
 \usepackage[math-style=TeX]{unicode-math}
-\usepackage[russian, ukrainian, english]{babel}
+\usepackage[russian, english, ukrainian]{babel}
 \usepackage{biblatex}
 \usepackage{xurl}
+\usepackage{indentfirst}
+\usepackage[most]{tcolorbox}
+\tcbset{highlight math style={enhanced,
+  colframe=red,colback=white,arc=0pt,boxrule=1pt}}
+\usepackage{subcaption}
+\captionsetup[subfigure]{justification=centering}
 \usepackage{hyperref}
+\usepackage{titlesec}
+\titlelabel{\thetitle.\space}
+\usepackage{minted}
+\usepackage{tikz, calc}
+\usepackage{enumitem}
+
+
 \addbibresource{d:/Projects/LaTeX/QChem/A_Documents/Syllabus_QChem/Syllabus_QChem.bib}
 
 %%                                                                        %%
@@ -44,49 +58,142 @@
 \usepackage{pgfplotstable}
 \usepgfplotslibrary{groupplots}
 
-\title{Basis sets for Helium}
-\date{}
 
+
+\def\C#1{{\color{teal}#1}}
+\def\a#1{{\color{magenta}#1}}
+\def\sgto#1{\left(\frac{2\cdot\a{#1}}{\pi}\right)^{3/4} e^{-\a{#1}\cdot r^2}}
+\NewDocumentCommand{\He}{}{
+\tikz[baseline=-5pt]{
+    \coordinate (dv) at (0,0);
+    \coordinate (base) at (50pt, 0pt);
+    \coordinate (height) at (0pt,50pt);
+    \coordinate (diag) at ($(base)+(height)$);
+    \path[draw=teal!80!black, rounded corners=2pt, fill=teal, thick] ($(dv)-.5*(diag)$) rectangle +(diag);
+    \node[white] at (dv) {\sffamily\huge He};
+    \node[white, inner sep=2pt] (dvtext) at ($(dv)-.5*(height)$) [anchor=south] {\sffamily\tiny Helium};
+    \node[white, inner sep=2pt] (dvnum) at ($(dv)+.5*(height)-.5*(base)$) [anchor=north west] {\sffamily\tiny 2};
+    \node[white, inner sep=2pt] (elestruct) at ($(dv)+.5*(height)+.1*(base)$) [anchor=north west] {\sffamily\tiny $1s^2$};
+}
+}
+
+\title{\bfseries Базисні набори для атома \He}
+\date{}
 %===============================================================================
 \begin{document}
 \maketitle
 
-\section{What is basis?}
+\section{Що таке базис?}
 
-One of the three major decisions for the scientist is which basis set to use. There are two general categories of basis sets:
+Базисний набір --- функції, що слугують для представлення наближеної хвильової функції атома (чи молекули).  Чим точніше цей набір обрано, тим точніше можна отримати результати при розв'язанні рівнянь Хартрі-Фока, що визначають електронну структуру системи.
 
-\textbf{Minimal basis sets}: a basis set that describes only the most basic aspects of the orbitals.
+Базиси для представлення орбіталей:
 
-\textbf{Extended basis sets}: a basis set with a much more detailed description
+\begin{equation*}
+    \phi(x, y, z) = \sum_{i=1}^M c_i \chi_i(x, y, z | \zeta).
+\end{equation*}
 
-\section{Slater Type Orbital and Gaussian Type Orbital}
+\section{Орбіталі слейтерового типу (STO) та орбіталі гаусового типу}
 
-Slater Type Orbital (STO) equation is:
+\href{https://en.wikipedia.org/wiki/Gaussian_orbital}{Орбіталі слейтерового типу (STO)}:
 
 \begin{equation}\label{STO}
-	\mathrm{STO} = \frac{(2\zeta)^{n+\frac12}}{\sqrt{(2n)!}} r^{n - 1}e^{-\zeta r}.
+	\tcbhighmath{\mathrm{STO} = \frac{(2\zeta)^{n+\frac12}}{\sqrt{(2n)!}} r^{n - 1}e^{-\zeta r}\times\text{Linear combination of $Y$}.
+	}
 \end{equation}
 
-Gaussian Type Orbital (GTO) equation:
+\href{https://en.wikipedia.org/wiki/Slater-type_orbital}{Орбіталі гаусового типу (GTOs)}:
 
 \begin{equation}\label{GTO}
-	\mathrm{GTO}(x,y,z;\alpha,i,j,k) = \left(\frac{2\alpha}{\pi}\right)^{3/4}\sqrt{\frac{(8\alpha)^{i + j + k} i!j!k!}{(2i)!(2j)!(2k)!}} x^{i} y^{j} z^{k} e^{-\alpha r^2}
+	\tcbhighmath{\mathrm{GTO}(x,y,z;\alpha,i,j,k) = \left(\frac{2\alpha}{\pi}\right)^{3/4}\sqrt{\frac{(8\alpha)^{i + j + k} i!j!k!}{(2i)!(2j)!(2k)!}} x^{i} y^{j} z^{k} e^{-\alpha r^2}
+	}
 \end{equation}
 
-When $i + j + k = 0$ (that is, $i = 0$, $j = 0$, $k = 0$), the GTF is called an s-type
-Gaussian. When $i + j + k = 1$, we have a p-type Gaussian, which contains the factor $x$,
-$y$, or $z$. When $i + j + k = 2$, we have a d-type Gaussian.
+Коли $i + j + k = 0$ (такі що, $i = 0$, $j = 0$, $k = 0$), GTO називається $s$-типу.
 
-Notice that the difference between the STO and GTO is in the $r$-expotetnt The GTO squares the $r$ so that the product of the gaussian <<primitives>> (original gaussian equations) is another gaussian. By doing this, we have an equation we can work with and so the equation is much easier. However, the price we pay is loss of accuracy. To compensate for this loss, we find that the more gaussian equations we combine, the more accurate our equation.
+Якщо $i + j + k = 1$, маємо гауссову функцію $p$-типу, яка містить множник $x$,
+$y$, or $z$. Якщо $i + j + k = 2$, ми маємо $d$-тип GTO.
 
-All basis set equations in the form STO-nG (where n represents the number of GTOs combined to approximate the STO) are considered to be <<minimal>> basis sets. The <<extended>> basis sets, then, are the ones that consider the higher orbitals of the molecule and account for size and shape of molecular charge distributions.
+Різниця між STO і GTO полягає у $r$-експоненті. GTO підносить $r$ до квадрату, так що добуток гауссових <<примітивів>> (вихідних гауссових рівнянь) є іншою гауссовою величиною. Таким чином, ми отримуємо рівняння, з яким можна працювати, і яке значно спрощується. Однак, ціна, яку ми платимо --- це втрата точності. Щоб компенсувати цю втрату, ми виявили, що чим більше гауссових рівнянь ми комбінуємо, тим точніше наше рівняння.
 
-\section{Helium Basis}
+Усі рівняння базисного набору у формі STO-nG (де $n$ --- кількість GTO, об'єднаних для апроксимації STO) вважаються <<мінімальними>> базисними наборами. <<Розширені>> базисні набори --- це ті, що враховують вищі орбіталі молекули і враховують розмір і форму розподілу молекулярного заряду.
+
+%% --------------------------------------------------------
+\section{Мінімальний базис STO-3G}
+%% --------------------------------------------------------
+
+\begin{equation*}
+	\text{STO-3G} =
+    {\color{blue} c_1 \cdot  \left(\frac{2\alpha_1}{\pi}\right)^{3/4}e^{-\alpha_1r^2}
+    }
+	+
+	{\color{magenta!50}
+	c_2 \cdot  \left(\frac{2\alpha_2}{\pi}\right)^{3/4}e^{-\alpha_2r^2}
+    }
+	+
+	{\color{teal}
+	c_3 \cdot \left(\frac{2\alpha_3}{\pi}\right)^{3/4}e^{-\alpha_3r^2}
+    }
+\end{equation*}
+
+%%basis
+%    NewGTO He
+%    S   3
+%    1         0.6362421394E+01       0.1543289673E+00
+%    2         0.1158922999E+01       0.5353281423E+00
+%    3         0.3136497915E+00       0.4446345422E+00
+%    end
+%end
+
+\begin{figure}[!h]\centering
+	\begin{tikzpicture}[
+        declare function = {
+            gto(\c,\a,\r)=\c*(2*\a/pi)^(3/4)*exp(-\a*\r^2);
+            sto(\z,\r)=sqrt((2*\z)^3/(8*pi))*exp(-\z*\r);
+        },
+        ]
+		\begin{axis}[
+                width=0.75\linewidth,
+				axis lines=left,
+				xlabel=$r$,
+				ylabel=STO,
+                samples=200,
+			]
+
+			\addplot [dashed, domain={0:4}]
+			{sto(1.7,x)} node [pos=0.1, pin=0:STO] (s1) {};
 
 
-Basis
+			\addplot [blue, domain={0:4}, smooth]
+			{gto(0.154, 0.636e1, x)} node [pos=0.1] (g1) {};
 
-	{\small \begin{verbatim}
+			\addplot [magenta, domain={0:4}, smooth]
+			{gto(0.535, 0.116e1, x)} node [pos=0.2] (g2) {};
+
+			\addplot [teal, domain={0:4}, smooth]
+			{gto(0.445, 0.314e0, x)} node [pos=0.2] (g3) {};
+
+			\addplot [thick, domain={0:4}, smooth, red]
+			{%
+                gto(0.154, 0.636e1, x) +
+                gto(0.535, 0.116e1, x)+
+                gto(0.445, 0.314e0, x)
+            } node [pos=0.2, pin=0:STO-3G] (gs) {};
+
+		\end{axis}
+	\end{tikzpicture}
+\caption{Представлення STO трьома GTO}
+\end{figure}
+
+%% --------------------------------------------------------
+\clearpage
+\section{Побудова STO на основі базису}
+%% --------------------------------------------------------
+
+
+Базис
+
+\begin{minted}[fontsize=\small, bgcolor=gray!10]{text}
 %basis
  NewGTO He
  S 3
@@ -97,25 +204,63 @@ Basis
    1       0.2975781595      1.0000000000
   end
 end
-\end{verbatim}}
+\end{minted}
 
-ORCA orbitals
 
-	{\small \begin{verbatim}
-                      0         1
-                  -0.91413   1.39986
-                   2.00000   0.00000
-                  --------  --------
-  0He  1s         0.592081 -1.149818
-  0He  2s         0.513586  1.186959
-\end{verbatim}}
+Побудова STO на обнові базису:
+\begin{multline*}
+	\mathrm{STO}_1 = \sum_{i = 1}^3 C_i \cdot GTO(\alpha_i) = \\
+	= \C{0.0401838903}\cdot\sgto{38.3549367370} +\\
+	+ \C{0.2613913445}\cdot\sgto{5.7689081479} +\\
+	+ \C{0.7930391578}\cdot\sgto{1.2399407035}
+\end{multline*}
 
-So I have
+\begin{multline*}
+	\mathrm{STO}_2 =  C_i \cdot GTO(\alpha_i) = \\ = \C{1.0000000000}\cdot\sgto{0.2975781595}.
+\end{multline*}
 
-\[
-	\phi_{1s} = 0.592081 \cdot \sum_{i = 1}^3 C_i GTO(\alpha_i)  + 0.513586 \cdot C_j  GTO(\alpha_j),
-\]
-where $\alpha_i$, $C_i$ and $\alpha_j$, $C_j$ presented in basis (first column for $\alpha$'s and second one for $C$'s).
+%% --------------------------------------------------------
+\clearpage
+\section{Розрахунки орбіталей в ORCA}
+%% --------------------------------------------------------
+
+
+Виведення ORCA
+
+\begin{minted}[fontsize=\small, bgcolor=gray!10]{text}
+                    0         1
+                -0.91413   1.39986
+                 2.00000   0.00000
+                --------  --------
+0He  1s         0.592081 -1.149818
+0He  2s         0.513586  1.186959
+\end{minted}
+
+Орбіталі:
+
+\begin{align*}
+	\phi_{0} & = \C{0.592081} \cdot \mathrm{STO}_1  + \C{0.513586} \cdot \mathrm{STO}_1, \quad \text{двічі заселена орбіталь}           \\
+	\phi_{1} & = \C{-1.149818} \cdot \mathrm{STO}_1  + \C{1.186959} \cdot \mathrm{STO}_1. \quad \text{віртуальна (незаселена) орбіталь}
+\end{align*}
+
+Детермінант Слейтера (\emph{\color{red}будується лише із заселених орбіталей}):
+\begin{equation*}
+	\Phi(\vec\xi_1, \vec\xi_2) = \phi_{0}(\vec{r}_1)\phi_{0}(\vec{r}_2)\left[\alpha(1)\beta(2) - \alpha(2)\beta(1)\right] .
+\end{equation*}
+
+Електронна густина (\emph{\color{red}рахується лише по заселеним орбіталям}):
+\begin{equation*}
+	\rho =  2\cdot|\phi_{0}|^2 .
+\end{equation*}
+
+Незаселені орбіталі не мають фізичного сенсу (артефакт методу).
+
+
+
+%% --------------------------------------------------------
+\section{Побудова орбіталей}
+%% --------------------------------------------------------
+
 
 %=================== Побудова засобами pgfplots ===================
 
@@ -161,50 +306,65 @@ where $\alpha_i$, $C_i$ and $\alpha_j$, $C_j$ presented in basis (first column f
 			phi(\x) =  c1*(g1s1(\x) + g1s2(\x) + g1s3(\x)) + c2*(g2s1(\x));
 		},
 }
-\begin{center}
-	\begin{tikzpicture}
-		\begin{axis}[
-				ymax=2.2,
-				ymin=-0,
-				xmax=4,
-				axis lines=left,
-				xlabel={$r$, bohr},
-				ylabel=$\phi$,
-			]
-			%			\addplot [dashed, domain={0:4}, smooth]     {sto1s(x)};
 
-			%			\addplot [cyan, domain={0:4}, smooth]       {g1s1(x)} ;
-			%			\addplot [magenta, domain={0:4}, smooth]    {g1s2(x)}  ;
-			%			\addplot [green, domain={0:4}, smooth]      {g1s3(x) } ;
-			%			\addplot [green, domain={0:4}, smooth]      {g1s4(x) } ;
+%=========================================================
+\begin{figure}[h!]\centering
+	%---------------------------------------------------------
+	\begin{subfigure}[t]{0.45\linewidth}\centering
+		\begin{tikzpicture}
+			\begin{axis}[
+					ymax=2.2,
+					ymin=-0,
+					xmax=4,
+					axis lines=left,
+					xlabel={$r$, bohr},
+					ylabel=$\phi$,
+					width=0.95\linewidth,
+				]
+				%			\addplot [dashed, domain={0:4}, smooth]     {sto1s(x)};
 
-			%            \addplot [thick, domain={0:4}, smooth, dashed, samples=1500] {-0.592081*(g1s1(x) + g1s2(x) + g1s3(x) + g1s4(x))} ;
-			%            \addplot [thick, domain={0:4}, smooth, dashed, samples=1500] {- 0.513586*(g2s1(x) + g2s2(x) + g2s3(x) + g2s4(x))} ;
-			\addplot [thick, domain={0:4}, smooth, red, samples=1500] {phi(x)} ;
-			\addplot [thick, domain={0:4}, smooth, dashed, samples=1500] {c1 * sto1s(x) + c2 * sto2s(x)} ;
-			%			\legend{STO,STO-4G}
-		\end{axis}
-	\end{tikzpicture}
-	%%--------------------------------------------------------------------------------------------------
-	\begin{tikzpicture}
-		\begin{axis}[
-				ymax=1.8,
-				xmax=7,
-				axis lines=left,
-				xlabel={$r$, bohr},
-				ylabel=$4\pi r^2 \rho(r)^2$,
-			]
-			%			\addplot [dashed, domain={0:4}, smooth]     {sto2s(x)};
-			%
-			%%			\addplot [cyan, domain={0:4}, smooth]       {g1s1(x)} ;
-			%%			\addplot [magenta, domain={0:4}, smooth]    {g1s2(x)}  ;
-			%%			\addplot [green, domain={0:4}, smooth]      {g1s3(x) } ;
-			%%			\addplot [green, domain={0:4}, smooth]      {g1s4(x) } ;
+				%			\addplot [cyan, domain={0:4}, smooth]       {g1s1(x)} ;
+				%			\addplot [magenta, domain={0:4}, smooth]    {g1s2(x)}  ;
+				%			\addplot [green, domain={0:4}, smooth]      {g1s3(x) } ;
+				%			\addplot [green, domain={0:4}, smooth]      {g1s4(x) } ;
 
-			\addplot [thick, domain={0:7}, smooth, red] {4*pi*x^2*2*(phi(x))^2} ;
-		\end{axis}
-	\end{tikzpicture}
-\end{center}
+				%            \addplot [thick, domain={0:4}, smooth, dashed, samples=1500] {-0.592081*(g1s1(x) + g1s2(x) + g1s3(x) + g1s4(x))} ;
+				%            \addplot [thick, domain={0:4}, smooth, dashed, samples=1500] {- 0.513586*(g2s1(x) + g2s2(x) + g2s3(x) + g2s4(x))} ;
+				\addplot [thick, domain={0:4}, smooth, red, samples=1500] {phi(x)} ;
+				\addplot [thick, domain={0:4}, smooth, dashed, samples=1500] {c1 * sto1s(x) + c2 * sto2s(x)} ;
+				%						\legend{STO,STO-4G}
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Орбіталь}
+	\end{subfigure}
+	\qquad%---------------------------------------------------------
+	\begin{subfigure}[t]{0.45\linewidth}\centering
+		\begin{tikzpicture}
+			\begin{axis}[
+					ymax=1.8,
+					xmax=4,
+					axis lines=left,
+					xlabel={$r$, bohr},
+					ylabel=$4\pi r^2 \rho(r)$,
+					width=0.95\linewidth,
+				]
+				%			\addplot [dashed, domain={0:4}, smooth]     {sto2s(x)};
+				%
+				%%			\addplot [cyan, domain={0:4}, smooth]       {g1s1(x)} ;
+				%%			\addplot [magenta, domain={0:4}, smooth]    {g1s2(x)}  ;
+				%%			\addplot [green, domain={0:4}, smooth]      {g1s3(x) } ;
+				%%			\addplot [green, domain={0:4}, smooth]      {g1s4(x) } ;
+
+				\addplot [thick, domain={0:4}, smooth, red] {4*pi*x^2*2*(phi(x))^2} ;
+			\end{axis}
+		\end{tikzpicture}
+		\caption*{Електронна густина}
+	\end{subfigure}
+	\caption{Радіальні розподіли}
+	%---------------------------------------------------------
+\end{figure}
+%=========================================================
+
 %
 %\begin{multline*}\label{}
 %	\chi_{1s} = \sqrt{\frac{\zeta_1^3}{\pi}} e^{-\zeta_1 r} \approx \\ \approx  C_1 \left(\frac{2\alpha_1}{\pi}\right)^{3/4}e^{-\alpha_1 r^2} +
@@ -269,7 +429,7 @@ where $\alpha_i$, $C_i$ and $\alpha_j$, $C_j$ presented in basis (first column f
 %\end{multline*}
 
 
-\nocite{BSE, ORCAInput}
+\nocite{BSE, EGMI1, EGMI2, EGMI3}
 \printbibliography
 
 

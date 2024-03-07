@@ -5,11 +5,13 @@
 
 \documentclass[10pt]{beamer}
 \usetheme{QuantumChemistry}
+\usepackage{QuantumChemistry}
+
 \def\vect#1{\mathbf{#1}}
 \title[Лекції з квантової хімії]{\huge\bfseries Вступ до квантової хімії}
 \subtitle{Лекції з квантової хімії}
 \author{Пономаренко С. М.}
-\addbibresource{../Textbook/QChem.bib}
+%\addbibresource{../Textbook/QChem.bib}
 \graphicspath{{pictures/}}
 \date{}
 \begin{document}
@@ -35,314 +37,314 @@
 \end{frame}
 
 
-\begin{frame}
-	\frametitle{Приблизна структура курсу}
-	\begin{enumerate}
-		\item Історія квантової хімії
-		\item Квантова механіка водню та воднеподібних атомів
-		\item Атом гелію
-		\item Багатоелектронні атоми. Періодична система елементів
-		\item Молекулярний іон водню \ce{H_2^+} та природа хімічного зв'язку
-		\item Квантово-хімічні моделі
-		\item Опис двоатомних молекул
-		\item Багатоатомні молекули
-		\item Хімічний зв'язок в конденсованих системах
-		\item Комп'ютерні програми для квантово-хімічних розрахунків
-		\item Екзамен
-	\end{enumerate}
-\end{frame}
+%\begin{frame}
+%	\frametitle{Приблизна структура курсу}
+%	\begin{enumerate}
+%		\item Історія квантової хімії
+%		\item Квантова механіка водню та воднеподібних атомів
+%		\item Атом гелію
+%		\item Багатоелектронні атоми. Періодична система елементів
+%		\item Молекулярний іон водню \ce{H_2^+} та природа хімічного зв'язку
+%		\item Квантово-хімічні моделі
+%		\item Опис двоатомних молекул
+%		\item Багатоатомні молекули
+%		\item Хімічний зв'язок в конденсованих системах
+%		\item Комп'ютерні програми для квантово-хімічних розрахунків
+%		\item Екзамен
+%	\end{enumerate}
+%\end{frame}
 
-\begin{frame}[allowframebreaks]
-	\frametitle{Література}
-    \printbibliography
-	\nocite{*}
-\end{frame}
+%\begin{frame}[allowframebreaks]
+%	\frametitle{Література}
+%    \printbibliography
+%	\nocite{*}
+%\end{frame}
 
 %============================================================================
 \begin{frame}[t]{Історія розвитку уявлень про будову матерії}{Чи існують атоми?}
-\begin{center}
-    \includegraphics[width=0.25\linewidth]{Lavuazie} \includegraphics[width=0.25\linewidth]{Prust} \includegraphics[width=0.25\linewidth]{Dalton}
-\end{center}
-		\begin{itemize}\small
-			\item \emph{Закон збереження маси}, (1789 році \emph{Антуаном Лораном Лавуазьє}) --- маса речовини при хімічній реакції не змінюється;
-			\item \emph{Закон сталості складу} (1799 році\emph{ Жозефом Луї Прустом}) --- будь-яка хімічна сполука, не залежно від способу її отримання, складається з одних і тих же хімічних елементів;
-			\item \emph{Закон кратних відношень},  (1803 році\emph{ Джоном Дальтоном}) --- відношення мас одного елемента до іншого буде цілим числом.
-		\end{itemize}
+	\begin{center}
+		\includegraphics[width=0.25\linewidth]{Lavuazie} \includegraphics[width=0.25\linewidth]{Prust} \includegraphics[width=0.25\linewidth]{Dalton}
+	\end{center}
+	\begin{itemize}\small
+		\item \emph{Закон збереження маси}, (1789 році \emph{Антуаном Лораном Лавуазьє}) --- маса речовини при хімічній реакції не змінюється;
+		\item \emph{Закон сталості складу} (1799 році\emph{ Жозефом Луї Прустом}) --- будь-яка хімічна сполука, не залежно від способу її отримання, складається з одних і тих же хімічних елементів;
+		\item \emph{Закон кратних відношень},  (1803 році\emph{ Джоном Дальтоном}) --- відношення мас одного елемента до іншого буде цілим числом.
+	\end{itemize}
 \end{frame}
 %============================================================================
 
 \begin{frame}[t]{Історія розвитку уявлень про будову матерії}{Як атоми взаємодіють?}
-Єнс Якоб Берцеліус --- 1818, электрохімічна теорія хімічного зв'язку.
+	Єнс Якоб Берцеліус --- 1818, электрохімічна теорія хімічного зв'язку.
 
-		\begin{columns}[c]
-			\begin{column}{.1\linewidth}
-				\begin{center}
-					\includegraphics[width=1.7\linewidth]{Berzelius}
-				\end{center}
-			\end{column}
-			\begin{column}{.8\linewidth}
-				\begin{quote}
-					<<кожна хімічна сполука залежить від двох протилежних сил, додатної та від'єної електрики, так як ніякої третьої сили не існує>>
-				\end{quote}
-				\begin{center}
-					\includegraphics[width=0.75\linewidth]{DBAS.jpg}
-				\end{center}
-			\end{column}
-		\end{columns}
+	\begin{columns}[c]
+		\begin{column}{.1\linewidth}
+			\begin{center}
+				\includegraphics[width=1.7\linewidth]{Berzelius}
+			\end{center}
+		\end{column}
+		\begin{column}{.8\linewidth}
+			\begin{quote}
+				<<кожна хімічна сполука залежить від двох протилежних сил, додатної та від'єної електрики, так як ніякої третьої сили не існує>>
+			\end{quote}
+			\begin{center}
+				\includegraphics[width=0.75\linewidth]{DBAS.jpg}
+			\end{center}
+		\end{column}
+	\end{columns}
 \end{frame}
 %============================================================================
 \begin{frame}[t]{Історія розвитку уявлень про будову матерії}{А-том вже не атом}
-Дж. Дж. Томсон --- 1906, Нобелівська премія за відкриття електрона.
-		\begin{columns}[c]
-			\begin{column}{.1\linewidth}
-				\begin{center}
-					\includegraphics[width=1.7\linewidth]{Thomson}
-				\end{center}
-			\end{column}
-			\begin{column}{.8\linewidth}
-				\begin{center}
-					\includegraphics[width=0.7\linewidth]{ThomsonAtom}
-				\end{center}
-			\end{column}
-		\end{columns}
+	Дж. Дж. Томсон --- 1906, Нобелівська премія за відкриття електрона.
+	\begin{columns}[c]
+		\begin{column}{.1\linewidth}
+			\begin{center}
+				\includegraphics[width=1.7\linewidth]{Thomson}
+			\end{center}
+		\end{column}
+		\begin{column}{.8\linewidth}
+			\begin{center}
+				\includegraphics[width=0.7\linewidth]{ThomsonAtom}
+			\end{center}
+		\end{column}
+	\end{columns}
 \end{frame}
 %============================================================================
 %============================================================================
 \begin{frame}[t]{Історія розвитку уявлень про будову матерії}{Атом подібний до сонячної системи?}
-1911, планетарна модель атома Резерфорда\\
-		\begin{columns}[c]
-			\begin{column}{.1\linewidth}
-				\includegraphics[width=1.7\linewidth]{rutherford}
-			\end{column}
-			\begin{column}{.8\linewidth}
-				\begin{center}
-					\includegraphics[width=0.5\linewidth]{planet_model}
-				\end{center}
-			\end{column}
-		\end{columns}
+	1911, планетарна модель атома Резерфорда\\
+	\begin{columns}[c]
+		\begin{column}{.1\linewidth}
+			\includegraphics[width=1.7\linewidth]{rutherford}
+		\end{column}
+		\begin{column}{.8\linewidth}
+			\begin{center}
+				\includegraphics[width=0.5\linewidth]{planet_model}
+			\end{center}
+		\end{column}
+	\end{columns}
 \end{frame}
 %============================================================================
 %============================================================================
 \begin{frame}[t]{Історія розвитку уявлень про будову матерії}{Менделеєв і його пріодичний закон}
-1913, зв'язок між зарядом ядра, атомним номером і положенням атома в періодичній таблиці Д.~І.~Менделеєва
-\begin{center}
-	\includegraphics[width=0.35\linewidth]{atom}
-	\includegraphics[width=0.35\linewidth]{mendeleev}
-\end{center}
+	1913, зв'язок між зарядом ядра, атомним номером і положенням атома в періодичній таблиці Д.~І.~Менделеєва
+	\begin{center}
+		\includegraphics[width=0.35\linewidth]{atom}
+		\includegraphics[width=0.35\linewidth]{mendeleev}
+	\end{center}
 \end{frame}
 %============================================================================
 %============================================================================
 \begin{frame}[t]{Історія розвитку уявлень про будову матерії}{Квантовий атом}
-Нільс Бор --- 1913, перша квантова теорія воднеподібного атома.
-\begin{equation*}
-	\tcbhighmath[drop fuzzy shadow]{E_1, E_2, \ldots, E_n, \ldots, \quad mv_nr_n = n \hbar, \quad \hbar\omega_{} = E_m - E_n}
-\end{equation*}
-\begin{columns}[c]
-	\begin{column}{.1\linewidth}
-		\includegraphics[width=1.7\linewidth]{NielsBohr}
-	\end{column}
-	\begin{column}{.8\linewidth}
-		\begin{center}
-			\includegraphics[width=0.8\linewidth]{BohrTheory}
-		\end{center}
-	\end{column}
-\end{columns}
+	Нільс Бор --- 1913, перша квантова теорія воднеподібного атома.
+	\begin{equation*}
+		\tcbhighmath[drop fuzzy shadow]{E_1, E_2, \ldots, E_n, \ldots, \quad mv_nr_n = n \hbar, \quad \hbar\omega_{} = E_m - E_n}
+	\end{equation*}
+	\begin{columns}[c]
+		\begin{column}{.1\linewidth}
+			\includegraphics[width=1.7\linewidth]{NielsBohr}
+		\end{column}
+		\begin{column}{.8\linewidth}
+			\begin{center}
+				\includegraphics[width=0.8\linewidth]{BohrTheory}
+			\end{center}
+		\end{column}
+	\end{columns}
 \end{frame}
 %============================================================================
 %============================================================================
 \begin{frame}[t]{Історія розвитку уявлень про будову матерії}{Частинка --- хвиля?}
-1923, хвильова теорія речовини Л. де Бройля
-\begin{equation*}
-	\tcbhighmath[drop fuzzy shadow]{p = \frac{2\pi\hbar}{\lambda} = \hbar k}
-\end{equation*}
-\begin{columns}[c]
-	\begin{column}{.1\linewidth}
-		\includegraphics[width=1.7\linewidth]{Broglie}
-	\end{column}
-	\begin{column}{.8\linewidth}
-		\begin{center}
-			\includegraphics[width=0.7\linewidth]{debroil}
-		\end{center}
-	\end{column}
-\end{columns}
+	1923, хвильова теорія речовини Л. де Бройля
+	\begin{equation*}
+		\tcbhighmath[drop fuzzy shadow]{p = \frac{2\pi\hbar}{\lambda} = \hbar k}
+	\end{equation*}
+	\begin{columns}[c]
+		\begin{column}{.1\linewidth}
+			\includegraphics[width=1.7\linewidth]{Broglie}
+		\end{column}
+		\begin{column}{.8\linewidth}
+			\begin{center}
+				\includegraphics[width=0.7\linewidth]{debroil}
+			\end{center}
+		\end{column}
+	\end{columns}
 \end{frame}
 %============================================================================
 %============================================================================
 \begin{frame}[t]{Історія розвитку уявлень про будову матерії}{Частинка --- де вона?}
-1923, принцип невизначеності Гейзенберга
-\begin{equation*}
-	\tcbhighmath[drop fuzzy shadow]{\Delta x \cdot \Delta p \ge \frac{\hbar}{2}}
-\end{equation*}
-\begin{columns}[c]
-	\begin{column}{.3\linewidth}
-		\includegraphics[width=1\linewidth]{HeisenbergOld}
-	\end{column}
-	\begin{column}{.7\linewidth}
-		\begin{center}
-			\includegraphics[width=0.6\linewidth]{HeisUncert}
-		\end{center}
-	\end{column}
-\end{columns}
+	1923, принцип невизначеності Гейзенберга
+	\begin{equation*}
+		\tcbhighmath[drop fuzzy shadow]{\Delta x \cdot \Delta p \ge \frac{\hbar}{2}}
+	\end{equation*}
+	\begin{columns}[c]
+		\begin{column}{.3\linewidth}
+			\includegraphics[width=1\linewidth]{HeisenbergOld}
+		\end{column}
+		\begin{column}{.7\linewidth}
+			\begin{center}
+				\includegraphics[width=0.6\linewidth]{HeisUncert}
+			\end{center}
+		\end{column}
+	\end{columns}
 \end{frame}
 %============================================================================
 %============================================================================
 \begin{frame}[t]{Історія розвитку уявлень про будову матерії}{У нас є механіка!}
-1926, матрична механіка В. Гайзенберга, нерелятивістське хвильове рівняння Е. Шредінґера
-		\begin{columns}[c]
-			\begin{column}{.5\linewidth}
-				\begin{center}
-					\includegraphics[width=0.5\linewidth]{Heisenberg}\\
-					\includegraphics[width=1.1\linewidth]{HeisMatrix}
-				\end{center}
-			\end{column}
-			\begin{column}{.5\linewidth}
-				\begin{center}
-					\includegraphics[width=1\linewidth]{Sroedinger} \\
-					\includegraphics[width=0.7\linewidth]{ShEq}
-				\end{center}
-			\end{column}
-		\end{columns}
+	1926, матрична механіка В. Гайзенберга, нерелятивістське хвильове рівняння Е. Шредінґера
+	\begin{columns}[c]
+		\begin{column}{.5\linewidth}
+			\begin{center}
+				\includegraphics[width=0.5\linewidth]{Heisenberg}\\
+				\includegraphics[width=1.1\linewidth]{HeisMatrix}
+			\end{center}
+		\end{column}
+		\begin{column}{.5\linewidth}
+			\begin{center}
+				\includegraphics[width=1\linewidth]{Sroedinger} \\
+				\includegraphics[width=0.7\linewidth]{ShEq}
+			\end{center}
+		\end{column}
+	\end{columns}
 \end{frame}
 %============================================================================
 %============================================================================
 \begin{frame}[t]{Історія розвитку уявлень про будову матерії}{Erwin with his psi \ldots}
-		\begin{center}
-			\begin{equation*}
-				\tcbhighmath[drop fuzzy shadow]{\hat{H} \Psi = i\hbar \frac{\partial \Psi}{\partial t}}
-			\end{equation*}
-		\end{center}
-		Свого часу серед фізиків ходила епіграма на Шредінгера, складена на англійській та німецькій мовах і приписувана Е. Хюккелю:
+	\begin{center}
+		\begin{equation*}
+			\tcbhighmath[drop fuzzy shadow]{\hat{H} \Psi = i\hbar \frac{\partial \Psi}{\partial t}}
+		\end{equation*}
+	\end{center}
+	Свого часу серед фізиків ходила епіграма на Шредінгера, складена на англійській та німецькій мовах і приписувана Е. Хюккелю:
 
-		\begin{center}\itshape
-			Erwin with his psi can do \\
-			Calculations quite a few \\
-			But one thing has not been seen \\
-			Just what does psi really mean?
-		\end{center}
+	\begin{center}\itshape
+		Erwin with his psi can do \\
+		Calculations quite a few \\
+		But one thing has not been seen \\
+		Just what does psi really mean?
+	\end{center}
 
-		\begin{center}\huge
-			$\Psi$ - ?
-		\end{center}
+	\begin{center}\huge
+		$\Psi$ - ?
+	\end{center}
 \end{frame}
 %============================================================================
 %============================================================================
 \begin{frame}{Історія розвитку уявлень про будову матерії}{Де електрон? Ймовірно він \ldots}
-Макс Борн --- 1926, ймовірнісна інтерпретація хвильової функції.
+	Макс Борн --- 1926, ймовірнісна інтерпретація хвильової функції.
+	\begin{overprint}
+		\onslide<1>
+		\begin{equation*}
+			\tcbhighmath[drop fuzzy shadow]{W = \int |\Psi|^2 dV}
+		\end{equation*}
+		\onslide<2>
+		\begin{equation*}
+			\tcbhighmath[drop fuzzy shadow]{\vect{p} =  \int e|\Psi|^2  \vect{r} dV = \int \rho  \vect{r} dV }
+		\end{equation*}
+	\end{overprint}
+
+	\bigskip
+	\begin{minipage}[t][][c]{.2\textwidth}
+		\includegraphics[width=1\linewidth]{MaxBorn.jpg}
+	\end{minipage}
+	\begin{minipage}[t][][c]{.7\textwidth}
 		\begin{overprint}
 			\onslide<1>
-			\begin{equation*}
-				\tcbhighmath[drop fuzzy shadow]{W = \int |\Psi|^2 dV}
-			\end{equation*}
+			\begin{quote}
+				\rmfamily <<є  ймовірність того, що електрон буде знайдено саме в елементі об'єма $dV$>>
+			\end{quote}
 			\onslide<2>
-			\begin{equation*}
-				\tcbhighmath[drop fuzzy shadow]{\vect{p} =  \int e|\Psi|^2  \vect{r} dV = \int \rho  \vect{r} dV }
-			\end{equation*}
+			\begin{quote}\rmfamily\small
+				В классической теории излучение определяется \ldots скоростью изменения $\vect{p}$ во времени. В волновой механике дипольный момент $\vect{p}$ легко вычисляется \ldots
+
+				\ldots для всех стационарных состояний атома этот интеграл обращается в нуль, так что производная дипольного момента, а вместе с ней и излучение равны нулю; таким образом, в стационарных состояниях излучение отсутствует. Это объясняет \ldots что вращающийся вокруг ядра электрон может двигаться по своей орбите, не излучая \ldots .
+			\end{quote}
 		\end{overprint}
-
-        \bigskip
-            \begin{minipage}[t][][c]{.2\textwidth}
-				\includegraphics[width=1\linewidth]{MaxBorn.jpg}
-			\end{minipage}
-			\begin{minipage}[t][][c]{.7\textwidth}
-				\begin{overprint}
-					\onslide<1>
-					\begin{quote}
-						\rmfamily <<є  ймовірність того, що електрон буде знайдено саме в елементі об'єма $dV$>>
-					\end{quote}
-					\onslide<2>
-					\begin{quote}\rmfamily\small
-						В классической теории излучение определяется \ldots скоростью изменения $\vect{p}$ во времени. В волновой механике дипольный момент $\vect{p}$ легко вычисляется \ldots
-
-						\ldots для всех стационарных состояний атома этот интеграл обращается в нуль, так что производная дипольного момента, а вместе с ней и излучение равны нулю; таким образом, в стационарных состояниях излучение отсутствует. Это объясняет \ldots что вращающийся вокруг ядра электрон может двигаться по своей орбите, не излучая \ldots .
-					\end{quote}
-				\end{overprint}
-			\end{minipage}
+	\end{minipage}
 \end{frame}
 %============================================================================
 %============================================================================
 \begin{frame}[t]{Історія розвитку уявлень про будову матерії}{Електрон --- юла і магнітик}
-Отто Штерн і Вальтер Герлах --- 1922, дослід з розщепленням пучка іонів срібла, який показав, що проекція магнітного моменту електрона квантується, і може набувати лише двох значень.
-\begin{center}
-	\includegraphics[width=0.45\linewidth]{Shtern-Gellax}
-    \includegraphics[width=0.45\linewidth]{electronSpin}
-\end{center}
+	Отто Штерн і Вальтер Герлах --- 1922, дослід з розщепленням пучка іонів срібла, який показав, що проекція магнітного моменту електрона квантується, і може набувати лише двох значень.
+	\begin{center}
+		\includegraphics[width=0.45\linewidth]{Shtern-Gellax}
+		\includegraphics[width=0.45\linewidth]{electronSpin}
+	\end{center}
 \end{frame}
 %============================================================================
 %============================================================================
 \begin{frame}{Історія розвитку уявлень про будову матерії}{Електрони --- індивідуалісти}
-		В. Паулі --- 1925, принцип виключення Паулі
-		\begin{multline*}
-			\psi_A(\vec{r}_1, \sigma_1; \vec{r}_2, \sigma_2; \ldots; \vec{r}_i, \sigma_i; \ldots; \vec{r}_j, \sigma_j; \vec{r}_N, \sigma_N) = \\ = - \psi_A(\vec{r}_1, \sigma_1; \vec{r}_2, \sigma_2; \ldots; \vec{r}_j, \sigma_j; \ldots; \vec{r}_i, \sigma_i; \vec{r}_N, \sigma_N)
-		\end{multline*}
-			\begin{minipage}[t][][b]{.2\textwidth}
-				\begin{center}
-					\includegraphics[width=1\linewidth]{Pauli}
-				\end{center}
-			\end{minipage}
-			\begin{minipage}[t][][b]{.7\textwidth}
-				\begin{quote}\small
-					Система частинок з напівцілими спінами має описуватися хвильовою функцією, яка змінює знак при перестановці координат і спінових змінних будь-якої пари електронів.
-				\end{quote}
-				\begin{center}
-					\includegraphics[width=0.55\linewidth]{pauli-exclusion-principle}
-				\end{center}
-			\end{minipage}
+	В. Паулі --- 1925, принцип виключення Паулі
+	\begin{multline*}
+		\psi_A(\vec{r}_1, \sigma_1; \vec{r}_2, \sigma_2; \ldots; \vec{r}_i, \sigma_i; \ldots; \vec{r}_j, \sigma_j; \vec{r}_N, \sigma_N) = \\ = - \psi_A(\vec{r}_1, \sigma_1; \vec{r}_2, \sigma_2; \ldots; \vec{r}_j, \sigma_j; \ldots; \vec{r}_i, \sigma_i; \vec{r}_N, \sigma_N)
+	\end{multline*}
+	\begin{minipage}[t][][b]{.2\textwidth}
+		\begin{center}
+			\includegraphics[width=1\linewidth]{Pauli}
+		\end{center}
+	\end{minipage}
+	\begin{minipage}[t][][b]{.7\textwidth}
+		\begin{quote}\small
+			Система частинок з напівцілими спінами має описуватися хвильовою функцією, яка змінює знак при перестановці координат і спінових змінних будь-якої пари електронів.
+		\end{quote}
+		\begin{center}
+			\includegraphics[width=0.55\linewidth]{pauli-exclusion-principle}
+		\end{center}
+	\end{minipage}
 \end{frame}
 %============================================================================
 %============================================================================
 \begin{frame}[t]{Історія розвитку уявлень про будову матерії}{Таємниця валентного штриха!}
-       Після відкриття електрона стало можливим подальший розвиток теорії зв'язку. З'являються  Косселя (1915) і електронна теорія валентності Льюїса (1916), яка є найбільш загальною і охоплює основні типи хімічного зв'язку --- ковалентну і іонну.
-\begin{itemize}
-\item Коссель (1915) --- іонна теорія хімічного зв'язку.
-\item Льюїса (1916) --- електронна теорія валентності: хімічний зв'язок утворюється парою електронів.
-\end{itemize}
+	Після відкриття електрона стало можливим подальший розвиток теорії зв'язку. З'являються  Косселя (1915) і електронна теорія валентності Льюїса (1916), яка є найбільш загальною і охоплює основні типи хімічного зв'язку --- ковалентну і іонну.
+	\begin{itemize}
+		\item Коссель (1915) --- іонна теорія хімічного зв'язку.
+		\item Льюїса (1916) --- електронна теорія валентності: хімічний зв'язок утворюється парою електронів.
+	\end{itemize}
 
-Основним досягненням електронних теорій Косселя і Льюїса слід вважати те, що вони, аби відродити правильний електрохімічний підхід Берцеліуса до розуміння природи хімічного зв'язку, використовували все цінне, що було досягнуто завдяки <<структурній>> теорією валентності.
+	Основним досягненням електронних теорій Косселя і Льюїса слід вважати те, що вони, аби відродити правильний електрохімічний підхід Берцеліуса до розуміння природи хімічного зв'язку, використовували все цінне, що було досягнуто завдяки <<структурній>> теорією валентності.
 \end{frame}
 %============================================================================
 
 %============================================================================
 \begin{frame}[t]{Історія розвитку уявлень про будову матерії}{Молекула... Ні, давайте спочатку йон!}
-1927, О.~Барооу розв'зує рівняння Шредінґера для  \href{https://en.wikipedia.org/wiki/Dihydrogen_cation}{молекулярного іона водню \ce{H_2^+}}
-\begin{center}
-	\includegraphics[width=0.55\linewidth]{dihydrogen-kation}
-\end{center}
+	1927, О.~Барооу розв'зує рівняння Шредінґера для  \href{https://en.wikipedia.org/wiki/Dihydrogen_cation}{молекулярного іона водню \ce{H_2^+}}
+	\begin{center}
+		\includegraphics[width=0.55\linewidth]{dihydrogen-kation}
+	\end{center}
 \end{frame}
 %============================================================================
 %============================================================================
 \begin{frame}{Історія розвитку уявлень про будову матерії}{Так ось яка ти --- молекула}
-		В. Гайтлер, Ф. Лондон --- 1927, квантово-механічна теорія ковалентного зв'язку (теорія молекули \ce{H2})
-		\begin{equation*}
-			\tcbhighmath[drop fuzzy shadow]{\Phi_\text{AB} (\overrightarrow{r_1},\overrightarrow{r_2}) = \frac{1}{\sqrt{2+2S_\text{AB}^2}} \left[ \chi_\text{A} (\overrightarrow{r_1}) \cdot \chi_\text{B} (\overrightarrow{r_2}) + \chi_\text{B} (\overrightarrow{r_1}) \cdot \chi_\text{A} (\overrightarrow{r_2}) \right]}
-		\end{equation*}
-			\begin{minipage}[t][][c]{.3\textwidth}
-				\includegraphics[width=1\linewidth]{Heitler-London}
-			\end{minipage}
-			\begin{minipage}[t][][c]{.65\textwidth}
-				\begin{center}
-					\includegraphics[width=0.55\linewidth]{Valence-Bond}
-				\end{center}
-			\end{minipage}
+	В. Гайтлер, Ф. Лондон --- 1927, квантово-механічна теорія ковалентного зв'язку (теорія молекули \ce{H2})
+	\begin{equation*}
+		\tcbhighmath[drop fuzzy shadow]{\Phi_\text{AB} (\overrightarrow{r_1},\overrightarrow{r_2}) = \frac{1}{\sqrt{2+2S_\text{AB}^2}} \left[ \chi_\text{A} (\overrightarrow{r_1}) \cdot \chi_\text{B} (\overrightarrow{r_2}) + \chi_\text{B} (\overrightarrow{r_1}) \cdot \chi_\text{A} (\overrightarrow{r_2}) \right]}
+	\end{equation*}
+	\begin{minipage}[t][][c]{.3\textwidth}
+		\includegraphics[width=1\linewidth]{Heitler-London}
+	\end{minipage}
+	\begin{minipage}[t][][c]{.65\textwidth}
+		\begin{center}
+			\includegraphics[width=0.55\linewidth]{Valence-Bond}
+		\end{center}
+	\end{minipage}
 \end{frame}
 %============================================================================
 %============================================================================
 \begin{frame}{Історія розвитку уявлень про будову матерії}{Тепер у нас є все що необхідно! Точно?}
-       		Поль Дірак --- 1928, релятивістське рівняння руху вільного електрона (позитрона)
-		\begin{equation*}
-			\tcbhighmath[drop fuzzy shadow]{i\hbar \gamma ^{\mu }\partial _{\mu }\psi -mc\psi =0}
-		\end{equation*}
-		\begin{columns}[c]
-			\begin{column}{.1\linewidth}
-				\includegraphics[width=1.7\linewidth]{Dirac}
-			\end{column}
-			\begin{column}{.8\linewidth}
-				\begin{quote}
-					\rmfamily <<Нарешті, основні фізичні закони  необхідні для побудови математичної теорії здебільшого фізики і всієї хімії, повністю відомі, і єдина складність полягає в тому, що в результаті застосування цих законів ми приходимо до дуже складних для розв'язання рівнянь>>
+	Поль Дірак --- 1928, релятивістське рівняння руху вільного електрона (позитрона)
+	\begin{equation*}
+		\tcbhighmath[drop fuzzy shadow]{i\hbar \gamma ^{\mu }\partial _{\mu }\psi -mc\psi =0}
+	\end{equation*}
+	\begin{columns}[c]
+		\begin{column}{.1\linewidth}
+			\includegraphics[width=1.7\linewidth]{Dirac}
+		\end{column}
+		\begin{column}{.8\linewidth}
+			\begin{quote}
+				\rmfamily <<Нарешті, основні фізичні закони  необхідні для побудови математичної теорії здебільшого фізики і всієї хімії, повністю відомі, і єдина складність полягає в тому, що в результаті застосування цих законів ми приходимо до дуже складних для розв'язання рівнянь>>
 
-					{\tiny\rmfamily Dirac P.A.M. Quantum Mechanics of Many Electron Systems // Proceedings of the Royal Society A123 (1929): 713}.
-				\end{quote}
-			\end{column}
-		\end{columns}
+				{\tiny\rmfamily Dirac P.A.M. Quantum Mechanics of Many Electron Systems // Proceedings of the Royal Society A123 (1929): 713}.
+			\end{quote}
+		\end{column}
+	\end{columns}
 \end{frame}
 %============================================================================
 
@@ -432,12 +434,12 @@
 \begin{frame}
 	\frametitle{Історія квантової хімії}
 	\framesubtitle{Вдосконалення методів}
-		\begin{itemize}
-			\item  1965, Вальтер Кон (Нобелівська премія з хімії 1998) і Лу Джей Шем  --- практичний метод знаходження електронної густини і енергії системи через електронну густину, що став обчислювальною основою методу функціонала густини.
-			\item 1964, П'єр Хоенберг, Вальтер Кон (Нобелівська премія з хімії 1998) ---  теорія функціонала електронної густини.
-			\item Джон Попл (Нобелівська премія з хімії 1998)--- напівемпіричні квантово-хімічних методів, заснованих на наближенні нульового диференціального перекривання.
-			\item 1970-ті,  перші версії програмного комплексу \texttt{GAUSSIAN}.\\ {\scriptsize Офіційний web-сайт програми \url{http://gaussian.com/}~--- програмного пакету для розрахунку структури і властивостей молекулярних систем, що включає велику різноманітність методів обчислювальної хімії, квантової хімії, молекулярного моделювання.}
-		\end{itemize}
+	\begin{itemize}
+		\item  1965, Вальтер Кон (Нобелівська премія з хімії 1998) і Лу Джей Шем  --- практичний метод знаходження електронної густини і енергії системи через електронну густину, що став обчислювальною основою методу функціонала густини.
+		\item 1964, П'єр Хоенберг, Вальтер Кон (Нобелівська премія з хімії 1998) ---  теорія функціонала електронної густини.
+		\item Джон Попл (Нобелівська премія з хімії 1998)--- напівемпіричні квантово-хімічних методів, заснованих на наближенні нульового диференціального перекривання.
+		\item 1970-ті,  перші версії програмного комплексу \texttt{GAUSSIAN}.\\ {\scriptsize Офіційний web-сайт програми \url{http://gaussian.com/}~--- програмного пакету для розрахунку структури і властивостей молекулярних систем, що включає велику різноманітність методів обчислювальної хімії, квантової хімії, молекулярного моделювання.}
+	\end{itemize}
 \end{frame}
 
 \begin{frame}
@@ -460,4 +462,157 @@
 
 \end{frame}
 
+% ============================== Слайд ## ===================================
+\begin{frame}{Ядра, атоми, молекули та спектри}{}
+
+	\begin{center}
+		\includegraphics[width=0.6\linewidth]{mol_types_of_motion}
+	\end{center}
+
+	\begin{block}{}\small\justifying
+		Діапазони енергій і часів, які відповідають електронним відповідають \emph{електронним}, \emph{коливальним}, \emph{обертальним} і \emph{поступальним} рухам молекули. Кожен із цих рухів є квантовим, тобто стаціонарні стани для цих рухів є розв'язанням якогось якогось рівняння Шредингера.
+	\end{block}
+
+
+
+	\begin{onlyenv}<1>
+		\begin{block}{}\small\justifying
+			Щоб ініціювати перехід, фотон має потрапити в резонанс із потрібним рухом молекули, тому частота/довжина хвилі фотона теж характеризує сам рух.
+		\end{block}
+	\end{onlyenv}
+
+	\begin{onlyenv}<2>
+		\begin{block}{}\small\justifying
+			Але не тільки ЕМ хвилі можуть викликати зміну станів: якщо до молекули підходять інші молекули, то вони можуть механічно віддавати/приймати енергію відповідних рухі (а для багатоатомних молекул роль інших частинок можуть виконувати інші шматки/рухи цієї ж самої молекули).
+		\end{block}
+	\end{onlyenv}
+
+\end{frame}
+% ===========================================================================
+
+% ============================== Слайд ## ===================================
+\begin{frame}{$\gamma$-Випромінювання}{}
+	\begin{equation*}
+		\nu \ge 10^{19}\  \text{Гц}
+	\end{equation*}
+	\begin{block}{}\small\justifying
+		У цій області відбуваються здебільшого всілякі мегаенергетичні процеси, типу ядерних реакцій, випромінювання всяких космічних об'єктів і випромінювань всяких космічних об'єктів \ldots . І це один із видів радіації, тому що у всіх хімічних сполук під час взаємодії з фотонами такої енергії відбувається вибивання електронів з різних енергетичних рівнів (іонізація).
+	\end{block}
+
+	\begin{center}
+		\includegraphics[width=0.5\linewidth]{gamma_rays}
+	\end{center}
+\end{frame}
+% ===========================================================================
+
+% ============================== Слайд ## ===================================
+\begin{frame}{Рентгенівське випромінювання}{}
+	\begin{equation*}
+		10^{19} \ge \nu \ge 10^{16}\ \text{Гц}.
+	\end{equation*}
+
+	\begin{block}{}\small\justifying
+		Ця область спектра належить до переходів остовних електронів. Так, наприклад, рентгенівські трубки працюють за рахунок "звалювання" електронів з якого-небудь 2p-рівня в атомі на 1s. Таким чином, ця область відповідає енергіям і частотам руху остовних електронів в атомах/молекулах. Тут електрони мають характеристичні періоди обертання навколо ядер у районі долей ангстрема. Запам'ятати довжини хвиль цього діапазону можна з таких міркувань: рентгенівські промені можуть дифрагувати на кристалічних решітках, отже, довжина хвилі повинна відповідати але довжина хвилі має бути порівнянна з довжиною міжатомних відстаней. атомних відстаней. Характеристична довжина хімічного зв'язку --- це $1$ \AA, що і є хорошою оцінкою для довжини хвилі рентгенівських променів, що лежать у діапазоні $10$ нм --  $10$ пм.
+	\end{block}
+
+	\begin{center}
+		\includegraphics[width=0.3\linewidth]{x-rays}
+	\end{center}
+\end{frame}
+% ===========================================================================
+
+% ============================== Слайд ## ===================================
+\begin{frame}{Ультрафіолетове та видиме випромінювання}{}
+	\begin{columns}
+		\begin{column}{0.5\linewidth}
+			\begin{equation*}
+				10^{16} \ge \nu \ge 0.77 \cdot 10^{15}\ \text{Гц}
+			\end{equation*}
+
+			\begin{equation*}
+				0.77 \cdot 10^{15} \ge \nu \ge 0.43 \cdot 10^{15}\ \text{Гц}
+			\end{equation*}
+		\end{column}
+		\begin{column}{0.5\linewidth}
+			\includegraphics[width=0.75\linewidth]{xps_ups_prinzip}
+		\end{column}
+	\end{columns}
+
+
+	\begin{block}{}\small\justifying
+		Тут уже відбуваються електронні переходи для валентних електронів.
+		Зокрема UV/Vis спектрометри є незамінним атрибутом будь-якої органічної лабораторії. Вони дозволяють <<бачити>>, наприклад, переходи в $\pi$-системах ароматичних молекул. І ми самі здатні бачити тільки в цьому вузькому шматочку всього неосяжного ЕМ-спектра, тому що процеси ізомеризації ретиналю в наших колбочках в очах ініціюються за рахунок електронного переходу, який розриває подвійний зв'язок \ce{C=C} в молекулі, а це якраз валентні електрони.
+	\end{block}
+
+	\begin{block}{}\small\justifying
+		Температура фотонів цього діапазону має порядок $10^4$ К, що можна порівняти з температурою на поверхні Сонця. За наших, земних, умов, з температурами порядку $10^2$ К, складно збудити електронні стани термічно,
+		тобто якщо молекулу спеціально не злити і не тикати високочастотними фотонами або іншими високоенергетичними фотонами, або іншими високоенергетичними частинками, то вона перебуватиме в основному електронному стані.
+	\end{block}
+\end{frame}
+% ===========================================================================
+
+% ============================== Слайд ## ===================================
+\begin{frame}{Інфрачервоне випромінювання}{}
+	\begin{equation*}
+		0.43 \cdot 10^{15} \ge \nu \ge 0.3 \cdot 10^{12}\ \text{Гц}
+	\end{equation*}
+	\begin{block}{}
+		Тут, в основному, вотчина всяких коливальних переходів у молекулах. У дальній же області (за низьких частот) уже можна спостерігати обертання малих і дуже легких молекул, типу водню.
+	\end{block}
+	\begin{center}
+		\includegraphics[width=1\linewidth]{mol_vibrations}
+	\end{center}
+\end{frame}
+% ===========================================================================
+
+% ============================== Слайд ## ===================================
+\begin{frame}{Мікрохвильовий діапазон}{}
+	\begin{equation*}
+		0.3\cdot 10^{12} \ge \nu \ge 0.3 \cdot 10^{9}\ \text{Гц}
+	\end{equation*}
+
+	\begin{block}{}
+		Тут відбуваються тільки обертальні переходи вільних молекул. Чим більша, розгалуженіша, важча молекула, тим нижча частота переходу. Часи обертальних рухів мають порядок від пікосекунд до долей мікросекунд.
+	\end{block}
+
+
+
+	\begin{columns}
+		\begin{column}{0.45\linewidth}
+			\includegraphics[width=\linewidth]{microwaveoven}
+		\end{column}
+		\begin{column}{0.45\linewidth}
+			\includegraphics[width=\linewidth]{water_rotation}
+		\end{column}
+	\end{columns}
+
+\end{frame}
+% ===========================================================================
+
+% ============================== Слайд ## ===================================
+\begin{frame}{Шкала електромагнітних хвиль}{}
+	\begin{center}
+		\includegraphics[width=\linewidth]{em_waves}
+	\end{center}
+\end{frame}
+% ===========================================================================
+
+
+% ============================== Слайд ## ===================================
+\begin{frame}{Спектроскопія}{}
+%\UseTblrLibrary{booktabs}
+       \begin{tblr}{|Q[l, m]|X[j, m]|}
+           \hline
+           Тип спектроскопії                              & Переходи в молекулах.                          \\ \hline
+           Інфрачервона (ІЧ)                              & Коливальні та обертальні переходи в молекулах \\
+           Раманівська (Раман)                            & Обертальні та коливальні переходи в молекулах. \\
+           УФ/видима (UV/Vis)                             & Електронні переходи в атомах або молекулах.    \\
+           Електронний парамагнітний резонанс (EPR)       & Електронні переходи зі зміною спіна.           \\
+           Ядерно-магнітний резонанс (ЯМР)                & Переорієнтація ядерних магнітних моментів.     \\
+           \hline
+       \end{tblr}
+\end{frame}
+% ===========================================================================
+
+%http://hyperphysics.phy-astr.gsu.edu/hbase/mod3.html
 \end{document}

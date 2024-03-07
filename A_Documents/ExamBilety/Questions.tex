@@ -1,6 +1,6 @@
 %%============================ Compiler Directives =======================%%
 %%                                                                        %%
-% !TeX program = pdflatex							    	
+% !TeX program = pdflatex
 % !TeX encoding = utf8
 % !TeX spellcheck = uk_UA
 %%                                                                        %%
@@ -14,18 +14,18 @@
 \usepackage[T2A,T1]{fontenc}
 \usepackage[ukrainian]{babel}
 %%                                                                        %%
-%%=========================== Киририличні корекції =======================%%   
+%%=========================== Киририличні корекції =======================%%
 \usepackage{indentfirst}
 \usepackage{misccorr}
 \usepackage{cmap}
 \usepackage{mhchem}
 %%                                                                        %%
 %%============================= Геометрія сторінки =======================%%
-%%                                                                        %%        
+%%                                                                        %%
 \usepackage[%
 	a4paper,%
 	footskip=1cm,%
-	headsep=0.3cm,% 
+	headsep=0.3cm,%
 	top=2cm, %поле сверху
 	bottom=2cm, %поле снизу
 	left=2cm, %поле ліворуч
@@ -52,7 +52,7 @@
 \usepackage{ifthen}
 %%                                                                        %%
 %%========================== Гіперпосилення (href) =======================%%
-%%                                                                        %% 
+%%                                                                        %%
 \usepackage[%colorlinks=true,
 	%urlcolor = blue, %Colour for external hyperlinks
 	%linkcolor  = malina, %Colour of internal links
@@ -82,7 +82,7 @@
 \newcommand{\loaditemsfromfile}[2][enumerate]{%
 \IfFileExists{#2}{%
   \openin\readquastions=#2
-  \begin{#1}  % Use an itemize enviroment with #1 as name of the env. 
+  \begin{#1}  % Use an itemize enviroment with #1 as name of the env.
     \loop\unless\ifeof\readquastions%
     \read\readquastions to \localvariable
     \ifeof\readquastions
@@ -94,7 +94,7 @@
   \closein\readquastions%  \close the file
 }{}%
 }
-	
+
 %%============================== Оформлення списків=======================%%
 %%                                                                        %%
 \usepackage{enumitem}
@@ -104,14 +104,14 @@
 %%                                                                        %%
 \title{\bfseries Перелік питань які виносяться на екзамен \\ <<Квантова хімія>> }
 \author{}
-\date{}                                   
+\date{}
 %%                                                                        %%
 %%========================================================================%%
 
 
 \begin{document}
 \maketitle
-\loaditemsfromfile[enumerate]{Qchem.dat}
+\loaditemsfromfile[enumerate]{QchemS.dat}
 \end{document}
 
 
