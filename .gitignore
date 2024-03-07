@@ -1,4 +1,4 @@
-Notes/
+minted/
 *.aux
 *.synctex.gz
 *.log
@@ -13,5 +13,6 @@ Notes/
 *.out
 *.fls
 *.fdb_latexmk
+
 
 
