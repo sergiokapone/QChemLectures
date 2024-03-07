@@ -1,4 +1,4 @@
-minted/
+_minted*/
 *.aux
 *.synctex.gz
 *.log
@@ -9,6 +9,7 @@ minted/
 *.blg
 *.nav
 *.toc
+*.thm
 *.snm
 *.out
 *.fls

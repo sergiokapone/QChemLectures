@@ -1,1 +1,0 @@
-unset surface; set cntrparam levels 14; set contour; set table "QChemBook_contourtmp1.table"; splot "QChemBook_contourtmp1.dat";
