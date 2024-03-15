@@ -46,22 +46,19 @@
 \usepackage{enumitem}
 
 
-\addbibresource{d:/Projects/LaTeX/QChem/A_Documents/Syllabus_QChem/Syllabus_QChem.bib}
+\addbibresource{../../Bibliography/QuantumChemistry.bib}
 
-%%                                                                        %%
-%%============================= Геометрія сторінки =======================%%
-%%                                                                        %%
+
 \usepackage[%
 	a4paper,%
 	footskip=1cm,%
 	headsep=0.3cm,%
-	top=2cm, %поле сверху
-	bottom=2cm, %поле снизу
-	left=2cm, %поле ліворуч
-	right=2cm, %поле праворуч
+	top=2cm,
+	bottom=2cm,
+	left=2cm,
+	right=2cm,
     ]{geometry}
-%%                                                                        %%
-%%============================== Інтерліньяж  ============================%%
+
 
 \usepackage{tikz}
 \usepackage{pgfplots}
@@ -190,35 +187,35 @@ MOLECULAR ORBITALS
 \clearpage
 Побудуємо орбіталі на основі розрахунків:
 \begin{tcolorbox}[mybox]
-\abovedisplayskip=0pt%
-\begin{align*}
-	\phi_{0} & = \C{-0.991218} \cdot \mathrm{STO}_{1s}  + (\C{-0.034144}) \cdot \mathrm{STO}_{2s},           \\
-	\phi_{1} & = \C{0.281468} \cdot \mathrm{STO}_{1s}  + (\C{-1.029840}) \cdot \mathrm{STO}_{2s}, \\
-    \phi_{2} & = \C{0.212225} \cdot \mathrm{STO}_{1p_{z}}  + (\C{-0.089877}) \cdot \mathrm{STO}_{1p_{x}}  + \C{0.973079} \cdot \mathrm{STO}_{1p_{y}}, \\
-    \phi_{3} & = \C{0.933091} \cdot \mathrm{STO}_{1p_{z}}  + (\C{-0.277220}) \cdot \mathrm{STO}_{1p_{x}}  + (\C{-0.229108}) \cdot \mathrm{STO}_{1p_{y}}, \\
-    \phi_{4} & = \C{0.290348} \cdot \mathrm{STO}_{1p_{z}}  + \C{0.956594} \cdot \mathrm{STO}_{1p_{x}}  + \C{0.025030} \cdot \mathrm{STO}_{1p_{y}}.
-\end{align*}
+	\abovedisplayskip=0pt%
+	\begin{align*}
+		\phi_{0} & = \C{-0.991218} \cdot \mathrm{STO}_{1s}  + (\C{-0.034144}) \cdot \mathrm{STO}_{2s},                                                       \\
+		\phi_{1} & = \C{0.281468} \cdot \mathrm{STO}_{1s}  + (\C{-1.029840}) \cdot \mathrm{STO}_{2s},                                                        \\
+		\phi_{2} & = \C{0.212225} \cdot \mathrm{STO}_{1p_{z}}  + (\C{-0.089877}) \cdot \mathrm{STO}_{1p_{x}}  + \C{0.973079} \cdot \mathrm{STO}_{1p_{y}},    \\
+		\phi_{3} & = \C{0.933091} \cdot \mathrm{STO}_{1p_{z}}  + (\C{-0.277220}) \cdot \mathrm{STO}_{1p_{x}}  + (\C{-0.229108}) \cdot \mathrm{STO}_{1p_{y}}, \\
+		\phi_{4} & = \C{0.290348} \cdot \mathrm{STO}_{1p_{z}}  + \C{0.956594} \cdot \mathrm{STO}_{1p_{x}}  + \C{0.025030} \cdot \mathrm{STO}_{1p_{y}}.
+	\end{align*}
 \end{tcolorbox}
 
 Орбіталь $\phi_0$ --- двічі заселена, орбіталь $\phi_1$ --- заселена одним електроном. Інші орбіталі не заселені (\emph{віртуальні}).
 
 Детермінант Слейтера (\emph{\color{red}будується лише із заселених орбіталей}):
 \begin{tcolorbox}[mybox]
-\begin{equation*}
-	\Phi(\vec\xi_1, \vec\xi_2, \vec\xi_3) = \frac1{\sqrt6}
-\begin{vmatrix}
-     \phi_0(1)\alpha(1) & \phi_0(1)\beta(1) & \phi_1(1)\alpha(1)\\
-     \phi_0(2)\alpha(2) & \phi_0(2)\beta(2) & \phi_1(2)\alpha(2)\\
-     \phi_0(3)\alpha(3) & \phi_0(3)\beta(3) & \phi_1(3)\alpha(3)
-\end{vmatrix}.
-\end{equation*}
+	\begin{equation*}
+		\Phi(\vec\xi_1, \vec\xi_2, \vec\xi_3) = \frac1{\sqrt6}
+		\begin{vmatrix}
+			\phi_0(1)\alpha(1) & \phi_0(1)\beta(1) & \phi_1(1)\alpha(1) \\
+			\phi_0(2)\alpha(2) & \phi_0(2)\beta(2) & \phi_1(2)\alpha(2) \\
+			\phi_0(3)\alpha(3) & \phi_0(3)\beta(3) & \phi_1(3)\alpha(3)
+		\end{vmatrix}.
+	\end{equation*}
 \end{tcolorbox}
 
 Електронна густина (\emph{\color{red}рахується лише по заселеним орбіталям}):
 \begin{tcolorbox}[mybox]
-\begin{equation*}
-	\rho =  2\cdot|\phi_{0}|^2 + 1\cdot |\phi_1|^2.
-\end{equation*}
+	\begin{equation*}
+		\rho =  2\cdot|\phi_{0}|^2 + 1\cdot |\phi_1|^2.
+	\end{equation*}
 \end{tcolorbox}
 
 Віртуальні орбіталі не мають фізичного сенсу (артефакт методу)\footnote{Однак вони використовуюся в деяких пост-Хартрі-Фоківських методах.}.
@@ -227,20 +224,20 @@ MOLECULAR ORBITALS
 %=================== Побудова засобами pgfplots ===================
 
 \tikzset{
-declare function = {
-					gtoS(\c,\a,\r)=\c*(2*\a/pi)^(3/4)*exp(-\a*\r^2);
-                    gtoPx(\c,\a,\x,\y,\z)=\c*(2*\a/pi)^(3/4)*sqrt(4*\a)\x*exp(-\a*(\x^2+\y^2+\z^2);
-                    gtoPy(\c,\a,\x,\y,\z)=\c*(2*\a/pi)^(3/4)*sqrt(4*\a)\y*exp(-\a*(\x^2+\y^2+\z^2);
-                    gtoPz(\c,\a,\x,\y,\z)=\c*(2*\a/pi)^(3/4)*sqrt(4*\a)\z*exp(-\a*(\x^2+\y^2+\z^2);
-                    sto1s(\r)=gtoS(0.15433,16.11,\r)+gtoS(0.53533,2.94,\r)+gtoS(0.445,0.79,\r);
-                    sto2s(\r)=gtoS(-0.09997,0.6363,\r)+gtoS(0.39951,0.148,\r)+gtoS(0.7,0.048,\r);
-                    sto1px(\x,\y,\z)=gtoPx(0.1559, 0.6363,\x,\y,\z)+gtoPx(0.6077, 0.148,\x,\y,\z)+
-                    gtoPx(0.392, 0.048,\x,\y,\z);
-                    sto1py(\x,\y,\z)=gtoPy(0.1559, 0.6363,\x,\y,\z)+gtoPy(0.6077, 0.148,\x,\y,\z)+
-                    gtoPy(0.392, 0.048,\x,\y,\z);
-                    sto1pz(\x,\y,\z)=gtoPz(0.1559, 0.6363,\x,\y,\z)+gtoPz(0.6077, 0.148,\x,\y,\z)+
-                    gtoPz(0.392, 0.048,\x,\y,\z);
-				},
+	declare function = {
+			gtoS(\c,\a,\r)=\c*(2*\a/pi)^(3/4)*exp(-\a*\r^2);
+			gtoPx(\c,\a,\x,\y,\z)=\c*(2*\a/pi)^(3/4)*sqrt(4*\a)\x*exp(-\a*(\x^2+\y^2+\z^2);
+			gtoPy(\c,\a,\x,\y,\z)=\c*(2*\a/pi)^(3/4)*sqrt(4*\a)\y*exp(-\a*(\x^2+\y^2+\z^2);
+			gtoPz(\c,\a,\x,\y,\z)=\c*(2*\a/pi)^(3/4)*sqrt(4*\a)\z*exp(-\a*(\x^2+\y^2+\z^2);
+			sto1s(\r)=gtoS(0.15433,16.11,\r)+gtoS(0.53533,2.94,\r)+gtoS(0.445,0.79,\r);
+			sto2s(\r)=gtoS(-0.09997,0.6363,\r)+gtoS(0.39951,0.148,\r)+gtoS(0.7,0.048,\r);
+			sto1px(\x,\y,\z)=gtoPx(0.1559, 0.6363,\x,\y,\z)+gtoPx(0.6077, 0.148,\x,\y,\z)+
+			gtoPx(0.392, 0.048,\x,\y,\z);
+			sto1py(\x,\y,\z)=gtoPy(0.1559, 0.6363,\x,\y,\z)+gtoPy(0.6077, 0.148,\x,\y,\z)+
+			gtoPy(0.392, 0.048,\x,\y,\z);
+			sto1pz(\x,\y,\z)=gtoPz(0.1559, 0.6363,\x,\y,\z)+gtoPz(0.6077, 0.148,\x,\y,\z)+
+			gtoPz(0.392, 0.048,\x,\y,\z);
+		},
 }
 
 %=========================================================
@@ -250,20 +247,20 @@ declare function = {
 		\begin{tikzpicture}[background rectangle/.style={fill=gray!5}, show background rectangle]
 			\begin{axis}[
 					ymin=-1.5,
-                    ymax=0.5,
+					ymax=0.5,
 					xmax=5,
 					axis lines=left,
 					xlabel={$r$, bohr},
 					ylabel=$\phi(r)$,
 					width=0.95\linewidth,
-                    legend style={at={(1,0.1)}, draw=none, fill=white, anchor=south east},
+					legend style={at={(1,0.1)}, draw=none, fill=white, anchor=south east},
 				]
 
 				\addplot [thick, domain={0:5}, smooth, red, samples=1500] {-0.991218*sto1s(x) - 0.034144*sto2s(x)} ;
-                \addlegendentry{$\phi_0$}
+				\addlegendentry{$\phi_0$}
 
-            	\addplot [thick, domain={0:5}, smooth, blue, samples=1500] {0.281468*sto1s(x) - 1.029840*sto2s(x)} ;
-                \addlegendentry{$\phi_1$}
+				\addplot [thick, domain={0:5}, smooth, blue, samples=1500] {0.281468*sto1s(x) - 1.029840*sto2s(x)} ;
+				\addlegendentry{$\phi_1$}
 
 			\end{axis}
 		\end{tikzpicture}
@@ -281,9 +278,9 @@ declare function = {
 					width=0.95\linewidth,
 				]
 				\addplot [thick, domain={0:5}, smooth, red, samples=1500] { 4*pi*x^2*(2*(-0.991218*sto1s(x) - 0.034144*sto2s(x))^2+
-                1*(0.281468*sto1s(x) - 1.029840*sto2s(x))^2)};
+					1*(0.281468*sto1s(x) - 1.029840*sto2s(x))^2)};
 
-            	\end{axis}
+			\end{axis}
 		\end{tikzpicture}
 		\caption{Електронна густина}
 	\end{subfigure}
@@ -299,20 +296,20 @@ declare function = {
 
 %---------------------------------------------------------
 \begin{figure}[h!]\centering
-		\begin{tikzpicture}[background rectangle/.style={fill=gray!5}, show background rectangle]
-			\begin{axis}[
-					ymax=3,
-					xmax=5,
-					axis lines=left,
-					xlabel={$r$, bohr},
-					ylabel=$4\pi r^2 \rho(r)$,
-					width=1\linewidth,
-				]
-				\addplot[mark=none, red, smooth, thick] table[x expr=2*\thisrowno{1},y index=2] {RDF.txt};
+	\begin{tikzpicture}[background rectangle/.style={fill=gray!5}, show background rectangle]
+		\begin{axis}[
+				ymax=3,
+				xmax=5,
+				axis lines=left,
+				xlabel={$r$, bohr},
+				ylabel=$4\pi r^2 \rho(r)$,
+				width=1\linewidth,
+			]
+			\addplot[mark=none, red, smooth, thick] table[x expr=2*\thisrowno{1},y index=2] {RDF.txt};
 
-            	\end{axis}
-		\end{tikzpicture}
-		\caption{Радіальний розподіл електронної густини}
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Радіальний розподіл електронної густини}
 \end{figure}
 %---------------------------------------------------------
 
@@ -321,27 +318,27 @@ declare function = {
 \begin{figure}[h!]\centering
 	%---------------------------------------------------------
 	\begin{subfigure}[t]{0.45\linewidth}\centering
-        \includegraphics[width=\linewidth]{pict/1.png}
+		\includegraphics[width=\linewidth]{pict/1.png}
 		\caption{Орбіталь $\phi_0$}
 	\end{subfigure}
 	\qquad%---------------------------------------------------------
 	\begin{subfigure}[t]{0.45\linewidth}\centering
-        \includegraphics[width=\linewidth]{pict/2.png}
+		\includegraphics[width=\linewidth]{pict/2.png}
 		\caption{Орбіталь $\phi_1$}
 	\end{subfigure}
 	\qquad%---------------------------------------------------------
 	\begin{subfigure}[t]{0.45\linewidth}\centering
-        \includegraphics[width=\linewidth]{pict/3.png}
+		\includegraphics[width=\linewidth]{pict/3.png}
 		\caption{Орбіталь $\phi_2$}
 	\end{subfigure}
 	\qquad%---------------------------------------------------------
 	\begin{subfigure}[t]{0.45\linewidth}\centering
-        \includegraphics[width=\linewidth]{pict/4.png}
+		\includegraphics[width=\linewidth]{pict/4.png}
 		\caption{Орбіталь $\phi_3$}
 	\end{subfigure}
 	\qquad%---------------------------------------------------------
 	\begin{subfigure}[t]{0.45\linewidth}\centering
-        \includegraphics[width=\linewidth]{pict/5.png}
+		\includegraphics[width=\linewidth]{pict/5.png}
 		\caption{Орбіталь $\phi_4$}
 	\end{subfigure}
 	\caption{Орбіталі}
