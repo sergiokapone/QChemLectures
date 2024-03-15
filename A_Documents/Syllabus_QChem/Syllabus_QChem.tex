@@ -198,7 +198,38 @@
 Нижче наводиться перелік навчальних матеріалів та ресурсів для засвоєння матеріалу, розглядуваного на лекційних заняттях та для додаткового вивчення.
 %Крім того, наводиться перелік online-ресурсів для підготовки та виконання розрахунково-графічної роботи.
 
-\nocite{*}
+\nocite{
+YatsimirsijQChem,
+Sleta,
+Yatsimirsij,
+Cirelson,
+Szabo,
+Zulicke,
+Levine,
+BlinderHouse,
+Gelman,
+AtkinsQM,
+Sauer,
+Dmitriev1,
+Gaussian,
+ORCA,
+ORCAInput,
+Multiwfn,
+ChemCraft,
+CCCBDB,
+BSE,
+GB,
+Neese,
+Cao2019,
+Dral2020,
+McArdle2020,
+Liu2010,
+Haag2013,
+EGMI1,
+EGMI2,
+EGMI3,
+}
+
 \printbibliography[category=Main, title={Основні}, heading=subbibliography]
 \addtocategory{Main}{YatsimirsijQChem, Sleta}
 \printbibliography[category=Additional, title={Додаткові}, heading=subbibliography]
@@ -210,7 +241,7 @@
 \printbibliography[category=SciArticles, title={Оглядові наукові статті}, heading=subbibliography]
 \addtocategory{SciArticles}{Neese, Cao2019, Dral2020, McArdle2020, Liu2010, Haag2013, EGMI1, EGMI2, EGMI3}
 
-\clearpage
+%\clearpage
 \syllabuschapter{Навчальний контент}
 
 \section{Методика опанування навчальної дисципліни (освітнього компонента)}
@@ -221,167 +252,175 @@
 
 \subsection*{Лекційні заняття}
 
-\begin{longtable}{|>{\arraybackslash}m{0.03\linewidth}|>{\raggedright\arraybackslash}m{0.9\linewidth}|}
-\hline
- \thead{№} & \thead {Назва теми лекції та перелік основних питань} \\
-\hline
-\endhead
+\DefTblrTemplate{contfoot-text}{default}{}
+\DefTblrTemplate{conthead-text}{default}{}
+\DefTblrTemplate{caption}{default}{}
+\DefTblrTemplate{conthead}{default}{}
+\DefTblrTemplate{capcont}{default}{}
+\begin{longtblr}[]{
+	colspec = {Q[l, m, fg=main]X[j,m,fg=main]},
+    rowhead=1,
+	row{1} = {bg=rowfill, c},
+	hlines = {1-Z}{infotablecolor},
+	vlines = {1-Z}{infotablecolor},
+	}
+	№                                                                           & Назва теми лекції та перелік основних питань                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   \\
 %======================================================
-\rc\multicolumn{2}{|c|}{Розділ \nref{R:predmet}}
- \\\hline
+\SetCell[c=2]{h, c}{Розділ \nref{R:predmet}}
+ \\
 %======================================================
-\thead{\rownumber.}
+\rownumber.
 & \textbf{Рівняння Шредінґера. Квантовомеханічний опис структури атома водню}. Стани електрона в атомі водню та квантові числа. Пояснення спектрів.  Спін електрона. Поняття мультиплетності. Історія виникнення квантової хімії та квантово-механічних розрахунків. Обє'єкт, предмет дослідження квантової хімії. Сучасні досягнення та перспективи розвитку галузі.
 \newline
 \lit{}\cite[Розділ 1]{YatsimirsijQChem}, \cite[Глава I, II, IV]{Yatsimirsij}, \cite[Глава 3, \S\  3.1]{Cirelson}
-\\\hline
+\\
 %======================================================
-\rc\multicolumn{2}{|c|}{Розділ \nref{R:bagatoelekronni}}
-\\\hline
+\SetCell[c=2]{h, c}{Розділ \nref{R:bagatoelekronni}}
+\\
 %======================================================
-\thead{\rownumber.}
+\rownumber.
 & \textbf{Варіаційний принцип та розв'язки рівняння Шредінгера}. Атом гелію. Ортогелій, парагелій. Застосування теорії збурень та варіаційного принципу для розрахунку енергії основного стану атома гелію. Проблема точного опису двоелектронного атому. Атомні електронні конфігурації і терми.
 \newline
 \lit{}\cite[Розділ 2. \S 2.2]{YatsimirsijQChem}, \cite[Глава V]{Yatsimirsij}, \cite[Глава 2]{Cirelson}
-\\\hline
-\thead{\rownumber.}
+\\
+\rownumber.
 & \textbf{Одноелектронна модель та методи її реалізації для розрахунку багатоелектронних атомів}. Метод самоузгодженого поля (метод Хартрі) та метод Хартрі-Фока для розрахунку електронної структури багатоелектронного атому. Детермінант Слейтера.  Атомні орбіталі. Канонічні орбіталі. Орбіталі слейтерівьского типу (STO). Оболонкова модель атома та метод Кона-Шема. Трактування розв'язків одноелектронної моделі з точки зору хімії. Теорема Купманса.
 \newline
 \lit{}\cite[Глава VI]{Yatsimirsij},  \cite[Глава 2, \S\  2.1, 2.2, 2.3, 2.6]{Cirelson}
-\\\hline
-\thead{\rownumber.}
+\\
+\rownumber.
 & \textbf{Програми для квантово-механічних обчислень електронної структури та властивостей багатоелектронних атомів.} Алгоритми розрахунку властивостей багатоелектронних атомів методом Хартрі-Фока.  Порівняння результатів хартрі-фоковських розрахунків атомів з експериментом.  Обмінна та кулонівська кореляції. Застосування прикладних програми для розрахунків електронної густини та характеристик багатоелектронних атомів.
 \newline
 \lit{}\cite[Глава 2, \S\   2.6, 2.7]{Cirelson}, \cite{Gaussian}, \cite{Multiwfn}
 \newline
 \zsrs{} Розрахуйте характеристики атомів 1-го  та 2-го періоду
-\\\hline
+\\
 %======================================================
-\rc\multicolumn{2}{|c|}{Розділ \nref{R:molstructura}}
-\\\hline
+\SetCell[c=2]{h, c}{Розділ \nref{R:molstructura}}
+\\
 %======================================================
-\thead{\rownumber.}
+\rownumber.
 &  \textbf{Силовий та енергетичний аспекти опису хімічного зв'язку}. Проблема означення поняття <<хімічний зв'язок>>. Метод валентних зв'язків як розвиток теорії Гайтлера-Лондона. Резонансні структури. Теорема Гельмана-Файнмана.  Теорема віріалу.
 \newline
 \lit{}\cite[Глава 11]{Sleta}, \cite[Глава 4, \S\   4.1]{Cirelson}
-\\\hline
-\thead{\rownumber.}
+\\
+\rownumber.
 & \textbf{Пояснення природи хімічного зв'язку в рамках одноелектронної моделі}. Молекулярні орбіталі та їх класифікація. Заселеність атомних орбіталей. Геометрична будова багатоатомних молекул. Локалізація і гібридизація орбіталей. Просторовий розподіл електронної густини. Індекси вільної валентності. Дипольні та квадрупольні моменти молекул. Спорідненість до електрона, електронегативність.
 \newline
 \lit{}\cite[Глава 3, \S\   3.7]{Cirelson}, \cite[Глава 9]{Sleta}
-\\\hline
-\thead{\rownumber.}
+\\
+\rownumber.
 & \textbf{Поняття молекулярної структури та наближення Борна-Оппенгеймера}. Наближення Борна-Оппенгеймера. Відокремлення електронної задачі від ядерної. Теорія Гайтлера-Лондона для молекули \ce{H2}. Порівняння результатів розрахунків \ce{H2} методом Гайтлера-Лондона з експериментом.
 \newline
 \lit{}\cite[Глава VIII]{Yatsimirsij}, \cite[Глава 3, \S\   3.1]{Cirelson}
-\\\hline
-\thead{\rownumber.}
+\\
+\rownumber.
 & \textbf{Застосування одноелектронної моделі для розрахунку молекул}. Метод Хартрі-Фока. Наближення МО ЛКАО. Рівняння Рутана. Способи врахування електронної кореляції в одноелектронній моделі.  Молекулярний іон водню \ce{H_2^+}.
 \newline
 \lit{}\cite[Глава 3, \S\S\   3.2, 3.3]{Cirelson}, \cite[Глава 14, \S\  14.2]{Sleta}
-\\\hline
-\thead{\rownumber.}
+\\
+\rownumber.
 & \textbf{Неемпіричні (\emph{ab-inito}) методи квантово-механічних розрахунків та їх точність}. Базисні функції. Поняття про мінімальний та розширений базиси. Орбіталь гаусового типу (GTO).  Точність неемпіричних методів розрахунку. рахування електронної кореляції. Ієрархія методів розрахунку (діаграма Поппла).
 \newline
 \lit{}\cite[Глава 3, \S\S\   3.5, 3.6]{Cirelson}, \zsrs{} Розрахуйте характеристики двоатомних молекул
 \\
-\hline
-\thead{\rownumber.}
+\rownumber.
 & \textbf{Поняття про метод функціонала електронної густини (DFT-method)}. Застосування DFT для розрахунку молекул.
 \newline
 \lit{}\cite[Глава 3, \S\   3.4]{Cirelson}
 \\
-\hline
-\thead{\rownumber.}
+\rownumber.
 & \textbf{Напівемпіричні методи розрахунку молекул}. Ідея нульового диференціального перекриття. Метод Хюккеля.
 \newline
 \lit{}\cite[Глава XI]{Yatsimirsij}, \cite[Глава 3, \S\   3.7]{Cirelson}, \cite[Глава 13, \S\S\   13.2, 13.3]{Sleta}
 \\
-\hline
-\thead{\rownumber.}
+\rownumber.
 & \textbf{Застосування прикладних програм для квантово-механічних розрахунків молекул.}. Застосування комплексу прикладних програм \href{https://orcaforum.kofo.mpg.de/index.php}{ORCA}. Візуалізатори \href{https://avogadro.cc}{Avogadro}. Вибір розрахункового методу для вирішення різних типів задач. Способи задавання вихідних координат атомів та розрахунок їх характеристик. Точкові розрахунки (Single Point). Оптимізація геометрії (Geometry Optimization) та перерізи поверхонь потенціальної енергії.
 \newline
 \lit{}\cite{ORCA, ORCAInput, Multiwfn, ChemCraft}
-\\\hline
+\\
 %======================================================
-\rc\multicolumn{2}{|c|}{Розділ \nref{R:vlastyv}} \\\hline %======================================================
-\thead{\rownumber.}
+\SetCell[c=2]{h, c}{Розділ \nref{R:vlastyv}} \\
+ %======================================================
+\rownumber.
 &  \textbf{Силовий та енергетичний аспекти опису хімічного зв'язку}. Проблема означення поняття <<хімічний зв'язок>>. Метод валентних зв'язків як розвиток теорії Гайтлера-Лондона. Резонансні структури. Теорема Гельмана-Файнмана.  Теорема віріалу.
 \newline
 \lit{}\cite[Глава 11]{Sleta}, \cite[Глава 4, \S\   4.1]{Cirelson}
-\\\hline
-\thead{\rownumber.}
+\\
+\rownumber.
 & \textbf{Пояснення природи хімічного зв'язку в рамках одноелектронної моделі}. Молекулярні орбіталі та їх класифікація. Заселеність атомних орбіталей. Геометрична будова багатоатомних молекул. Локалізація і гібридизація орбіталей. Просторовий розподіл електронної густини. Індекси вільної валентності. Дипольні та квадрупольні моменти молекул. Спорідненість до електрона, електронегативність.
 \newline
 \lit{}\cite[Глава 3, \S\   3.7]{Cirelson}, \cite[Глава 9]{Sleta}
-\\\hline
+\\
 %======================================================
-\rc\multicolumn{2}{|c|}{Розділ \nref{R:vlastyv}} \\\hline %======================================================
+\SetCell[c=2]{h, c}{Розділ \nref{R:vlastyv}} \\ %======================================================
 % ------------------------------------------------------------
-\thead{\rownumber.}
+\rownumber.
 & \textbf{Електричні та магнітні властивості.} Класичний опис властивостей.
 \newline
 \lit{}\cite[4.1 -- 4.4, 5.1 -- 5.4]{Sauer}, \cite[12]{AtkinsQM}
-\\\hline
+\\
 % ------------------------------------------------------------
-\thead{\rownumber.}
+\rownumber.
 & \textbf{Теорія відгуку.} Квантово-механічний опис властивостей в рамках теорії збурення.
 \newline
 \lit{}\cite[4.5 -- 4.6, 5.5 -- 5.10, 10]{Sauer}, \cite[13]{AtkinsQM}
-\\\hline
+\\
 % ------------------------------------------------------------
-\thead{\rownumber.}
+\rownumber.
 & \textbf{Метод зв'язаного збурення} в рамках метода Хартрі-Фока для розрахунку властивостей молекул.
 \newline
 \lit{}\cite[11]{Sauer}
-\\\hline
+\\
 % ------------------------------------------------------------
 %======================================================
-\rc\multicolumn{2}{|c|}{Розділ \nref{R:kondensovani}} \\\hline %======================================================
-\thead{\rownumber.}
+\SetCell[c=2]{h, c}{Розділ \nref{R:kondensovani}} \\ %======================================================
+\rownumber.
 & \textbf{Невалентні взаємодії в молекулярних системах}. Міжмолекулярні взаємодії. Донорно-акцепторні молекулярні комплекси. Водневий зв'язок
 \newline
 \lit{}\cite[Розділ 6.б \S 6.2]{YatsimirsijQChem}, \cite[Глава 5, \S\S\   5.1  -- 5.3]{Cirelson}
-\\\hline
-\thead{\rownumber.}
+\\
+\rownumber.
 & \textbf{Класифікація конденсованих систем за типами хімічного зв’язку}. Хімічний зв'язок в іонних сполуках. Ковалентний зв'язок в твердих тілах. \newline
 \lit{}\cite[Розділ 6., \S\S 6.1, 6.2]{YatsimirsijQChem}, \cite[Глава XIV, \S\S\  1,4]{Yatsimirsij}
 \\
-\hline
-\thead{\rownumber.}
+\rownumber.
 & \textbf{Застосування одноелектронного методу для опису фізичних властивостей твердих тіл}. Модель вільних електронів. Зонна теорія твердих тіл. Методи розрахунку хвильових функцій в кристалах. \newline
 \lit{}\cite[Глава XIV, \S\  6]{Yatsimirsij}
-\\
-\hline
-\end{longtable}
+\end{longtblr}
 
 \subsection*{Практичні заняття}
 
 \begin{center}\setcounter{magicrownumbers}{0}
-    \begin{longtable}{|>{\arraybackslash}m{0.03\linewidth}|>{\raggedright\arraybackslash}m{0.9\linewidth}|}
-        \hline
-        \thead{№} & \thead {Назва теми заняття та перелік розглядуваних питань}
-        \\\hline
-        \endhead
+\DefTblrTemplate{contfoot-text}{default}{}
+\DefTblrTemplate{conthead-text}{default}{}
+\DefTblrTemplate{caption}{default}{}
+\DefTblrTemplate{conthead}{default}{}
+\DefTblrTemplate{capcont}{default}{}
+\def\ORCA{\href{https://orcaforum.kofo.mpg.de/index.php}{ORCA}}
+\begin{longtblr}[]{
+	colspec = {Q[l, m, fg=main]X[j,m,fg=main]},
+    rowhead=1,
+	row{1} = {bg=rowfill, c},
+	hlines = {1-Z}{infotablecolor},
+	vlines = {1-Z}{infotablecolor},
+	}
+        № & Назва теми заняття та перелік розглядуваних питань
+        \\
+        \rownumber. & Розрахунок атома водню в \ORCA.
+        \\
+        \rownumber. & Розрахунок атома гелію в \ORCA. Побудова молекулярних орбіталей на основі базису.
+        \\
+        \rownumber. & Розрахунок атома літію та інших багатоелектронних атомів в ORCA. Побудова молекулярних орбіталей та радіального розподілу густини за допомогою  \href{http://sobereva.com/multiwfn/}{Multiwfn}.
+        \\
         \rownumber. & Побудова молекулярних систем в програмі \href{https://avogadro.cc}{Avogadro}. Оптимізація структури за допомогою вбудованих методів молекулярної механіки.
-%        \newline \probl{} \cite{}
-        \\\hline
-        \rownumber. & Розрахунок властивостей атомів в програмі \href{https://orcaforum.kofo.mpg.de/index.php}{ORCA}. Візуалізація за допомогою \href{https://avogadro.cc}{Avogadro}
-        \newline   \cite{ORCAInput}
-        \\\hline
-        \rownumber. & Оптимізація структури молекул.
-        \newline  \cite{ORCAInput}
-        \\\hline
+        \\
         \rownumber. & Розрахунок енергії основного стану та розподілу густини заряду для двоатомних та багатоатомних молекул.
-        \newline \cite{ORCAInput}
-        \\\hline
+        \\
         \rownumber. & Розрахунок властивостей багатоатомних молекул.
-        \newline   \cite{ORCAInput}
-        \\\hline
+        \\
         \rownumber. & Розрахунок властивостей кристалів.
-        \newline   \cite{ORCAInput}
-        \\\hline
-    \end{longtable}
+    \end{longtblr}
 \end{center}
 
 \section{Самостійна робота студента}

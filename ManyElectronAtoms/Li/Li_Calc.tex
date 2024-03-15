@@ -115,7 +115,7 @@
     CTyp xyz       # the type of coordinates = xyz or internal
     Charge 0       # the total charge of the molecule
     Mult 2         # the multiplicity = 2S+1 ; S = +1/2 - 1/2  = 1/2
-    Units Angs     # the unit of length = angs or bohrs
+    Units Borhs     # the unit of length = angs or borhs
     coords
         Li        0.000000       0.00000        0.00000
     end
@@ -123,7 +123,7 @@ end
 \end{minted}
 
 %% --------------------------------------------------------
-\clearpage
+%\clearpage
 \subsection*{Базисні функції}
 %% --------------------------------------------------------
 
@@ -132,7 +132,6 @@ end
         bgcolor=gray!5,
         ]
         {ruby}
- # Basis set for element : Li
  NewGTO Li
  S 3
    1      16.1195750000      0.1543289703
@@ -170,9 +169,11 @@ ORBITAL ENERGIES
    2   0.0000       0.130126         3.5409
    3   0.0000       0.130126         3.5409
    4   0.0000       0.130126         3.5409
+
 ------------------
 MOLECULAR ORBITALS
 ------------------
+
                       0         1         2         3         4
                   -2.35349  -0.18017   0.13013   0.13013   0.13013
                    2.00000   1.00000   0.00000   0.00000   0.00000
@@ -184,8 +185,12 @@ MOLECULAR ORBITALS
   0Li  1py       -0.000000  0.000000  0.973079 -0.229108  0.025030
 \end{minted}
 
-\clearpage
-Побудуємо орбіталі на основі розрахунків:
+%% --------------------------------------------------------
+\subsection*{Побудова орбіталей та детермінанта Слейтера}
+%% --------------------------------------------------------
+%\clearpage
+
+Орбіталі:
 \begin{tcolorbox}[mybox]
 	\abovedisplayskip=0pt%
 	\begin{align*}
@@ -199,6 +204,7 @@ MOLECULAR ORBITALS
 
 Орбіталь $\phi_0$ --- двічі заселена, орбіталь $\phi_1$ --- заселена одним електроном. Інші орбіталі не заселені (\emph{віртуальні}).
 
+\clearpage
 Детермінант Слейтера (\emph{\color{red}будується лише із заселених орбіталей}):
 \begin{tcolorbox}[mybox]
 	\begin{equation*}
@@ -211,6 +217,7 @@ MOLECULAR ORBITALS
 	\end{equation*}
 \end{tcolorbox}
 
+%\clearpage
 Електронна густина (\emph{\color{red}рахується лише по заселеним орбіталям}):
 \begin{tcolorbox}[mybox]
 	\begin{equation*}
@@ -218,8 +225,7 @@ MOLECULAR ORBITALS
 	\end{equation*}
 \end{tcolorbox}
 
-Віртуальні орбіталі не мають фізичного сенсу (артефакт методу)\footnote{Однак вони використовуюся в деяких пост-Хартрі-Фоківських методах.}.
-
+Функція радіального розподілу $4\pi r^2 \rho(r)$.
 
 %=================== Побудова засобами pgfplots ===================
 
@@ -290,12 +296,15 @@ MOLECULAR ORBITALS
 %=========================================================
 
 
+Радіальний розподіл електронної густини атома показує, що атом має оболонкову структуру.
+
 %% --------------------------------------------------------
+\clearpage
 \section{Візуалізація орбіталей та радіального розподілу в \texttt{Multiwfn}}
 %% --------------------------------------------------------
 
 %---------------------------------------------------------
-\begin{figure}[h!]\centering
+\begin{center}
 	\begin{tikzpicture}[background rectangle/.style={fill=gray!5}, show background rectangle]
 		\begin{axis}[
 				ymax=3,
@@ -309,35 +318,35 @@ MOLECULAR ORBITALS
 
 		\end{axis}
 	\end{tikzpicture}
-	\caption{Радіальний розподіл електронної густини}
-\end{figure}
+	\captionof{figure}{Радіальний розподіл електронної густини}
+\end{center}
 %---------------------------------------------------------
 
-Радіальний розподіл електронної густини атома показує, що атом має оболонкову структуру.
+
 %=========================================================
 \begin{figure}[h!]\centering
 	%---------------------------------------------------------
-	\begin{subfigure}[t]{0.45\linewidth}\centering
+	\begin{subfigure}[t]{0.4\linewidth}\centering
 		\includegraphics[width=\linewidth]{pict/1.png}
 		\caption{Орбіталь $\phi_0$}
 	\end{subfigure}
 	\qquad%---------------------------------------------------------
-	\begin{subfigure}[t]{0.45\linewidth}\centering
+	\begin{subfigure}[t]{0.4\linewidth}\centering
 		\includegraphics[width=\linewidth]{pict/2.png}
 		\caption{Орбіталь $\phi_1$}
 	\end{subfigure}
 	\qquad%---------------------------------------------------------
-	\begin{subfigure}[t]{0.45\linewidth}\centering
+	\begin{subfigure}[t]{0.4\linewidth}\centering
 		\includegraphics[width=\linewidth]{pict/3.png}
 		\caption{Орбіталь $\phi_2$}
 	\end{subfigure}
 	\qquad%---------------------------------------------------------
-	\begin{subfigure}[t]{0.45\linewidth}\centering
+	\begin{subfigure}[t]{0.4\linewidth}\centering
 		\includegraphics[width=\linewidth]{pict/4.png}
 		\caption{Орбіталь $\phi_3$}
 	\end{subfigure}
 	\qquad%---------------------------------------------------------
-	\begin{subfigure}[t]{0.45\linewidth}\centering
+	\begin{subfigure}[t]{0.4\linewidth}\centering
 		\includegraphics[width=\linewidth]{pict/5.png}
 		\caption{Орбіталь $\phi_4$}
 	\end{subfigure}
@@ -347,7 +356,7 @@ MOLECULAR ORBITALS
 %=========================================================
 
 \clearpage
-\nocite{BSE,  Multiwfn, Bartell1953}
+\nocite{BSE,  Multiwfn, Lu2011, Bartell1953}
 \printbibliography[title=Перелік використаних джерел]
 
 
