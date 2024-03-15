@@ -1,0 +1,357 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+
+\documentclass[]{article}
+\usepackage[fontsize=14pt]{fontsize}
+
+\usepackage{fontspec}
+\setsansfont{CMU Sans Serif}%{Arial}
+\setmainfont{CMU Serif}%{Times New Roman}
+\setmonofont{CMU Typewriter Text}%{Consolas}
+
+\defaultfontfeatures{Ligatures={TeX}}
+\usepackage[math-style=TeX]{unicode-math}
+\usepackage[russian, english, ukrainian]{babel}
+
+\usepackage[autolang=other, bibstyle=gost-numeric]{biblatex}
+
+\usepackage{microtype}
+\usepackage{xurl}
+\usepackage{indentfirst}
+
+\usepackage[most]{tcolorbox}
+\tcbset{highlight math style={enhanced,
+  colframe=red,colback=white,arc=0pt,boxrule=1pt}}
+\tcbset{
+    mybox/.style={
+        enhanced,
+        colback=gray!5,
+        fonttitle=\bfseries,
+        sharp corners,
+        boxrule=0pt,
+        frame empty
+    }
+}
+\usepackage{subcaption}
+\captionsetup[subfigure]{justification=centering}
+\usepackage{hyperref}
+
+\usepackage{titlesec}
+\titlelabel{\thetitle.\space}
+\usepackage{minted}
+\usepackage{tikz, calc}
+\usetikzlibrary{backgrounds}
+
+\usepackage{enumitem}
+
+
+\addbibresource{d:/Projects/LaTeX/QChem/A_Documents/Syllabus_QChem/Syllabus_QChem.bib}
+
+%%                                                                        %%
+%%============================= Геометрія сторінки =======================%%
+%%                                                                        %%
+\usepackage[%
+	a4paper,%
+	footskip=1cm,%
+	headsep=0.3cm,%
+	top=2cm, %поле сверху
+	bottom=2cm, %поле снизу
+	left=2cm, %поле ліворуч
+	right=2cm, %поле праворуч
+    ]{geometry}
+%%                                                                        %%
+%%============================== Інтерліньяж  ============================%%
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepgfplotslibrary{units}
+\pgfplotsset{compat=newest}
+\usepackage{pgfplotstable}
+\usepgfplotslibrary{groupplots}
+
+
+
+\def\C#1{{\color{teal}#1}}
+\def\a#1{{\color{magenta}#1}}
+\def\sgto#1{\left(\frac{2\cdot\a{#1}}{\pi}\right)^{3/4} e^{-\a{#1}\cdot r^2}}
+\NewDocumentCommand{\Li}{}{
+\tikz[baseline=-5pt]{
+    \coordinate (dv) at (0,0);
+    \coordinate (base) at (50pt, 0pt);
+    \coordinate (height) at (0pt,50pt);
+    \coordinate (diag) at ($(base)+(height)$);
+    \path[draw=teal!80!black, rounded corners=2pt, fill=teal, thick] ($(dv)-.5*(diag)$) rectangle +(diag);
+    \node[white] at (dv) {\sffamily\huge Li};
+    \node[white, inner sep=2pt] (dvtext) at ($(dv)-.5*(height)$) [anchor=south] {\sffamily\tiny Lithium};
+    \node[white, inner sep=2pt] (dvnum) at ($(dv)+.5*(height)-.5*(base)$) [anchor=north west] {\sffamily\tiny 3};
+    \node[white, inner sep=2pt] (elestruct) at ($(dv)+.5*(height)-.1*(base)$) [anchor=north west] {\sffamily\tiny $1s^22s^1$};
+}
+}
+
+\title{\bfseries Розрахунок атома \Li в \texttt{ORCA}}
+\date{}
+%===============================================================================
+\begin{document}
+\maketitle
+
+
+%% --------------------------------------------------------
+%\clearpage
+\section{Розрахунки орбіталей в ORCA}
+%% --------------------------------------------------------
+
+%% --------------------------------------------------------
+\subsection*{Файл \texttt{.inp}}
+%% --------------------------------------------------------
+
+\begin{minted}[mathescape,
+        fontsize=\small,
+        bgcolor=gray!5,
+        ]
+        {ruby}
+!ROHF SP STO-3G
+!Printbasis
+!PrintMOs
+
+%coords
+    CTyp xyz       # the type of coordinates = xyz or internal
+    Charge 0       # the total charge of the molecule
+    Mult 2         # the multiplicity = 2S+1 ; S = +1/2 - 1/2  = 1/2
+    Units Angs     # the unit of length = angs or bohrs
+    coords
+        Li        0.000000       0.00000        0.00000
+    end
+end
+\end{minted}
+
+%% --------------------------------------------------------
+\clearpage
+\subsection*{Базисні функції}
+%% --------------------------------------------------------
+
+\begin{minted}[mathescape,
+        fontsize=\small,
+        bgcolor=gray!5,
+        ]
+        {ruby}
+ # Basis set for element : Li
+ NewGTO Li
+ S 3
+   1      16.1195750000      0.1543289703
+   2       2.9362007000      0.5353281412
+   3       0.7946505000      0.4446345410
+ S 3
+   1       0.6362897000     -0.0999672298
+   2       0.1478601000      0.3995128292
+   3       0.0480887000      0.7001154686
+ P 3
+   1       0.6362897000      0.1559162650
+   2       0.1478601000      0.6076837007
+   3       0.0480887000      0.3919573775
+  end;
+\end{minted}
+
+%% --------------------------------------------------------
+%\clearpage
+\subsection*{Виведення орбіталей в ORCA}
+%% --------------------------------------------------------
+
+
+\begin{minted}[mathescape,
+        fontsize=\small,
+        bgcolor=gray!5,
+        ]
+        {ruby}
+----------------
+ORBITAL ENERGIES
+----------------
+
+  NO   OCC          E(Eh)            E(eV)
+   0   2.0000      -2.353491       -64.0417
+   1   1.0000      -0.180172        -4.9027
+   2   0.0000       0.130126         3.5409
+   3   0.0000       0.130126         3.5409
+   4   0.0000       0.130126         3.5409
+------------------
+MOLECULAR ORBITALS
+------------------
+                      0         1         2         3         4
+                  -2.35349  -0.18017   0.13013   0.13013   0.13013
+                   2.00000   1.00000   0.00000   0.00000   0.00000
+                  --------  --------  --------  --------  --------
+  0Li  1s        -0.991218  0.281468 -0.000000 -0.000000 -0.000000
+  0Li  2s        -0.034144 -1.029840  0.000000  0.000000  0.000000
+  0Li  1pz       -0.000000  0.000000  0.212225  0.933091  0.290348
+  0Li  1px       -0.000000  0.000000 -0.089877 -0.277220  0.956594
+  0Li  1py       -0.000000  0.000000  0.973079 -0.229108  0.025030
+\end{minted}
+
+\clearpage
+Побудуємо орбіталі на основі розрахунків:
+\begin{tcolorbox}[mybox]
+\abovedisplayskip=0pt%
+\begin{align*}
+	\phi_{0} & = \C{-0.991218} \cdot \mathrm{STO}_{1s}  + (\C{-0.034144}) \cdot \mathrm{STO}_{2s},           \\
+	\phi_{1} & = \C{0.281468} \cdot \mathrm{STO}_{1s}  + (\C{-1.029840}) \cdot \mathrm{STO}_{2s}, \\
+    \phi_{2} & = \C{0.212225} \cdot \mathrm{STO}_{1p_{z}}  + (\C{-0.089877}) \cdot \mathrm{STO}_{1p_{x}}  + \C{0.973079} \cdot \mathrm{STO}_{1p_{y}}, \\
+    \phi_{3} & = \C{0.933091} \cdot \mathrm{STO}_{1p_{z}}  + (\C{-0.277220}) \cdot \mathrm{STO}_{1p_{x}}  + (\C{-0.229108}) \cdot \mathrm{STO}_{1p_{y}}, \\
+    \phi_{4} & = \C{0.290348} \cdot \mathrm{STO}_{1p_{z}}  + \C{0.956594} \cdot \mathrm{STO}_{1p_{x}}  + \C{0.025030} \cdot \mathrm{STO}_{1p_{y}}.
+\end{align*}
+\end{tcolorbox}
+
+Орбіталь $\phi_0$ --- двічі заселена, орбіталь $\phi_1$ --- заселена одним електроном. Інші орбіталі не заселені (\emph{віртуальні}).
+
+Детермінант Слейтера (\emph{\color{red}будується лише із заселених орбіталей}):
+\begin{tcolorbox}[mybox]
+\begin{equation*}
+	\Phi(\vec\xi_1, \vec\xi_2, \vec\xi_3) = \frac1{\sqrt6}
+\begin{vmatrix}
+     \phi_0(1)\alpha(1) & \phi_0(1)\beta(1) & \phi_1(1)\alpha(1)\\
+     \phi_0(2)\alpha(2) & \phi_0(2)\beta(2) & \phi_1(2)\alpha(2)\\
+     \phi_0(3)\alpha(3) & \phi_0(3)\beta(3) & \phi_1(3)\alpha(3)
+\end{vmatrix}.
+\end{equation*}
+\end{tcolorbox}
+
+Електронна густина (\emph{\color{red}рахується лише по заселеним орбіталям}):
+\begin{tcolorbox}[mybox]
+\begin{equation*}
+	\rho =  2\cdot|\phi_{0}|^2 + 1\cdot |\phi_1|^2.
+\end{equation*}
+\end{tcolorbox}
+
+Віртуальні орбіталі не мають фізичного сенсу (артефакт методу)\footnote{Однак вони використовуюся в деяких пост-Хартрі-Фоківських методах.}.
+
+
+%=================== Побудова засобами pgfplots ===================
+
+\tikzset{
+declare function = {
+					gtoS(\c,\a,\r)=\c*(2*\a/pi)^(3/4)*exp(-\a*\r^2);
+                    gtoPx(\c,\a,\x,\y,\z)=\c*(2*\a/pi)^(3/4)*sqrt(4*\a)\x*exp(-\a*(\x^2+\y^2+\z^2);
+                    gtoPy(\c,\a,\x,\y,\z)=\c*(2*\a/pi)^(3/4)*sqrt(4*\a)\y*exp(-\a*(\x^2+\y^2+\z^2);
+                    gtoPz(\c,\a,\x,\y,\z)=\c*(2*\a/pi)^(3/4)*sqrt(4*\a)\z*exp(-\a*(\x^2+\y^2+\z^2);
+                    sto1s(\r)=gtoS(0.15433,16.11,\r)+gtoS(0.53533,2.94,\r)+gtoS(0.445,0.79,\r);
+                    sto2s(\r)=gtoS(-0.09997,0.6363,\r)+gtoS(0.39951,0.148,\r)+gtoS(0.7,0.048,\r);
+                    sto1px(\x,\y,\z)=gtoPx(0.1559, 0.6363,\x,\y,\z)+gtoPx(0.6077, 0.148,\x,\y,\z)+
+                    gtoPx(0.392, 0.048,\x,\y,\z);
+                    sto1py(\x,\y,\z)=gtoPy(0.1559, 0.6363,\x,\y,\z)+gtoPy(0.6077, 0.148,\x,\y,\z)+
+                    gtoPy(0.392, 0.048,\x,\y,\z);
+                    sto1pz(\x,\y,\z)=gtoPz(0.1559, 0.6363,\x,\y,\z)+gtoPz(0.6077, 0.148,\x,\y,\z)+
+                    gtoPz(0.392, 0.048,\x,\y,\z);
+				},
+}
+
+%=========================================================
+\begin{figure}[h!]\centering
+	%---------------------------------------------------------
+	\begin{subfigure}[t]{0.45\linewidth}\centering
+		\begin{tikzpicture}[background rectangle/.style={fill=gray!5}, show background rectangle]
+			\begin{axis}[
+					ymin=-1.5,
+                    ymax=0.5,
+					xmax=5,
+					axis lines=left,
+					xlabel={$r$, bohr},
+					ylabel=$\phi(r)$,
+					width=0.95\linewidth,
+                    legend style={at={(1,0.1)}, draw=none, fill=white, anchor=south east},
+				]
+
+				\addplot [thick, domain={0:5}, smooth, red, samples=1500] {-0.991218*sto1s(x) - 0.034144*sto2s(x)} ;
+                \addlegendentry{$\phi_0$}
+
+            	\addplot [thick, domain={0:5}, smooth, blue, samples=1500] {0.281468*sto1s(x) - 1.029840*sto2s(x)} ;
+                \addlegendentry{$\phi_1$}
+
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Зайняті орбіталі}
+	\end{subfigure}
+	\qquad%---------------------------------------------------------
+	\begin{subfigure}[t]{0.45\linewidth}\centering
+		\begin{tikzpicture}[background rectangle/.style={fill=gray!5}, show background rectangle]
+			\begin{axis}[
+					ymax=3,
+					xmax=5,
+					axis lines=left,
+					xlabel={$r$, bohr},
+					ylabel=$4\pi r^2 \rho(r)$,
+					width=0.95\linewidth,
+				]
+				\addplot [thick, domain={0:5}, smooth, red, samples=1500] { 4*pi*x^2*(2*(-0.991218*sto1s(x) - 0.034144*sto2s(x))^2+
+                1*(0.281468*sto1s(x) - 1.029840*sto2s(x))^2)};
+
+            	\end{axis}
+		\end{tikzpicture}
+		\caption{Електронна густина}
+	\end{subfigure}
+	\caption{Радіальні розподіли}
+	%---------------------------------------------------------
+\end{figure}
+%=========================================================
+
+
+%% --------------------------------------------------------
+\section{Візуалізація орбіталей та радіального розподілу в \texttt{Multiwfn}}
+%% --------------------------------------------------------
+
+%---------------------------------------------------------
+\begin{figure}[h!]\centering
+		\begin{tikzpicture}[background rectangle/.style={fill=gray!5}, show background rectangle]
+			\begin{axis}[
+					ymax=3,
+					xmax=5,
+					axis lines=left,
+					xlabel={$r$, bohr},
+					ylabel=$4\pi r^2 \rho(r)$,
+					width=1\linewidth,
+				]
+				\addplot[mark=none, red, smooth, thick] table[x expr=2*\thisrowno{1},y index=2] {RDF.txt};
+
+            	\end{axis}
+		\end{tikzpicture}
+		\caption{Радіальний розподіл електронної густини}
+\end{figure}
+%---------------------------------------------------------
+
+Радіальний розподіл електронної густини атома показує, що атом має оболонкову структуру.
+%=========================================================
+\begin{figure}[h!]\centering
+	%---------------------------------------------------------
+	\begin{subfigure}[t]{0.45\linewidth}\centering
+        \includegraphics[width=\linewidth]{pict/1.png}
+		\caption{Орбіталь $\phi_0$}
+	\end{subfigure}
+	\qquad%---------------------------------------------------------
+	\begin{subfigure}[t]{0.45\linewidth}\centering
+        \includegraphics[width=\linewidth]{pict/2.png}
+		\caption{Орбіталь $\phi_1$}
+	\end{subfigure}
+	\qquad%---------------------------------------------------------
+	\begin{subfigure}[t]{0.45\linewidth}\centering
+        \includegraphics[width=\linewidth]{pict/3.png}
+		\caption{Орбіталь $\phi_2$}
+	\end{subfigure}
+	\qquad%---------------------------------------------------------
+	\begin{subfigure}[t]{0.45\linewidth}\centering
+        \includegraphics[width=\linewidth]{pict/4.png}
+		\caption{Орбіталь $\phi_3$}
+	\end{subfigure}
+	\qquad%---------------------------------------------------------
+	\begin{subfigure}[t]{0.45\linewidth}\centering
+        \includegraphics[width=\linewidth]{pict/5.png}
+		\caption{Орбіталь $\phi_4$}
+	\end{subfigure}
+	\caption{Орбіталі}
+	%---------------------------------------------------------
+\end{figure}
+%=========================================================
+
+\clearpage
+\nocite{BSE,  Multiwfn, Bartell1953}
+\printbibliography[title=Перелік використаних джерел]
+
+
+\end{document}

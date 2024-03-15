@@ -10,6 +10,7 @@
 \setmainfont{CMU Serif}%{Times New Roman}
 \setmonofont{CMU Typewriter Text}%{Consolas}
 
+
 \defaultfontfeatures{Ligatures={TeX}}
 \usepackage[math-style=TeX]{unicode-math}
 \usepackage[russian, english, ukrainian]{babel}
@@ -17,7 +18,7 @@
 \usepackage[autolang=other]{biblatex}
 
 \usepackage{microtype}
-\usepackage{xurl}
+\usepackage{amsmath}
 \usepackage{indentfirst}
 
 \usepackage[most]{tcolorbox}
@@ -69,6 +70,7 @@
 \pgfplotsset{compat=newest}
 \usepackage{pgfplotstable}
 \usepgfplotslibrary{groupplots}
+\usepackage{xifthen}
 
 
 
@@ -92,8 +94,6 @@
 \title{\bfseries Процедура розв'язку рівнянь Хартрі-Фока для атома \He}
 \date{}
 
-\usepackage{xifthen}
-
 %% --------------------------------------------------------
 \def\P#1{%
 % Parity operator
@@ -104,7 +104,7 @@
 \fi
 }
 
-\NewDocumentCommand{\J}{e_ m e_ d()}{
+\NewDocumentCommand{\J}{E_{\space} m E_{\space} d()}{
 \ifthenelse{\equal{#2}{\phi}}{\edef\V{V}}{\edef\V{\mathcal{V}}}
 % #1 - operator index
 % #2 - function name
@@ -120,7 +120,7 @@
 }
 }
 
-\NewDocumentCommand{\K}{e_ m e_ d()}{
+\NewDocumentCommand{\K}{E_{\space} m E_{\space} d()}{
 \ifthenelse{\equal{#2}{\phi}}{\edef\V{V}}{\edef\V{\mathcal{V}}}
 % #1 - operator index
 % #2 - function name
@@ -136,12 +136,21 @@
 }
 }
 
-\def\opbracket<#1|#2|#3>{
-\left\langle #1 \right| #2 \left| #3 \right\rangle
-}
+\ExplSyntaxOn
+\NewDocumentCommand{\bracket}{r<>}
+  {
+    \tl_set:Nn \l_tmpa_tl { #1 }
+    \tl_replace_all:Nnn \l_tmpa_tl { | } { \middle | }
+    \left\langle \l_tmpa_tl \right\rangle
+  }
 
-\def\bracket<#1|#2>{
-\left\langle #1 \right|\left. #2 \right\rangle
+\ExplSyntaxOff
+
+
+\def\braces(#1#2|#3#4){
+    \ensuremath{
+        \int \frac{\chi_#1(1)\chi_#2(1)\chi_#3(2)\chi_#4(2)}{r_{12}} dV_1 dV_2
+    }
 }
 
 %% --------------------------------------------------------
@@ -178,24 +187,17 @@
      = \varepsilon_2\varphi_2(2), \\
 \end{align*}
 
-
 Якщо оболонки замкнені, то $\varphi_1 = \phi\alpha$, $\varphi_2 = \phi\beta$, то рівняння приймуть вигляд:
 
 \begin{align*}
-    \hat{h}(1)\phi(1) +
-    \int \frac{\phi^*(2)\phi(2)}{r_{12}} dV_2\ \phi(1)
-     = \varepsilon_1\phi(1), \\
-    \hat{h}(2)\phi(2) +
-    \int \frac{\phi^*(1)\phi(1)}{r_{12}} dV_1\ \phi(2)
-     = \varepsilon_2\phi(2).
+    \hat{h}(1)\phi(1) + \J\phi(1) = \varepsilon_1\phi(1), \\
+    \hat{h}(2)\phi(2) + \J\phi(2) = \varepsilon_2\phi(2). \\
 \end{align*}
 
 Оскільки електрони не розрізненні, то нам фактично доводиться розв'язувати одне рівняння:
 
 \begin{equation}\label{eq:parahelium_HF_equation}
-    \hat{h}(1)\phi(1) +
-    \int \frac{\phi^*(2)\phi(2)}{r_{12}} d2\ \phi(1)
-     = \varepsilon\phi(1).
+    \hat{h}(1)\phi(1) + \J\phi(1) = \varepsilon_1\phi(1).
 \end{equation}
 
 Розв'язок другого рівняння аналогічний, за винятком номера електрона.
@@ -244,7 +246,7 @@
 Введені традиційні позначення:
 
 \begin{equation*}
-    h_{rs} = \opbracket<\chi_r(1)|\hat{h}(1)|\chi_s(1)>,
+    h_{rs} = \bracket<\chi_r(1)|\hat{h}(1)|\chi_s(1)>,
 \end{equation*}
 
 \begin{equation*}
