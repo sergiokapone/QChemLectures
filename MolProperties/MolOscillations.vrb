@@ -1,0 +1,108 @@
+\frametitle{Розрахунок інфрачервоних спектрів в ORCA}\framesubtitle {}
+	\tikz[remember picture,overlay] \node[opacity=0.3,inner sep=0pt, anchor=north east] at ([yshift=-1cm]current page.north
+	east){\includegraphics[width=2cm]{orca_logo}};
+
+	\begin{onlyenv}<1>
+		\begin{block}{}
+			Щоб знайти ІЧ-спектри молекули, треба додати наступні рядки:
+
+			\begin{minted}[
+        autogobble,
+        fontsize=\scriptsize,
+        ]
+        {ruby}
+
+    ! Opt
+    ! AnFreq # or NumFreq
+    \end{minted}
+		\end{block}
+
+		\begin{block}{}\justifying
+			Аналітичні (\texttt{AnFreq}) частоти вимагають менше часу на обчислення ніж чисельні (\texttt{NumFreq}).
+		\end{block}
+
+		\begin{minted}[
+        autogobble,
+        fontsize=\scriptsize,
+        ]
+        {ruby}
+            ! RHF Opt AnFreq def2-SVP
+
+            * int 0 1
+               O     0     0     0        0.00000        0.00000        0.00000
+               H     1     0     0        0.99025        0.00000        0.00000
+               H     1     2     0        0.99025      104.51004        0.00000
+            *
+        \end{minted}
+	\end{onlyenv}
+	\begin{onlyenv}<2>
+		\begin{block}{}\justifying
+			Перші кілька частот завжди дорівнюють нулю, оскільки вони відповідають обертальним і поступальним модам. Їх має бути п'ять для лінійних молекул і
+			шість для нелінійних, решта відповідають власне коливальним модам.
+			\begin{minted}[
+        autogobble,
+        fontsize=\scriptsize,
+        ]
+        {ruby}
+        -----------------------
+        VIBRATIONAL FREQUENCIES
+        -----------------------
+
+        Scaling factor for frequencies =  1.000000000  (already applied!)
+
+           0:         0.00 cm**-1
+           1:         0.00 cm**-1
+           2:         0.00 cm**-1
+           3:         0.00 cm**-1
+           4:         0.00 cm**-1
+           5:         0.00 cm**-1
+           6:      1750.33 cm**-1
+           7:      4148.51 cm**-1
+           8:      4244.72 cm**-1
+        \end{minted}
+		\end{block}
+	\end{onlyenv}
+	\begin{onlyenv}<3>
+		\begin{block}{}
+			Потім програма виводить нормальні моди коливань:
+
+			\begin{minted}[
+        autogobble,
+        fontsize=\scriptsize,
+        ]
+        {ruby}
+-----------
+IR SPECTRUM
+-----------
+
+ Mode   freq       eps      Int      T**2         TX        TY        TZ
+       cm**-1   L/(mol*cm) km/mol    a.u.
+----------------------------------------------------------------------------
+  6:   1750.33   0.016362   82.68  0.002917  (-0.033072 -0.042700 -0.000000)
+  7:   4148.51   0.005311   26.84  0.000400  ( 0.012232  0.015807 -0.000000)
+  8:   4244.72   0.014716   74.37  0.001082  ( 0.026011 -0.020132 -0.000000)
+ \end{minted}
+		\end{block}
+
+		\begin{block}{}
+			ІЧ-спектр можна побудувати за допомогою утиліти \texttt{orca\_mapspc}:
+			\begin{minted}[
+        autogobble,
+        ]
+        {bash}
+> orca_mapspc H2O.out IR
+ \end{minted}
+		\end{block}
+	\end{onlyenv}
+	\begin{onlyenv}<4>
+Одиницею енергії переходу для ІЧ є см\textsuperscript{-1}:
+\begin{equation*}
+    1\ \text{еВ}=8.0655\cdot 10^3\ \text{см\textsuperscript{-1}}
+\end{equation*}
+Програма розраховує \href{https://en.wikipedia.org/wiki/Beer%E2%80%93Lambert_law}{коефіцієнт молярної екстинції} $\varepsilon$ в
+$\frac{\text{літр}}{\text{моль}\cdot\text{см}} = \frac{1000\ \text{см}^2}{\text{моль}}$ та інтенсивність за формулою:
+\begin{equation*}
+    I = \int \varepsilon(\nu)d\nu,
+\end{equation*}
+в одиницях $\frac{1000\ \text{см}^2}{\text{моль}}\cdot\text{см}^{-1} = \frac{0.01\ \text{km}}{\text{моль}}$.
+	\end{onlyenv}

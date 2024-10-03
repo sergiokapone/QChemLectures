@@ -1,0 +1,159 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+
+\documentclass[]{article}
+\usepackage[fontsize=14pt]{fontsize}
+
+\usepackage{fontspec}
+\setsansfont{CMU Sans Serif}%{Arial}
+\setmainfont{CMU Serif}%{Times New Roman}
+\setmonofont{CMU Typewriter Text}%{Consolas}
+
+\defaultfontfeatures{Ligatures={TeX}}
+\usepackage[math-style=TeX]{unicode-math}
+\usepackage[russian, english, ukrainian]{babel}
+
+\usepackage{biblatex}
+
+\usepackage{microtype}
+\usepackage{xurl}
+\usepackage{indentfirst}
+
+\usepackage[most]{tcolorbox}
+\tcbset{highlight math style={enhanced,
+  colframe=red,colback=white,arc=0pt,boxrule=1pt}}
+\tcbset{
+    mybox/.style={
+        enhanced,
+        colback=gray!5,
+        fonttitle=\bfseries,
+        sharp corners,
+        boxrule=0pt,
+        frame empty
+    }
+}
+\usepackage{subcaption}
+\captionsetup[subfigure]{justification=centering}
+\usepackage{hyperref}
+
+\usepackage{titlesec}
+\titlelabel{\thetitle.\space}
+\usepackage{minted}
+\usepackage{tikz, calc}
+\usetikzlibrary{backgrounds}
+
+\usepackage{enumitem}
+\usepackage{tabularray}
+
+
+\addbibresource{../Bibliography/QuantumChemistry.bib}
+
+%%                                                                        %%
+%%============================= Геометрія сторінки =======================%%
+%%                                                                        %%
+\usepackage[%
+	a4paper,%
+	footskip=1cm,%
+	headsep=0.3cm,%
+	top=2cm, %поле сверху
+	bottom=2cm, %поле снизу
+	left=2cm, %поле ліворуч
+	right=2cm, %поле праворуч
+    ]{geometry}
+%%                                                                        %%
+%%============================== Інтерліньяж  ============================%%
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepgfplotslibrary{units}
+\pgfplotsset{compat=newest}
+\usepackage{pgfplotstable}
+\usepgfplotslibrary{groupplots}
+
+\usepackage{mhchem}[version=4.10]
+
+
+
+\def\C#1{{\color{teal}#1}}
+\def\a#1{{\color{magenta}#1}}
+\def\sgto#1{\left(\frac{2\cdot\a{#1}}{\pi}\right)^{3/4} e^{-\a{#1}\cdot r^2}}
+\NewDocumentCommand{\He}{}{
+\tikz[baseline=-5pt]{
+    \coordinate (dv) at (0,0);
+    \coordinate (base) at (50pt, 0pt);
+    \coordinate (height) at (0pt,50pt);
+    \coordinate (diag) at ($(base)+(height)$);
+    \path[draw=teal!80!black, rounded corners=2pt, fill=teal, thick] ($(dv)-.5*(diag)$) rectangle +(diag);
+    \node[white] at (dv) {\sffamily\huge He};
+    \node[white, inner sep=2pt] (dvtext) at ($(dv)-.5*(height)$) [anchor=south] {\sffamily\tiny Helium};
+    \node[white, inner sep=2pt] (dvnum) at ($(dv)+.5*(height)-.5*(base)$) [anchor=north west] {\sffamily\tiny 2};
+    \node[white, inner sep=2pt] (elestruct) at ($(dv)+.5*(height)+.1*(base)$) [anchor=north west] {\sffamily\tiny $1s^2$};
+}
+}
+
+\title{\bfseries Таблиці даних}
+\date{}
+%===============================================================================
+\begin{document}
+\maketitle
+
+\begin{table}\centering
+\caption{Точні значення енергії основного стану для деяких атомів}
+\begin{tblr}{
+colspec={QQX[l, m]X[c, m]},
+row{1} = {c, bg=gray!50},
+hlines,
+vlines
+}
+    $Z$ & Атом & Конфігурація                     & Точне значення енергії, Eh  \\
+    2   & He   & \ce{1s^2}               \ce{^1S} & −2.903385       \\
+    3   & Li   & \ce{1s^2 2s}            \ce{^2S} & −7.477976       \\
+    4   & Be   & \ce{1s^2 2s^2}          \ce{^1S} & −14.668449      \\
+    5   & B    & \ce{1s^2 2s^2 2p}       \ce{^2P} & −24.658211      \\
+    6   & C    & \ce{1s^2 2s^2 2p^2}     \ce{^3P} & −37.855668      \\
+    7   & N    & \ce{1s^2 2s^2 2p^3}     \ce{^4S} & −54.611893      \\
+    8   & O    & \ce{1s^2 2s^2 2p^4}     \ce{^3P} & −75.109991      \\
+    9   & F    & \ce{1s^2 2s^2 2p^5}     \ce{^2P} & −99.803888      \\
+    10  & Ne   & \ce{1s^2 2s^2 2p^6}     \ce{^1S} & −128.830462     \\
+    11  & Na   & \ce{[Ne] 3s}            \ce{^2S} & −162.428221     \\
+    12  & Mg   & \ce{[Ne] 3s^2}          \ce{^1S} & −200.309935     \\
+    13  & Al   & \ce{[Ne] 3s^2 3p}       \ce{^2P} & −242.712031     \\
+    14  & Si   & \ce{[Ne] 3s^2 3p2}      \ce{^3P} & −289.868255     \\
+    15  & P    & \ce{[Ne] 3s^2 3p^3}     \ce{^4S} & −341.946219     \\
+    16  & S    & \ce{[Ne] 3s^2 3p^4}     \ce{^3P} & −399.034923     \\
+    17  & Cl   & \ce{[Ne] 3s^2 3p^5}     \ce{^2P} & −461.381223     \\
+    18  & Ar   & \ce{[Ne] 3s^2 3p^6}     \ce{^1S} & −529.112009     \\
+    19  & K    & \ce{[Ar] 4s}            \ce{^2S} & −601.967492     \\
+    20  & Ca   & \ce{[Ar] 4s^2}          \ce{^1S} & −680.101971
+\end{tblr}
+\end{table}
+
+
+\begin{table}\centering
+\caption{Молекулярні коливальні константи основного стану для вибраних двоатомних молекул}
+\begin{tblr}{
+colspec={QQ[c, m]Q[c, m]Q[c, m]},
+row{1} = {c, bg=gray!50},
+hlines,
+vlines
+}
+    Molecule & $\mu$ (а. о.) & $E$, Eh & $R$, \AA & $k$, Н/м & $\omega$,  см$^{-1}$   \\
+    \ce{H2}  & 0.50          &         & 0.742    & 570      & 4401.21                \\
+    \ce{HF}  & 0.96          &         & 0.917    & 970      & 4138.32                \\
+    \ce{HCl} & 0.98          &         & 1.275    & 520      & 2990.95                \\
+    \ce{HBr} & 1.00          &         & 1.414    & 410      & 2649.67                \\
+    \ce{HI}  & 1.00          &         & 1.609    & 310      & 2309.60                \\
+    \ce{CO}  & 6.86          &         & 1.128    & 1900     & 2169.82                \\
+    \ce{N2}  & 7.00          &         & 1.098    & 2290     & 2358.07                \\
+    \ce{NO}  & 7.47          &         & 1.151    & 1600     & 1904.41                \\
+    \ce{O2}  & 8.00          &         & 1.207    & 1180     & 1580.36                \\
+    \ce{F2}  & 9.50          &         & 1.418    & 440      & 891.20                 \\
+    \ce{Cl2} & 17.48         &         & 1.988    & 320      & 560.50                 \\
+    \ce{Br2} & 39.46         &         & 2.670    & 250      & 325.29                 \\
+    \ce{IBr} & 48.66         &         & 2.470    & 210      & 268.71                 \\
+    \ce{I2}  & 63.45         &         & 2.664    & 170      & 214.52
+\end{tblr}
+\end{table}
+
+\end{document}

@@ -6,7 +6,7 @@
 \usetheme{QuantumChemistry}
 \usepackage{QuantumChemistry}
 \graphicspath{{pictures/}}
-\addbibresource{\jobname.bib}
+\addbibresource{MolProperties.bib}
 \title[Лекції з квантової хімії]{\bfseries\huge Властивості молекул}
 \subtitle{\bfseries Лекції з квантової хімії}
 \author{Пономаренко С. М.}
@@ -95,25 +95,25 @@
 		\begin{equation*}\label{}
 			\rho(\vec{r})_{A - B} = \sum_{p,q=1}^{M_A}  \sum_{p,q=1}^{M_B}
 			\left(
-			\highlight{cyan!50}{\chi_p^{*A}\chi_q^{A} R_{pq}^{A}}{A1} +
-			\highlight{red!50}{ \chi_p^{*A}\chi_q^{B} R_{pq}^{AB}}{C1} +
-			\highlight{cyan!50}{\chi_p^{*B}\chi_q^{B} R_{pq}^{B}}{B1}
+			{\color{blue!50}{\chi_p^{*A}\chi_q^{A} R_{pq}^{A}}} +
+			{\color{red!50}{ \chi_p^{*A}\chi_q^{B} R_{pq}^{AB}}} +
+			{\color{blue!50}{\chi_p^{*B}\chi_q^{B} R_{pq}^{B}}}
 			\right)
 		\end{equation*}
 
 		%        \highlighttext{cyan!50}{Густина на атомі $A$}{a1} \highlighttext{cyan!50}{Густина на атомі $B$}{b1} \highlighttext{red!50}{Густина між атомами $A - B$}{c1}
-		\begin{tikzpicture}[
-				overlay,
-				%			arrows={-Latex},
-				sig/.style = {anchor=north, font=\scriptsize},
-			]
-			%\draw<2>[]     (s1) to (pic cs:ge1);
-			\draw<2>[->] (A1.south) to ++(-125:0.5cm) node[sig] {Густина на атомі $A$};
-			\draw<2>[->] (C1.south) to ++(-90:1cm) node[sig] {Густина на між атомами $A - B$};
-			\draw<2>[->] (B1.south) to ++(-55:0.5cm) node[sig] {Густина на атомі $B$};
-			%		\draw[] (b1) edge [bend right] (B1);
-			%		\draw[] (c1) edge [bend right] (C1);
-		\end{tikzpicture}
+		%		\begin{tikzpicture}[
+		%				overlay,
+		%				%			arrows={-Latex},
+		%				sig/.style = {anchor=north, font=\scriptsize},
+		%			]
+		%			%\draw<2>[]     (s1) to (pic cs:ge1);
+		%			\draw<2>[->] (A1.south) to ++(-125:0.5cm) node[sig] {Густина на атомі $A$};
+		%			\draw<2>[->] (C1.south) to ++(-90:1cm) node[sig] {Густина на між атомами $A - B$};
+		%			\draw<2>[->] (B1.south) to ++(-55:0.5cm) node[sig] {Густина на атомі $B$};
+		%			%		\draw[] (b1) edge [bend right] (B1);
+		%			%		\draw[] (c1) edge [bend right] (C1);
+		%		\end{tikzpicture}
 		\vfill
 		\begin{enumerate}
 			\item Чиста заселеність атома $A$: \( N(A) = \int \rho^A(\vec r) dV \).
@@ -140,21 +140,21 @@
 			q^A = N^0(A) - \tilde{N}(A), \quad  q^B = N^0(B) - \tilde{N}(B).
 		\]
 	\end{onlyenv}
-%	\begin{onlyenv}<4>
-%		\begin{enumerate}
-%			\item<+-> Заселеність по Льовдіну  (Lowdin Population Analysis --- LPA).
-%
-%					{\scriptsize Подібно до аналізу по Малікену, але виконується у ортогоналізованому базисі. Інтеграли перекриття між різними орбіталями дорівнюють нулю, зникають вклади заселеностей перекривання, а електронна густина атома дорівнює просто сумі діагональних елементів матриці густини за орбіталями даного атома.}
-%
-%				%\item Нормальні заселеності (Natural Population Analysis --- NPA).
-%
-%			\item<+-> Заселеність по Бейдеру (Atoms In Molecules --- AIM).
-%
-%					{\scriptsize Підхід до аналізу заселеностей заснований на повному ігноруванні орбітальної структури атома та інтегруванні всієї електронної густини, що припадає на об'єм атома.}
-%
-%			\item<+-> Підгонка\label{key} зарядів під електростатичний потенціал (MESP, CHELPG).
-%		\end{enumerate}
-%	\end{onlyenv}
+	%	\begin{onlyenv}<4>
+	%		\begin{enumerate}
+	%			\item<+-> Заселеність по Льовдіну  (Lowdin Population Analysis --- LPA).
+	%
+	%					{\scriptsize Подібно до аналізу по Малікену, але виконується у ортогоналізованому базисі. Інтеграли перекриття між різними орбіталями дорівнюють нулю, зникають вклади заселеностей перекривання, а електронна густина атома дорівнює просто сумі діагональних елементів матриці густини за орбіталями даного атома.}
+	%
+	%				%\item Нормальні заселеності (Natural Population Analysis --- NPA).
+	%
+	%			\item<+-> Заселеність по Бейдеру (Atoms In Molecules --- AIM).
+	%
+	%					{\scriptsize Підхід до аналізу заселеностей заснований на повному ігноруванні орбітальної структури атома та інтегруванні всієї електронної густини, що припадає на об'єм атома.}
+	%
+	%			\item<+-> Підгонка\label{key} зарядів під електростатичний потенціал (MESP, CHELPG).
+	%		\end{enumerate}
+	%	\end{onlyenv}
 \end{frame}
 %============================================================================
 
@@ -164,7 +164,7 @@
 
 %============================================================================
 \begin{frame}{Класифікація зарядів на атомах}{}
-{\scriptsize \fullcite{Cho2020}}
+	{\scriptsize \fullcite{Cho2020}}
 
 	\begin{enumerate}[Клас I]\small
 		\item визначаються на основі вимірюваних властивостей молекули.
@@ -174,15 +174,15 @@
 			      \item спектроскопічних та діелектричних даних.
 		      \end{itemize}
 		\item обчислюються з методу МО ЛКАО.
-            \begin{itemize}\scriptsize
-                \item Заряди по Малікену, по Льовдіну.
-            \end{itemize}
-        \item виділяються з хвильової функції або електронної густини шляхом підгонки під певну фізичну величину (наприклад, електростатичним потенціалом), що отримується отриманий з них.
-        \begin{itemize}\scriptsize
-            \item Заряди по Бейдеру, обчислюються інтегруванням електронної густини молекули в межах атомного басейну, обмеженому поверхню нульового потоку вектора градієнта електронної густини.
-            %\item Заряди по Хіршфельду, обчислюються інтегруванням деформаційної електронної густини по об'єму, пропорційному відповідним сферично-симетричним атомом в промолекулі.
-        \end{itemize}
-        \item отримують на основі зарядів класу II або III і підганяють до кращої відповідності з якоюсь фізичною величиною (наприклад, дипольним моментом).
+		      \begin{itemize}\scriptsize
+			      \item Заряди по Малікену, по Льовдіну.
+		      \end{itemize}
+		\item виділяються з хвильової функції або електронної густини шляхом підгонки під певну фізичну величину (наприклад, електростатичним потенціалом), що отримується отриманий з них.
+		      \begin{itemize}\scriptsize
+			      \item Заряди по Бейдеру, обчислюються інтегруванням електронної густини молекули в межах атомного басейну, обмеженому поверхню нульового потоку вектора градієнта електронної густини.
+			            %\item Заряди по Хіршфельду, обчислюються інтегруванням деформаційної електронної густини по об'єму, пропорційному відповідним сферично-симетричним атомом в промолекулі.
+		      \end{itemize}
+		\item отримують на основі зарядів класу II або III і підганяють до кращої відповідності з якоюсь фізичною величиною (наприклад, дипольним моментом).
 	\end{enumerate}
 \end{frame}
 %============================================================================
@@ -212,118 +212,406 @@
 %============================================================================
 \begin{frame}{Властивості молекул}{}
 
-    \begin{myexample}{Властивості молекул}\scriptsize
-        \begin{enumerate}[\faHandORight]
-            \item Дипольний момент.
-            \item Поляризовність.
-            \item Хімічний зсув ЯМР.
-            \item Частоти коливань.
-            \item Інфра-червоні спектри.
-            \item Раманівські спектри.
-        \end{enumerate}
-    \end{myexample}
+	\begin{myexample}{Властивості молекул}\scriptsize
+	\begin{enumerate}[\faHandORight]
+		\item Дипольний момент.
+		\item Поляризовність.
+		\item Хімічний зсув ЯМР.
+		\item Частоти коливань.
+		\item Інфра-червоні спектри.
+		\item Раманівські спектри.
+	\end{enumerate}
+	\end{myexample}
 
-    \begin{alertblock}{}\centering
-        Фізичні властивості молекул --- характеризуються певною фізичною величиною.
-    \end{alertblock}
-    \begin{myexample}{Спостережувана величина}
-        \begin{tblr}{X[j,m]Q}
-            Кожна спостережувана фізична величина $\color{green!50!black}p$ системи в стані $\color{red}\Phi$ в квантовій механіці описується оператором $\color{blue}\hat{P}$ & ${\color{blue}\hat{P}}\,{\color{red}\Phi} = {\color{green!50!black}p}\, {\color{red}\Phi}$ \\
-        \end{tblr}
-    \end{myexample}
+	\begin{alertblock}{}\centering
+		Фізичні властивості молекул --- характеризуються певною фізичною величиною.
+	\end{alertblock}
+	\begin{myexample}{Спостережувана величина}
+	\begin{tblr}{X[j,m]Q}
+		Кожна спостережувана фізична величина $\color{green!50!black}p$ системи в стані $\color{red}\Phi$ в квантовій механіці описується оператором $\color{blue}\hat{P}$ & ${\color{blue}\hat{P}}\,{\color{red}\Phi} = {\color{green!50!black}p}\, {\color{red}\Phi}$ \\
+	\end{tblr}
+	\end{myexample}
 \end{frame}
 %============================================================================
 
 
 
+%% --------------------------------------------------------
+\section{Дипольний момент молекули}
+%% --------------------------------------------------------
 
-%============================================================================
-\tikzstyle{every picture}+=[remember picture]
-\begin{frame}[t]{Похідні енергії молекули --- властивості}{}
-    \begin{columns}
-        \begin{column}{0.5\linewidth}
-            \begin{center}
-                {Теорема Гельмана-Фейнмана}
-                \[
-                \frac{dE}{d\lambda} = \opbracket{\Phi}{\frac{d\hat{H}}{d\lambda}}{\Phi}
-                \]
-            \end{center}
-        \end{column}
-        \begin{column}{0.5\linewidth}
-            \begin{alertblock}{}\scriptsize\centering
-                Теорема Гельмана-Фейнмана не обов'язково виконується для наближених хвильових функцій, з якими ми зазвичай маємо справу в квантова хімії.
-            \end{alertblock}
-        \end{column}
-    \end{columns}
 
-    \begin{block}{}\centering\large
-        {властивість} = \highlight[][red][c1]{відгук} молекули на \highlight[][blue][c2]{збурення ($\lambda$)}
-    \end{block}
-    \begin{tikzpicture}[overlay]
-        \draw[->, red, font=\scriptsize] (c1.south) -- ++(0,-0.5) node[below] {зміна енергії};
-        \draw[<-, blue] (c2.south) -- ++(0,-0.5) node[pos=1, below, text width=5.5cm, font=\scriptsize, align=center] {зміна геометрії молекули, \\ вплив електричного \\ або магнітного поля, тощо};
-    \end{tikzpicture}
+% ============================== Слайд ## ===================================
+\begin{frame}{Дипольний момент молекули}{}
+	\begin{block}{}
+		Оператор дипольного моменту:
+		\begin{equation*}
+			\hat{\vec{\mu}}_e = \underbrace{\sum_a^{N_n} Z_a\vec{R}_a}_{\text{ядра}} +
+			\underbrace{\sum_i^{N_e}-e\vec{r}_i}_{\text{електрони}}
+		\end{equation*}
 
-    \vspace{1.5em}
+		Розрахунок \alert{постійного дипольного моменту} в квантовій механіці:
 
-    %	Розкладання енергії в ряд Тейлора:
-    \tikzset{prop/.style={fill=gray!15, draw=red}}
-    \begin{equation*}
-        E(\lambda) = E(0) +
-        \highlight[math][prop][d1]{\left(\frac{\partial E}{\partial \lambda}\right)_{0}}\lambda +
-        \frac{1}{2!}\highlight[math][prop][d2]{\left(\frac{\partial^2 E}{\partial \lambda^2}\right)_0}\lambda^2 +
-        \frac{1}{3!}\highlight[math][prop][d3]{\left(\frac{\partial^3 E}{\partial \lambda^3}\right)_0}\lambda^3 +
-        \ldots
-    \end{equation*}
-    \begin{tikzpicture}[overlay]
-        \node[below=10pt of d2, blue] (p) {властивості};
-        \draw[->] (d1.south) to[out=-90, in=90] (p.north west);
-        \draw[->] (d2.south) to[out=-90, in=90] (p);
-        \draw[->] (d3.south) to[out=-90, in=90] (p.north east);
-    \end{tikzpicture}
+		\begin{equation*}
+			\vec{\mu}_e = \bracket<\Phi_0|\hat{\vec{\mu}}_e|\Phi_0>.
+		\end{equation*}
+		Обчислення будуть точними, якщо $\Phi_0$ є точним розв'язком рівняння Шредінґера:
+
+		\begin{equation*}
+			\hat{H}_0\Phi_0 = E\Phi_0.
+		\end{equation*}
+	\end{block}
+
+
+\end{frame}
+% ===========================================================================
+
+% ============================== Слайд ## ===================================
+\begin{frame}{Молекула під впливом зовнішнього поля}{}
+	\begin{block}{}\justifying
+		В квантовій механіці, система, яка знаходиться під впливом зовнішніх полів описується гамільтоніаном:
+		\begin{equation*}
+			\hat{H} = \hat{H}_0 + \hat{H}_\text{field}.
+		\end{equation*}
+		Якщо \alert{нейтральна} молекула знаходиться в електричному полі, то гамільтоніан системи буде мати вигляд:
+		\begin{equation*}
+			\hat{H} = \hat{H}_0 - ({\hat{\vec{\mu}}_e}\cdot{\vec{\mathcal{E}}}),
+		\end{equation*}
+		де $\vec{\mathcal{E}}$ --- напруженість електричного поля.
+		Теорема Гелмана-Фейнмана дає змогу в цьому випадку знайти дипольний момент як похідну енергії системи по
+		електричному полю:
+		\begin{equation*}
+			\left.\frac{dE(\vec{\mathcal{E}})}{d\mathcal{E}_i}\right|_{\mathcal{E} = 0} = \bracket<\Phi_0|\frac{\partial
+				\hat{H}}{\partial
+				\mathcal{E}_i}|\Phi_0> = -
+			\bracket<\Phi_0|\hat{\vec{\mu}}_e|\Phi_0> = - (\mu_e).
+		\end{equation*}
+	\end{block}
+\end{frame}
+% ===========================================================================
+
+% ============================== Слайд ## ===================================
+\begin{frame}{Молекула під впливом зовнішнього поля}{}
+	\begin{block}{}\justifying
+		При взаємодії молекули з зовнішнім електричним полем, розподіл електронної густини, а отже і сам дипольний
+		момент молекули буде
+		змінюватись. В результаті до постійного дипольного моменту додається наведений (індукований) момент:
+		\begin{equation*}
+			\mu_i(\vec{\mathcal{E}})      = \mu_i^\text{perm} + \mu_i^\text{ind}(\vec{\mathcal{E}})
+		\end{equation*}
+		Розкладання дипольного моменту в ряд
+		\begin{equation*}\label{}
+			\mu_i(\vec{\mathcal{E}}) = \mu_i^\text{perm} + \sum_j \chi_{ij}\mathcal{E}_j + \frac12\sum_{jk}
+			\beta_{ijk} \mathcal{E}_j \mathcal{E}_k + \ldots,
+		\end{equation*}
+		Дипольні поляризовність та гіперполяризовність
+		\begin{equation*}\label{}
+			\tcbhighmath[title = {\scriptsize поляризовність}]{
+			\chi_{ij} = \left.\frac{d\mu_i(\vec{\mathcal{E}})}{d\mathcal{E}_j}\right|_{\vec{\mathcal{E}} = 0}
+			}
+			\quad
+			\tcbhighmath[title = {\scriptsize гіперполяризовність}]{
+			\beta_{ijk} = \left.\frac{d\mu_i(\vec{\mathcal{E}})}{d\mathcal{E}_j
+				d\mathcal{E}_k}\right|_{\vec{\mathcal{E}}
+			= 0}
+			}
+		\end{equation*}
+	\end{block}
+\end{frame}
+% ===========================================================================
+
+
+
+% ============================== Слайд #7 ===================================
+\begin{frame}{Електричні властивості як похідні енергії}{}
+	\begin{itemize}
+		\item Інфінітезимальна зміна енергії при інфінітезимальній зміні поля  $d\mathcal{E}_\alpha$ (дипольна
+		      складова)
+		      \begin{equation*}
+			      dE = - \mu(\vec{\mathcal{E}}) d\vec{\mathcal{E}}
+		      \end{equation*}
+		\item Енергію можна отримати інтегруванням
+		      \begin{multline*}
+			      E(\mathcal{E}) - E_0 = -\int\limits_0^{\mathcal{E}} \mu(\vec{\mathcal{E}}) d\vec{\mathcal{E}} = \\
+			      = -\sum_i \mu_i^\text{perm}\mathcal{E}_i - \frac12\sum_{ij}
+			      \chi{ij}\mathcal{E}_i\mathcal{E}_j - \frac16\sum_{ijk} \beta_{ijk} =
+			      \mathcal{E}_i\mathcal{E}_j\mathcal{E}_k + \ldots
+		      \end{multline*}
+		\item Властивості за відсутності поля ($\vec{\mathcal{E}} = 0$) можна отримати диференціюючи енергію:
+	\end{itemize}
+	\begin{equation*}
+		\mu_i^\text{perm} = - \left.\frac{dE}{d\mathcal{E}_i}\right|_{\vec{\mathcal{E}}=0}
+		\,\,
+		\chi_{ij} = - \left.\frac{d^2E}{d\mathcal{E}_i d\mathcal{E}_j}\right|_{\vec{\mathcal{E}}=0}
+		\,\,
+		\beta_{ijk} = - \left.\frac{d^3E}{d\mathcal{E}_i d\mathcal{E}_j d\mathcal{E}_k}\right|_{\vec{\mathcal{E}}=0}
+	\end{equation*}
 \end{frame}
 %============================================================================
 
+
+% ============================== Слайд ## ===================================
+\begin{frame}{Приклад теорії збурень}{}
+	\begin{block}{}\justifying\
+		Якщо вважати $\hat{H}^{(1)} = - ({\hat{\vec{\mu}}_e}\cdot{\vec{\mathcal{E}}}) $ збуренням, то
+		використовуючи теорію збурень можна
+		показати, що:
+		\begin{multline*}
+			E(\mathcal{E}) = E_0 + \bracket<\Phi_0|\hat{H}^{(1)}|\Phi_0>
+			+ \sum_{n\neq 0}
+			\frac{\bracket<\Phi_0|\hat{H}^{(1)}|\Phi_n>\bracket<\Phi_n|\hat{H}^{(1)}|\Phi_0>}{E_0 - E_n}+
+			\ldots = \\
+			= E_0 -  \bracket<\Phi_0|\hat{\vec{\mu}}|\Phi_0>\cdot \vec{\mathcal{E}} +
+			\sum_{n\neq 0}
+			\frac{\vec{\mathcal{E}}\cdot\bracket<\Phi_0|\hat{\vec{\mu}}|\Phi_n>\bracket<\Phi_n|\hat{\vec{\mu}}|\Phi_0>\cdot\vec{\mathcal{E}}}{E_0
+				- E_n} + \ldots ,
+		\end{multline*}
+		де дипольний момент:
+		\begin{equation*}
+			\mu_i = \bracket<\Phi_0|\hat{\mu_i}|\Phi_0>,
+		\end{equation*}
+		поляризовність:
+		\begin{equation*}
+			\chi_{ij} = -2\sum_{n\neq 0} \frac{\bracket<\Phi_0|\hat{\mu}_i|\Phi_n>\bracket<\Phi_n|\hat{\mu}_j|\Phi_0>}{E_0
+				- E_n}
+		\end{equation*}
+	\end{block}
+\end{frame}
+% ===========================================================================
+
+
+
+% ============================== Слайд ## ===================================
+\begin{frame}{Властивості, що обчислюються на основі дипольного моменту}{Інтенсивності дипольних переходів}
+
+	\begin{block}{Золоте правило Фермі}
+		Інтенсивності спектральних ліній пропорційні імовірність переходу в одиницю часу з вихідного стану $i$ в кінцевий
+		стан $f$:
+		\begin{equation*}
+			I \sim \left|\bracket<\Phi_f|\hat{V}|\Phi_i>\right|^2\rho(E_f)|^2,
+		\end{equation*}
+		де $\bracket<\Phi_f|\hat{V}|\Phi_i>$ --- метричний елемент збурення між початковим і кінцевим станом, $\rho(E_f)$
+		--- густина стані в околі енергії $E_f$.
+	\end{block}
+
+	\begin{block}{}\justifying
+		Якщо в молекули є \alert{дипольний момент}, то при взаємодії з електричним полем, інтенсивність переходу можна
+		записати як:
+		\begin{equation*}
+			I \sim \left|\bracket<\Phi_f|\hat{\vec{\mu}}|\Phi_i>\right|^2\mathcal{E}^2\rho(E_f)^2.
+		\end{equation*}
+	\end{block}
+\end{frame}
+
+% ============================== Слайд ## ===================================
+\begin{frame}{Інтенсивності коливальних переходів}{Диатомні молекули}
+	\begin{onlyenv}<1>
+		\begin{block}{}\justifying
+			Електричний дипольний момент переходу для з стану $i \to 0$:
+			\begin{equation*}
+				\bracket<i|\hat{\vec{\mu}}|0>
+			\end{equation*}
+			Переходи відбуваються в межах даного електронного стану $E_e$. Дипольний момент залежить від довжини зв'язку
+			$R$,
+			можна виразити його зміну зі зміщенням ядер від рівноваги як:
+			\begin{equation*}
+				\vec{\mu} = \left(\frac{d\vec{\mu}}{dR}\right)_{R=R_0} \Delta R +
+				\frac12 \left(\frac{d^2\vec{\mu}}{dR^2}\right)_{R=R_0}
+				\Delta R^2 + \ldots.
+			\end{equation*}
+		\end{block}
+		Елементи матриці дипольних переходів:
+		\begin{equation*}
+			\bracket<\Phi_i|\hat{\vec{\mu}}|0> = \vec{\mu}_0\bracket<i|0> +
+			\left.\frac{d\vec{\mu}}{dR}\right|_{0} \bracket<i|\Delta R|0> +
+			\frac12 \left.\frac{d^2\vec{\mu}}{dR^2}\right|_{0} \bracket<i|\Delta R^2|0> +\ldots.
+		\end{equation*}
+		Оскільки $\bracket<i|0> = 0$ --- стани ортогональні, перший доданок дорівнює нулю.
+	\end{onlyenv}
+	\begin{onlyenv}<2>
+		\begin{block}{}\justifying
+			Інтенсивність коливальних дипольних переходів:
+			\begin{equation*}
+				I \sim \left(\frac{d\vec{\mu}}{dR}\right)^2 = \sum_i\left(\frac{d^2E}{dR d\mathcal{E}_i}\right)^2
+			\end{equation*}
+			Коливальні спектри мають лише ті диатомні молекули, які мають дипольний момент, який змінюється зі збільшенням
+			відстані між ядрами. Гомоядерні двоатомні молекули не зазнають електричних
+			дипольних коливальних переходів.
+		\end{block}
+	\end{onlyenv}
+\end{frame}
+% ===========================================================================
+
+% ============================== Слайд ## ===================================
+\begin{frame}{Рахманівські спектри}{}
+	\begin{block}{Раманівський спектр}\justifying
+		Спектр непружно розсіяного випромінення на частинках даної сполуки; становить систему супутніх ліній,
+		розташованих симетрично відносно незміщеної лінії, частота якої збігається з частотою збуджуючого світла. Кожній
+		супутній лінії з меншою частотою (червоній, стоксовій) відповідає фіолетова, чи антистоксова, з вищою частотою.
+	\end{block}
+	%---------------------------------------------------------
+	\begin{figure}[h!]\centering
+		\includegraphics[width=0.6\linewidth]{KIspectrum}
+		\caption*{Раманівський спектр йодиту калію \ce{KI}}
+	\end{figure}
+	%---------------------------------------------------------
+\end{frame}
+% ===========================================================================
+
+% ============================== Слайд ## ===================================
+\begin{frame}{Рахманівські спектри}{Класична теорія}
+	\begin{onlyenv}<1>
+		\begin{block}{}
+			Раманівські спектри виникають завдяки наявності в молекули поляризовності --- міри реакції молекули на
+			електричне поле.
+
+			Розгляненмо дипольний момент, індукований у молекулі залежним від часу електромагнітним полем $\mathcal{E} =
+				\mathcal{E}_0\cos\omega t$:
+			\begin{equation*}
+				\mu(t) = \chi(t)\mathcal{E}
+			\end{equation*}
+			Якщо поляризованість молекули змінюється між $\chi_{\max}$ і $\chi_{\min}$ з частотою $\omega_0$ при
+			обертанні або
+			коливання за законом $\chi(t) = \chi_0 + \frac12\Delta\chi\cos(\omega_0 t)$, то
+			\begin{multline*}
+				\mu(t) = (\chi_0 + \frac12\Delta\chi\cos(\omega_0 t))\mathcal{E}_0\cos\omega t = \\
+				= \chi_0 \mathcal{E}_0\cos\omega t +  \frac12\Delta\chi\mathcal{E}_0\cos\omega t \cos(\omega_0 t) = \\
+				= \chi_0 \mathcal{E}_0\cos\omega t  + \frac14\Delta\chi\mathcal{E}_0(\cos(\omega + \omega_0)t +
+				\cos(\omega
+				- \omega_0) t).
+			\end{multline*}
+		\end{block}
+	\end{onlyenv}
+	\begin{onlyenv}<2>
+		\begin{block}{}
+			\begin{equation*}
+				\mu(t) = \chi_0 \mathcal{E}_0\cos\omega t  + \frac14\Delta\chi\mathcal{E}_0(\cos(\omega + \omega_0)t +
+				\cos(\omega
+				- \omega_0) t).
+			\end{equation*}
+			Індукований дипольний момент має три компоненти:
+			\begin{enumerate}
+				\item Перша $\chi_0 \mathcal{E}_0\cos\omega t$ --- має частоту падаючого випромінювання і спричиняє незсунуту
+				      \alert{релеєвську лінію} в спектрі.
+				\item Друга з частотою $\omega + \omega_0$ \alert{антистоксова лінія} і
+				\item третя з частотою $\omega - \omega_0$ \alert{стоксова лінія}
+			\end{enumerate}
+			Таким чином, коли молекула опромінюється монохроматичним світлом із частотою $\omega$
+			у результаті індукованої електронної поляризації вона розсіює випромінювання як із частотою $\omega + \omega_0$,
+			так і з частотою $\omega - \omega_0$. При квантовому розгляді таких стає більше.
+		\end{block}
+	\end{onlyenv}
+\end{frame}
+% ===========================================================================
+
+
+%\begin{block}{}
+%    Компонента сили осцилятора:
+%    \begin{multline*}
+%        (f_{n})_i =
+%\frac{2}{3}(E_n - E_0)^2|\bracket<\Phi_n|\hat{\mu}_i|\Phi_0>|^2 = \\
+%    = \frac{2m_e}{\hbar^2e^2}(E_n - E_0)\bracket<\Phi_n|\hat{\mu}_i|\Phi_0>\bracket<\Phi_0|\hat{\mu}_i|\Phi_n> = \\
+%    =  \frac{2}{3}(E_n - E_0)^2 \chi_{ii} = \frac{1}{3}(E_n - E_0)^2 \left. \frac{d\mu_i
+%    }{d\mathcal{E}_i}\right|_{\vec{\mathcal{E}} = 0}.
+%    \end{multline*}
+%
+%\end{block}
+
+%\end{frame}
+% ===========================================================================
+
+
+\section{Теорія відгуку}
+
+
+
+
+
+% ============================== Слайд #8 ===================================
+\begin{frame}{Теорія відгуку}{Відгук --- реакція на збурення}
+
+	\begin{alertblock}{}\centering
+		Молекулярні властивості можуть бути отримані з використанням похідних електронної енергії або молекулярних
+		моментів за збуренням!
+	\end{alertblock}
+
+	\begin{block}{}\centering\large
+		{властивість} = \highlight[][red][c1]{відгук} молекули на \highlight[][blue][c2]{збурення
+			($\vec{\mathcal{F}}$)}
+	\end{block}
+	\begin{tikzpicture}[overlay]
+		\draw[->, red, font=\scriptsize] (c1.south) -- ++(0,-0.5) node[below] {зміна енергії};
+		\draw[<-, blue] (c2.south) -- ++(0,-0.5) node[pos=1, below, text width=5.5cm, font=\scriptsize,
+			align=center] {зміна геометрії молекули, \\
+			вплив електричного \\ або магнітного поля, тощо};
+	\end{tikzpicture}
+
+	\vspace{1.5em}
+
+	%	Розкладання енергії в ряд Тейлора:
+	\begin{equation*}\small
+		\tcbset{highlight math/.append style={left=0mm,right=0mm,top=0mm,bottom=0mm}}
+		E(\vec{\mathcal{F}}) = E(0) +
+		\tcbhighmath[remember as=d1]{
+		\left(\frac{d E}{d \vec{\mathcal{F}}}\right)_{\vec{\mathcal{F}}=0}
+		}\vec{\mathcal{F}} + \frac{1}{2!}
+		\tcbhighmath[remember as=d2]{
+		\left(\frac{d^2 E}{d \vec{\mathcal{F}}^2}\right)_{\vec{\mathcal{F}}=0}
+		}\vec{\mathcal{F}}^2 + \frac{1}{3!}
+		\tcbhighmath[remember as=d3]{
+		\left(\frac{d^3 E}{d \vec{\mathcal{F}}^3}\right)_{\vec{\mathcal{F}}=0}
+		}\vec{\mathcal{F}}^3 +
+		\ldots
+	\end{equation*}
+	\begin{tikzpicture}[overlay]
+		\node[below=10pt of d2, blue] (p) {властивості};
+		\draw[->] (d1.south) to[out=-90, in=90] (p.north west);
+		\draw[->] (d2.south) to[out=-90, in=90] (p);
+		\draw[->] (d3.south) to[out=-90, in=90] (p.north east);
+	\end{tikzpicture}
+\end{frame}
+%============================================================================
 
 
 
 %============================================================================
 \begin{frame}{Порядок похідної}{}
-    \begin{center}
-        \begin{tblr}{
-                cells = {font=\scriptsize},
-                colspec={Q[c,m]Q[c,m]Q[c,m]Q[c,m]X[l,m]},
-                cell{1}{1} = {c=4}{c},
-                cell{1}{5} = {}{c,m},
-                cell{2-Z}{1-4}={}{fg=blue, cmd=\bfseries},
-                stretch = -1,
-                %            rowsep=-2pt,
-                row{3}  = {abovesep=5pt},
-                row{Z}  = {belowsep=5pt},
-                hline{2} = {2pt},
-                hline{3} = {1pt},
-            }
-            $n$-та похідна енергії &       &       &       & Збурення ($q$ --- координати, $E$ --- зовнішнє електричне поле, $B$ --- зовнішнє магнітне поле, $I$ --- магнітне поле ядра) \\
-            $n_R$                  & $n_E$ & $n_B$ & $n_I$ & Властивість                                                                                                                 \\
-            1                      & 0     & 0     & 0     & Сила                                                                                                                        \\
-            2                      & 0     & 0     & 0     & Частоти гармонічних коливань                                                                                                \\
-            3                      & 0     & 0     & 0     & Ангармонічні поправки                                                                                                       \\
-            0                      & 1     & 0     & 0     & Електричний дипольний момент $\vec \mu_e$                                                                                   \\
-            0                      & 2     & 0     & 0     & Електрична поляризовність $\chi_e$                                                                                          \\
-            0                      & 3     & 0     & 0     & Електрична надполяризовність                                                                                                \\
-            0                      & 0     & 0     & 0     & Електричний дипольний момент $\vec \mu_m$                                                                                   \\
-            0                      & 0     & 1     & 0     & Магнітна сприйнятливість $\chi_m$                                                                                           \\
-            0                      & 0     & 2     & 1     & Константа надтонкого зв'язку ЕСР                                                                                            \\
-            0                      & 0     & 0     & 2     & Стала спін-спінової взаємодії ядер                                                                                          \\
-            1                      & 1     & 0     & 0     & Інтенсивності ІЧ спектрів                                                                                                   \\
-            2                      & 1     & 0     & 0     & Інтенсивності обертонів ІЧ спектрах                                                                                         \\
-            1                      & 2     & 0     & 0     & Інтенсивності Раманівських спектрів                                                                                         \\
-            2                      & 2     & 0     & 0     & Інтенсивності обертонів в Раманівських спектрах                                                                             \\
-            0                      & 1     & 1     & 0     & Циркулярний дихроїзм                                                                                                        \\
-            0                      & 2     & 1     & 0     & Магнітний циркулярний дихроїзм                                                                                              \\
-            0                      & 0     & 1     & 1     & Хімічний зсув                                                                                                               \\
-        \end{tblr}
-    \end{center}
+	\begin{center}
+		\begin{tblr}{
+			cells = {font=\scriptsize},
+			colspec={Q[c,m]Q[c,m]Q[c,m]Q[c,m]X[l,m]},
+			cell{1}{1} = {c=4}{c},
+			cell{1}{5} = {}{c,m},
+			cell{2-Z}{1-4}={}{fg=blue, cmd=\bfseries},
+			stretch = -1,
+			%            rowsep=-2pt,
+			row{3}  = {abovesep=5pt},
+			row{Z}  = {belowsep=5pt},
+			hline{2} = {2pt},
+			hline{3} = {1pt},
+			}
+			$n$-та похідна енергії &       &       &       & Збурення ($q$ --- координати, $E$ --- зовнішнє електричне поле, $B$ --- зовнішнє магнітне поле, $I$ --- магнітне поле ядра) \\
+			$n_R$                  & $n_E$ & $n_B$ & $n_I$ & Властивість                                                                                                                 \\
+			1                      & 0     & 0     & 0     & Сила                                                                                                                        \\
+			2                      & 0     & 0     & 0     & Частоти гармонічних коливань                                                                                                \\
+			3                      & 0     & 0     & 0     & Ангармонічні поправки                                                                                                       \\
+			0                      & 1     & 0     & 0     & Електричний дипольний момент $\vec \mu_e$                                                                                   \\
+			0                      & 2     & 0     & 0     & Електрична поляризовність
+			$\chi_e$                                                                                                                                                                     \\
+			0                      & 3     & 0     & 0     & Електрична надполяризовність                                                                                                \\
+			0                      & 0     & 0     & 0     & Електричний дипольний момент $\vec \mu_m$                                                                                   \\
+			0                      & 0     & 1     & 0     & Магнітна сприйнятливість $\chi_m$                                                                                           \\
+			0                      & 0     & 2     & 1     & Константа надтонкого зв'язку ЕСР                                                                                            \\
+			0                      & 0     & 0     & 2     & Стала спін-спінової взаємодії ядер                                                                                          \\
+			1                      & 1     & 0     & 0     & Інтенсивності ІЧ спектрів                                                                                                   \\
+			2                      & 1     & 0     & 0     & Інтенсивності обертонів ІЧ спектрах                                                                                         \\
+			1                      & 2     & 0     & 0     & Інтенсивності Раманівських спектрів                                                                                         \\
+			2                      & 2     & 0     & 0     & Інтенсивності обертонів в Раманівських спектрах                                                                             \\
+			0                      & 1     & 1     & 0     & Циркулярний дихроїзм                                                                                                        \\
+			0                      & 2     & 1     & 0     & Магнітний циркулярний дихроїзм                                                                                              \\
+			0                      & 0     & 1     & 1     & Хімічний зсув                                                                                                               \\
+		\end{tblr}
+	\end{center}
 \end{frame}
 %============================================================================
 
@@ -331,90 +619,97 @@
 
 
 %============================================================================
-\begin{frame}{Частоти коливань молекули}{Збурення --- відхилення від рівноважної геометрії}
-
-    \begin{block}{}\tiny
-        \fullcite[in 15.10  <<Molecular Geometry>>, 15.11 <<Conformational Searching>>, 15.12 <<Molecular Vibrational Frequencies>>]{Levine}
-    \end{block}
-    \vspace*{-2em}
-    \begin{equation*}
-        E(q_1, q_2, \ldots, q_n) = E(0) +
-        \sum_i^n
-        \underbrace{\frac{\partial E}{\partial q_i}}_\stext{градієнти = сили} q_i +
-        \frac{1}{2!}\sum_i^n\sum_j^n
-        \underbrace{\frac{\partial^2 E}{\partial q_i q_j}}_\stext{силові константи $k_{ij}$} q_i q_j +
-        \ldots
-    \end{equation*}
-    $q_i$ --- внутрішні координати молекули.
-    \vspace*{-1em}
-    \begin{equation*}\label{}
-        \begin{+bmatrix}
-            k_{11} & k_{12} & \cdots & k_{1n} \\
-            k_{21} & k_{22} & \cdots & k_{2n} \\
-            \vdots & \vdots & \ddots & \vdots \\
-            k_{n1} & k_{n2} & \cdots & k_{nn}
-        \end{+bmatrix}
-        \tikz[baseline, thick] {\draw[->] (0,0) -- node[above, font=\tiny, red] {Діагоналізація} ++(0.75,0);}
-        \begin{bmatrix}
-            n_{11} & 0      & \cdots & 0      \\
-            0      & n_{22} & \cdots & 0      \\
-            \vdots & \vdots & \ddots & \vdots \\
-            0      & 0      & \cdots & n_{nn}
-        \end{bmatrix}
-        \tikz[baseline, thick] {\draw[->] (0,0) -- node[above, font=\tiny, red] {маси ядер} ++(0.75,0);}
-        \tikz[baseline] {
-            \node[font=\tiny, blue, draw=blue, dashed] (A) {частоти коливань};
-            \draw[->, overlay, thick] (A) -- ++(0,1) node[above, font=\tiny, text width = 2.25cm, align=center] {ІЧ та Раманівські спектри};
-        }
-    \end{equation*}
-
-    \begin{exampleblock}{}\scriptsize\centering
-        Розрахунок частот в \href{https://sites.google.com/site/orcainputlibrary/vibrational-frequencies-thermochemistry}{\button{ORCA}}
-    \end{exampleblock}
-\end{frame}
+%\begin{frame}{Частоти коливань молекули}{Збурення --- відхилення від рівноважної геометрії}
+%
+%    \begin{block}{}\tiny
+%        \fullcite[in 15.10  <<Molecular Geometry>>, 15.11 <<Conformational Searching>>, 15.12 <<Molecular
+%Vibrational Frequencies>>]{Levine}
+%    \end{block}
+%    \vspace*{-2em}
+%    \begin{equation*}
+%        E(q_1, q_2, \ldots, q_n) = E(0) +
+%        \sum_i^n
+%        \underbrace{\frac{\partial E}{\partial q_i}}_\stext{градієнти = сили} q_i +
+%        \frac{1}{2!}\sum_i^n\sum_j^n
+%        \underbrace{\frac{\partial^2 E}{\partial q_i q_j}}_\stext{силові константи $k_{ij}$} q_i q_j +
+%        \ldots
+%    \end{equation*}
+%    $q_i$ --- внутрішні координати молекули.
+%    \vspace*{-1em}
+%    \begin{equation*}\label{}
+%        \begin{+bmatrix}
+%            k_{11} & k_{12} & \cdots & k_{1n} \\
+%            k_{21} & k_{22} & \cdots & k_{2n} \\
+%            \vdots & \vdots & \ddots & \vdots \\
+%            k_{n1} & k_{n2} & \cdots & k_{nn}
+%        \end{+bmatrix}
+%        \tikz[baseline, thick] {\draw[->] (0,0) -- node[above, font=\tiny, red] {Діагоналізація} ++(0.75,0);}
+%        \begin{bmatrix}
+%            n_{11} & 0      & \cdots & 0      \\
+%            0      & n_{22} & \cdots & 0      \\
+%            \vdots & \vdots & \ddots & \vdots \\
+%            0      & 0      & \cdots & n_{nn}
+%        \end{bmatrix}
+%        \tikz[baseline, thick] {\draw[->] (0,0) -- node[above, font=\tiny, red] {маси ядер} ++(0.75,0);}
+%        \tikz[baseline] {
+%            \node[font=\tiny, blue, draw=blue, dashed] (A) {частоти коливань};
+%            \draw[->, overlay, thick] (A) -- ++(0,1) node[above, font=\tiny, text width = 2.25cm, align=center] {ІЧ
+%та Раманівські спектри};
+%        }
+%    \end{equation*}
+%
+%    \begin{exampleblock}{}\scriptsize\centering
+%        Розрахунок частот в
+%\href{https://sites.google.com/site/orcainputlibrary/vibrational-frequencies-thermochemistry}{\button{ORCA}}
+%    \end{exampleblock}
+%\end{frame}
 %============================================================================
 
 
 
 
 %============================================================================
-\begin{frame}{Електричні властивості молекул}{Збурення --- електричне поле $\vec{\mathcal{E}}$}
-    \begin{block}{}\tiny\centering
-        \fullcite[12  <<The electric properties of molecules>>]{AtkinsQM}
-    \end{block}
-    Доданок в гамільтоніані наявності електричного поля:
-    \[
-    \hat{H}^{(1)} = - \hat{\mu} \vec{\mathcal{E}}
-    \]
-    З теореми Гельмана-Фейнмана:
-    \[
-    \left.\frac{dE(\vec{\mathcal{E}})}{d\mathcal{E}_i}\right|_{ \vec{\mathcal{E}} = 0} = \opbracket{\Phi}{\frac{d\hat{H}^{(1)}(\vec{\mathcal{E}})}{d\mathcal{E}_i}}{\Phi} = -\mu_i
-    \]
+%\begin{frame}{Електричні властивості молекул}{Збурення --- електричне поле $\vec{\mathcal{E}}$}
+%    \begin{block}{}\tiny\centering
+%        \fullcite[12  <<The electric properties of molecules>>]{AtkinsQM}
+%    \end{block}
+%    Доданок в гамільтоніані наявності електричного поля:
+%    \[
+%    \hat{H}^{(1)} = - \hat{\mu} \vec{\mathcal{E}}
+%    \]
+%    З теореми Гельмана-Фейнмана:
+%    \[
+%    \left.\frac{dE(\vec{\mathcal{E}})}{d\mathcal{E}_i}\right|_{ \vec{\mathcal{E}} = 0} =
+%\opbracket{\Phi}{\frac{d\hat{H}^{(1)}(\vec{\mathcal{E}})}{d\mathcal{E}_i}}{\Phi} = -\mu_i
+%    \]
 
 
-    %\begin{center}
-    %            {\scriptsize Дипольний момент}
-    %        \(
-    %            \mu_i = - \dfrac{\partial E}{\partial \mathcal{E}_i},
-    %        \)
-    %        \hfill
-    %        {\scriptsize Тензор поляризовності}
-    %        \(
-    %        \alpha_{ij} = - \dfrac{\partial^2 E}{\partial \mathcal{E}_i\mathcal{E}_j}
-    %        \)
-    %\end{center}
+%\begin{center}
+%            {\scriptsize Дипольний момент}
+%        \(
+%            \mu_i = - \dfrac{\partial E}{\partial \mathcal{E}_i},
+%        \)
+%        \hfill
+%        {\scriptsize Тензор поляризовності}
+%        \(
+%        \alpha_{ij} = - \dfrac{\partial^2 E}{\partial \mathcal{E}_i\mathcal{E}_j}
+%        \)
+%\end{center}
 
-    \begin{equation*}
-        E = E(0) +
-        %\sum_i^3
-        \underbrace{\frac{\partial E}{\partial \mathcal{E}_i}}_\stext{дипольний момент $-\mu_i$} \mathcal{E}_i +
-        \frac{1}{2}%\sum_i^3\sum_j^3
-        \underbrace{\frac{\partial^2 E}{\partial \mathcal{E}_i \mathcal{E}_j}}_\stext{тензор поляризовності $-\alpha_{ij}$} \mathcal{E}_i \mathcal{E}_j +
-        \ldots = -\mu_i \mathcal{E}_i - \frac12 \alpha_{ij} \mathcal{E}_i \mathcal{E}_j + \ldots
-    \end{equation*}
-    \begin{exampleblock}{}\scriptsize\centering
-        Розрахунок електричних властивостей в \href{https://sites.google.com/site/orcainputlibrary/molecular-properties}{\button{ORCA}}
-    \end{exampleblock}
-\end{frame}
+%    \begin{equation*}
+%        E = E(0) +
+%        %\sum_i^3
+%        \underbrace{\frac{\partial E}{\partial \mathcal{E}_i}}_\stext{дипольний момент $-\mu_i$} \mathcal{E}_i +
+%        \frac{1}{2}%\sum_i^3\sum_j^3
+%        \underbrace{\frac{\partial^2 E}{\partial \mathcal{E}_i \mathcal{E}_j}}_\stext{тензор поляризовності
+%$-\alpha_{ij}$} \mathcal{E}_i
+%\mathcal{E}_j +
+%        \ldots = -\mu_i \mathcal{E}_i - \frac12 \alpha_{ij} \mathcal{E}_i \mathcal{E}_j + \ldots
+%    \end{equation*}
+%    \begin{exampleblock}{}\scriptsize\centering
+%        Розрахунок електричних властивостей в
+%\href{https://sites.google.com/site/orcainputlibrary/molecular-properties}{\button{ORCA}}
+%    \end{exampleblock}
+%\end{frame}
 %============================================================================
 \end{document}

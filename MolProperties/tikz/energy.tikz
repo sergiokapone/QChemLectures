@@ -1,0 +1,38 @@
+\pgfplotstableread[]{tikz/H2.relaxscancasscf.dat}\table
+
+\begin{tikzpicture}
+	\begin{axis}[%
+            legend style={nodes={scale=0.5, transform shape},
+%            at={(current axis.south east)},anchor=south east,
+            },
+			xlabel = {Довжина зв'язку, \r{A}},
+			ylabel = {Енергія, Eh},
+			tick label style={font=\tiny},
+			xtick distance={0.5},
+%			xticklabel style = {rotate=45},
+            ytick distance={0.1},
+			width=5cm,
+			height=5cm,
+			scale only axis,
+			enlargelimits=false,
+			line join=round,
+            xmin=0.5,
+            xmax=2.25,
+%            ymax=-0.9,
+			ymin=-1.2,
+			% === Налаштування сітки ===
+			grid = both,
+			grid style={line width=.1pt, draw=gray!10},
+			major grid style={line width=.2pt,draw=gray!50},
+			minor grid style = {line width=.1pt,draw=gray!10},
+            minor x tick num=1,
+            minor y tick num=4,
+            width=0.75\linewidth,
+		]
+        \addplot [color=red, mark=none, smooth] table[y index = 1] {\table};
+        \addlegendentry{Основний стан}
+        \addplot [color=blue, mark=none, smooth] table[y index = 2] {\table};
+        \addlegendentry{Перший збуджений стан}
+
+	\end{axis}
+\end{tikzpicture}%

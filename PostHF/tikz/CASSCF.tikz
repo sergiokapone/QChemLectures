@@ -1,0 +1,56 @@
+\begin{tikzpicture}[
+		upspinarrow/.pic = {\draw[-latex, blue, thick] (0,-0.3) -- (0, 0.3);},
+		downspinarrow/.pic = {\draw[latex-,red, thick] (0,-0.3) -- (0, 0.3);},
+		updown/.style={insert path={
+						pic at ([xshift=-0.1cm]#1) {upspinarrow}
+						pic at ([xshift=+0.1cm]#1) {downspinarrow}
+					}},
+		up/.style={insert path={
+						pic at ([xshift=-0.1cm]#1) {upspinarrow}
+					}},
+		down/.style={insert path={
+						pic at ([xshift=+0.1cm]#1) {downspinarrow}
+					}},
+		curlybrace/.style = {decorate,decoration={brace,amplitude=5pt, mirror, raise=10pt}},
+		curlybracel/.style = {decorate,decoration={brace,amplitude=5pt}},
+	]
+
+	\def\xshiftnode{1.15}
+	\def\distance{0.75}
+	\def\lofl{0.75}
+	\foreach \i[count = \c from 0] in {1,3,5,7}{
+			\foreach \j in {1,...,8}{
+					\draw[ultra thick]  (\i*\xshiftnode,\j*\distance) coordinate (LD\i\j)
+					\ifnum\i=1 node[left=5pt] (phi\j) {}\fi -- coordinate (O\i\j) ++(\lofl,0) coordinate (RU\i\j);
+					\node (Ph\c) at ({\i*\xshiftnode+0.5*\lofl}, 0) {
+						\ifnum\c=0
+							$\Phi_{\c}$
+						\fi
+					};
+				}
+		}
+	\path[dotted] (O33.east) -- node {$\ldots$} (O53.west);
+	\path[dotted] (O53.east) -- node {$\ldots$} (O73.west);
+	\path [
+		updown=O11, updown=O12, updown=O13, updown=O14,
+		updown=O31, updown=O32, updown=O33, up=O34, down=O35,
+		updown=O51, updown=O52, up=O54, up=O53, updown=O54, down=O56,
+		updown=O71, updown=O72, updown=O75, updown=O76,
+	];
+	\draw [curlybrace]   (Ph0.west) -- (Ph0.east) node[midway, below=15pt, font=\scriptsize]{ХФ детермінант};
+	\draw [curlybrace]   (Ph1.west) -- (Ph3.east) node[midway, below=15pt, font=\scriptsize]{Всі можливі конфігурації};
+	%                \draw [curlybrace]   (Ph3.west) -- (Ph4.east) node[midway, below=15pt, font=\scriptsize]{Double Excited};
+	%                \draw [curlybrace]   (Ph5.west) -- (Ph5.east) node[midway, below=15pt, font=\scriptsize]{Triple Excited};
+	%
+	\draw [curlybracel]   (phi1.west) -- (phi2.west) node[midway, font=\scriptsize, sloped, above=5pt]{неактивні};
+	%
+	\draw [curlybracel]   (phi3.west) -- (phi6.west) node[midway, font=\scriptsize, sloped, above=5pt]{активні (\alert{\texttt{Norb}})};
+	\draw [curlybracel]   (phi7.west) -- (phi8.west) node[midway, font=\scriptsize, sloped, above=5pt]{віртуальні};
+	% ----------------------- Обводка ------------------------
+	\fill[opacity=0.1, cyan]
+	[stroke={LD13}{RU16}]
+	[stroke={LD33}{RU36}]
+	[stroke={LD53}{RU56}]
+	[stroke={LD73}{RU76}]
+	;
+\end{tikzpicture}

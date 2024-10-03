@@ -1,0 +1,15 @@
+! ROHF SP STO-3G PrintBasis PrintMOs
+    
+%coords
+    CTyp internal
+    Charge 1
+    Mult 2
+    Units Angs
+    coords
+       H     0     0     0        0.00000        0.00000        0.00000
+       H     1     0     0        0.70000        0.00000        0.00000 
+    end
+end
+
+
+

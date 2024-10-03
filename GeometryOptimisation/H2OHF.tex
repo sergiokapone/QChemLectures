@@ -1,0 +1,128 @@
+\documentclass[12pt, landscape]{article}
+\usepackage[%
+	a4paper,%
+	footskip=1cm,%
+	headsep=0.3cm,% 
+	top=2cm, %поле сверху
+	bottom=2cm, %поле снизу
+	left=2cm, %поле ліворуч
+	right=2cm, %поле праворуч
+    ]{geometry}
+\usepackage{pgfplotstable}
+\pgfplotstableread[]{
+   r Eh 
+   0.30000000  -0.65445567 
+   0.39310345  -0.92455843 
+   0.48620690  -1.04863551 
+   0.57931034  -1.10438015 
+   0.67241379  -1.12518847 
+   0.76551724  -1.12727250 
+   0.85862069  -1.11909676 
+   0.95172414  -1.10530251 
+   1.04482759  -1.08853876 
+   1.13793103  -1.07037286 
+   1.23103448  -1.05176265 
+   1.32413793  -1.03330636 
+   1.41724138  -1.01537700 
+   1.51034483  -0.99819804 
+   1.60344828  -0.98189024 
+   1.69655172  -0.96650424 
+   1.78965517  -0.95204487 
+   1.88275862  -0.93848934 
+   1.97586207  -0.92580005 
+   2.06896552  -0.91393287 
+   2.16206897  -0.90284188 
+   2.25517241  -0.89248172 
+   2.34827586  -0.88280862 
+   2.44137931  -0.87378075 
+   2.53448276  -0.86535829 
+   2.62758621  -0.85750342 
+   2.72068966  -0.85018029 
+   2.81379310  -0.84335495 
+   2.90689655  -0.83699527 
+   3.00000000  -0.83107085   
+}\popple
+
+\pgfplotstableread[]{
+   r Eh 
+   0.30000000  -0.66142047 
+   0.39310345  -0.92959735 
+   0.48620690  -1.05331274 
+   0.57931034  -1.10932135 
+   0.67241379  -1.13053320 
+   0.76551724  -1.13290920 
+   0.85862069  -1.12484506 
+   0.95172414  -1.11101670 
+   1.04482759  -1.09413684 
+   1.13793103  -1.07582378 
+   1.23103448  -1.05705945 
+   1.32413793  -1.03844287 
+   1.41724138  -1.02033632 
+   1.51034483  -1.00295301 
+   1.60344828  -0.98641113 
+   1.69655172  -0.97076775 
+   1.78965517  -0.95604048 
+   1.88275862  -0.94222150 
+   1.97586207  -0.92928666 
+   2.06896552  -0.91720165 
+   2.16206897  -0.90592607 
+   2.25517241  -0.89541638 
+   2.34827586  -0.88562789 
+   2.44137931  -0.87651617 
+   2.53448276  -0.86803800 
+   2.62758621  -0.86015189 
+   2.72068966  -0.85281832 
+   2.81379310  -0.84599976 
+   2.90689655  -0.83966062 
+   3.00000000  -0.83376719      
+}\defsvp
+
+\pgfplotstablecreatecol[
+	create col/expr={\thisrow{Eh}+1},
+]{DEh}\popple
+
+\pgfplotstablecreatecol[
+	create col/expr={\thisrow{Eh}+1},
+]{DEh}\defsvp
+
+\begin{document}
+\thispagestyle{empty}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[%
+ymin=-0.15,
+xlabel={distance, \AA},
+ylabel = {Energy, Eh},
+width=5cm,
+height=5cm,
+scale only axis,
+enlargelimits=false,
+line join=round,
+% === Налаштування сітки ===
+grid = both,
+grid style={line width=.1pt, draw=gray!10},
+major grid style={line width=.2pt,draw=gray!50},
+minor tick num = 4,
+minor grid style = {line width=.1pt,draw=gray!10},
+xtick distance= {0.5},
+extra x ticks = {0.74},
+extra y ticks = {-0.128},
+width=0.75\linewidth,
+height=0.5\linewidth,
+    every extra x tick/.style={
+        color=red, 
+        font=\footnotesize,
+        },
+    every extra y tick/.style={
+        color=red,
+        font=\footnotesize, 
+        },
+]
+\addplot [color=red,line width=1pt, mark=none, smooth]  table[x=r, y expr={\thisrow{DEh}},] {\popple};
+
+\addplot [color=blue,line width=1pt, mark=none, smooth]  table[x=r, y expr={\thisrow{DEh}},] {\defsvp};
+\end{axis}
+\end{tikzpicture}%
+\end{center}
+
+\end{document}

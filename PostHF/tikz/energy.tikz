@@ -1,0 +1,64 @@
+\pgfplotstableread[]{tikz/H2cas.trjscf.dat}\atable
+\pgfplotstableread[]{tikz/H2cas.trjscf_nocas.dat}\btable
+
+\begin{tikzpicture}[   oxygen/.style={circle, ball color=red, minimum size=6mm, inner sep=0},
+		hydrogen/.style={circle, ball color=white, minimum size=2.5mm, inner sep=0},
+		carbon/.style={circle, ball color=black!75, minimum size=7mm, inner sep=0}
+	]
+	\begin{axis}[%
+            legend style={nodes={scale=0.5, transform shape},
+%            at={(current axis.south east)},anchor=south east,
+            },
+			xlabel = {Довжина зв'язку, \r{A}},
+			ylabel = {Енергія, Eh},
+			tick label style={font=\tiny},
+			xtick distance={0.5},
+%			xticklabel style = {rotate=45},
+            ytick distance={0.1},
+			width=5cm,
+			height=5cm,
+			scale only axis,
+			enlargelimits=false,
+			line join=round,
+            xmin=0,
+            ymax=-0.9,
+			ymin=-1.2,
+			% === Налаштування сітки ===
+			grid = both,
+			grid style={line width=.1pt, draw=gray!10},
+			major grid style={line width=.2pt,draw=gray!50},
+			minor grid style = {line width=.1pt,draw=gray!10},
+            minor x tick num=1,
+            minor y tick num=4,
+            width=0.75\linewidth,
+		]
+        \addplot [color=red, mark=none, smooth] table[y index = 1] {\atable};
+        \addlegendentry{{def2-SVP, RHF метод}}
+        \addplot [color=blue, mark=none, smooth] table[y index = 1] {\btable};
+        \addlegendentry{{def2-SVP, CAS SCF метод}}
+
+%        \addplot [color=green, mark=none, smooth] table {\ctable};
+        \coordinate (MINCAS) at (axis cs:0.759142884817,  -1.163182705);
+        \coordinate (MINHF) at (axis cs:0.74489796,  -1.10855245);
+        \node[circle, fill=red, inner sep=0.5pt] at (MINCAS) {};
+        \node[circle, fill=blue, inner sep=0.5pt] at (MINHF) {};
+        \node[below, font=\tiny, anchor=north west, text=red] at (MINCAS) {
+            \pgfplotspointgetcoordinates{(MINCAS)}
+            $(
+                \pgfmathprintnumber[fixed]
+                {\pgfkeysvalueof{/data point/x}},
+                \pgfmathprintnumber[fixed]
+                {\pgfkeysvalueof{/data point/y}}
+            )$
+        };
+         \node[below, font=\tiny, anchor=north west, text=blue] at (MINHF) {
+            \pgfplotspointgetcoordinates{(MINHF)}
+            $(
+                \pgfmathprintnumber[fixed]
+                {\pgfkeysvalueof{/data point/x}},
+                \pgfmathprintnumber[fixed]
+                {\pgfkeysvalueof{/data point/y}}
+            )$
+        };
+	\end{axis}
+\end{tikzpicture}%

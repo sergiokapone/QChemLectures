@@ -1,0 +1,115 @@
+%%============================ Compiler Directives =======================%%
+%%                                                                        %%
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+%%                                                                        %%
+%%============================== Клас документа ==========================%%
+%%                                                                        %%
+\documentclass[14pt]{extarticle}
+\IfFileExists{ukrcorr.sty}{\usepackage{ukrcorr}}{}
+%%                                                                        %%
+%%========================== Мови, шрифти та кодування ===================%%
+%%                                                                        %%
+\usepackage{fontspec}
+\setsansfont{CMU Sans Serif}%{Arial}
+\setmainfont{CMU Serif}%{Times New Roman}
+\setmonofont{CMU Typewriter Text}%{Consolas}
+\defaultfontfeatures{Ligatures={TeX}}
+\usepackage[math-style=TeX]{unicode-math}
+\usepackage[english, russian, ukrainian]{babel}
+\usepackage[most]{tcolorbox}
+
+%%                                                                        %%
+%%============================= Геометрія сторінки =======================%%
+%%                                                                        %%
+\usepackage[%
+	a4paper,%
+	footskip=1cm,%
+	headsep=0.3cm,%
+	top=2cm, %поле сверху
+	bottom=2cm, %поле снизу
+	left=2cm, %поле ліворуч
+	right=2cm, %поле праворуч
+    ]{geometry}
+%%                                                                        %%
+%%============================== Інтерліньяж  ============================%%
+%%                                                                        %%
+\renewcommand{\baselinestretch}{1}
+%-------------------------  Подавление висячих строк  --------------------%%
+\clubpenalty =10000
+\widowpenalty=10000
+%---------------------------------Інтервали-------------------------------%%
+\setlength{\parskip}{0.5ex}%
+\setlength{\parindent}{2.5em}%
+%%                                                                        %%
+%%=========================== Математичні пакети і графіка ===============%%
+%%                                                                        %%
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{QuantumChemistry}
+\usepackage{mhchem}
+%%                                                                        %%
+%%========================== Гіперпосилення (href) =======================%%
+%%                                                                        %%
+\usepackage[colorlinks=true,
+	%urlcolor = blue, %Colour for external hyperlinks
+	%linkcolor  = malina, %Colour of internal links
+	%citecolor  = green, %Colour of citations
+	bookmarks = true,
+	bookmarksnumbered=true,
+	unicode,
+	linktoc = all,
+	hypertexnames=false,
+	pdftoolbar=false,
+	pdfpagelayout=TwoPageRight,
+	pdfauthor={Ponomarenko S.M. aka sergiokapone},
+	pdfdisplaydoctitle=true,
+	pdfencoding=auto
+	]%
+	{hyperref}
+		\makeatletter
+	\AtBeginDocument{
+	\hypersetup{
+		pdfinfo={
+		Title={\@title},
+		}
+	}
+	}
+	\makeatother
+%%                                                                        %%
+%%============================ Заголовок та автори =======================%%
+%%                                                                        %%
+\title{Пост Хартрі-Фоківські методи для \ce{H2}}
+\author{}
+\date{}
+%%                                                                        %%
+%%========================================================================%%
+
+
+\begin{document}
+\maketitle
+
+
+%% --------------------------------------------------------
+\section{Методи CI}
+%% --------------------------------------------------------
+
+Найбільш послідовний підхід до урахування кореляційних ефектів заснований на понятті електронно-збуджених конфігурацій, кожній з яких ставиться у
+відповідність певний слейтерівський детермінант. Електронно-збуджені конфігурації припускають інший розподіл електронів за спін-орбіталями у
+порівнянні з тим, як це реалізується в методі Хартрі-Фока. У зв’язку з різними можливими способами розподілу електронів розрізняють
+електронно-збуджені конфігурації (детермінанти) різної кратності збудження. Так, однократно-збуджені (single) конфігурації одержують, коли один з
+електронів переміщають із зайнятої спін-орбіталі на вакантну.
+
+%%---------------------------------------------------------
+%\begin{figure}[h!]\centering
+%    \input{tikz/CI.tikz}
+%\caption{}
+%\label{}
+%\end{figure}
+%%---------------------------------------------------------
+
+
+\end{document}
+
+

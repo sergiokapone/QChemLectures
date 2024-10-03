@@ -1,0 +1,123 @@
+%%============================ Compiler Directives =======================%%
+%%                                                                        %%
+% !TeX program = pdflatex							    	
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+%%                                                                        %%
+%%============================== Клас документа ==========================%%
+%%                                                                        %%
+\documentclass[]{article}
+\usepackage[%
+paperheight=15in,
+paperwidth=15in,
+margin=1in,
+heightrounded,
+%showframe
+]{geometry}   
+
+\usepackage{tikz}
+\makeatletter
+  \def\xwhilenum #1\do{\@whilesw{\ifnum #1}\fi }
+\makeatother
+\newcounter{it}
+
+\usepackage{multicol}
+
+
+\usepackage[%colorlinks=true,
+	%urlcolor = blue, %Colour for external hyperlinks
+	%linkcolor  = malina, %Colour of internal links
+	%citecolor  = green, %Colour of citations
+	bookmarks = false,
+	bookmarksnumbered=true,
+	unicode,
+	linktoc = all,
+	hypertexnames=false,
+	pdftoolbar=false,
+	pdfpagelayout=SinglePage,
+	pdfauthor={Ponomarenko S.M. aka sergiokapone},
+	pdfdisplaydoctitle=true,
+	pdfencoding=auto
+	]%
+	{hyperref}
+		\makeatletter
+	\AtBeginDocument{
+	\hypersetup{
+		pdfinfo={
+		Title={\@title},
+		}
+	}
+	}
+	\makeatother
+
+
+%\ExplSyntaxOn
+%\NewDocumentCommand\looping{ m m }{
+%\int_set:Nn \l_tmpa_int {1}
+% \int_do_while:nn {\l_tmpa_int < #1}
+%{
+%    #2
+%    \int_incr:N \l_tmpa_int
+%}
+%}
+%\ExplSyntaxOff
+
+\begin{document}
+\pagestyle{empty}
+
+%\begin{tabular}[t]{c|c}
+%R & E \\ \hline
+
+%\end{tabular}
+
+\foreach \i[count = \ci] in {0.3,0.4,...,3.2} {
+\clearpage
+\begin{center}\Huge\bfseries
+Optimization chemical bond length
+\end{center}
+
+%---------------------------------------------------------
+\begin{tikzpicture}[remember picture, overlay]
+\node[anchor=north west] at ([xshift=1in, yshift=-1.5in]current page.north west) {%
+\begin{tabular}{l|l}
+  $R$ & $E$ \\\hline
+  \setcounter{it}{0}%
+  \xwhilenum{\ci>\value{it}}\do {%
+    \stepcounter{it}%
+     $R_{\theit}$ & $E_{\theit}$ \\
+  }%
+\hline
+\end{tabular}    
+};
+\end{tikzpicture}%
+%---------------------------------------------------------
+
+\begin{center}
+    \begin{tikzpicture}[scale=3]
+    \draw[-latex] (-0.3,0) -- ++(3.8,0) node[below] {$R$};
+    \draw[-latex] (0,-2.5) -- ++(0,4) node[left] {$E$};
+    \draw[domain=0.3:3.2, smooth, variable=\x, red, samples = 100]  plot ({\x}, {-3/\x + 1/(\x*\x)});
+    \node[circle, fill=red, inner sep= 2pt] (A) at ({\i}, {-3/\i + 1/(\i*\i)}) {};
+    \draw[dashed] (A) -| node[left]  {$E_{\ci}$} (0,0) ;
+    \draw[dashed] (A) |- node[above] {$R_{\ci}$} (0,0) ;
+    \end{tikzpicture}%    
+\end{center}
+%---------------------------------------------------------
+
+
+
+
+\vfill
+
+\begin{center}
+\begin{tikzpicture}[scale=3]
+\path[inner color=red, outer color=white, opacity=1] (-\i/2,0) circle(3);
+\path[inner color=blue, outer color=white, opacity=0.5] (\i/2,0) circle(3);
+\draw[ball color=red] (-\i/2,0) circle (0.1) node [color=white] {H};
+\draw[ball color=blue] (\i/2,0) circle (0.1) node [color=white] {H};
+\draw (-\i/2,-0.2) --  (-\i/2,-0.4) (\i/2,-0.2) --  (\i/2,-0.4) ;
+\draw [latex-latex] (-\i/2,-0.3) -- node [below] {$R$}(\i/2,-0.3);
+\end{tikzpicture}
+\end{center}
+}
+\end{document}

@@ -12,7 +12,7 @@
 \date{}
 \author{Пономаренко С. М.}
 %============================================================================
-\addbibresource{d:/Projects/LaTeX/QChem/Textbook2/QChemBook.bib}
+\addbibresource{.. /Bibliography/QuantumChemistry.bib}
 \AtEveryCitekey{\clearfield{url}\clearfield{doi}}
 
 \graphicspath{{pictures/}}
@@ -145,7 +145,7 @@
 
 %============================================================================
 \begin{frame}{Теорія збурень}{}
-	%----------------------------------------------------------------------------
+	%---------------------------------------------------------------------------
 	Основна ідея теорії збурень --- всі взаємодії в системі можна умовно розділити на <<основні>> і <<збурення>>, --- гамільтоніан системи можна представити у вигляді:
 	\begin{equation*}
 		\hat{H} = \hat{H}^0 + \hat{V},
@@ -160,10 +160,10 @@
 
 	Перше наближення теорії збурень:
 	\begin{equation*}\label{PerturbedValues}
-		E_n = E_n^{(0)} + \opbracket{\phi_n^{(0)}}{\hat{V}}{\phi_n^{(0)}}, \quad
-		\phi_n = \phi_n^{(0)} + \sum\limits_{\substack{m\\m \neq n}} \frac{\opbracket{\phi_n^{(0)}}{\hat{V}}{\phi_m^{(0)}}}{E_n^{(0)} - E_m^{(0)}} \phi_m^{(0)}.
+		E_n = E_n^{(0)} + \bracket<\phi_n^{(0)}|\hat{V}|\phi_n^{(0)}>, \quad
+		\phi_n = \phi_n^{(0)} + \sum\limits_{\substack{m\\m \neq n}} \frac{\bracket<\phi_n^{(0)}|\hat{V}|\phi_m^{(0)}>}{E_n^{(0)} - E_m^{(0)}} \phi_m^{(0)}.
 	\end{equation*}
-	%----------------------------------------------------------------------------
+	%---------------------------------------------------------------------------
 \end{frame}
 
 
@@ -228,7 +228,7 @@
 
 		Перша поправка до енергії в теорії збурень:
 		\begin{equation*}
-			E^{(1)} = \opbracket{\Phi_0}{\hat{V}}{\Phi_0} \equiv J = \frac{Z^6}{\pi^2} \int\limits_{V_1}\int\limits_{V_2}\frac{1}{r_{12}} e^{-2Z(r_1 + r_2)} dV_1dV_2 = + \frac58 Z.
+			E^{(1)} = \bracket<{\Phi_0}|{\hat{V}}|{\Phi_0}> \equiv J = \frac{Z^6}{\pi^2} \int\limits_{V_1}\int\limits_{V_2}\frac{1}{r_{12}} e^{-2Z(r_1 + r_2)} dV_1dV_2 = + \frac58 Z.
 		\end{equation*}
 		$J$~--- кулонівський інтеграл.
 		Енергія атома \ce{He} :
@@ -292,7 +292,7 @@
 		\]
 		Перша поправка до енергії в теорії збурень:
 		\begin{multline*}
-			E^{(1)} = \opbracket{\Phi_0}{\hat{V}}{\Phi_0} = \\ = \opbracket{(1s)_1(2s)_2}{\hat{V}}{(1s)_1(2s)_2} - \opbracket{(1s)_1(2s)_2}{\hat{V}}{(2s)_1(1s)_2} = J - K.
+			E^{(1)} = \bracket<\Phi_0|\hat{V}|\Phi_0> = \\ = \bracket<(1s)_1(2s)_2|\hat{V}|(1s)_1(2s)_2> - \bracket<(1s)_1(2s)_2|\hat{V}|(2s)_1(1s)_2> = J - K.
 		\end{multline*}
 		$J$~--- кулонівський інтеграл, $K$~--- обмінний інтеграл.
 		\[
@@ -333,7 +333,7 @@
 	\only<1>{%
 		Енергію системи в стані $\Phi$ можна розрахувати як:
 		\begin{equation*}
-			E[\Phi]  = \opbracket{\Phi}{\hat{H}}{\Phi} = \int \Phi^* \hat{H} \Phi d\xi, \quad \int \Phi^*  \Phi d\xi = 1.
+			E[\Phi]  = \bracket<{\Phi}|{\hat{H}}|{\Phi}> = \int \Phi^* \hat{H} \Phi d\xi, \quad \int \Phi^*  \Phi d\xi = 1.
 		\end{equation*}
 		Застосуємо варіаційний принцип $\delta E = 0$
 		\[
@@ -352,15 +352,15 @@
 		\end{center}
 	}
 	\only<2>{%
-		Припустимо, що довільна функція $\tilde{\Phi} = \sum\limits_m C_m\Phi_m$ є розв'язком, $(\sum\limits_m|C_m|^2 = 1)$, $\bracket{\tilde{\Phi}}{\tilde{\Phi}} = 1$, розкладена в ряд по точним (але невідомим) власним функціям гамільтоніана $\hat H$ :
+		Припустимо, що довільна функція $\tilde{\Phi} = \sum\limits_m C_m\Phi_m$ є розв'язком, $(\sum\limits_m|C_m|^2 = 1)$, $\bracket<\tilde{\Phi}|\tilde{\Phi}> = 1$, розкладена в ряд по точним (але невідомим) власним функціям гамільтоніана $\hat H$ :
 
 		\begin{equation*}
-			E[\Phi]  = \opbracket{\tilde\Phi}{\hat{H}}{\tilde\Phi} = \sum\limits_m |C_m|^2 E_m.
+			E[\Phi]  = \bracket<{\tilde\Phi}|{\hat{H}}|{\tilde\Phi}> = \sum\limits_m |C_m|^2 E_m.
 		\end{equation*}
 
 		Нехай $E_0$ найменше  значення енергії основного стану гамільтоніана $\hat{H}$, тоді
 		\begin{equation*}
-			E[\tilde\Phi]  = \opbracket{\tilde\Phi}{\hat{H}}{\tilde\Phi} = \sum\limits_m |C_m|^2 E_m \ge \sum\limits_m |C_m|^2 E_0  = E_0.
+			E[\tilde\Phi]  = \bracket<{\tilde\Phi}|{\hat{H}}|{\tilde\Phi}> = \sum\limits_m |C_m|^2 E_m \ge \sum\limits_m |C_m|^2 E_0  = E_0.
 		\end{equation*}
 		\begin{alertblock}{}\centering
 			Енергія обчислена з довільною функцією $\tilde\Phi$  буде оцінкою зверху для точного значення енергії основного стану
@@ -528,7 +528,7 @@
 			\left(-\frac12 \nabla_2^2  - \frac{1}{r_2}\right)\phi_2 + \int\frac{|\phi_1|^2}{r_{12}} dV_1 \cdot \phi_2  & = \varepsilon_2 \phi_2.
 		\end{align*}
 		\onslide<3>
-		Енергія атома методом Хартрі $E = \opbracket{\Phi}{\hat{H}}{\Phi}$:
+		Енергія атома методом Хартрі $E = \bracket<{\Phi}|{\hat{H}}|{\Phi}>$:
 		\begin{multline*}
 			E =  \int \phi^*_1 \left( -\frac12 \nabla_1^2 - \frac{1}{r_{1}}\right) \phi_1 dV_1 + \int \phi^*_2 \left( -\frac12 \nabla_2и и ^2 - \frac{1}{r_{2}}\right) \phi_2 dV_2 + \\ +  \int\frac{|\phi_1|^2 |\phi_2|^2}{r_{12}} dV_1 dV_2
 			= \varepsilon_1 + \varepsilon_2 - \int\frac{|\phi_1|^2 |\phi_2|^2}{r_{12}} dV_1 dV_2.
@@ -656,7 +656,7 @@
 		\end{align*}
 		\noindent де $\hat{F} = \hat{h} + \hat{J} - \hat{K}$~--- оператор Фока (або фокіан),\\ \noindent $\varepsilon_1$ та $\varepsilon_2$~--- орбітальні енергії електронів.
 		\onslide<4>
-		Енергія атома методом Хартрі-Фока $E = \opbracket{\Phi}{\hat{H}}{\Phi}$:
+		Енергія атома методом Хартрі-Фока $E = \bracket<{\Phi}|{\hat{H}}|{\Phi}>$:
 		\begin{multline*}
 			E = 2 \int \vphi^*_1 \left( -\frac12 \nabla_1^2 - \frac{1}{r_{1}}\right) \vphi_1 d(1) +  \int\frac{|\vphi_1(1)|^2 |\phi_2(2)|^2}{r_{12}} d(1) d(2) - \\
 			- \int\frac{\vphi_1 (1) \vphi_2(2) \vphi_2 (1) \vphi_1(2)}{r_{12}} d(1) d(2)

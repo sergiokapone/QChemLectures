@@ -1,0 +1,126 @@
+%%============================ Compiler Directives =======================%%
+%%                                                                        %%
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+%%                                                                        %%
+%%============================== Клас документа ==========================%%
+%%                                                                        %%
+\documentclass[14pt]{extarticle}
+\IfFileExists{ukrcorr.sty}{\usepackage{ukrcorr}}{}
+%%                                                                        %%
+%%========================== Мови, шрифти та кодування ===================%%
+%%                                                                        %%
+\usepackage{fontspec}
+\setsansfont{CMU Sans Serif}%{Arial}
+\setmainfont{CMU Serif}%{Times New Roman}
+\setmonofont{CMU Typewriter Text}%{Consolas}
+\defaultfontfeatures{Ligatures={TeX}}
+\usepackage[math-style=TeX]{unicode-math}
+\usepackage[english, russian, ukrainian]{babel}
+\usepackage[most]{tcolorbox}
+
+%%                                                                        %%
+%%============================= Геометрія сторінки =======================%%
+%%                                                                        %%
+\usepackage[%
+	a4paper,%
+	footskip=1cm,%
+	headsep=0.3cm,%
+	top=2cm, %поле сверху
+	bottom=2cm, %поле снизу
+	left=2cm, %поле ліворуч
+	right=2cm, %поле праворуч
+    ]{geometry}
+%%                                                                        %%
+%%============================== Інтерліньяж  ============================%%
+%%                                                                        %%
+\renewcommand{\baselinestretch}{1}
+%-------------------------  Подавление висячих строк  --------------------%%
+\clubpenalty =10000
+\widowpenalty=10000
+%---------------------------------Інтервали-------------------------------%%
+\setlength{\parskip}{0.5ex}%
+\setlength{\parindent}{2.5em}%
+%%                                                                        %%
+%%=========================== Математичні пакети і графіка ===============%%
+%%                                                                        %%
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{floatflt}
+%%                                                                        %%
+%%========================== Гіперпосилення (href) =======================%%
+%%                                                                        %%
+\usepackage[colorlinks=true,
+	%urlcolor = blue, %Colour for external hyperlinks
+	%linkcolor  = malina, %Colour of internal links
+	%citecolor  = green, %Colour of citations
+	bookmarks = true,
+	bookmarksnumbered=true,
+	unicode,
+	linktoc = all,
+	hypertexnames=false,
+	pdftoolbar=false,
+	pdfpagelayout=TwoPageRight,
+	pdfauthor={Ponomarenko S.M. aka sergiokapone},
+	pdfdisplaydoctitle=true,
+	pdfencoding=auto
+	]%
+	{hyperref}
+		\makeatletter
+	\AtBeginDocument{
+	\hypersetup{
+		pdfinfo={
+		Title={\@title},
+		}
+	}
+	}
+	\makeatother
+%%                                                                        %%
+%%============================ Заголовок та автори =======================%%
+%%                                                                        %%
+\title{Метод обчислення властивостей молекул}
+\author{}
+\date{}
+%%                                                                        %%
+%%========================================================================%%
+
+
+\begin{document}
+\maketitle
+
+
+%% --------------------------------------------------------
+\section{Медоди квантової хімії}
+%% --------------------------------------------------------
+
+\begin{itemize}
+	\item Методи Хартрі-Фока
+	      \begin{itemize}
+		      \item Hartree–Fock (HF)
+		      \item Restricted open-shell Hartree–Fock (ROHF)
+		      \item Unrestricted Hartree–Fock (UHF)
+	      \end{itemize}
+	\item Методи Пост-Хартрі-Фока
+
+	      \begin{itemize}
+		      \item Configuration interaction (CI)
+		      \item Coupled cluster (CC)
+		      \item Møller–Plesset perturbation theory (MPn)
+%		      \item Quadratic configuration interaction (QCI)
+		            %        \item Quantum chemistry composite methods
+		            %        \item Sign Learning Kink-based (SiLK) Quantum Monte Carlo
+	      \end{itemize}
+	\item Multi-reference methods
+	      \begin{itemize}
+		      \item Multi-configurational self-consistent field (MCSCF including CASSCF and RASSCF)
+		      \item Multi-reference configuration interaction (MRCI)
+%		      \item n-electron valence state perturbation theory (NEVPT)
+		      \item Complete active space perturbation theory (CASPTn)
+		      \item State universal multi-reference coupled-cluster theory (SUMR-CC)
+	      \end{itemize}
+\end{itemize}
+
+\end{document}
+
+

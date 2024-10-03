@@ -1,0 +1,18 @@
+! RHF OPT STO-3G PrintMOs
+
+%coords
+    CTyp internal
+    Charge 0
+    Mult 1
+    Units Angs
+    coords
+       H     0     0     0        0.00000        0.00000        0.00000
+       H     1     0     0        0.30000        0.00000        0.00000
+    end
+end
+
+%geom Scan
+    B 0 1 = 0.1, 6.0, 200
+    end
+end
+

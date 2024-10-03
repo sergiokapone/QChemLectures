@@ -1,0 +1,11 @@
+\begin{tikzpicture}[scale=0.75]
+	\coordinate (s) at (0,0);
+	\orbital[pos = {(s)},  scale = 2, pcolor = red,]{s}
+	\path [updown=s];
+	\node[font=\Huge] at (2,0) {+};
+	\coordinate (p) at (5,0);
+	\orbital[pos = {(p)},  scale = 2, pcolor = red,]{pz}
+	\pic at ([xshift=1cm]p) {upspinarrow};
+	\orbital[pos = {(p)},  scale = 2, pcolor = blue,]{py}
+	\pic at ([yshift=1cm]p) {downspinarrow};
+\end{tikzpicture}
