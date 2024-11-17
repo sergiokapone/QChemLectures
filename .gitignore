@@ -13,7 +13,9 @@ _minted*/
 *.snm
 *.out
 *.fls
+*.vrb
 *.fdb_latexmk
+*.tmp
 
 
 
