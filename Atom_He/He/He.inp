@@ -1,0 +1,8 @@
+# avogadro generated ORCA input file 
+# Basic Mode
+# 
+! RHF SP STO-3G 
+
+* xyz 0 1
+  He       0        0        0
+*

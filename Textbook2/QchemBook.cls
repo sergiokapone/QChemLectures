@@ -45,9 +45,10 @@
 \newlength{\topspace}
 \setlength{\topspace}{2cm}
 \RequirePackage[%
+%    showframe,
 	a4paper,%
 	footskip=1cm,%
-	headsep=1cm,% 
+	headsep=1cm,%
 	top=2cm, %поле сверху
 	bottom=2cm, %поле снизу
 	left=2cm, %поле ліворуч
@@ -74,12 +75,12 @@
 \ifxetexorluatex
 	\RequirePackage{fontspec}
 	\setsansfont{CMU Sans Serif}%{Arial}
-	\setmainfont{stix}%{CMU Serif}%{Times New Roman}
+	\setmainfont{Bookman Old Style}%{CMU Serif}%{Times New Roman}
 	\setmonofont{CMU Typewriter Text}%{Consolas}
 	\defaultfontfeatures{Ligatures={TeX}}
-	\newfontfamily\Annabelle{Annabelle}
+%	\newfontfamily\Annabelle{Annabelle}
 	\RequirePackage{luacolor}
-	\usepackage{luatexbase} % TexLive2018 bug
+%	\usepackage{luatexbase} % TexLive2018 bug
 \else
 	\RequirePackage[T2A,T1]{fontenc}
 	\RequirePackage[utf8]{inputenc}
@@ -91,7 +92,7 @@
 	\renewcommand{\bfdefault}{b}
 \fi
 \RequirePackage[english,russian,ukrainian]{babel}
-
+\RequirePackage{csquotes}
 
 %========================================================================================================
 %
@@ -161,11 +162,11 @@
 \setlength\arrayrulewidth{1pt}
 % ------------------------------------ Математика -------------------------------------------------------
 \ifluatex
-	\RequirePackage{lualatex-math}
+%	\RequirePackage{lualatex-math}
 	\RequirePackage{amsmath}
 	\RequirePackage[math-style=TeX,bold-style=TeX]{unicode-math}
 	\setmathfont[math-style=TeX]{Stix Two Math}
-    
+
 \else
 	\RequirePackage{amsfonts}
 	\RequirePackage{amssymb}
@@ -177,10 +178,10 @@
 % -------------------------------- Визначення математичних команд -----------------------------------
 \def\EMF{\mathcal{E}}
 \newcommand{\vect}[1]{\symbf{#1}}
-\def\Efield{\vect{E}}          % --- Визначення вектора електричного поля            --- 
-\def\Dfield{\vect{D}}          % --- Визначення електричної індукції                 --- 
-\def\Bfield{\vect{B}}          % --- Визначення вектора магнітногї індукції          --- 
-\def\Hfield{\vect{H}}          % --- Визначення вектора напруженості магнітного поля --- 
+\def\Efield{\vect{E}}          % --- Визначення вектора електричного поля            ---
+\def\Dfield{\vect{D}}          % --- Визначення електричної індукції                 ---
+\def\Bfield{\vect{B}}          % --- Визначення вектора магнітногї індукції          ---
+\def\Hfield{\vect{H}}          % --- Визначення вектора напруженості магнітного поля ---
 \def\rot{\symbf{\nabla}\times} % --- Визначення ротора                               ---
 \def\divg{\symbf{\nabla}\cdot} % --- Визначення дівергенції                          ---
 \AtBeginDocument{%
@@ -188,6 +189,7 @@
     \let\phi\varphi
 	\let\epsilon\varepsilon
 	\DeclareMathOperator{\const}{const}
+    \DeclareMathOperator{\Ry}{Ry}
 	\DeclareMathOperator{\inv}{inv}
 	\newcommand{\Laplasian}{\Delta}
 }
@@ -208,7 +210,9 @@
 \setlength{\belowrulesep}{0pt}
 \setlength{\extrarowheight}{0.75ex}
 \RequirePackage[justification=centering,labelsep=period]{caption}
-\RequirePackage{multirow}
+\RequirePackage{tabularray}
+\UseTblrLibrary{booktabs}
+\RequirePackage{wrapstuff}
 % ------------------------------------- Фалові операції -------------------------------------------------
 \RequirePackage{currfile}
 % ------------------------------------- Пакети LaTeX3 ---------------------------------------------------
@@ -412,7 +416,7 @@
 \newcommand\partbreak{\clearpage}
 
 \titleformat{\chapter}[block]
-{\normalfont\sffamily}{}{0pt}
+{\normalfont\sffamily\bfseries}{}{0pt}
 {\parbox[b]{\chapnumb}{%
    \color{themecolordark}\fontsize{100}{90}\selectfont\thechapter}%
   \parbox[b]{\dimexpr\textwidth-\chapnumb\relax}{%
@@ -421,7 +425,7 @@
     \rule{\dimexpr\textwidth-\chapnumb\relax}{0.4pt}}}
 
 \titleformat{name=\chapter,numberless}[block]
-{\normalfont\sffamily}{}{0pt}
+{\normalfont\sffamily\bfseries}{}{0pt}
 {\parbox[b]{\chapnumb}{%
    \mbox{}}%
   \parbox[b]{\dimexpr\textwidth-\chapnumb\relax}{%
@@ -522,7 +526,7 @@
 \RequirePackage[all]{hypcap}
 \RequirePackage{bookmark}
 
-% ------------------------------------ Патч для україомовної назви розділу для nameref ------------------ % 
+% ------------------------------------ Патч для україомовної назви розділу для nameref ------------------ %
 \addto\extrasukrainian{%
 	\renewcommand{\chapterautorefname}{}%
 }
@@ -539,12 +543,12 @@
 %========================================================================================================
 
 \ifbiblatex
-  \RequirePackage[backend=biber, 
+  \RequirePackage[backend=biber,
 bibstyle=gost-numeric,
 maxnames = 10,
- babel=other, 
-isbn=true, 
-url=false, 
+ babel=other,
+isbn=true,
+url=false,
 defernumbers=true
 ]{biblatex}
   \newbibmacro{string+url}[1]{%
@@ -600,13 +604,13 @@ defernumbers=true
         \p1=(title.north east),
         \p2=(frame.north east)
         in
-        node[anchor=west,font=\sffamily,color=themecolordark,text width=\x2-\x1] 
+        node[anchor=west,font=\sffamily,color=themecolordark,text width=\x2-\x1]
         at (title.east) {#1};
   }
 }
 
 \newtcolorbox{Attention}[1][]{enhanced,
-  breakable,	
+  breakable,
   before skip=2mm,after skip=3mm,
   before upper={\parindent15pt},
   boxrule=0.4pt,left=5mm,right=2mm,top=1mm,bottom=1mm,
@@ -660,7 +664,7 @@ defernumbers=true
 
 \tcbset{
 		answersolutionstyle/.style={
-			enhanced jigsaw,colframe=cyan,interior hidden, boxrule=0pt, frame hidden, 
+			enhanced jigsaw,colframe=cyan,interior hidden, boxrule=0pt, frame hidden,
 				breakable,before skip=10pt,after skip=10pt, parbox=false, ,before upper={\parindent20pt},
 				overlay unbroken = {\draw[line width=1pt, themecolorlight, rounded corners] (frame.south west) rectangle (frame.north east);},
 				extras first={
@@ -717,7 +721,7 @@ defernumbers=true
 %\NewDocumentCommand{\MakeChapterList}{ m m }
 % {
 %  \clist_set:cn {chapter_list_#1_clist} { #2 }
-% } 
+% }
 % -------------------------------------------------------------------------------------------------------
 \NewDocumentCommand{\multiinclude}{ m O{} }
 {
