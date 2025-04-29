@@ -1,0 +1,52 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+
+%https://www.youtube.com/watch?v=_HMnI0MaFNk&ab_channel=SergiyPonomarenko
+\documentclass[border=0.5cm]{standalone}
+
+\usepackage{pgfplotstable}
+\pgfplotsset{compat=newest}
+
+
+\pgfplotstableread[skip first n=1]{H2cis.trjcis.dat}\atable
+
+
+\begin{document}
+
+\begin{tikzpicture}[   oxygen/.style={circle, ball color=red, minimum size=6mm, inner sep=0},
+		hydrogen/.style={circle, ball color=white, minimum size=2.5mm, inner sep=0},
+		carbon/.style={circle, ball color=black!75, minimum size=7mm, inner sep=0}
+	]
+	\begin{axis}[%
+			xlabel = {Bond length, \r{A}},
+			ylabel = {Energy, Eh},
+			tick label style={font=\tiny},
+			xtick distance={0.5},
+%			xticklabel style = {rotate=45},
+            ytick distance={0.1},
+			width=5cm,
+			height=5cm,
+			scale only axis,
+			enlargelimits=false,
+			line join=round,
+            xmin=0,
+			ymin=-1.2,
+			% === Налаштування сітки ===
+			grid = both,
+			grid style={line width=.1pt, draw=gray!10},
+			major grid style={line width=.2pt,draw=gray!50},
+			minor grid style = {line width=.1pt,draw=gray!10},
+            minor x tick num=1,
+		]
+
+        \addplot [color=blue, mark=none, smooth] table[y index = 1] {\atable};
+        \addplot [color=red, mark=none, smooth] table[y index = 2] {\atable};
+        \addplot [color=green, mark=none, smooth] table[y index = 3] {\atable};
+
+
+
+	\end{axis}
+\end{tikzpicture}%
+
+
+\end{document}

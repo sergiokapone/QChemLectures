@@ -44,7 +44,7 @@
 	\framesubtitle<4>{Ілюстрація методу}
 	\begin{onlyenv}<4>
 		\begin{center}
-            \input{tikz/CASSCF.tikz}
+			\input{tikz/CASSCF.tikz}
 		\end{center}
 	\end{onlyenv}
 	\begin{onlyenv}<5>
@@ -53,12 +53,26 @@
 			орбіталей \alert{\texttt{Norb}} і число електронів \alert{\texttt{Nel}}, які всіма можливими
 			способами будуть по цих орбіталях <<розсаджені>> при побудові
 			конфігурацій.
-            %Є також можливість вибрати номери орбіталей, які будуть віднесені до активного
+			%Є також можливість вибрати номери орбіталей, які будуть віднесені до активного
 			простору.
 		\end{block}
+
+
+
+	\begin{block}{}
+		Збуджені електронні стани атома/молекули --- розв'язки (\alert{\texttt{roots}}) рівняння
+		Шредінґера для функцій $m > 0$:
+		\begin{equation*}
+			\tcbhighmath{\hat{H}_e(\vec{R})\Phi_{\color{red}n}(\vxi\,|\,\vec{R}) =
+			E_{e_{\color{red}n}}(\vec{R})\Phi_{\color{red}n}(\vxi\,|\,\vec{R})}
+		\end{equation*}
+	\end{block}
+
+
+
 	\end{onlyenv}
 	\begin{onlyenv}<6>
-        Сканування геометрії молекули \ce{H2} методом CASSCF
+		Сканування геометрії молекули \ce{H2} методом CASSCF
 		\begin{minted}[
         autogobble,
         fontsize=\scriptsize,
@@ -81,10 +95,10 @@ end
         \end{minted}
 	\end{onlyenv}
 	\begin{onlyenv}<7>
-        \begin{center}
-            \input{tikz/energy.tikz}
-        \end{center}
-    \begin{block}{}
-        Енергія дисоціації молекули \ce{H2}: $E = 1.16 - 1 = 0.16$~Eh.
-    \end{block}
-   	\end{onlyenv}
+		\begin{center}
+			\input{tikz/energy.tikz}
+		\end{center}
+		\begin{block}{}
+			Енергія дисоціації молекули \ce{H2}: $E = 1.16 - 1 = 0.16$~Eh.
+		\end{block}
+	\end{onlyenv}

@@ -1,0 +1,1831 @@
+-------------------------------------------------------------
+----------------------- !PROPERTIES! ------------------------
+-------------------------------------------------------------
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 1
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.0075998822 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -0.9318792494
+ROOT   1 Energy     -0.2890542778
+ROOT   2 Energy     -0.1344954736
+ROOT   3 Energy      0.6350848683
+ROOT   4 Energy      0.6823447216
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 1
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     141083.773478  70.879873   0.317722   4.782143   2.186811  -0.000000
+      1     175005.510006  57.141058   0.000000   0.000000  -0.000000   0.000000
+      2     343908.871633  29.077470   0.000000   0.000000  -0.000000  -0.000000
+      3     354281.210481  28.226165   0.234208   1.403802  -1.184822   0.000000
+                  6    
+      0      -0.000000
+      1       0.000000
+      2       0.000000
+      3      -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 1
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     141083.773478  70.879873   0.000000   0.000000  -0.000000   0.000000
+      1     175005.510006  57.141058  -0.000000   0.000000  -0.000000  -0.000000
+      2     343908.871633  29.077470  -0.000000  -0.000000   0.000000  -0.000000
+      3     354281.210481  28.226165   0.000000   0.000000   0.000000  -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 1
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000000  -0.000000  -0.000000   0.000000
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 2
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.2600527984 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -1.0904731018
+ROOT   1 Energy     -0.5050372316
+ROOT   2 Energy     -0.3062337670
+ROOT   3 Energy      0.2804264785
+ROOT   4 Energy      0.3210536300
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 2
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     128488.321623  77.828085   0.392139   6.480813  -2.545744  -0.000000
+      1     172120.638677  58.098785   0.000000   0.000000   0.000000  -0.000000
+      2     300877.679615  33.236098   0.000000   0.000000   0.000000   0.000000
+      3     309794.308707  32.279483   0.200430   1.373862  -1.172119   0.000000
+                  6    
+      0       0.000000
+      1      -0.000000
+      2      -0.000000
+      3      -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 2
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     128488.321623  77.828085  -0.000000  -0.000000   0.000000  -0.000000
+      1     172120.638677  58.098785  -0.000000   0.000000   0.000000  -0.000000
+      2     300877.679615  33.236098  -0.000000  -0.000000  -0.000000  -0.000000
+      3     309794.308707  32.279483   0.000000   0.000000   0.000000  -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 2
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000000  -0.000000  -0.000000   0.000000
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 3
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.3935919357 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -1.1432432617
+ROOT   1 Energy     -0.6059322555
+ROOT   2 Energy     -0.3642867886
+ROOT   3 Energy      0.0462634335
+ROOT   4 Energy      0.0992391938
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 3
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     117926.134853  84.798845   0.462243   8.323638   2.885071  -0.000000
+      1     170961.184556  58.492809   0.000000   0.000000   0.000000  -0.000000
+      2     261066.543090  38.304410   0.000000   0.000000  -0.000000   0.000000
+      3     272693.378528  36.671224   0.150930   1.175315  -1.084119   0.000000
+                  6    
+      0      -0.000000
+      1      -0.000000
+      2       0.000000
+      3      -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 3
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     117926.134853  84.798845   0.000000   0.000000  -0.000000   0.000000
+      1     170961.184556  58.492809  -0.000000  -0.000000   0.000000   0.000000
+      2     261066.543090  38.304410   0.000000  -0.000000   0.000000  -0.000000
+      3     272693.378528  36.671224   0.000000   0.000000   0.000000  -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 3
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000000  -0.000000  -0.000000   0.000000
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 4
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.4701769941 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -1.1522503368
+ROOT   1 Energy     -0.6552023844
+ROOT   2 Energy     -0.3744150435
+ROOT   3 Energy     -0.1247101318
+ROOT   4 Energy     -0.0443070742
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 4
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     109089.415972  91.667921   0.523982  10.199686  -3.193695   0.000000
+      1     170715.114031  58.577122   0.000000   0.000000  -0.000000   0.000000
+      2     225519.007402  44.342160   0.000000   0.000000   0.000000  -0.000000
+      3     243165.438798  41.124265   0.100376   0.876558  -0.936247   0.000000
+                  6    
+      0       0.000000
+      1       0.000000
+      2      -0.000000
+      3      -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 4
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     109089.415972  91.667921  -0.000000   0.000000   0.000000  -0.000000
+      1     170715.114031  58.577122  -0.000000  -0.000000  -0.000000  -0.000000
+      2     225519.007402  44.342160   0.000000  -0.000000  -0.000000   0.000000
+      3     243165.438798  41.124265   0.000000   0.000000   0.000000  -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 4
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000000  -0.000000  -0.000000   0.000000
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 5
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.5164884095 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -1.1420594467
+ROOT   1 Energy     -0.6792385523
+ROOT   2 Energy     -0.3654154195
+ROOT   3 Energy     -0.2541699369
+ROOT   4 Energy     -0.1415586923
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 5
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     101577.445053  98.447052   0.573117  11.981168  -3.461382   0.000000
+      1     170453.661347  58.666971   0.000000   0.000000  -0.000000   0.000000
+      2     194869.222609  51.316467   0.000000   0.000000  -0.000000   0.000000
+      3     219584.533958  45.540548   0.055865   0.540249  -0.735016   0.000000
+                  6    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+      3      -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 5
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     101577.445053  98.447052  -0.000000   0.000000   0.000000  -0.000000
+      1     170453.661347  58.666971  -0.000000   0.000000  -0.000000  -0.000000
+      2     194869.222609  51.316467   0.000000  -0.000000   0.000000  -0.000000
+      3     219584.533958  45.540548   0.000000   0.000000   0.000000  -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 5
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000000  -0.000000  -0.000000   0.000000
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 6
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.5449321648 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -1.1237544467
+ROOT   1 Energy     -0.6904262120
+ROOT   2 Energy     -0.3716679585
+ROOT   3 Energy     -0.3313393177
+ROOT   4 Energy     -0.2074728889
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 6
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     95104.554439 105.147435   0.604863  13.505440   3.674975  -0.000000
+      1     165063.904539  60.582597   0.000000   0.000000   0.000000  -0.000000
+      2     173915.018100  57.499347   0.000000   0.000000   0.000000  -0.000000
+      3     201100.556852  49.726367   0.022746   0.240185  -0.490087   0.000000
+                  6    
+      0      -0.000000
+      1      -0.000000
+      2       0.000000
+      3      -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 6
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     95104.554439 105.147435  -0.000000  -0.000000  -0.000000  -0.000000
+      1     165063.904539  60.582597  -0.000000  -0.000000   0.000000   0.000000
+      2     173915.018100  57.499347   0.000000  -0.000000  -0.000000   0.000000
+      3     201100.556852  49.726367  -0.000000  -0.000000   0.000000   0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 6
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000000   0.000000  -0.000000   0.000000
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 7
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.5621685523 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -1.1029269577
+ROOT   1 Energy     -0.6950256211
+ROOT   2 Energy     -0.4416539015
+ROOT   3 Energy     -0.3207331296
+ROOT   4 Energy     -0.2505031514
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 7
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     89523.995376 111.701896   0.615624  14.602568   3.821331  -0.000000
+      1     145132.660053  68.902479   0.000000   0.000000   0.000000  -0.000000
+      2     171671.701846  58.250719   0.000000   0.000000  -0.000000  -0.000000
+      3     187085.400410  53.451525   0.004207   0.047746  -0.218509   0.000000
+                  6    
+      0      -0.000000
+      1      -0.000000
+      2       0.000000
+      3      -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 7
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     89523.995376 111.701896  -0.000000  -0.000000  -0.000000  -0.000000
+      1     145132.660053  68.902479   0.000000   0.000000  -0.000000   0.000000
+      2     171671.701846  58.250719   0.000000   0.000000  -0.000000  -0.000000
+      3     187085.400410  53.451525  -0.000000  -0.000000   0.000000   0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 7
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000000   0.000000  -0.000000   0.000000
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 8
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.5722157912 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -1.0825093550
+ROOT   1 Energy     -0.6962100622
+ROOT   2 Energy     -0.5023778105
+ROOT   3 Energy     -0.3033834287
+ROOT   4 Energy     -0.2765982995
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 8
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     84782.894778 117.948320   0.604483  15.140097   3.891028  -0.000000
+      1     127324.156691  78.539692   0.000000   0.000000   0.000000   0.000000
+      2     170998.375239  58.480088   0.000000   0.000000  -0.000000  -0.000000
+      3     176877.031587  56.536453   0.000266   0.003191  -0.056492  -0.000000
+                  6    
+      0       0.000000
+      1      -0.000000
+      2       0.000000
+      3       0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 8
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     84782.894778 117.948320  -0.000000  -0.000000  -0.000000  -0.000000
+      1     127324.156691  78.539692  -0.000000   0.000000  -0.000000   0.000000
+      2     170998.375239  58.480088   0.000000  -0.000000  -0.000000  -0.000000
+      3     176877.031587  56.536453  -0.000000   0.000000  -0.000000  -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 8
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000000   0.000000  -0.000000   0.000000
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 9
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.5777122177 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -1.0640452335
+ROOT   1 Energy     -0.6955603200
+ROOT   2 Energy     -0.5498746653
+ROOT   3 Energy     -0.2902947773
+ROOT   4 Energy     -0.2887860922
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 9
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     80873.090446 123.650524   0.573560  15.060107  -3.880735   0.000000
+      1     112847.395770  88.615248   0.000000   0.000000  -0.000000  -0.000000
+      2     169818.595919  58.886366   0.007649   0.095647   0.309268   0.000000
+      3     170149.714017  58.771771   0.000000   0.000000   0.000000  -0.000000
+                  6    
+      0       0.000000
+      1       0.000000
+      2      -0.000000
+      3       0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 9
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     80873.090446 123.650524  -0.000000   0.000000  -0.000000  -0.000000
+      1     112847.395770  88.615248  -0.000000   0.000000   0.000000  -0.000000
+      2     169818.595919  58.886366  -0.000000  -0.000000   0.000000   0.000000
+      3     170149.714017  58.771771   0.000000   0.000000  -0.000000  -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 9
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000000   0.000000  -0.000000   0.000000
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 10
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.5804914082 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -1.0482422741
+ROOT   1 Energy     -0.6938591867
+ROOT   2 Energy     -0.5861001931
+ROOT   3 Energy     -0.2954743193
+ROOT   4 Energy     -0.2787810678
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 10
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     77778.097364 128.570900   0.527302  14.396447  -3.794265   0.000000
+      1     101428.462714  98.591655   0.000000   0.000000  -0.000000  -0.000000
+      2     165213.469148  60.527753   0.020834   0.267780  -0.517474  -0.000000
+      3     168877.214370  59.214620   0.000000   0.000000  -0.000000   0.000000
+                  6    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+      3      -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 10
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     77778.097364 128.570900  -0.000000   0.000000  -0.000000  -0.000000
+      1     101428.462714  98.591655   0.000000  -0.000000  -0.000000  -0.000000
+      2     165213.469148  60.527753  -0.000000   0.000000  -0.000000  -0.000000
+      3     168877.214370  59.214620  -0.000000   0.000000  -0.000000   0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 10
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000000   0.000000  -0.000000   0.000000
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 11
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.5817557967 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -1.0354421231
+ROOT   1 Energy     -0.6912928940
+ROOT   2 Energy     -0.6128746297
+ROOT   3 Energy     -0.2954572452
+ROOT   4 Energy     -0.2737120915
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 11
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     75532.025090 132.394173   0.471713  13.261724   3.641665  -0.000000
+      1     92742.844719 107.825030   0.000000   0.000000  -0.000000  -0.000000
+      2     162407.908072  61.573356   0.034091   0.445745   0.667642   0.000000
+      3     167180.417660  59.815618   0.000000   0.000000  -0.000000  -0.000000
+                  6    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+      3       0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 11
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     75532.025090 132.394173   0.000000   0.000000   0.000000   0.000000
+      1     92742.844719 107.825030  -0.000000  -0.000000   0.000000  -0.000000
+      2     162407.908072  61.573356   0.000000   0.000000   0.000000   0.000000
+      3     167180.417660  59.815618   0.000000   0.000000  -0.000000  -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 11
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000000   0.000000  -0.000000   0.000000
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 12
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.5821745724 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -1.0253612370
+ROOT   1 Energy     -0.6880143510
+ROOT   2 Energy     -0.6317005091
+ROOT   3 Energy     -0.2931097307
+ROOT   4 Energy     -0.2726870344
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 12
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     74039.083348 135.063801   0.411640  11.806173   3.436011  -0.000000
+      1     86398.543014 115.742693   0.000000   0.000000  -0.000000  -0.000000
+      2     160710.629200  62.223638   0.043326   0.572474   0.756620   0.000000
+      3     165192.892921  60.535292   0.000000   0.000000   0.000000   0.000000
+                  6    
+      0       0.000000
+      1       0.000000
+      2      -0.000000
+      3      -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 12
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     74039.083348 135.063801  -0.000000  -0.000000   0.000000   0.000000
+      1     86398.543014 115.742693  -0.000000   0.000000   0.000000  -0.000000
+      2     160710.629200  62.223638  -0.000000  -0.000000   0.000000   0.000000
+      3     165192.892921  60.535292  -0.000000   0.000000  -0.000000  -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 12
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000000   0.000000  -0.000000   0.000000
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 13
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.5820884597 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -1.0176807715
+ROOT   1 Energy     -0.6840210485
+ROOT   2 Energy     -0.6440762954
+ROOT   3 Energy     -0.2902767594
+ROOT   4 Energy     -0.2743874238
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 13
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     73229.844610 136.556346   0.351504  10.192848  -3.192624  -0.000000
+      1     81996.704562 121.956121   0.000000   0.000000  -0.000003  -0.000000
+      2     159646.727194  62.638303   0.046849   0.623145   0.789395   0.000000
+      3     163134.033259  61.299287   0.000000   0.000000   0.000000   0.000000
+                  6    
+      0       0.000000
+      1       0.000000
+      2      -0.000000
+      3      -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 13
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     73229.844610 136.556346  -0.000000   0.000000  -0.000000  -0.000000
+      1     81996.704562 121.956121   0.000000  -0.000000  -0.000000  -0.000000
+      2     159646.727194  62.638303  -0.000000  -0.000000   0.000000   0.000000
+      3     163134.033259  61.299287  -0.000000  -0.000000  -0.000000  -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 13
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000000   0.000000  -0.000000   0.000000
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 14
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.5816879575 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -1.0119798940
+ROOT   1 Energy     -0.6793661931
+ROOT   2 Energy     -0.6513670596
+ROOT   3 Energy     -0.2880642050
+ROOT   4 Energy     -0.2776624357
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 14
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     73000.269291 136.985796   0.294517   8.567190  -2.926976  -0.000000
+      1     79145.368781 126.349781   0.000000   0.000000   0.000029   0.000000
+      2     158881.128755  62.940137   0.044938   0.600606   0.774988   0.000000
+      3     161164.053246  62.048576   0.000000   0.000000  -0.000000   0.000000
+                  6    
+      0       0.000000
+      1      -0.000000
+      2      -0.000000
+      3      -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 14
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     73000.269291 136.985796  -0.000000   0.000000  -0.000000  -0.000000
+      1     79145.368781 126.349781  -0.000000   0.000000  -0.000000   0.000000
+      2     158881.128755  62.940137  -0.000000  -0.000000   0.000000   0.000000
+      3     161164.053246  62.048576  -0.000000  -0.000000  -0.000000  -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 14
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000002   0.000000  -0.000000   0.000002
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 15
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.5810956830 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -1.0078453459
+ROOT   1 Energy     -0.6741356426
+ROOT   2 Energy     -0.6547517793
+ROOT   3 Energy     -0.2870249136
+ROOT   4 Energy     -0.2817207334
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 15
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     73240.814003 136.535894   0.242798   7.039553  -2.653216  -0.000000
+      1     77495.080247 129.040450   0.000000   0.000000  -0.000251  -0.000000
+      2     158201.798445  63.210407   0.039117   0.525052  -0.724605  -0.000000
+      3     159365.931426  62.748668   0.000000   0.000000   0.000006  -0.000000
+                  6    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+      3       0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 15
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     73240.814003 136.535894  -0.000000   0.000000  -0.000000  -0.000000
+      1     77495.080247 129.040450   0.000000  -0.000000  -0.000000  -0.000000
+      2     158201.798445  63.210407  -0.000000   0.000000  -0.000000  -0.000000
+      3     159365.931426  62.748668  -0.000000   0.000000   0.000000   0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 15
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000008   0.000000  -0.000000   0.000008
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 16
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.5803880890 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -1.0049048286
+ROOT   1 Energy     -0.6684342909
+ROOT   2 Energy     -0.6552040476
+ROOT   3 Energy     -0.2873276128
+ROOT   4 Energy     -0.2860696650
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 16
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     73846.747141 135.415579   0.197444   5.677616   2.382775   0.000000
+      1     76750.449902 130.292396   0.000000   0.000004   0.002097   0.000000
+      2     157489.994706  63.496097   0.031377   0.423069   0.650438   0.000000
+      3     157766.082339  63.384980   0.000000   0.000000  -0.000245   0.000000
+                  6    
+      0      -0.000000
+      1      -0.000000
+      2      -0.000000
+      3      -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 16
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     73846.747141 135.415579   0.000000   0.000000   0.000000   0.000000
+      1     76750.449902 130.292396  -0.000000   0.000000   0.000000   0.000000
+      2     157489.994706  63.496097   0.000000   0.000000   0.000000   0.000000
+      3     157766.082339  63.384980   0.000000  -0.000000  -0.000000  -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 16
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000033   0.000000  -0.000000   0.000033
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 17
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.5796014108 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -1.0028518963
+ROOT   1 Energy     -0.6623673715
+ROOT   2 Energy     -0.6535039549
+ROOT   3 Energy     -0.2904143680
+ROOT   4 Energy     -0.2888694633
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 17
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     74727.715449 133.819159   0.158728   4.510506   2.123795  -0.000000
+      1     76673.010555 130.423990   0.000000   0.000000   0.000080   0.000000
+      2     156361.963670  63.954173   0.000000   0.000000   0.000006   0.000000
+      3     156701.031068  63.815789   0.023492   0.318352   0.564227   0.000000
+                  6    
+      0       0.000000
+      1      -0.000000
+      2      -0.000000
+      3      -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 17
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     74727.715449 133.819159   0.000000   0.000000   0.000000   0.000000
+      1     76673.010555 130.423990  -0.000000   0.000000   0.000000   0.000000
+      2     156361.963670  63.954173  -0.000000  -0.000000  -0.000000  -0.000000
+      3     156701.031068  63.815789   0.000000   0.000000   0.000000   0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 17
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000001   0.000000  -0.000000   0.000001
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 18
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.5787406048 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -1.0014449361
+ROOT   1 Energy     -0.6560463681
+ROOT   2 Energy     -0.6502707565
+ROOT   3 Energy     -0.2945781019
+ROOT   4 Energy     -0.2913628616
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 18
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     75806.223286 131.915291   0.126354   3.539469  -1.881348  -0.000000
+      1     77073.823507 129.745737   0.000000   0.000001  -0.000868  -0.000000
+      2     155139.337638  64.458184   0.000000   0.000000  -0.000023   0.000000
+      3     155845.001319  64.166319   0.016525   0.225169   0.474520   0.000000
+                  6    
+      0      -0.000000
+      1       0.000000
+      2      -0.000000
+      3      -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 18
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     75806.223286 131.915291   0.000000  -0.000000  -0.000000  -0.000000
+      1     77073.823507 129.745737   0.000000   0.000000  -0.000000  -0.000000
+      2     155139.337638  64.458184  -0.000000  -0.000000   0.000000   0.000000
+      3     155845.001319  64.166319   0.000000   0.000000   0.000000   0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 18
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000004   0.000000  -0.000000   0.000004
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 19
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.5777912737 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -1.0004588199
+ROOT   1 Energy     -0.6495924547
+ROOT   2 Energy     -0.6459841521
+ROOT   3 Energy     -0.2984439455
+ROOT   4 Energy     -0.2944769964
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 19
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     77006.266050 129.859562   0.099638   2.747587   1.657585   0.000000
+      1     77798.196935 128.537683   0.000000   0.000010   0.003133   0.000000
+      2     154074.455562  64.903685   0.000000   0.000000   0.000042  -0.000000
+      3     154945.100263  64.538988   0.011182   0.153253   0.391475   0.000000
+                  6    
+      0      -0.000000
+      1      -0.000000
+      2       0.000000
+      3      -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 19
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     77006.266050 129.859562  -0.000000   0.000000   0.000000   0.000000
+      1     77798.196935 128.537683  -0.000000  -0.000000   0.000000   0.000000
+      2     154074.455562  64.903685   0.000000   0.000000  -0.000000  -0.000000
+      3     154945.100263  64.538988   0.000000   0.000000   0.000000   0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 19
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000006   0.000000  -0.000000   0.000006
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 20
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.5767372037 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -0.9998276201
+ROOT   1 Energy     -0.6430625268
+ROOT   2 Energy     -0.6409984935
+ROOT   3 Energy     -0.3019504540
+ROOT   4 Energy     -0.2978469242
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 20
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     78300.887241 127.712474   0.077951   2.114004  -1.453962   0.000000
+      1     78753.890172 126.977854   0.000000   0.000000   0.000115   0.000000
+      2     153166.333564  65.288499   0.000000   0.000000   0.000001  -0.000000
+      3     154066.954257  64.906846   0.007170   0.098830  -0.314372  -0.000000
+                  6    
+      0      -0.000000
+      1      -0.000000
+      2       0.000000
+      3       0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 20
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     78300.887241 127.712474  -0.000000  -0.000000  -0.000000  -0.000000
+      1     78753.890172 126.977854   0.000000  -0.000000   0.000000   0.000000
+      2     153166.333564  65.288499  -0.000000   0.000000  -0.000000  -0.000000
+      3     154066.954257  64.906846   0.000000  -0.000000  -0.000000  -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 20
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000000   0.000000  -0.000000   0.000000
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 21
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.5755647284 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -0.9993815046
+ROOT   1 Energy     -0.6365901258
+ROOT   2 Energy     -0.6356078050
+ROOT   3 Energy     -0.3050446186
+ROOT   4 Energy     -0.3011995880
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 21
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     79623.504018 125.591057   0.060440   1.611883  -1.269600   0.000000
+      1     79839.098528 125.251915   0.000000   0.000000  -0.000546  -0.000000
+      2     152389.331904  65.621391   0.000000   0.000000   0.000002  -0.000000
+      3     153233.218566  65.260001   0.004482   0.062113  -0.249226  -0.000000
+                  6    
+      0      -0.000000
+      1       0.000000
+      2       0.000000
+      3       0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 21
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     79623.504018 125.591057   0.000000  -0.000000  -0.000000  -0.000000
+      1     79839.098528 125.251915   0.000000   0.000000  -0.000000  -0.000000
+      2     152389.331904  65.621391  -0.000000   0.000000  -0.000000  -0.000000
+      3     153233.218566  65.260001   0.000000  -0.000000  -0.000000  -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 21
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000000   0.000000  -0.000000   0.000000
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 22
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.5742734987 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -0.9990933869
+ROOT   1 Energy     -0.6302228385
+ROOT   2 Energy     -0.6300105078
+ROOT   3 Energy     -0.3077124787
+ROOT   4 Energy     -0.3043282814
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 22
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     80957.727502 123.521254   0.046471   1.218936   1.104054  -0.000000
+      1     81004.328704 123.450193   0.000001   0.000033  -0.005736  -0.000000
+      2     151740.569745  65.901954   0.000000   0.000000   0.000003  -0.000000
+      3     152483.315188  65.580946   0.002704   0.037650   0.194037   0.000000
+                  6    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+      3      -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 22
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     80957.727502 123.521254   0.000000   0.000000   0.000000   0.000000
+      1     81004.328704 123.450193   0.000000   0.000000  -0.000000  -0.000000
+      2     151740.569745  65.901954  -0.000000   0.000000  -0.000000  -0.000000
+      3     152483.315188  65.580946   0.000000   0.000000   0.000000   0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 22
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000000   0.000000  -0.000000   0.000001
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 23
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.5728735298 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -0.9989044916
+ROOT   1 Energy     -0.6243664232
+ROOT   2 Energy     -0.6240321698
+ROOT   3 Energy     -0.3099556054
+ROOT   4 Energy     -0.3071089592
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 23
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     82201.604389 121.652127   0.000003   0.000069   0.008286  -0.000000
+      1     82274.964529 121.543656   0.035420   0.914191   0.956133   0.000000
+      2     151206.802626  66.134591   0.000000   0.000000  -0.000007   0.000000
+      3     151831.569237  65.862456   0.001578   0.022063  -0.148538  -0.000000
+                  6    
+      0       0.000000
+      1      -0.000000
+      2      -0.000000
+      3       0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 23
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     82201.604389 121.652127   0.000000  -0.000000   0.000000   0.000000
+      1     82274.964529 121.543656   0.000000   0.000000   0.000000   0.000000
+      2     151206.802626  66.134591  -0.000000   0.000000   0.000000   0.000000
+      3     151831.569237  65.862456   0.000000  -0.000000  -0.000000  -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 23
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000001   0.000000  -0.000000   0.000001
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 24
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.5713840803 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -0.9987804413
+ROOT   1 Energy     -0.6187908346
+ROOT   2 Energy     -0.6180688215
+ROOT   3 Energy     -0.3117959594
+ROOT   4 Energy     -0.3094843448
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 24
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     83398.078737 119.906839   0.000003   0.000076  -0.008719   0.000000
+      1     83556.542295 119.679438   0.026755   0.679960  -0.824597  -0.000000
+      2     150775.665708  66.323700   0.000000   0.000000   0.000015  -0.000000
+      3     151283.006472  66.101278   0.000892   0.012514   0.111865   0.000000
+                  6    
+      0      -0.000000
+      1       0.000000
+      2       0.000000
+      3      -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 24
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     83398.078737 119.906839  -0.000000   0.000000  -0.000000  -0.000000
+      1     83556.542295 119.679438   0.000000  -0.000000  -0.000000  -0.000000
+      2     150775.665708  66.323700  -0.000000  -0.000000  -0.000000  -0.000000
+      3     151283.006472  66.101278   0.000000   0.000000   0.000000   0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 24
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000001   0.000000  -0.000000   0.000001
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 25
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.5698301985 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -0.9986990142
+ROOT   1 Energy     -0.6133661196
+ROOT   2 Energy     -0.6123689398
+ROOT   3 Energy     -0.3132702984
+ROOT   4 Energy     -0.3114466207
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 25
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     84570.794883 118.244129   0.000008   0.000205   0.014331  -0.000000
+      1     84789.650551 117.938922   0.020019   0.501365  -0.708071  -0.000000
+      2     150434.214536  66.474239   0.000000   0.000000   0.000030  -0.000000
+      3     150834.465506  66.297845   0.000488   0.006868   0.082874   0.000000
+                  6    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+      3      -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 25
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     84570.794883 118.244129   0.000000   0.000000   0.000000   0.000000
+      1     84789.650551 117.938922   0.000000  -0.000000  -0.000000  -0.000000
+      2     150434.214536  66.474239  -0.000000   0.000000  -0.000000  -0.000000
+      3     150834.465506  66.297845   0.000000   0.000000   0.000000   0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 25
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000002   0.000000  -0.000000   0.000002
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -------------------------------------------------------------
+----------------------- !GEOMETRIES! ------------------------
+# -------------------------------------------------------------
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     1 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      0.400000000000    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     2 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      0.529166666667    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     3 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      0.658333333333    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     4 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      0.787500000000    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     5 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      0.916666666667    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     6 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      1.045833333333    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     7 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      1.175000000000    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     8 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      1.304166666667    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     9 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      1.433333333333    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     10 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      1.562500000000    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     11 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      1.691666666667    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     12 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      1.820833333333    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     13 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      1.950000000000    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     14 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      2.079166666667    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     15 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      2.208333333333    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     16 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      2.337500000000    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     17 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      2.466666666667    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     18 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      2.595833333333    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     19 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      2.725000000000    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     20 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      2.854166666667    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     21 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      2.983333333333    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     22 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      3.112500000000    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     23 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      3.241666666667    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     24 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      3.370833333333    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     25 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      3.500000000000    0.000000000000    0.000000000000

@@ -1,0 +1,363 @@
+%%============================ Compiler Directives =======================%%
+%%                                                                        %%
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+%%                                                                        %%
+%%============================== Клас документа ==========================%%
+%%                                                                        %%
+\documentclass[14pt]{extarticle}
+
+%%                                                                        %%
+%%========================== Мови, шрифти та кодування ===================%%
+%%                                                                        %%
+\usepackage{fontspec}
+\setsansfont{CMU Sans Serif}%{Arial}
+\setmainfont{Bookman Old Style}%{Times New Roman}
+\setmonofont{CMU Typewriter Text}%{Consolas}
+\defaultfontfeatures{Ligatures={TeX}}
+\usepackage[math-style=TeX]{unicode-math}
+\usepackage[english, russian, ukrainian]{babel}
+\usepackage[most]{tcolorbox}
+
+%%                                                                        %%
+%%============================= Геометрія сторінки =======================%%
+%%                                                                        %%
+\usepackage[%
+	a4paper,%
+	footskip=1cm,%
+	headsep=0.3cm,%
+	top=2cm, %поле сверху
+	bottom=2cm, %поле снизу
+	left=2cm, %поле ліворуч
+	right=2cm, %поле праворуч
+    ]{geometry}
+%%                                                                        %%
+%%============================== Інтерліньяж  ============================%%
+%%                                                                        %%
+\renewcommand{\baselinestretch}{1}
+%-------------------------  Подавление висячих строк  --------------------%%
+\clubpenalty =10000
+\widowpenalty=10000
+%---------------------------------Інтервали-------------------------------%%
+\setlength{\parskip}{0.5ex}%
+\setlength{\parindent}{2.5em}%
+%%                                                                        %%
+%%=========================== Математичні пакети і графіка ===============%%
+%%                                                                        %%
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{floatflt}
+%%                                                                        %%
+%%========================== Гіперпосилення (href) =======================%%
+%%                                                                        %%
+\usepackage[colorlinks=true,
+	%urlcolor = blue, %Colour for external hyperlinks
+	%linkcolor  = malina, %Colour of internal links
+	%citecolor  = green, %Colour of citations
+	bookmarks = true,
+	bookmarksnumbered=true,
+	unicode,
+	linktoc = all,
+	hypertexnames=false,
+	pdftoolbar=false,
+	pdfpagelayout=TwoPageRight,
+	pdfauthor={Ponomarenko S.M. aka sergiokapone},
+	pdfdisplaydoctitle=true,
+	pdfencoding=auto
+	]%
+	{hyperref}
+		\makeatletter
+	\AtBeginDocument{
+	\hypersetup{
+		pdfinfo={
+		Title={\@title},
+		}
+	}
+	}
+	\makeatother
+%%                                                                        %%
+%%============================ Заголовок та автори =======================%%
+%%                                                                        %%
+\title{\bfseries Теорія малих коливань молекул}
+\author{}
+\date{}
+%%                                                                        %%
+%%========================================================================%%
+
+
+\begin{document}
+\maketitle
+
+\section{Потенціальна енергія}
+Розкладемо потенціальну енергію $U(\mathbf{q})$ в ряд Тейлора навколо положення рівноваги $\mathbf{q}
+=
+\mathbf{0}$:
+
+\[
+U(\mathbf{q}) = U(0) + \left. \frac{\partial U}{\partial q_i} \right|_0 q_i + \frac{1}{2} \left.
+\frac{\partial^2 U}{\partial q_i \partial q_j} \right|_0 q_i q_j + \cdots
+\]
+
+Де:
+\begin{itemize}
+\item Перший член $U(0) = U_0$ --- потенціальна енергія в положенні рівноваги (константа)
+\item Перша похідна $\left. \frac{\partial U}{\partial q_i} \right|_0 = 0$, оскільки в точці рівноваги
+сила дорівнює нулю ($F_i = -\frac{\partial U}{\partial q_i} = 0$)
+\item Друга похідна $H_{ij} = \left. \frac{\partial^2 U}{\partial q_i \partial q_j} \right|_0$ утворює
+матрицю Гессе
+\end{itemize}
+
+Таким чином, в гармонічному наближенні:
+\[
+U(\mathbf{q}) \approx U_0 + \frac{1}{2} H_{ij} q_i q_j
+\]
+
+
+\subsection{Кінетична енергія}
+\[
+T = \frac{1}{2} m_i \dot{q}_i \dot{q}_i
+\]
+
+\subsection{Рівняння Лагранжа}
+\[
+\frac{d}{dt}\left(\frac{\partial T}{\partial \dot{q}_i}\right) - \frac{\partial T}{\partial q_i} +
+\frac{\partial U}{\partial q_i} = 0 \implies m_i \ddot{q}_i + H_{ij} q_j = 0
+\]
+
+\section{Силова константа \( k \) для двохатомної молекули}
+
+
+Для двоатомної молекули силова константа визначається як:
+
+\[
+k = \left. \frac{d^2 U}{dr^2} \right|_{r_e},
+\]
+де \( r_e \) --- рівноважна відстань.
+
+\subsection{Зв'язок із частотою коливань}
+
+Частота коливань пов'язана з \( k \) через приведену масу \( \mu \):
+
+\[
+\omega = \sqrt{\frac{k}{\mu}}, \quad \mu = \frac{m_1 m_2}{m_1 + m_2}.
+\]
+
+Звідси:
+
+\[
+k = \mu \omega^2.
+\]
+
+
+\section{Нормальні моди коливань молекул}
+
+\subsection{Фізичний зміст нормальних мод}
+Нормальні моди — це \textbf{спеціальні типи коливань}, при яких всі атоми молекули рухаються
+\textbf{синхронно} з однаковою частотою $\omega_i$.
+
+
+\subsection{Математичний опис}
+Для кожної нормальної моди $k$:
+\[
+q_i(t) =  A_i e^{(\omega_i t + \phi_k)}
+\]
+де:
+\begin{itemize}
+\item $A_k$ — амплітуда коливань
+\item $\phi_k$ — фаза коливань
+\item $\omega_k$ — власна частота
+\end{itemize}
+
+
+\subsection{Фізична інтерпретація}
+Кожна нормальна мода відповідає:
+\begin{itemize}
+\item Для двоатомних молекул --- простому розтягу/стиску зв'язку
+\item Для багатоатомних молекул --- складним колективним рухам (наприклад:
+\begin{itemize}
+\item Валентні коливання (розтяг зв'язків)
+\item Деформаційні коливання (зміна кутів)
+\end{itemize}
+\end{itemize}
+
+
+\subsection{Розв'язок у вигляді нормальних мод}
+Підстановка \(q_i(t) =  A_i e^{(\omega_i t + \phi_k)}  \) дає:
+\[
+\sum_{j=1}^{3N} H_{ij}A_j = \omega^2 m_i A_i
+\]
+або в матричній формі:
+\[
+\mathbf{H}\mathbf{A} = \omega^2 \mathbf{M}\mathbf{A}
+\]
+
+\begin{enumerate}
+\item \textbf{Нормування за масою}:
+Вводимо нові змінні:
+\begin{equation}
+B_i = \sqrt{m_i} A_i
+\end{equation}
+
+\item \textbf{Переписуємо систему}:
+\begin{equation}
+\sum_{j=1}^{3N} \frac{H_{ij}}{\sqrt{m_i m_j}} B_j = \omega^2 B_i
+\end{equation}
+
+\item \textbf{Нормальні координати}:
+Визначаємо:
+\begin{equation}
+Q_k = \sum_{i=1}^{3N} \frac{B_i^{(k)}}{\sqrt{m_i}} q_i
+\end{equation}
+\end{enumerate}
+
+\subsection{Фінальний вигляд}
+
+Отримуємо незалежні рівняння руху:
+\begin{equation}
+\ddot{Q}_k + {H}^{(Q)}_{kk} Q_k = 0
+\end{equation}\
+або
+\begin{equation}
+\ddot{Q}_k + \omega_k^2 Q_k = 0
+\end{equation}
+
+
+До базису нормальних координат $\mathbf{H}^{(Q)} $ матриця Гессе перетворюється за формулою
+\begin{equation}
+    \mathbf{H}^{(Q)} = \mathbf{Q}^T \mathbf{H}  \mathbf{Q}.
+\end{equation}
+і має діагональну форму:
+
+\[
+\mathbf{H}^{(Q)} =
+\begin{pmatrix}
+\omega_1^2 & 0 & \cdots & 0 \\
+0 & \omega_2^2 & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & \omega_{3N}^2
+\end{pmatrix}
+\]
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Властивості}
+
+\begin{itemize}
+\item Діагональні елементи --- квадрати власних частот:
+\[
+H_{kk}^{(Q)} = \omega_k^2
+\]
+
+\item Недіагональні елементи дорівнюють нулю:
+\[
+H_{kl}^{(Q)} = 0 \quad (k \neq l)
+\]
+
+\item Для фізичних коливань ($k > 6$ для нелінійних молекул):
+\[
+\omega_k^2 > 0
+\]
+
+\item Для поступальних/обертальних мод ($k \leq 6$):
+\[
+\omega_k^2 = 0
+\]
+\end{itemize}
+
+\subsection{Розподіл ступенів вільності}
+
+Для молекули з $N$ атомами:
+
+\[
+\text{Загальна кількість мод} = 3N =
+\underbrace{3}_{\text{поступальні}} +
+\underbrace{3}_{\text{обертальні}} +
+\underbrace{3N-6}_{\text{коливальні}}
+\]
+
+\subsection{Матричний вигляд}
+
+У нормальних координатах матриця Гессе має вигляд:
+
+\[
+\mathbf{H} =
+\begin{pmatrix}
+0 & & & & \\
+& \ddots & & \text{\huge0} & \\
+& & 0 & & \\
+& \text{\huge0} & & \omega_7^2 & \\
+& & & & \ddots \\
+\end{pmatrix}
+\]
+
+\subsection{Доведення для поступальних рухів}
+
+Для поступального руху ($\mathbf{q} = \mathbf{a}$ --- постійний вектор):
+
+\[
+\mathbf{Ha} = 0 \Rightarrow \omega^2 = 0
+\]
+
+\subsection{Доведення для обертальних рухів}
+
+Для малих поворотів $\theta$:
+
+\[
+\mathbf{q} = \boldsymbol{\theta} \times \mathbf{r}_i \Rightarrow \mathbf{H}(\boldsymbol{\theta} \times
+\mathbf{r}) = 0
+\]
+
+\subsection{Властивості}
+
+\begin{itemize}
+\item Перші 6 мод - нульові частоти
+\item Коливальні моди ($k>6$) мають $\omega_k^2 > 0$
+\item Для лінійних молекул: 5 нульових мод (3 поступальні + 2 обертальні)
+\end{itemize}
+
+
+\subsection{Фізична інтерпретація результатів}
+
+\begin{itemize}
+\item Для нелінійної молекули:
+\begin{itemize}
+\item 3 нульові частоти --- поступальні рухи
+\item 3 нульові частоти --- обертальні рухи
+\item $3N-6$ додатних частот --- коливальні моди
+\end{itemize}
+
+\item Для лінійної молекули:
+\begin{itemize}
+\item 3 нульові частоти --- поступальні рухи
+\item 2 нульові частоти --- обертальні рухи
+\item $3N-5$ додатних частот --- коливальні моди
+\end{itemize}
+\end{itemize}
+
+\subsection{Приклад для молекули води (H$_2$O)}
+
+\begin{itemize}
+\item $N=3$ атоми $\Rightarrow$ $9\times9$ матриця Гессе
+\item 3 поступальні моди ($\omega=0$)
+\item 3 обертальні моди ($\omega=0$)
+\item 3 коливальні моди:
+\begin{itemize}
+\item Симетричний розтяг ($\sim 3650$ см$^{-1}$)
+\item Деформація ($\sim 1590$ см$^{-1}$)
+\item Антисиметричний розтяг ($\sim 3750$ см$^{-1}$)
+\end{itemize}
+\end{itemize}
+
+\end{document}
+
+

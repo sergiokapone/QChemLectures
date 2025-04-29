@@ -1,0 +1,139 @@
+-------------------------------------------------------------
+----------------------- !PROPERTIES! ------------------------
+-------------------------------------------------------------
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 1
+   prop. index: 1
+        SCF Energy:       -7.9780967042
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 2
+   prop. index: 1
+        SCF Energy:       -7.9783925343
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 3
+   prop. index: 1
+        SCF Energy:       -7.9786736634
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 4
+   prop. index: 1
+        SCF Energy:       -7.9786782359
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 5
+   prop. index: 1
+        SCF Energy:       -7.9786782717
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 5
+   prop. index: 1
+       Filename                          : d:\Projects\LaTeX\QChem\MolProperties\ORCA\LiH\LiH.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        5.9513398916
+        Electronic Contribution:
+                  0    
+      0      -3.837011
+      1       0.000000
+      2       0.000000
+        Nuclear Contribution:
+                  0    
+      0       1.495622
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0      -2.341390
+      1       0.000000
+      2       0.000000
+# -----------------------------------------------------------
+$ Hessian
+   description: Details about the Hessian
+   geom. index: 5
+   prop. index: 1
+Normal modes:
+Number of Rows: 6 Number of Columns: 6
+                  0          1          2          3          4          5    
+      0       0.000000   0.000000   0.000000   0.000000   0.000000   0.143716
+      1       0.000000   0.000000   0.000000   0.000000   0.000000   0.000000
+      2       0.000000   0.000000   0.000000   0.000000   0.000000   0.000000
+      3       0.000000   0.000000   0.000000   0.000000   0.000000  -0.989619
+      4       0.000000   0.000000   0.000000   0.000000   0.000000   0.000000
+      5       0.000000   0.000000   0.000000   0.000000   0.000000   0.000000
+# -----------------------------------------------------------
+$ THERMOCHEMISTRY_Energies
+   description: The Thermochemistry energies
+   geom. index: 5
+   prop. index: 1
+        Temperature (Kelvin)           :        298.1500000000
+        Pressure (atm)                 :          1.0000000000
+        Total Mass (AMU)               :          7.9490000000
+        Spin Degeneracy                :          1.0000000000
+        Electronic Energy (Hartree)    :         -7.9786782717
+        Translational Energy (Hartree) :          0.0014162714
+        Rotational Energy (Hartree)    :          0.0009441809
+        Vibrational Energy (Hartree)   :          0.0000059293
+        Number of frequencies          :     6      
+        Scaling Factor for frequencies :          1.0000000000
+        Vibrational frequencies        :     
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+      3       0.000000
+      4       0.000000
+      5     1454.779932
+        Zero Point Energy (Hartree)    :          0.0033142325
+        Inner Energy (Hartree)         :         -7.9729976575
+        Enthalpy (Hartree)             :         -7.9720534485
+        Electronic entropy             :          0.0000000000
+        Rotational entropy             :          0.0040873911
+        Vibrational entropy            :          0.0000067752
+        Translational entropy          :          0.0040873911
+        Entropy                        :          0.0193792335
+        Gibbs Energy (Hartree)         :         -7.9914326820
+        Is Linear                      :                 false
+# -------------------------------------------------------------
+----------------------- !GEOMETRIES! ------------------------
+# -------------------------------------------------------------
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     1 
+    Coordinates:
+               0 Li     0.000000000000    0.000000000000    0.000000000000
+               1 H      1.676930000000    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     2 
+    Coordinates:
+               0 Li     0.010893308139    0.000000000000    0.000000000000
+               1 H      1.666036691861    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     3 
+    Coordinates:
+               0 Li     0.038416273467    0.000000000000    0.000000000000
+               1 H      1.638513726533    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     4 
+    Coordinates:
+               0 Li     0.035135150924    0.000000000000    0.000000000000
+               1 H      1.641794849076    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     5 
+    Coordinates:
+               0 Li     0.035398032182    0.000000000000    0.000000000000
+               1 H      1.641531967818    0.000000000000    0.000000000000

@@ -1,9 +1,10 @@
 ! RHF SVP SP PrintMOs
 %casscf
-    Nel 1
-    Norb 3
-    Nroots 1
+    Nel 2
+    Norb 5
+    Nroots 5
 end
+
 #%paras
     #vb = 0.5,3.5,50
 #end

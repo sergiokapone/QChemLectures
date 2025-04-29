@@ -1,0 +1,7 @@
+! RHF SP def2-SVP PrintMOs PrintBasis
+
+
+* xyz 0 1
+H 0.0 0.0 0.0
+H 0.74 0.0 0.0 
+*

@@ -1,0 +1,47 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+
+%https://www.youtube.com/watch?v=_HMnI0MaFNk&ab_channel=SergiyPonomarenko
+\documentclass[border=0.5cm]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+
+
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+\usepackage{pgfplotstable}
+\pgfplotstableread[]{H2+.relaxscanact.dat}\mytable
+
+\begin{document}
+
+\begin{tikzpicture}[   oxygen/.style={circle, ball color=red, minimum size=6mm, inner sep=0},
+		hydrogen/.style={circle, ball color=white, minimum size=2.5mm, inner sep=0},
+		carbon/.style={circle, ball color=black!75, minimum size=7mm, inner sep=0}
+	]
+	\begin{axis}[%
+			xlabel = {$r$, \AA},
+			ylabel = {Energy, $Eh$},
+			tick label style={font=\tiny},
+			xtick distance={0.2},
+			xticklabel style = {rotate=45,anchor=east},
+			width=5cm,
+			height=5cm,
+			scale only axis,
+			enlargelimits=false,
+			line join=round,
+			%ymax=-74.9,
+			% === Налаштування сітки ===
+			grid = both,
+			grid style={line width=.1pt, draw=gray!10},
+			major grid style={line width=.2pt,draw=gray!50},
+			minor tick num = 4,
+			minor grid style = {line width=.1pt,draw=gray!10},
+		]
+		\addplot [color=red,line width=1pt, mark=none, smooth]
+		table {\mytable};
+	\end{axis}
+
+\end{tikzpicture}%
+
+
+\end{document}

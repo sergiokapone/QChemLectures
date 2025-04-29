@@ -1,7 +1,4 @@
-! Opt NumFreq
-
-%elprop Polar 1 end
-
+! RHF Opt AnFreq def2-SVP
 
 * int 0 1
    H     0     0     0        0.00000     0.00000        0.00000

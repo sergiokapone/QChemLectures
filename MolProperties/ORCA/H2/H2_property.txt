@@ -30,10 +30,10 @@ $ SCF_Electric_Properties
    description: The SCF Calculated Electric Properties
    geom. index: 4
    prop. index: 1
-       Filename                          : d:\Projects\LaTeX\QChem\MolProperties\ORCA\H2\H2.scfp 
+       Filename                          : H2.scfp 
        Do Dipole Moment Calculation      : true 
        Do Quadrupole Moment Calculation  : false 
-       Do Polarizability Calculation     : true 
+       Do Polarizability Calculation     : false 
 ** Dipole moment part of electric properties **
         Magnitude of dipole moment (Debye) :        0.0000000000
         Electronic Contribution:
@@ -51,34 +51,30 @@ $ SCF_Electric_Properties
       0      -0.000000
       1       0.000000
       2       0.000000
-** Polarizabilities part of electric properties **
-        Isotropic polarizability :        2.8458055908
-        The raw cartesian tensor (atomic units):
-                  0          1          2    
-      0       6.525255   0.000000   0.000000
-      1       0.000000   1.006081   0.000000
-      2       0.000000   0.000000   1.006081
-        Diagonalised polarizability tensor :
-                  0    
-      0       1.006081
-      1       1.006081
-      2       6.525255
 # -----------------------------------------------------------
-$ SCF_Energy
-   description: The SCF energy
-   geom. index: 5
+$ Hessian
+   description: Details about the Hessian
+   geom. index: 4
    prop. index: 1
-        SCF Energy:       -1.1289285686
+Normal modes:
+Number of Rows: 6 Number of Columns: 6
+                  0          1          2          3          4          5    
+      0       0.000000   0.000000   0.000000   0.000000   0.000000   0.707107
+      1       0.000000   0.000000   0.000000   0.000000   0.000000   0.000000
+      2       0.000000   0.000000   0.000000   0.000000   0.000000   0.000000
+      3       0.000000   0.000000   0.000000   0.000000   0.000000  -0.707107
+      4       0.000000   0.000000   0.000000   0.000000   0.000000   0.000000
+      5       0.000000   0.000000   0.000000   0.000000   0.000000   0.000000
 # -----------------------------------------------------------
 $ THERMOCHEMISTRY_Energies
    description: The Thermochemistry energies
-   geom. index: 5
+   geom. index: 4
    prop. index: 1
         Temperature (Kelvin)           :        298.1500000000
         Pressure (atm)                 :          1.0000000000
         Total Mass (AMU)               :          2.0160000000
         Spin Degeneracy                :          1.0000000000
-        Electronic Energy (Hartree)    :         -1.1289285686
+        Electronic Energy (Hartree)    :         -1.1289285684
         Translational Energy (Hartree) :          0.0014162714
         Rotational Energy (Hartree)    :          0.0009441809
         Vibrational Energy (Hartree)   :          0.0000000000
@@ -91,16 +87,16 @@ $ THERMOCHEMISTRY_Energies
       2       0.000000
       3       0.000000
       4       0.000000
-      5     4589.461902
-        Zero Point Energy (Hartree)    :          0.0104555635
-        Inner Energy (Hartree)         :         -1.1161125527
-        Enthalpy (Hartree)             :         -1.1151683436
+      5     4589.384359
+        Zero Point Energy (Hartree)    :          0.0104553869
+        Inner Energy (Hartree)         :         -1.1161127292
+        Enthalpy (Hartree)             :         -1.1151685201
         Electronic entropy             :          0.0000000000
         Rotational entropy             :          0.0014607505
         Vibrational entropy            :         -0.0000000001
         Translational entropy          :          0.0014607505
         Entropy                        :          0.0148027912
-        Gibbs Energy (Hartree)         :         -1.1299711349
+        Gibbs Energy (Hartree)         :         -1.1299713114
         Is Linear                      :                 false
 # -------------------------------------------------------------
 ----------------------- !GEOMETRIES! ------------------------
@@ -126,12 +122,6 @@ $ THERMOCHEMISTRY_Energies
 ------------------------ !GEOMETRY! -------------------------
     Number of atoms:    2 
     Geometry Index:     4 
-    Coordinates:
-               0 H     -0.003464378947    0.000000000000    0.000000000000
-               1 H      0.743464378947    0.000000000000    0.000000000000
------------------------- !GEOMETRY! -------------------------
-    Number of atoms:    2 
-    Geometry Index:     5 
     Coordinates:
                0 H     -0.003464378947    0.000000000000    0.000000000000
                1 H      0.743464378947    0.000000000000    0.000000000000

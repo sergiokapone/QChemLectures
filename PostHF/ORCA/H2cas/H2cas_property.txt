@@ -1,6 +1,90 @@
 -------------------------------------------------------------
 ----------------------- !PROPERTIES! ------------------------
 -------------------------------------------------------------
+# -----------------------------------------------------------
+$ CASSCF_Energies
+   description: The CASSCF energies
+   geom. index: 1
+   prop. index: 1
+       Number of Multiplicities          : 1 
+       FINAL CASSCF Energy               :     -0.4465028030 
+ RESULTS FOR MULTIPLICITY                 1  AND IRREP  0
+       NUMBER OF ROOTS                    5 
+ROOT   0 Energy     -1.1520873611
+ROOT   1 Energy     -0.6409889712
+ROOT   2 Energy     -0.3740319273
+ROOT   3 Energy     -0.0673721869
+ROOT   4 Energy      0.0019664313
+# -----------------------------------------------------------
+$ CASSCF_ABS
+   description: The CASSCF absorption spectrum 
+   geom. index: 1
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0     112173.130559  89.147909   0.502645   9.515366  -3.084699   0.000000
+      1     170763.429291  58.560548   0.000000   0.000000  -0.000000   0.000000
+      2     238067.462681  42.004900   0.000000   0.000000  -0.000000   0.000000
+      3     253285.530316  39.481134   0.118646   0.994712   0.997352   0.000000
+                  6    
+      0       0.000000
+      1      -0.000000
+      2       0.000000
+      3      -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          1          0          1     
+      1         0          0          2          0          1     
+      2         0          0          3          0          1     
+      3         0          0          4          0          1     
+# -----------------------------------------------------------
+$ CASSCF_CD
+   description: The CASSCF CD spectrum 
+   geom. index: 1
+   prop. index: 1
+        Number of roots:  4
+        The CASSCF CD Spectrum:
+                  0          1          2          3          4          5    
+      0     112173.130559  89.147909  -0.000000   0.000000   0.000000   0.000000
+      1     170763.429291  58.560548   0.000000   0.000000   0.000000  -0.000000
+      2     238067.462681  42.004900   0.000000  -0.000000  -0.000000   0.000000
+      3     253285.530316  39.481134   0.000000   0.000000  -0.000000  -0.000000
+        Info about the excitations:
+                  0          1          2          3          4    
+      0         0          0          0          0          0     
+      1         0          0          0          0          0     
+      2         0          0          0          0          0     
+      3         0          0          0          0          0     
+# -----------------------------------------------------------
+$ CASSCF_Dipole
+   description: The CASSCF dipole moments 
+   geom. index: 1
+   prop. index: 1
+        Number of states:  4
+        The CASSCF Dipole moments :
+                  0          1          2          3    
+      0       0.000000   0.000000  -0.000000   0.000000
+        Info about the states:
+                  0          1    
+      0         0          0     
+# -----------------------------------------------------------
+$ Calculation_Info
+   description: Details of the calculation
+   geom. index: 1
+   prop. index: 1
+     Multiplicity:                          1
+     Charge:                                0
+     number of atoms:                       2
+     number of electrons:                   0
+     number of frozen core electrons:       1
+     number of correlated electrons:        0
+     number of basis functions:             10
+     number of aux C basis functions:       0
+     number of aux J basis functions:       0
+     number of aux JK basis functions:      0
+     number of aux CABS basis functions:    0
+     Total Energy                           -0.446503
 # -------------------------------------------------------------
 ----------------------- !GEOMETRIES! ------------------------
 # -------------------------------------------------------------
@@ -8,5 +92,5 @@
     Number of atoms:    2 
     Geometry Index:     1 
     Coordinates:
-               0  H      0.000000000000    0.000000000000    0.000000000000
-               1  H      0.740000000000    0.000000000000    0.000000000000
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      0.740000000000    0.000000000000    0.000000000000

@@ -1,0 +1,1631 @@
+-------------------------------------------------------------
+----------------------- !PROPERTIES! ------------------------
+-------------------------------------------------------------
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 1
+   prop. index: 1
+        SCF Energy:       -0.9156385332
+# -----------------------------------------------------------
+$ CIS_ABS
+   description: The CIS absorption spectrum 
+   geom. index: 1
+   prop. index: 1
+        Number of roots:  3
+        The CIS Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0       0.660176   0.353648   0.803532   0.896400  -0.000000  -0.000000
+      1       0.815662   0.000000   0.000000  -0.000000  -0.000000   0.000000
+      2       1.651713   0.412394   0.374515  -0.611976  -0.000000  -0.000000
+        The CIS Absorption Spectrum (Velocity):
+                  0          1          2          3          4          5    
+      0       0.660176   0.356173   0.352705  -0.593890  -0.000000  -0.000000
+      1       0.815662   0.000000   0.000000  -0.000000   0.000000  -0.000000
+      2       1.651713   0.230935   0.572158   0.756411   0.000000   0.000000
+# -----------------------------------------------------------
+$ CIS_CD
+   description: The CIS CD spectrum 
+   geom. index: 1
+   prop. index: 1
+        Number of roots:  3
+        The CIS CD Spectrum:
+                  0          1          2          3    
+      0       0.000000   0.000000   0.000000  -0.000000
+      1      -0.000000   0.000000   0.000000  -0.000000
+      2      -0.000000   0.000000  -0.000000   0.000000
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 1
+   prop. index: 1
+       Filename                          : H2cis.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        0.0000000000
+        Electronic Contribution:
+                  0    
+      0       0.000000
+      1      -0.000000
+      2      -0.000000
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0       0.000000
+      1      -0.000000
+      2      -0.000000
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 2
+   prop. index: 1
+        SCF Energy:       -1.0720391862
+# -----------------------------------------------------------
+$ CIS_ABS
+   description: The CIS absorption spectrum 
+   geom. index: 2
+   prop. index: 1
+        Number of roots:  3
+        The CIS Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0       0.600738   0.453568   1.132528   1.064203   0.000000   0.000000
+      1       0.799950   0.000000   0.000000  -0.000000   0.000000  -0.000000
+      2       1.451415   0.324714   0.335583   0.579296  -0.000000  -0.000000
+        The CIS Absorption Spectrum (Velocity):
+                  0          1          2          3          4          5    
+      0       0.600738   0.394868   0.355818  -0.596505   0.000000   0.000000
+      1       0.799950   0.000000   0.000000  -0.000000  -0.000000   0.000000
+      2       1.451415   0.176762   0.384831  -0.620348   0.000000   0.000000
+# -----------------------------------------------------------
+$ CIS_CD
+   description: The CIS CD spectrum 
+   geom. index: 2
+   prop. index: 1
+        Number of roots:  3
+        The CIS CD Spectrum:
+                  0          1          2          3    
+      0       0.000000   0.000000   0.000000   0.000000
+      1      -0.000000  -0.000000  -0.000000   0.000000
+      2      -0.000000  -0.000000   0.000000   0.000000
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 2
+   prop. index: 1
+       Filename                          : H2cis.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        0.0000000000
+        Electronic Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2      -0.000000
+        Nuclear Contribution:
+                  0    
+      0      -0.000000
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0       0.000000
+      1       0.000000
+      2      -0.000000
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 3
+   prop. index: 1
+        SCF Energy:       -1.1221024343
+# -----------------------------------------------------------
+$ CIS_ABS
+   description: The CIS absorption spectrum 
+   geom. index: 3
+   prop. index: 1
+        Number of roots:  3
+        The CIS Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0       0.547822   0.555459   1.520911   1.233252   0.000000  -0.000000
+      1       0.791122   0.000000   0.000000   0.000000   0.000000   0.000000
+      2       1.289739   0.246336   0.286496  -0.535253   0.000000  -0.000000
+        The CIS Absorption Spectrum (Velocity):
+                  0          1          2          3          4          5    
+      0       0.547822   0.425768   0.349867  -0.591496   0.000000  -0.000000
+      1       0.791122   0.000000   0.000000  -0.000000  -0.000000  -0.000000
+      2       1.289739   0.124503   0.240864   0.490779  -0.000000   0.000000
+# -----------------------------------------------------------
+$ CIS_CD
+   description: The CIS CD spectrum 
+   geom. index: 3
+   prop. index: 1
+        Number of roots:  3
+        The CIS CD Spectrum:
+                  0          1          2          3    
+      0      -0.000000  -0.000000  -0.000000  -0.000000
+      1      -0.000000   0.000000  -0.000000  -0.000000
+      2      -0.000000   0.000000   0.000000   0.000000
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 3
+   prop. index: 1
+       Filename                          : H2cis.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        0.0000000000
+        Electronic Contribution:
+                  0    
+      0      -0.000000
+      1       0.000000
+      2       0.000000
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0      -0.000000
+      1       0.000000
+      2       0.000000
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 4
+   prop. index: 1
+        SCF Energy:       -1.1278410359
+# -----------------------------------------------------------
+$ CIS_ABS
+   description: The CIS absorption spectrum 
+   geom. index: 4
+   prop. index: 1
+        Number of roots:  3
+        The CIS Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0       0.500753   0.654805   1.961461   1.400522  -0.000000  -0.000000
+      1       0.787703   0.000000   0.000000   0.000000  -0.000000   0.000000
+      2       1.166654   0.176544   0.226988   0.476432   0.000000   0.000000
+        The CIS Absorption Spectrum (Velocity):
+                  0          1          2          3          4          5    
+      0       0.500753   0.445851   0.334892  -0.578698  -0.000000  -0.000000
+      1       0.787703   0.000000   0.000000  -0.000000   0.000000  -0.000000
+      2       1.166654   0.078568   0.137493  -0.370800  -0.000000  -0.000000
+# -----------------------------------------------------------
+$ CIS_CD
+   description: The CIS CD spectrum 
+   geom. index: 4
+   prop. index: 1
+        Number of roots:  3
+        The CIS CD Spectrum:
+                  0          1          2          3    
+      0       0.000000   0.000000   0.000000   0.000000
+      1       0.000000   0.000000  -0.000000   0.000000
+      2      -0.000000  -0.000000   0.000000   0.000000
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 4
+   prop. index: 1
+       Filename                          : H2cis.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        0.0000000000
+        Electronic Contribution:
+                  0    
+      0      -0.000000
+      1       0.000000
+      2      -0.000000
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0      -0.000000
+      1       0.000000
+      2      -0.000000
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 5
+   prop. index: 1
+        SCF Energy:       -1.1139731531
+# -----------------------------------------------------------
+$ CIS_ABS
+   description: The CIS absorption spectrum 
+   geom. index: 5
+   prop. index: 1
+        Number of roots:  3
+        The CIS Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0       0.458666   0.747446   2.444411  -1.563461   0.000000   0.000000
+      1       0.787919   0.000000   0.000000   0.000000  -0.000000   0.000000
+      2       1.071190   0.116436   0.163047  -0.403791  -0.000000  -0.000000
+        The CIS Absorption Spectrum (Velocity):
+                  0          1          2          3          4          5    
+      0       0.458666   0.453124   0.311749   0.558345   0.000000   0.000000
+      1       0.787919   0.000000   0.000000   0.000000   0.000000  -0.000000
+      2       1.071190   0.042494   0.068279   0.261302   0.000000   0.000000
+# -----------------------------------------------------------
+$ CIS_CD
+   description: The CIS CD spectrum 
+   geom. index: 5
+   prop. index: 1
+        Number of roots:  3
+        The CIS CD Spectrum:
+                  0          1          2          3    
+      0      -0.000000   0.000000   0.000000   0.000000
+      1       0.000000   0.000000  -0.000000   0.000000
+      2      -0.000000   0.000000  -0.000000   0.000000
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 5
+   prop. index: 1
+       Filename                          : H2cis.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        0.0000000000
+        Electronic Contribution:
+                  0    
+      0      -0.000000
+      1      -0.000000
+      2      -0.000000
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0      -0.000000
+      1      -0.000000
+      2      -0.000000
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 6
+   prop. index: 1
+        SCF Energy:       -1.0915803746
+# -----------------------------------------------------------
+$ CIS_ABS
+   description: The CIS absorption spectrum 
+   geom. index: 6
+   prop. index: 1
+        Number of roots:  3
+        The CIS Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0       0.420995   0.830753   2.959966  -1.720455  -0.000000   0.000000
+      1       0.790794   0.000000   0.000000   0.000000   0.000000  -0.000000
+      2       0.996651   0.069195   0.104141  -0.322708   0.000000  -0.000000
+        The CIS Absorption Spectrum (Velocity):
+                  0          1          2          3          4          5    
+      0       0.420995   0.447027   0.282294   0.531313  -0.000000   0.000000
+      1       0.790794   0.000000   0.000000  -0.000000   0.000000   0.000000
+      2       0.996651   0.018120   0.027089   0.164588  -0.000000   0.000000
+# -----------------------------------------------------------
+$ CIS_CD
+   description: The CIS CD spectrum 
+   geom. index: 6
+   prop. index: 1
+        Number of roots:  3
+        The CIS CD Spectrum:
+                  0          1          2          3    
+      0      -0.000000   0.000000  -0.000000   0.000000
+      1      -0.000000  -0.000000   0.000000   0.000000
+      2      -0.000000   0.000000  -0.000000  -0.000000
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 6
+   prop. index: 1
+       Filename                          : H2cis.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        0.0000000000
+        Electronic Contribution:
+                  0    
+      0      -0.000000
+      1      -0.000000
+      2      -0.000000
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0      -0.000000
+      1      -0.000000
+      2      -0.000000
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 7
+   prop. index: 1
+        SCF Energy:       -1.0660146168
+# -----------------------------------------------------------
+$ CIS_ABS
+   description: The CIS absorption spectrum 
+   geom. index: 7
+   prop. index: 1
+        Number of roots:  3
+        The CIS Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0       0.387479   0.904864   3.502893  -1.871602  -0.000000   0.000000
+      1       0.796034   0.000000   0.000000   0.000000  -0.000000  -0.000000
+      2       0.938848   0.035915   0.057382   0.239546   0.000000  -0.000000
+        The CIS Absorption Spectrum (Velocity):
+                  0          1          2          3          4          5    
+      0       0.387479   0.428863   0.249263   0.499262  -0.000000   0.000000
+      1       0.796034   0.000000   0.000000  -0.000000   0.000000   0.000000
+      2       0.938848   0.004787   0.006741  -0.082104   0.000000  -0.000000
+# -----------------------------------------------------------
+$ CIS_CD
+   description: The CIS CD spectrum 
+   geom. index: 7
+   prop. index: 1
+        Number of roots:  3
+        The CIS CD Spectrum:
+                  0          1          2          3    
+      0      -0.000000   0.000000  -0.000000  -0.000000
+      1      -0.000000   0.000000   0.000000   0.000000
+      2      -0.000000  -0.000000   0.000000   0.000000
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 7
+   prop. index: 1
+       Filename                          : H2cis.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        0.0000000000
+        Electronic Contribution:
+                  0    
+      0      -0.000000
+      1       0.000000
+      2      -0.000000
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0      -0.000000
+      1       0.000000
+      2      -0.000000
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 8
+   prop. index: 1
+        SCF Energy:       -1.0399082449
+# -----------------------------------------------------------
+$ CIS_ABS
+   description: The CIS absorption spectrum 
+   geom. index: 8
+   prop. index: 1
+        Number of roots:  3
+        The CIS Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0       0.357993   0.972391   4.074340  -2.018500  -0.000000   0.000000
+      1       0.803339   0.000000   0.000000   0.000000   0.000000   0.000000
+      2       0.894306   0.015135   0.025386   0.159330   0.000000  -0.000000
+        The CIS Absorption Spectrum (Velocity):
+                  0          1          2          3          4          5    
+      0       0.357993   0.401086   0.215379   0.464090  -0.000000   0.000000
+      1       0.803339   0.000000   0.000000  -0.000000  -0.000000  -0.000000
+      2       0.894306   0.000141   0.000189  -0.013739   0.000000  -0.000000
+# -----------------------------------------------------------
+$ CIS_CD
+   description: The CIS CD spectrum 
+   geom. index: 8
+   prop. index: 1
+        Number of roots:  3
+        The CIS CD Spectrum:
+                  0          1          2          3    
+      0       0.000000  -0.000000   0.000000  -0.000000
+      1      -0.000000  -0.000000  -0.000000  -0.000000
+      2       0.000000   0.000000   0.000000   0.000000
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 8
+   prop. index: 1
+       Filename                          : H2cis.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        0.0000000000
+        Electronic Contribution:
+                  0    
+      0      -0.000000
+      1       0.000000
+      2      -0.000000
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0      -0.000000
+      1       0.000000
+      2      -0.000000
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 9
+   prop. index: 1
+        SCF Energy:       -1.0145375058
+# -----------------------------------------------------------
+$ CIS_ABS
+   description: The CIS absorption spectrum 
+   geom. index: 9
+   prop. index: 1
+        Number of roots:  3
+        The CIS Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0       0.332385   1.037075   4.680160   2.163368   0.000000  -0.000000
+      1       0.811361   0.000000   0.000000   0.000000   0.000000  -0.000000
+      2       0.860254   0.004157   0.007248  -0.085138  -0.000000   0.000000
+        The CIS Absorption Spectrum (Velocity):
+                  0          1          2          3          4          5    
+      0       0.332385   0.366423   0.182690  -0.427423   0.000000  -0.000000
+      1       0.811361   0.000000   0.000000   0.000000  -0.000000   0.000000
+      2       0.860254   0.001350   0.001742  -0.041734  -0.000000   0.000000
+# -----------------------------------------------------------
+$ CIS_CD
+   description: The CIS CD spectrum 
+   geom. index: 9
+   prop. index: 1
+        Number of roots:  3
+        The CIS CD Spectrum:
+                  0          1          2          3    
+      0       0.000000   0.000000  -0.000000  -0.000000
+      1       0.000000  -0.000000   0.000000   0.000000
+      2       0.000000   0.000000   0.000000   0.000000
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 9
+   prop. index: 1
+       Filename                          : H2cis.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        0.0000000000
+        Electronic Contribution:
+                  0    
+      0      -0.000000
+      1      -0.000000
+      2      -0.000000
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0      -0.000000
+      1      -0.000000
+      2      -0.000000
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 10
+   prop. index: 1
+        SCF Energy:       -0.9905162737
+# -----------------------------------------------------------
+$ CIS_ABS
+   description: The CIS absorption spectrum 
+   geom. index: 10
+   prop. index: 1
+        Number of roots:  3
+        The CIS Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0       0.310387   1.102322   5.327167   2.308066  -0.000000  -0.000000
+      1       0.817073   0.000000   0.000000  -0.000000  -0.000000  -0.000000
+      2       0.834604   0.000193   0.000346  -0.018602   0.000000   0.000000
+        The CIS Absorption Spectrum (Velocity):
+                  0          1          2          3          4          5    
+      0       0.310387   0.327528   0.152490  -0.390500  -0.000000  -0.000000
+      1       0.817073   0.000000   0.000000   0.000000   0.000000   0.000000
+      2       0.834604   0.005891   0.007375  -0.085880   0.000000   0.000000
+# -----------------------------------------------------------
+$ CIS_CD
+   description: The CIS CD spectrum 
+   geom. index: 10
+   prop. index: 1
+        Number of roots:  3
+        The CIS CD Spectrum:
+                  0          1          2          3    
+      0       0.000000   0.000000   0.000000  -0.000000
+      1       0.000000  -0.000000  -0.000000  -0.000000
+      2      -0.000000  -0.000000  -0.000000   0.000000
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 10
+   prop. index: 1
+       Filename                          : H2cis.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        0.0000000000
+        Electronic Contribution:
+                  0    
+      0      -0.000000
+      1      -0.000000
+      2      -0.000000
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0      -0.000000
+      1      -0.000000
+      2      -0.000000
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 11
+   prop. index: 1
+        SCF Energy:       -0.9681339980
+# -----------------------------------------------------------
+$ CIS_ABS
+   description: The CIS absorption spectrum 
+   geom. index: 11
+   prop. index: 1
+        Number of roots:  3
+        The CIS Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0       0.291635   1.170468   6.020198  -2.453609   0.000000   0.000000
+      1       0.815782   0.000836   0.001538  -0.039213  -0.000000  -0.000000
+      2       0.817133   0.000000   0.000000   0.000000   0.000000  -0.000000
+        The CIS Absorption Spectrum (Velocity):
+                  0          1          2          3          4          5    
+      0       0.291635   0.286940   0.125523   0.354292   0.000000   0.000000
+      1       0.815782   0.011776   0.014410   0.120041  -0.000000  -0.000000
+      2       0.817133   0.000000   0.000000  -0.000000   0.000000   0.000000
+# -----------------------------------------------------------
+$ CIS_CD
+   description: The CIS CD spectrum 
+   geom. index: 11
+   prop. index: 1
+        Number of roots:  3
+        The CIS CD Spectrum:
+                  0          1          2          3    
+      0      -0.000000   0.000000   0.000000   0.000000
+      1       0.000000  -0.000000  -0.000000  -0.000000
+      2      -0.000000  -0.000000  -0.000000   0.000000
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 11
+   prop. index: 1
+       Filename                          : H2cis.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        0.0000000000
+        Electronic Contribution:
+                  0    
+      0      -0.000000
+      1      -0.000000
+      2       0.000000
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0      -0.000000
+      1      -0.000000
+      2       0.000000
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 12
+   prop. index: 1
+        SCF Energy:       -0.9474983547
+# -----------------------------------------------------------
+$ CIS_ABS
+   description: The CIS absorption spectrum 
+   geom. index: 12
+   prop. index: 1
+        Number of roots:  3
+        The CIS Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0       0.275736   1.243022   6.762030  -2.600390   0.000000   0.000000
+      1       0.802551   0.004075   0.007616  -0.087272  -0.000000  -0.000000
+      2       0.810405   0.000000   0.000000  -0.000000   0.000000  -0.000000
+        The CIS Absorption Spectrum (Velocity):
+                  0          1          2          3          4          5    
+      0       0.275736   0.246881   0.102111   0.319548   0.000000   0.000000
+      1       0.802551   0.017521   0.021092   0.145230  -0.000000  -0.000000
+      2       0.810405   0.000000   0.000000   0.000000  -0.000000   0.000000
+# -----------------------------------------------------------
+$ CIS_CD
+   description: The CIS CD spectrum 
+   geom. index: 12
+   prop. index: 1
+        Number of roots:  3
+        The CIS CD Spectrum:
+                  0          1          2          3    
+      0      -0.000000   0.000000   0.000000   0.000000
+      1      -0.000000   0.000000   0.000000   0.000000
+      2      -0.000000  -0.000000   0.000000   0.000000
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 12
+   prop. index: 1
+       Filename                          : H2cis.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        0.0000000000
+        Electronic Contribution:
+                  0    
+      0      -0.000000
+      1      -0.000000
+      2      -0.000000
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0      -0.000000
+      1      -0.000000
+      2      -0.000000
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 13
+   prop. index: 1
+        SCF Energy:       -0.9285994549
+# -----------------------------------------------------------
+$ CIS_ABS
+   description: The CIS absorption spectrum 
+   geom. index: 13
+   prop. index: 1
+        Number of roots:  3
+        The CIS Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0       0.262325   1.321245   7.555008  -2.748638   0.000000   0.000000
+      1       0.793886   0.008208   0.015509  -0.124534  -0.000000  -0.000000
+      2       0.798282   0.000000   0.000000  -0.000000  -0.000000   0.000000
+        The CIS Absorption Spectrum (Velocity):
+                  0          1          2          3          4          5    
+      0       0.262325   0.208976   0.082229   0.286757   0.000000   0.000000
+      1       0.793886   0.022110   0.026330   0.162264  -0.000000  -0.000000
+      2       0.798282   0.000000   0.000000   0.000000  -0.000000  -0.000000
+# -----------------------------------------------------------
+$ CIS_CD
+   description: The CIS CD spectrum 
+   geom. index: 13
+   prop. index: 1
+        Number of roots:  3
+        The CIS CD Spectrum:
+                  0          1          2          3    
+      0       0.000000  -0.000000   0.000000  -0.000000
+      1       0.000000  -0.000000  -0.000000   0.000000
+      2       0.000000  -0.000000  -0.000000   0.000000
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 13
+   prop. index: 1
+       Filename                          : H2cis.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        0.0000000000
+        Electronic Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 14
+   prop. index: 1
+        SCF Energy:       -0.9113568198
+# -----------------------------------------------------------
+$ CIS_ABS
+   description: The CIS absorption spectrum 
+   geom. index: 14
+   prop. index: 1
+        Number of roots:  3
+        The CIS Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0       0.251083   1.406409   8.402054   2.898630  -0.000000  -0.000000
+      1       0.783080   0.000000   0.000000   0.000000   0.000000   0.000000
+      2       0.788878   0.011843   0.022518  -0.150061  -0.000000  -0.000000
+        The CIS Absorption Spectrum (Velocity):
+                  0          1          2          3          4          5    
+      0       0.251083   0.174217   0.065614  -0.256153  -0.000000  -0.000000
+      1       0.783080   0.000000   0.000000  -0.000000  -0.000000  -0.000000
+      2       0.788878   0.024962   0.029538   0.171867  -0.000000  -0.000000
+# -----------------------------------------------------------
+$ CIS_CD
+   description: The CIS CD spectrum 
+   geom. index: 14
+   prop. index: 1
+        Number of roots:  3
+        The CIS CD Spectrum:
+                  0          1          2          3    
+      0       0.000000   0.000000   0.000000   0.000000
+      1      -0.000000  -0.000000  -0.000000  -0.000000
+      2      -0.000000   0.000000   0.000000   0.000000
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 14
+   prop. index: 1
+       Filename                          : H2cis.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        0.0000000000
+        Electronic Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2      -0.000000
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0       0.000000
+      1       0.000000
+      2      -0.000000
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 15
+   prop. index: 1
+        SCF Energy:       -0.8956577615
+# -----------------------------------------------------------
+$ CIS_ABS
+   description: The CIS absorption spectrum 
+   geom. index: 15
+   prop. index: 1
+        Number of roots:  3
+        The CIS Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0       0.241725   1.499746   9.306506  -3.050657   0.000000   0.000000
+      1       0.766840   0.000000   0.000000   0.000000  -0.000000  -0.000000
+      2       0.786657   0.013953   0.026607   0.163115   0.000000   0.000000
+        The CIS Absorption Spectrum (Velocity):
+                  0          1          2          3          4          5    
+      0       0.241725   0.143113   0.051891   0.227796   0.000000   0.000000
+      1       0.766840   0.000000   0.000000   0.000000   0.000000   0.000000
+      2       0.786657   0.025886   0.030545  -0.174771   0.000000   0.000000
+# -----------------------------------------------------------
+$ CIS_CD
+   description: The CIS CD spectrum 
+   geom. index: 15
+   prop. index: 1
+        Number of roots:  3
+        The CIS CD Spectrum:
+                  0          1          2          3    
+      0      -0.000000   0.000000   0.000000  -0.000000
+      1       0.000000   0.000000  -0.000000   0.000000
+      2       0.000000   0.000000   0.000000  -0.000000
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 15
+   prop. index: 1
+       Filename                          : H2cis.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        0.0000000000
+        Electronic Contribution:
+                  0    
+      0      -0.000000
+      1       0.000000
+      2      -0.000000
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0      -0.000000
+      1       0.000000
+      2      -0.000000
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 16
+   prop. index: 1
+        SCF Energy:       -0.8813816083
+# -----------------------------------------------------------
+$ CIS_ABS
+   description: The CIS absorption spectrum 
+   geom. index: 16
+   prop. index: 1
+        Number of roots:  3
+        The CIS Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0       0.233995   1.602319  10.271509   3.204920  -0.000000  -0.000000
+      1       0.750996   0.000000   0.000000   0.000000   0.000000  -0.000000
+      2       0.786328   0.013979   0.026666  -0.163297  -0.000000  -0.000000
+        The CIS Absorption Spectrum (Velocity):
+                  0          1          2          3          4          5    
+      0       0.233995   0.115852   0.040663  -0.201651  -0.000000  -0.000000
+      1       0.750996   0.000000   0.000000  -0.000000   0.000000   0.000000
+      2       0.786328   0.025035   0.029528   0.171838  -0.000000  -0.000000
+# -----------------------------------------------------------
+$ CIS_CD
+   description: The CIS CD spectrum 
+   geom. index: 16
+   prop. index: 1
+        Number of roots:  3
+        The CIS CD Spectrum:
+                  0          1          2          3    
+      0       0.000000  -0.000000  -0.000000   0.000000
+      1      -0.000000   0.000000  -0.000000   0.000000
+      2       0.000000   0.000000  -0.000000   0.000000
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 16
+   prop. index: 1
+       Filename                          : H2cis.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        0.0000000000
+        Electronic Contribution:
+                  0    
+      0      -0.000000
+      1       0.000000
+      2       0.000000
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0      -0.000000
+      1       0.000000
+      2       0.000000
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 17
+   prop. index: 1
+        SCF Energy:       -0.8684109143
+# -----------------------------------------------------------
+$ CIS_ABS
+   description: The CIS absorption spectrum 
+   geom. index: 17
+   prop. index: 1
+        Number of roots:  3
+        The CIS Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0       0.227658   1.714946  11.299513  -3.361475   0.000000   0.000000
+      1       0.736449   0.000000   0.000000  -0.000000   0.000000  -0.000000
+      2       0.786988   0.011918   0.022715   0.150716   0.000000   0.000000
+        The CIS Absorption Spectrum (Velocity):
+                  0          1          2          3          4          5    
+      0       0.227658   0.092403   0.031554   0.177635   0.000000   0.000000
+      1       0.736449   0.000000   0.000000   0.000000  -0.000000   0.000000
+      2       0.786988   0.022818   0.026937  -0.164124   0.000000   0.000000
+# -----------------------------------------------------------
+$ CIS_CD
+   description: The CIS CD spectrum 
+   geom. index: 17
+   prop. index: 1
+        Number of roots:  3
+        The CIS CD Spectrum:
+                  0          1          2          3    
+      0       0.000000  -0.000000  -0.000000  -0.000000
+      1       0.000000   0.000000   0.000000   0.000000
+      2       0.000000   0.000000  -0.000000   0.000000
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 17
+   prop. index: 1
+       Filename                          : H2cis.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        0.0000000000
+        Electronic Contribution:
+                  0    
+      0      -0.000000
+      1       0.000000
+      2      -0.000000
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0      -0.000000
+      1       0.000000
+      2      -0.000000
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 18
+   prop. index: 1
+        SCF Energy:       -0.8566351435
+# -----------------------------------------------------------
+$ CIS_ABS
+   description: The CIS absorption spectrum 
+   geom. index: 18
+   prop. index: 1
+        Number of roots:  3
+        The CIS Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0       0.222504   1.838178  12.391991   3.520226   0.000000  -0.000000
+      1       0.723705   0.000000   0.000000  -0.000000   0.000000   0.000000
+      2       0.787807   0.008347   0.015892  -0.126064   0.000000  -0.000000
+        The CIS Absorption Spectrum (Velocity):
+                  0          1          2          3          4          5    
+      0       0.222504   0.072584   0.024225  -0.155644   0.000000  -0.000000
+      1       0.723705   0.000000   0.000000  -0.000000  -0.000000  -0.000000
+      2       0.787807   0.019768   0.023360   0.152840   0.000000  -0.000000
+# -----------------------------------------------------------
+$ CIS_CD
+   description: The CIS CD spectrum 
+   geom. index: 18
+   prop. index: 1
+        Number of roots:  3
+        The CIS CD Spectrum:
+                  0          1          2          3    
+      0      -0.000000  -0.000000  -0.000000   0.000000
+      1      -0.000000  -0.000000   0.000000  -0.000000
+      2      -0.000000   0.000000  -0.000000   0.000000
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 18
+   prop. index: 1
+       Filename                          : H2cis.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        0.0000000000
+        Electronic Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 19
+   prop. index: 1
+        SCF Energy:       -0.8459514340
+# -----------------------------------------------------------
+$ CIS_ABS
+   description: The CIS absorption spectrum 
+   geom. index: 19
+   prop. index: 1
+        Number of roots:  3
+        The CIS Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0       0.218346   1.972311  13.549418   3.680953   0.000000  -0.000000
+      1       0.713004   0.000000   0.000000   0.000000  -0.000000   0.000000
+      2       0.788134   0.004308   0.008199  -0.090547   0.000000  -0.000000
+        The CIS Absorption Spectrum (Velocity):
+                  0          1          2          3          4          5    
+      0       0.218346   0.056119   0.018380  -0.135573   0.000000  -0.000000
+      1       0.713004   0.000000   0.000000  -0.000000   0.000000  -0.000000
+      2       0.788134   0.016397   0.019385   0.139230   0.000000  -0.000000
+# -----------------------------------------------------------
+$ CIS_CD
+   description: The CIS CD spectrum 
+   geom. index: 19
+   prop. index: 1
+        Number of roots:  3
+        The CIS CD Spectrum:
+                  0          1          2          3    
+      0      -0.000000  -0.000000  -0.000000   0.000000
+      1       0.000000  -0.000000  -0.000000   0.000000
+      2       0.000000  -0.000000  -0.000000   0.000000
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 19
+   prop. index: 1
+       Filename                          : H2cis.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        0.0000000000
+        Electronic Contribution:
+                  0    
+      0      -0.000000
+      1       0.000000
+      2       0.000000
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0      -0.000000
+      1       0.000000
+      2       0.000000
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 20
+   prop. index: 1
+        SCF Energy:       -0.8362647101
+# -----------------------------------------------------------
+$ CIS_ABS
+   description: The CIS absorption spectrum 
+   geom. index: 20
+   prop. index: 1
+        Number of roots:  3
+        The CIS Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0       0.215020   2.117428  14.771385  -3.843356   0.000000   0.000000
+      1       0.704412   0.000000   0.000000   0.000000   0.000000  -0.000000
+      2       0.787562   0.001097   0.002089   0.045707   0.000000   0.000000
+        The CIS Absorption Spectrum (Velocity):
+                  0          1          2          3          4          5    
+      0       0.215020   0.042678   0.013765   0.117325   0.000000   0.000000
+      1       0.704412   0.000000   0.000000  -0.000000  -0.000000   0.000000
+      2       0.787562   0.013109   0.015486  -0.124442   0.000000   0.000000
+# -----------------------------------------------------------
+$ CIS_CD
+   description: The CIS CD spectrum 
+   geom. index: 20
+   prop. index: 1
+        Number of roots:  3
+        The CIS CD Spectrum:
+                  0          1          2          3    
+      0      -0.000000   0.000000  -0.000000   0.000000
+      1       0.000000   0.000000   0.000000  -0.000000
+      2      -0.000000  -0.000000  -0.000000  -0.000000
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 20
+   prop. index: 1
+       Filename                          : H2cis.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        0.0000000000
+        Electronic Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 21
+   prop. index: 1
+        SCF Energy:       -0.8274877026
+# -----------------------------------------------------------
+$ CIS_ABS
+   description: The CIS absorption spectrum 
+   geom. index: 21
+   prop. index: 1
+        Number of roots:  3
+        The CIS Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0       0.212383   2.273465  16.056824   4.007097  -0.000000  -0.000000
+      1       0.697875   0.000000   0.000000  -0.000000   0.000000   0.000000
+      2       0.785928   0.000024   0.000046   0.006774  -0.000000  -0.000000
+        The CIS Absorption Spectrum (Velocity):
+                  0          1          2          3          4          5    
+      0       0.212383   0.031905   0.010164  -0.100817  -0.000000  -0.000000
+      1       0.697875   0.000000   0.000000  -0.000000  -0.000000  -0.000000
+      2       0.785928   0.010156   0.011973   0.109422  -0.000000  -0.000000
+# -----------------------------------------------------------
+$ CIS_CD
+   description: The CIS CD spectrum 
+   geom. index: 21
+   prop. index: 1
+        Number of roots:  3
+        The CIS CD Spectrum:
+                  0          1          2          3    
+      0      -0.000000  -0.000000  -0.000000   0.000000
+      1      -0.000000   0.000000   0.000000  -0.000000
+      2       0.000000  -0.000000  -0.000000  -0.000000
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 21
+   prop. index: 1
+       Filename                          : H2cis.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        0.0000000000
+        Electronic Contribution:
+                  0    
+      0      -0.000000
+      1      -0.000000
+      2       0.000000
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0      -0.000000
+      1      -0.000000
+      2       0.000000
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 22
+   prop. index: 1
+        SCF Energy:       -0.8195407472
+# -----------------------------------------------------------
+$ CIS_ABS
+   description: The CIS absorption spectrum 
+   geom. index: 22
+   prop. index: 1
+        Number of roots:  3
+        The CIS Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0       0.210317   2.440273  17.404274   4.171843  -0.000000   0.000000
+      1       0.693260   0.000000   0.000000   0.000000  -0.000000   0.000000
+      2       0.783264   0.002223   0.004256   0.065241  -0.000000   0.000000
+        The CIS Absorption Spectrum (Velocity):
+                  0          1          2          3          4          5    
+      0       0.210317   0.023432   0.007392  -0.085978  -0.000000   0.000000
+      1       0.693260   0.000000   0.000000   0.000000   0.000000  -0.000000
+      2       0.783264   0.007661   0.009001   0.094874  -0.000000   0.000000
+# -----------------------------------------------------------
+$ CIS_CD
+   description: The CIS CD spectrum 
+   geom. index: 22
+   prop. index: 1
+        Number of roots:  3
+        The CIS CD Spectrum:
+                  0          1          2          3    
+      0      -0.000000  -0.000000  -0.000000  -0.000000
+      1      -0.000000  -0.000000   0.000000   0.000000
+      2       0.000000   0.000000  -0.000000  -0.000000
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 22
+   prop. index: 1
+       Filename                          : H2cis.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        0.0000000000
+        Electronic Contribution:
+                  0    
+      0      -0.000000
+      1       0.000000
+      2       0.000000
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0      -0.000000
+      1       0.000000
+      2       0.000000
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 23
+   prop. index: 1
+        SCF Energy:       -0.8123512191
+# -----------------------------------------------------------
+$ CIS_ABS
+   description: The CIS absorption spectrum 
+   geom. index: 23
+   prop. index: 1
+        Number of roots:  3
+        The CIS Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0       0.208723   2.617679  18.812120  -4.337294   0.000000  -0.000000
+      1       0.690372   0.000000   0.000000   0.000000  -0.000000   0.000000
+      2       0.779736   0.008538   0.016424   0.128157  -0.000000   0.000000
+        The CIS Absorption Spectrum (Velocity):
+                  0          1          2          3          4          5    
+      0       0.208723   0.016900   0.005291   0.072740   0.000000  -0.000000
+      1       0.690372   0.000000   0.000000   0.000000  -0.000000   0.000000
+      2       0.779736   0.005646   0.006604   0.081265  -0.000000   0.000000
+# -----------------------------------------------------------
+$ CIS_CD
+   description: The CIS CD spectrum 
+   geom. index: 23
+   prop. index: 1
+        Number of roots:  3
+        The CIS CD Spectrum:
+                  0          1          2          3    
+      0       0.000000  -0.000000  -0.000000  -0.000000
+      1       0.000000   0.000000   0.000000   0.000000
+      2       0.000000   0.000000   0.000000   0.000000
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 23
+   prop. index: 1
+       Filename                          : H2cis.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        0.0000000000
+        Electronic Contribution:
+                  0    
+      0      -0.000000
+      1       0.000000
+      2      -0.000000
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0      -0.000000
+      1       0.000000
+      2      -0.000000
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 24
+   prop. index: 1
+        SCF Energy:       -0.8058526711
+# -----------------------------------------------------------
+$ CIS_ABS
+   description: The CIS absorption spectrum 
+   geom. index: 24
+   prop. index: 1
+        Number of roots:  3
+        The CIS Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0       0.207522   2.805536  20.278808   4.503200  -0.000000   0.000000
+      1       0.688976   0.000000   0.000000  -0.000000  -0.000000  -0.000000
+      2       0.775572   0.019489   0.037693  -0.194147   0.000000  -0.000000
+        The CIS Absorption Spectrum (Velocity):
+                  0          1          2          3          4          5    
+      0       0.207522   0.011964   0.003724  -0.061027  -0.000000   0.000000
+      1       0.688976   0.000000   0.000000   0.000000   0.000000   0.000000
+      2       0.775572   0.004076   0.004742  -0.068864   0.000000  -0.000000
+# -----------------------------------------------------------
+$ CIS_CD
+   description: The CIS CD spectrum 
+   geom. index: 24
+   prop. index: 1
+        Number of roots:  3
+        The CIS CD Spectrum:
+                  0          1          2          3    
+      0       0.000000   0.000000  -0.000000  -0.000000
+      1      -0.000000   0.000000   0.000000   0.000000
+      2       0.000000  -0.000000  -0.000000  -0.000000
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 24
+   prop. index: 1
+       Filename                          : H2cis.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        0.0000000000
+        Electronic Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2      -0.000000
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0       0.000000
+      1       0.000000
+      2      -0.000000
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 25
+   prop. index: 1
+        SCF Energy:       -0.7999838783
+# -----------------------------------------------------------
+$ CIS_ABS
+   description: The CIS absorption spectrum 
+   geom. index: 25
+   prop. index: 1
+        Number of roots:  3
+        The CIS Absorption Spectrum :
+                  0          1          2          3          4          5    
+      0       0.206652   3.003750  21.803001  -4.669368  -0.000000  -0.000000
+      1       0.688817   0.000000   0.000000   0.000000  -0.000000  -0.000000
+      2       0.771017   0.035285   0.068646   0.262004   0.000000   0.000000
+        The CIS Absorption Spectrum (Velocity):
+                  0          1          2          3          4          5    
+      0       0.206652   0.008312   0.002577   0.050760  -0.000000  -0.000000
+      1       0.688817   0.000000   0.000000  -0.000000   0.000000   0.000000
+      2       0.771017   0.002887   0.003339   0.057785   0.000000   0.000000
+# -----------------------------------------------------------
+$ CIS_CD
+   description: The CIS CD spectrum 
+   geom. index: 25
+   prop. index: 1
+        Number of roots:  3
+        The CIS CD Spectrum:
+                  0          1          2          3    
+      0      -0.000000   0.000000   0.000000  -0.000000
+      1       0.000000   0.000000  -0.000000   0.000000
+      2       0.000000   0.000000   0.000000  -0.000000
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 25
+   prop. index: 1
+       Filename                          : H2cis.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        0.0000000000
+        Electronic Contribution:
+                  0    
+      0      -0.000000
+      1       0.000000
+      2       0.000000
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1       0.000000
+      2       0.000000
+        Total Dipole moment:
+                  0    
+      0      -0.000000
+      1       0.000000
+      2       0.000000
+# -------------------------------------------------------------
+----------------------- !GEOMETRIES! ------------------------
+# -------------------------------------------------------------
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     1 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      0.400000000000    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     2 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      0.529166666667    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     3 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      0.658333333333    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     4 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      0.787500000000    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     5 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      0.916666666667    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     6 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      1.045833333333    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     7 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      1.175000000000    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     8 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      1.304166666667    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     9 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      1.433333333333    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     10 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      1.562500000000    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     11 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      1.691666666667    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     12 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      1.820833333333    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     13 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      1.950000000000    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     14 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      2.079166666667    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     15 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      2.208333333333    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     16 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      2.337500000000    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     17 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      2.466666666667    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     18 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      2.595833333333    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     19 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      2.725000000000    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     20 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      2.854166666667    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     21 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      2.983333333333    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     22 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      3.112500000000    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     23 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      3.241666666667    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     24 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      3.370833333333    0.000000000000    0.000000000000
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    2 
+    Geometry Index:     25 
+    Coordinates:
+               0 H      0.000000000000    0.000000000000    0.000000000000
+               1 H      3.500000000000    0.000000000000    0.000000000000

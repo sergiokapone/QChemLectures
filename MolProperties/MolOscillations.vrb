@@ -95,14 +95,14 @@ IR SPECTRUM
 		\end{block}
 	\end{onlyenv}
 	\begin{onlyenv}<4>
-Одиницею енергії переходу для ІЧ є см\textsuperscript{-1}:
-\begin{equation*}
-    1\ \text{еВ}=8.0655\cdot 10^3\ \text{см\textsuperscript{-1}}
-\end{equation*}
-Програма розраховує \href{https://en.wikipedia.org/wiki/Beer%E2%80%93Lambert_law}{коефіцієнт молярної екстинції} $\varepsilon$ в
-$\frac{\text{літр}}{\text{моль}\cdot\text{см}} = \frac{1000\ \text{см}^2}{\text{моль}}$ та інтенсивність за формулою:
-\begin{equation*}
-    I = \int \varepsilon(\nu)d\nu,
-\end{equation*}
-в одиницях $\frac{1000\ \text{см}^2}{\text{моль}}\cdot\text{см}^{-1} = \frac{0.01\ \text{km}}{\text{моль}}$.
+		Одиницею енергії переходу для ІЧ є см\textsuperscript{-1}:
+		\begin{equation*}
+			1\ \text{еВ}=8.0655\cdot 10^3\ \text{см\textsuperscript{-1}}
+		\end{equation*}
+		Програма розраховує \href{https://en.wikipedia.org/wiki/Beer%E2%80%93Lambert_law}{коефіцієнт молярної екстинції} $\varepsilon$ в
+		$\frac{\text{літр}}{\text{моль}\cdot\text{см}} = \frac{1000\ \text{см}^2}{\text{моль}}$ та інтенсивність за формулою:
+		\begin{equation*}
+			I = \int \varepsilon(\nu)d\nu,
+		\end{equation*}
+		в одиницях $\frac{1000\ \text{см}^2}{\text{моль}}\cdot\text{см}^{-1} = \frac{0.01\ \text{km}}{\text{моль}}$.
 	\end{onlyenv}

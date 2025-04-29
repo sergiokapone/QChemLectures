@@ -1,0 +1,85 @@
+% !TeX spellcheck = uk_UA
+% !TeX encoding = utf-8
+% !TeX program = lualatex
+
+\documentclass[]{article}
+\usepackage[fontsize=14pt]{fontsize}
+%packages-------------------------------------------------------------------------------
+\let\phi\varphi
+
+\usepackage{fontspec}
+\setsansfont{CMU Sans Serif}%{Arial}
+\setmainfont{CMU Serif}%{Times New Roman}
+\setmonofont{CMU Typewriter Text}%{Consolas}
+\defaultfontfeatures{Ligatures={TeX}}
+\usepackage[math-style=TeX]{unicode-math}
+\usepackage[english, russian, ukrainian]{babel}
+
+
+\usepackage[%
+	a4paper,%
+	footskip=1cm,%
+	headsep=0.3cm,%
+	top=2cm, %поле сверху
+	bottom=2cm, %поле снизу
+	left=2cm, %поле ліворуч
+	right=2cm, %поле праворуч
+    ]{geometry}
+
+\usepackage{amsmath}
+\usepackage{microtype}
+
+%Розмір шрифта та міжстрочний інтервал---------------------------------------------------
+
+\renewcommand{\baselinestretch}{1.5}
+
+
+\def\Cut{\noindent\dotfill}
+\newcounter{nom}
+\setcounter{nom}{1}
+\newcommand{\problem}{\textbf{Задача \No \thenom} \stepcounter{nom}}
+\newcommand{\signat}{ \raisebox{-\baselineskip}{\shortstack{\underline{\hspace{5cm}}}}}
+\newcounter{var}
+\setcounter{var}{1}
+\newcommand{\variant}{\Cut
+\begin{flushleft}
+\textbf{Варіант \Roman{var}} \addtocounter{var}{1}
+%\hfill \textit{Група ФБ --} \underline{\hspace{1cm}} \, \textit{Студент:} \underline{\hspace{8cm}}
+\end{flushleft}
+}
+\let\phi\varphi
+\def\vidp#1#2{\textbf{Іродов #1} -- \textit{ Відповідь: #2}}
+%\def\vidp#1#2{}
+\usepackage[shortlabels]{enumitem}
+
+
+
+\begin{document}
+\clearpage
+\thispagestyle{empty}
+
+
+\section{Аналітичні розрахунки}
+
+\problem Після опромінювання атома гідрогену, який перебуває в основному стані, світлом з довжиною
+хвилі $\lambda$ електрон переходить у збуджений стан з $n = 3$. Знайти значення $\lambda$.
+
+\problem Довести, що середня потенціальна енергія гідрогеноподібного
+атома в основному стані становить $\left\langle U\right\rangle = - Z^2$ (в Хартрі).
+
+\problem Довести, що середня кінетична енергія гідрогеноподібного
+атома в основному стані становить $\left\langle T\right\rangle = \frac{Z^2}{2}$.
+
+\problem Для основного стану атома гідрогену знайти ймовірність
+знаходження електрона усередині сфери радіусом $0.53$ пм.
+
+\problem Енергія іонізації атома гелію дорівнює $24,58$~еВ. Знайдіть
+константу екранування $\sigma$ одного електрона іншим.
+
+\section{Комп'ютерні розрахунки}
+
+\problem Використайте метод RHF та базис STO-3G. Побудуйте орбіталі атома Ne (Неону) та запишіть їх
+аналітичний вигляд через базисні функції. Знайдіть RDF, запишіть його аналітичний вигляд через
+знайдені орбіталі та наведіть графік.
+
+\end{document}
