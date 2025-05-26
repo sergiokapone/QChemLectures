@@ -1,0 +1,72 @@
+\documentclass{article}
+
+\usepackage[fontsize=14pt]{fontsize}
+
+\usepackage{fontspec}
+\setsansfont{CMU Sans Serif}%{Arial}
+\setmainfont{CMU Serif}%{Times New Roman}
+\setmonofont{CMU Typewriter Text}%{Consolas}
+\defaultfontfeatures{Ligatures={TeX}}
+\usepackage[math-style=TeX]{unicode-math}
+\usepackage[english, russian, ukrainian]{babel}
+
+
+\usepackage{amsmath}
+\usepackage{mhchem}[version=4]
+\usepackage[a4paper, margin=2.5cm]{geometry}
+
+\usepackage{titlesec}
+
+% Настройка стиля разделов
+\titleformat{\section}
+    {\normalfont\normalsize\bfseries} % стиль заголовка (здесь полужирный)
+    {Завдання \thesection.}                    % формат номера (с точкой)
+    {0.5em}                           % расстояние между номером и текстом
+    {}                                 % код перед заголовком
+
+
+\title{Розрахункові завдання з квантової хімії в ORCA}
+\date{}
+\begin{document}
+\maketitle
+
+\section{Оптимізація геометрії та визначення дипольних моментів молекул}
+
+Виконати оптимізацію геометрії молекули методом HF з базисним набором cc-pVDZ. Після оптимізації дипольні моменти молекул.
+\begin{enumerate}
+\item аміаку \ce{NH3};
+\item вуглекислого газу \ce{CO2};
+\item монооксиду вуглецю \ce{CO}.
+\end{enumerate}
+
+\vspace*{1em}
+\textbf{Очікувані результати:}
+\begin{itemize}
+  \item Результати записані в таблицю.
+\end{itemize}
+
+\section{Розрахунок УФ-спектру формальдегіду  методом EOM-CCSD}
+
+Виконати розрахунок збуджених електронних станів молекули \ce{H2CO} (формальдегід) методом EOM-CCSD, використовуючи попередньо оптимізовану геометрію. Визначити положення смуг в УФ-видимому спектрі.
+
+\vspace*{1em}
+\textbf{Очікувані результати:}
+\begin{itemize}
+  \item Оптимізована геометрія молекули.
+  \item Енергії збуджених станів (у еВ).
+  \item Осциляторні сили.
+\end{itemize}
+
+\section{Оптимізація та розрахунок ІЧ-спектрів для молекули ацетилену}
+
+Провести повну геометричну оптимізацію молекули \ce{C2H2} методом HF, а також розрахувати її ІЧ-спектр.
+
+\vspace*{1em}
+\textbf{Очікувані результати:}
+\begin{itemize}
+  \item Оптимізована геометрія молекули.
+  \item Визначені частоти ІЧ-переходів (у см\(^{-1}\)) та нм та інтенсивності ІЧ-переходів.
+  \item Результати записані в таблицю. Наведений спектр у вигляді графіка.
+\end{itemize}
+
+\end{document}

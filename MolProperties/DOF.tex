@@ -1,0 +1,73 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{physics}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+
+\usepackage{fontspec}
+\setsansfont{CMU Sans Serif}%{Arial}
+\setmainfont{CMU Serif}%{Times New Roman}
+\setmonofont{CMU Typewriter Text}%{Consolas}
+\defaultfontfeatures{Ligatures={TeX}}
+\usepackage[math-style=TeX]{unicode-math}
+\usepackage[english, russian, ukrainian]{babel}
+
+\usepackage[]{titlesec}
+
+
+
+\title{Виведення щільності енергії електромагнітного поля через векторний потенціал}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Векторний потенціал хвилі}
+
+Розглянемо плоску електромагнітну хвилю у вакуумі з векторним потенціалом:
+\[
+\vec{A}(\vec{r}, t) = \vec{A}_0 e^{i(\vec{k} \cdot \vec{r} - \omega t)} + \text{c.c.}
+\]
+де:
+\begin{itemize}
+  \item \( \vec{A}_0 \) — амплітуда векторного потенціалу,
+  \item \( \vec{k} \) — хвильовий вектор,
+  \item \( \omega = c|\vec{k}| \),
+  \item \text{c.c.} — комплексно спряжене.
+\end{itemize}
+
+\section{Електричне і магнітне поля}
+
+\[
+\vec{E} = -\frac{1}{c} \frac{\partial \vec{A}}{\partial t} = i \frac{\omega}{c} \vec{A}_0 e^{i(\vec{k} \cdot \vec{r} - \omega t)} + \text{c.c.}
+\]
+\[
+\Rightarrow \langle |\vec{E}|^2 \rangle = 2 \left( \frac{\omega}{c} \right)^2 |\vec{A}_0|^2
+\]
+
+\[
+\vec{B} = \nabla \times \vec{A} = i (\vec{k} \times \vec{A}_0) e^{i(\vec{k} \cdot \vec{r} - \omega t)} + \text{c.c.}
+\]
+Оскільки \( \vec{A}_0 \perp \vec{k} \), маємо:
+\[
+\Rightarrow \langle |\vec{B}|^2 \rangle = 2 \left( \frac{\omega}{c} \right)^2 |\vec{A}_0|^2
+\]
+
+\section{Густина енергії електромагнітного поля}
+
+\[
+u = \frac{1}{8\pi} \left( \langle |\vec{E}|^2 \rangle + \langle |\vec{B}|^2 \rangle \right)
+= \frac{1}{8\pi} \cdot 4 \left( \frac{\omega}{c} \right)^2 |\vec{A}_0|^2
+= \frac{1}{2\pi} \left( \frac{\omega}{c} \right)^2 |\vec{A}_0|^2
+\]
+
+\[
+\boxed{
+\rho = \frac{\omega^2}{2\pi c^2} |\vec{A}_0|^2
+}
+\]
+
+Це і є шуканий вираз для щільності енергії через амплітуду векторного потенціалу.
+
+\end{document}

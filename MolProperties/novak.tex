@@ -1,0 +1,186 @@
+\documentclass{article}
+\usepackage{fontspec}
+\setsansfont{CMU Sans Serif}%{Arial}
+\setmainfont{CMU Serif}%{Times New Roman}
+\setmonofont{CMU Typewriter Text}%{Consolas}
+\defaultfontfeatures{Ligatures={TeX}}
+
+
+\usepackage[russian]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+
+\begin{document}
+
+\section*{Лекция 9. Молекулы во внешнем электромагнитном поле}
+
+\subsection{Временное уравнение Шрёдингера для состояний системы во внешнем электромагнитном поле}
+
+Пусть $\hat{H}_0$ — гамильтониан свободной частицы. При обсуждении гамильтониана молекулы во внешнем электромагнитном поле необходимо добавить к гамильтониану свободной частицы гамильтониан внешнего поля $\hat{H}_f$ и гамильтониан взаимодействия поля с молекулами $\hat{H}_{mf}$.
+
+\begin{equation}
+\hat{H} = \hat{H}_0 + \hat{H}_f + \hat{H}_{mf} = \hat{H}_{(0)} + \hat{H}'
+\label{eq:83}
+\end{equation}
+
+Заметим, что электромагнитное поле в общем случае может меняться со временем, а значит, для решения задачи с таким гамильтонианом нужно воспользоваться временным уравнением Шрёдингера.
+
+\begin{equation}
+i\hbar \frac{\partial \tilde{\Psi}}{\partial t} = \hat{H} \tilde{\Psi}
+\label{eq:84}
+\end{equation}
+
+Для свободной частицы временное уравнение Шрёдингера:
+
+\begin{equation}
+i\hbar \frac{\partial \tilde{\Psi}^{(0)}_{k}}{\partial t} = \hat{H}_0 \tilde{\Psi}^{(0)}_{k}
+\label{eq:85}
+\end{equation}
+
+Учитывая, что оператор Гамильтона не зависит в явном виде от времени, решение уравнения можно искать в виде произведения двух волновых функций, одна из которых зависит только от координат частиц молекулярной системы, а вторая зависит только от времени:
+
+\begin{equation}
+\tilde{\Psi}^{(0)}_{k} = \Psi^{(0)}_{k}(\mathbf{r}, \mathbf{R}) f_k(t)
+\label{eq:86}
+\end{equation}
+
+Тогда методом разделения переменных временное уравнение Шрёдингера можно свести к системе двух уравнений:
+
+\begin{equation}
+\begin{cases}
+\hat{H}_{(0)} \Psi^{(0)}_{k} = E_k \Psi^{(0)}_{k} \\
+i\hbar \frac{\partial f_k}{\partial t} = E_k f_k
+\end{cases}
+\label{eq:87}
+\end{equation}
+
+Решение второго уравнения — экспоненциальная функция от времени. Тогда решение временного уравнения Шрёдингера можно записать как:
+
+\begin{equation}
+\tilde{\Psi}^{(0)}_{k} = \Psi^{(0)}_{k} e^{-\frac{i}{\hbar} E_k t}
+\label{eq:88}
+\end{equation}
+
+\subsection*{Теория возмущений}
+
+Для упрощения задачи предположим, что в начальный момент времени система представлена одним состоянием $\tilde{\Psi}_{n}^{(0)}$. После выключения внешнего воздействия (рис. 9) молекула может оказаться в состоянии, которое можно записать как линейную комбинацию возможных исходных состояний:
+
+\begin{equation}
+\sum_{k} c_{nk}\tilde{\Psi}_{k}^{(0)}
+\end{equation}
+
+Вероятность перехода системы из состояния $\tilde{\Psi}_{n}^{(0)}$ в состояние $\tilde{\Psi}_{k}^{(0)}$ определяется квадратом коэффициента $c_{nk}$:
+
+\begin{equation}
+W_{nk} = |c_{nk}|^{2}
+\label{eq:89}
+\end{equation}
+
+Подставим линейную комбинацию в уравнение \eqref{eq:85}:
+
+\begin{equation}
+i\hbar\frac{\partial}{\partial t}\left(\sum_{k} c_{nk}\tilde{\Psi}_{k}^{(0)}\right) = \hat{H}\left(\sum_{k} c_{nk}\tilde{\Psi}_{k}^{(0)}\right)
+\label{eq:90}
+\end{equation}
+
+После дифференцирования и подстановки гамильтониана из уравнения \eqref{eq:83} получаем:
+
+\begin{equation}
+\sum_{k} c_{nk}i\hbar\frac{\partial\tilde{\Psi}_{k}^{(0)}}{\partial t} + \sum_{k} i\hbar\frac{\partial c_{nk}}{\partial t}\tilde{\Psi}_{k}^{(0)} = \sum_{k} c_{nk}\hat{H}_{0}\tilde{\Psi}_{k}^{(0)} + \sum_{k} c_{nk}\hat{H}'\tilde{\Psi}_{k}^{(0)}
+\label{eq:91}
+\end{equation}
+
+Первые слагаемые в левой и правой частях согласно уравнению \eqref{eq:85} равны, поэтому:
+
+\begin{equation}
+\sum_{k} i\hbar\frac{\partial c_{nk}}{\partial t}\tilde{\Psi}_{k}^{(0)} = \sum_{k} c_{nk}\hat{H}'\tilde{\Psi}_{k}^{(0)}
+\label{eq:92}
+\end{equation}
+
+\subsection*{Развитие теории возмущений}
+
+Домножим уравнение \eqref{eq:92} на функцию $\tilde{\Psi}_{m}^{(0)}$, собственную для оператора $\hat{H}_{(0)}$, и проинтегрируем по всему конфигурационному пространству:
+
+\begin{equation}
+\sum_{k} i\hbar\frac{\partial c_{nk}}{\partial t}\langle\tilde{\Psi}_{m}^{(0)}|\Psi_{k}^{(0)}\rangle = \sum_{k} c_{nk}\langle\tilde{\Psi}_{m}^{(0)}|\hat{H}'|\tilde{\Psi}_{k}^{(0)}\rangle
+\label{eq:93}
+\end{equation}
+
+Учитывая ортогональность и ортонормированность базиса, получим:
+
+\begin{equation}
+i\hbar\frac{\partial c_{nm}}{\partial t} = \sum_{k} c_{nk}\langle\tilde{\Psi}_{m}^{(0)}|\hat{H}'|\tilde{\Psi}_{k}^{(0)}\rangle
+\label{eq:94}
+\end{equation}
+
+Перепишем это дифференциальное уравнение в интегральном виде:
+
+\begin{equation}
+c_{nm}(\tau) = -\frac{i}{\hbar}\int_{0}^{\tau}\sum_{k} c_{nk}\langle\tilde{\Psi}_{m}^{(0)}|\hat{H}'|\tilde{\Psi}_{k}^{(0)}\rangle dt
+\label{eq:95}
+\end{equation}
+
+\subsection*{Приближенное решение}
+
+Полученное уравнение (система уравнений) достаточно сложное. Вводят следующее приближение: в момент отключения внешнего поля система выбирает одно состояние, либо исходное, либо какое-то другое с вероятностью, равным поправке в теории возмущений. Решение ищут в виде:
+
+\begin{equation}
+\tilde{\Psi}_n = \tilde{\Psi}^{(0)}_n + \Delta; \quad \Delta = \sum_{k \neq n} c_{nk}(t) \tilde{\Psi}^{(0)}_k
+\label{eq:96}
+\end{equation}
+
+Тогда уравнение \eqref{eq:94} можно переписать в виде:
+
+\begin{equation}
+i\hbar \frac{\partial}{\partial t} (c^{(1)}_{nm} + c^{(2)}_{nm} + \ldots) = \sum_k (\delta_{nk} + c^{(1)}_{nk} + c^{(2)}_{nk} + \ldots) \langle \tilde{\Psi}^{(0)}_m | \hat{H}'| \tilde{\Psi}^{(0)}_k \rangle
+\label{eq:97}
+\end{equation}
+
+\subsubsection*{Теория возмущений первого порядка}
+
+В первом порядке теории возмущений оставляем только первые слагаемые:
+
+\begin{equation}
+i\hbar \frac{\partial}{\partial t} c^{(1)}_{nm} = \langle \tilde{\Psi}^{(0)}_m | \hat{H}' | \tilde{\Psi}^{(0)}_n \rangle
+\label{eq:98}
+\end{equation}
+
+\begin{equation}
+c^{(1)}_{nm}(\tau) = -\frac{i}{\hbar} \int_0^{\tau} \langle \tilde{\Psi}^{(0)}_m | \hat{H}' | \tilde{\Psi}^{(0)}_n \rangle dt
+\label{eq:99}
+\end{equation}
+
+\subsubsection*{Теория возмущений второго порядка}
+
+Во втором порядке теории возмущений учитываем следующие слагаемые:
+
+\begin{equation}
+i\hbar \frac{\partial}{\partial t} c^{(2)}_{nm} = \sum_k c^{(1)}_{nk} \langle \tilde{\Psi}^{(0)}_m | \hat{H}' | \tilde{\Psi}^{(0)}_k \rangle
+\label{eq:100}
+\end{equation}
+
+\begin{equation}
+c^{(2)}_{nm}(\tau) = -\frac{i}{\hbar} \int_0^{\tau} \sum_k c^{(1)}_{nk} \langle \tilde{\Psi}^{(0)}_m | \hat{H}' | \tilde{\Psi}^{(0)}_k \rangle dt
+\label{eq:101}
+\end{equation}
+
+\subsection*{Физическая интерпретация}
+
+Физический смысл выражения \eqref{eq:99}: если оператор $\hat{H}'$ переводит функцию из состояния $\tilde{\Psi}^{(0)}_n$ в состояние $\tilde{\Psi}^{(0)}_m$, интеграл не равен нулю и получается ненулевой коэффициент вероятности. Такие переходы называются:
+
+\begin{itemize}
+\item одноквантовые процессы (поглощение и испускание)
+\item двухквантовые процессы (стоксово рассеяние, антистоксово рассеяние, релеевское рассеяние)
+\end{itemize}
+
+\begin{figure}[h]
+\centering
+%\includegraphics[width=0.6\textwidth]{processes.png}
+\caption{Одно- и двухквантовые процессы}
+\label{fig:10}
+\end{figure}
+
+Физический смысл выражения \eqref{eq:101} — вероятность двух переходов: сначала в \textit{виртуальное состояние} $\tilde{\Psi}_k^{(0)}$, затем в состояние $\tilde{\Psi}_m^{(0)}$.
+
+\end{document}

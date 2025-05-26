@@ -6,265 +6,185 @@
 \usetheme{QuantumChemistry}
 \usepackage{QuantumChemistry}
 \graphicspath{{pictures/}}
-\addbibresource{MolProperties.bib}
-\title[Лекції з квантової хімії]{\bfseries\huge Властивості молекул}
+\addbibresource{../Bibliography/QuantumChemistry.bib}
+\title[Лекції з квантової хімії]{\bfseries\huge Взаємодія молекул з електромагнітним полем}
 \subtitle{\bfseries Лекції з квантової хімії}
 \author{Пономаренко С. М.}
 \date{}
 % https://www.youtube.com/watch?v=zv9Y7YmHyBk
-
-
+\def\stext#1{\text{
+        \makebox[0pt]{
+            \tikz[baseline] {\node[text width=50pt, align=center, execute at begin node=\setlength{\baselineskip}{-0.5ex}, blue] {#1};}
+        }
+}}
 
 \begin{document}
 
 %============================================================================
 \begin{frame}
+	\thispagestyle{empty}
 	\titlepage
 \end{frame}
 %============================================================================
 
 
-
-\section{Аналіз електронної густини}
-
 %============================================================================
-\begin{frame}{Розподіл електронної густини}{}
-	\only<1>{
-		Розв'язок електронного рівняння Шредінґера $\Phi$ згідно інтерпретації Борна
-		\begin{equation*}\label{}
-			dW = \Phi^*(\vxi_1, \vxi_2, \ldots, \vxi_{N_e}) \Phi^*(\vxi_1, \vxi_2, \ldots, \vxi_{N_e}) d\xi_1 d\xi_2\ldots d\xi_{N_e} .
-		\end{equation*}
-		є імовірністю одночасного знаходження першого електрона в елементі $d\xi_1$ координатно-спінового простору, другого --- в елементі $d\xi_2$ і т. д. Для прикладних задач цікаво розподіл електронної густини в \alert{тривимірному просторі} що визначає різноманітні властивості системи і який можна \alert{визначити експериментально} --- наприклад методом електронографії.}
-	\only<1-2>{
-		\begin{equation*}\label{}
-			\tcbhighmath{\rho(\vec{r}) = N_e\int |\Phi|^2 d\sigma_1 d\xi_2\ldots d\xi_{N_e}, \quad \int \rho(\vec{r}) d\vec{r}_1 = N_e}
-		\end{equation*}
-	}
-	\only<2>{
-		Для однодетермінантного наближення
-		\begin{equation*}\label{}
-			\Phi_0 = \mathrm{det}\{\vphi_1, \vphi_2, \ldots, \vphi_{N_e}\}.
-		\end{equation*}
-		електронна густина для базису $\phi_i =  \sum_{p=1}^M c_{iq} \chi_p$
-		\begin{equation*}\label{}
-			\tcbhighmath{\rho(\vec{r}) = \sum\limits_{m = 1}^{N_e} n_i |\phi_i|^2 = \sum_{p,q=1}^M \chi_p^*\chi_q\sum_{i = 1}^{N_e} n_i  c^*_{pi} c_{qi} = \sum_{p,q=1}^M \chi_p^*\chi_q R_{pq},}
-		\end{equation*}
-		$R_{pq}$~--- матриця густини.
-	}
-\end{frame}
-%============================================================================
+\begin{frame}{Гамільтоніан системи}
+\begin{block}{}\justifying
+    	$\hat{H}_0$ --- гамільтоніан вільної молекули. Якщо молекула знаходиться в зовнішньому електромагнітному полі:
 
-
-
-
-
-%============================================================================
-%\begin{frame}{Карти електронної густини молекул}{}
-%     \begin{center}
-%        \includegraphics[width=0.5\linewidth]{Charge_in_water_molecule}
-%        \includegraphics[width=0.5\linewidth]{Perfubron}
-%    \end{center}
-%\end{frame}
-%============================================================================
-
-
-
-
-%============================================================================
-\tikzstyle{every picture}+=[remember picture]
-\begin{frame}[t]{Аналіз атомних заселеностей}{}
-	\framesubtitle<2>{Атомні заселеності}
-	\framesubtitle<3>{Заселеність по Малікену}
-	\begin{onlyenv}<1>
-		\begin{equation*}\label{}
-			\tcbhighmath{\rho(\vec{r}) = \sum\limits_{m = 1}^{N_e} n_i |\phi_i|^2 = \sum_{p,q=1}^M \chi_p^*\chi_q\sum_{i = 1}^{N_e} n_i  c^*_{pi} c_{qi} = \sum_{p,q=1}^M \chi_p^*\chi_q R_{pq},}
-		\end{equation*}
-		де $n_i$ --- число електронів на орбіталі $\phi_i$:
-		\begin{itemize}
-			\item $n_i = 1$ для \emphs{необмеженого методу Хартрі-Фока} (UHF);
-			\item $n_i = 2$ для системи із \emphs{замкненими оболонками в обмеженому методі Хартрі-Фока} (RHF);
-			\item $n_i = 2$ для спарених електронів і $n_1 = 1$ для неспарених \emphs{в методі Хартрі-Фока з відкритими оболонками} (ROHF).
-		\end{itemize}
-
-		\begin{center}\small
-			Для визначення електричних властивостей молекули (дипольного, квадрупольного, і. т. д. моментів) необхідно знати, \alert{як розподілена електронна густина між атомами молекули}.
-		\end{center}
-	\end{onlyenv}
-	\begin{onlyenv}<2>
-		Вклади в АО для атомів $A$ та $B$
-		\begin{equation*}\label{}
-			\rho(\vec{r})_{A - B} = \sum_{p,q=1}^{M_A}  \sum_{p,q=1}^{M_B}
-			\left(
-			{\color{blue!50}{\chi_p^{*A}\chi_q^{A} R_{pq}^{A}}} +
-			{\color{red!50}{ \chi_p^{*A}\chi_q^{B} R_{pq}^{AB}}} +
-			{\color{blue!50}{\chi_p^{*B}\chi_q^{B} R_{pq}^{B}}}
-			\right)
-		\end{equation*}
-
-		%        \highlighttext{cyan!50}{Густина на атомі $A$}{a1} \highlighttext{cyan!50}{Густина на атомі $B$}{b1} \highlighttext{red!50}{Густина між атомами $A - B$}{c1}
-		%		\begin{tikzpicture}[
-		%				overlay,
-		%				%			arrows={-Latex},
-		%				sig/.style = {anchor=north, font=\scriptsize},
-		%			]
-		%			%\draw<2>[]     (s1) to (pic cs:ge1);
-		%			\draw<2>[->] (A1.south) to ++(-125:0.5cm) node[sig] {Густина на атомі $A$};
-		%			\draw<2>[->] (C1.south) to ++(-90:1cm) node[sig] {Густина на між атомами $A - B$};
-		%			\draw<2>[->] (B1.south) to ++(-55:0.5cm) node[sig] {Густина на атомі $B$};
-		%			%		\draw[] (b1) edge [bend right] (B1);
-		%			%		\draw[] (c1) edge [bend right] (C1);
-		%		\end{tikzpicture}
-		\vfill
-		\begin{enumerate}
-			\item Чиста заселеність атома $A$: \( N(A) = \int \rho^A(\vec r) dV \).
-			\item Чиста заселеність атома $B$: \( N(B) = \int \rho^B(\vec r) dV \).
-			\item Заселеність \emphs{перекривання}: \( N(AB) = \int \rho^{AB}(\vec r) dV \).
-		\end{enumerate}
-
-		\bigskip
-
-		Заселеності між атомами $ N(AB) $ характеризують те, що у класичної теорії хімічної будови називають \emphs{хімічними зв'язками між атомами}.
-	\end{onlyenv}
-	\begin{onlyenv}<3>
-
-		Чисті заселеності і заселеність перекривання
-		\[
-			N(A) = \int \rho^A(\vec r) dV, \quad N(B) = \int \rho^B(\vec r) dV, \quad N(AB) = \int \rho^{AB}(\vec r) dV.
-		\]
-		Заселеність атомів \emphs{по Малікену} (заселеність перекривання ділять навпіл і розкидують між атомами)
-		\[
-			\tilde{N}(A) = N(A) + \frac12 N(AB), \quad \tilde{N}(B) = N(B) + \frac12 N(AB).
-		\]
-		Заряди на атомах ($N^0$ --- заряд атома до утворення молекули):
-		\[
-			q^A = N^0(A) - \tilde{N}(A), \quad  q^B = N^0(B) - \tilde{N}(B).
-		\]
-	\end{onlyenv}
-	%	\begin{onlyenv}<4>
-	%		\begin{enumerate}
-	%			\item<+-> Заселеність по Льовдіну  (Lowdin Population Analysis --- LPA).
-	%
-	%					{\scriptsize Подібно до аналізу по Малікену, але виконується у ортогоналізованому базисі. Інтеграли перекриття між різними орбіталями дорівнюють нулю, зникають вклади заселеностей перекривання, а електронна густина атома дорівнює просто сумі діагональних елементів матриці густини за орбіталями даного атома.}
-	%
-	%				%\item Нормальні заселеності (Natural Population Analysis --- NPA).
-	%
-	%			\item<+-> Заселеність по Бейдеру (Atoms In Molecules --- AIM).
-	%
-	%					{\scriptsize Підхід до аналізу заселеностей заснований на повному ігноруванні орбітальної структури атома та інтегруванні всієї електронної густини, що припадає на об'єм атома.}
-	%
-	%			\item<+-> Підгонка\label{key} зарядів під електростатичний потенціал (MESP, CHELPG).
-	%		\end{enumerate}
-	%	\end{onlyenv}
-\end{frame}
-%============================================================================
-
-
-
-
-
-%============================================================================
-\begin{frame}{Класифікація зарядів на атомах}{}
-	{\scriptsize \fullcite{Cho2020}}
-
-	\begin{enumerate}[Клас I]\small
-		\item визначаються на основі вимірюваних властивостей молекули.
-		      \begin{itemize}\scriptsize
-			      \item з величини дипольного моменту молекул (молекули розглядаються як набір точкових зарядів, відстані між якими відомі),
-			      \item моделі вирівнювання електронегативностей атомів у молекулі
-			      \item спектроскопічних та діелектричних даних.
-		      \end{itemize}
-		\item обчислюються з методу МО ЛКАО.
-		      \begin{itemize}\scriptsize
-			      \item Заряди по Малікену, по Льовдіну.
-		      \end{itemize}
-		\item виділяються з хвильової функції або електронної густини шляхом підгонки під певну фізичну величину (наприклад, електростатичним потенціалом), що отримується отриманий з них.
-		      \begin{itemize}\scriptsize
-			      \item Заряди по Бейдеру, обчислюються інтегруванням електронної густини молекули в межах атомного басейну, обмеженому поверхню нульового потоку вектора градієнта електронної густини.
-			            %\item Заряди по Хіршфельду, обчислюються інтегруванням деформаційної електронної густини по об'єму, пропорційному відповідним сферично-симетричним атомом в промолекулі.
-		      \end{itemize}
-		\item отримують на основі зарядів класу II або III і підганяють до кращої відповідності з якоюсь фізичною величиною (наприклад, дипольним моментом).
-	\end{enumerate}
-\end{frame}
-%============================================================================
-
-
-
-
-
-%============================================================================
-\begin{frame}{Величини, що залежать від електронної густини}{Дипольний та квадрупольний моменти молекул}
-	Дипольний моменти молекул
 	\begin{equation*}
-		\vec{\mu} = \sum_A Z_AR_A - \int_V \rho(x,y,x) \vec{r} dxdydz.
+		\hat{H} = \hat{H}_0 + \hat{H}_f + \hat{H}_{mf} = \hat{H}_{(0)} + \hat{H}'
 	\end{equation*}
-	В наближенні МО ЛКАО (RHF)
+\end{block}
+	\begin{itemize}
+		\item $\hat{H}_0$ --- гамільтоніан вільної частинки
+		\item $\hat{H}_f$ --- гамільтоніан зовнішнього поля
+		\item $\hat{H}_{mf}$ --- гамільтоніан взаємодії поля з молекулами
+	\end{itemize}
+\end{frame}
+%============================================================================
+
+% Слайд 3 - Нестаціонарне рівняння Шредінгера
+\begin{frame}{Нестаціонарне рівняння Шредінгера}
+	Електромагнітне поле може змінюватися з часом, тому використовуємо нестаціонарне рівняння Шредінгера:
+
 	\begin{equation*}
-		\vec{\mu} = \sum_A Z_A \vec{R}_A - 2 \sum_p\sum_q P_{pq}\int_V \vec{r} \chi_p^* \chi_q  dxdydz.
+		i\hbar \frac{\partial \tilde{\Psi}}{\partial t} = \hat{H} \tilde{\Psi}
+	\end{equation*}
+
+	Для вільної частинки:
+	\begin{equation*}
+		i\hbar \frac{\partial \tilde{\Psi}^{(0)}_{k}}{\partial t} = \hat{H}_0 \tilde{\Psi}^{(0)}_{k}
 	\end{equation*}
 \end{frame}
-%============================================================================
 
+% Слайд 4 - Розділення змінних
+\begin{frame}{Метод розділення змінних}
+	Розв'язок шукаємо у вигляді:
+	\begin{equation*}
+		\tilde{\Psi}^{(0)}_{k} = \Psi^{(0)}_{k}(\mathbf{r}, \mathbf{R}) f_k(t)
+	\end{equation*}
 
-
-
-
-
-%============================================================================
-\begin{frame}{Властивості молекул}{}
-
-	\begin{myexample}{Властивості молекул}\scriptsize
-	\begin{enumerate}[\faHandORight]
-		\item Дипольний момент.
-		\item Поляризовність.
-		\item Хімічний зсув ЯМР.
-		\item Частоти коливань.
-		\item Інфра-червоні спектри.
-		\item Раманівські спектри.
-	\end{enumerate}
-	\end{myexample}
-
-	\begin{alertblock}{}\centering
-		Фізичні властивості молекул --- характеризуються певною фізичною величиною.
-	\end{alertblock}
-	\begin{myexample}{Спостережувана величина}
-	\begin{tblr}{X[j,m]Q}
-		Кожна спостережувана фізична величина $\color{green!50!black}p$ системи в стані $\color{red}\Phi$ в квантовій механіці описується оператором $\color{blue}\hat{P}$ & ${\color{blue}\hat{P}}\,{\color{red}\Phi} = {\color{green!50!black}p}\, {\color{red}\Phi}$ \\
-	\end{tblr}
-	\end{myexample}
+	Отримуємо систему:
+	\begin{equation*}
+		\begin{cases}
+			\hat{H}_{(0)} \Psi^{(0)}_{k} = E_k \Psi^{(0)}_{k} \\
+			i\hbar \frac{\partial f_k}{\partial t} = E_k f_k
+		\end{cases}
+	\end{equation*}
 \end{frame}
-%============================================================================
 
+% Слайд 5 - Розв'язок
+\begin{frame}{Розв'язок рівняння}
+	Розв'язок для часової частини:
+	\begin{equation*}
+		f_k(t) = e^{-\frac{i}{\hbar} E_k t}
+	\end{equation*}
 
-
-%% --------------------------------------------------------
-\section{Дипольний момент молекули}
-%% --------------------------------------------------------
-
-
-% ============================== Слайд ## ===================================
-\begin{frame}{Дипольний момент молекули}{}
-	\begin{block}{}
-		Оператор дипольного моменту:
-		\begin{equation*}
-			\hat{\vec{\mu}}_e = \underbrace{\sum_a^{N_n} Z_a\vec{R}_a}_{\text{ядра}} +
-			\underbrace{\sum_i^{N_e}-e\vec{r}_i}_{\text{електрони}}
-		\end{equation*}
-
-		Розрахунок \alert{постійного дипольного моменту} в квантовій механіці:
-
-		\begin{equation*}
-			\vec{\mu}_e = \bracket<\Phi_0|\hat{\vec{\mu}}_e|\Phi_0>.
-		\end{equation*}
-		Обчислення будуть точними, якщо $\Phi_0$ є точним розв'язком рівняння Шредінґера:
-
-		\begin{equation*}
-			\hat{H}_0\Phi_0 = E\Phi_0.
-		\end{equation*}
-	\end{block}
-
-
+	Повний розв'язок:
+	\begin{equation*}
+		\tilde{\Psi}^{(0)}_{k} = \Psi^{(0)}_{k} e^{-\frac{i}{\hbar} E_k t}
+	\end{equation*}
 \end{frame}
-% ===========================================================================
+
+\begin{frame}{Початкові припущення}
+	Припустимо, що в початковий момент часу система знаходиться в стані $\tilde{\Psi}_{n}^{(0)}$. Після вимкнення зовнішнього впливу (рис. 9) молекула може перейти в стан:
+
+	\begin{equation*}
+		\sum_{k} c_{nk}\tilde{\Psi}_{k}^{(0)}
+	\end{equation*}
+
+	Ймовірність переходу між станами:
+	\begin{equation}
+		W_{nk} = |c_{nk}|^{2}
+	\end{equation}
+\end{frame}
+
+% Слайд 2 - Основне рівняння
+\begin{frame}{Основне рівняння}
+	Підставляємо лінійну комбінацію в рівняння Шредінгера:
+
+	\begin{equation}
+		i\hbar\frac{\partial}{\partial t}\left(\sum_{k} c_{nk}\tilde{\Psi}_{k}^{(0)}\right) = \hat{H}\left(\sum_{k} c_{nk}\tilde{\Psi}_{k}^{(0)}\right)
+	\end{equation}
+
+	Після диференціювання:
+	\begin{equation}
+		\sum_{k} i\hbar\frac{\partial c_{nk}}{\partial t}\tilde{\Psi}_{k}^{(0)} = \sum_{k} c_{nk}\hat{H}'\tilde{\Psi}_{k}^{(0)}
+	\end{equation}
+\end{frame}
+
+% Слайд 3 - Теорія збурень
+\begin{frame}{Розвиток теорії збурень}
+	Інтегруємо з урахуванням ортогональності базису:
+
+	\begin{equation}
+		i\hbar\frac{\partial c_{nm}}{\partial t} = \sum_{k} c_{nk}\langle\tilde{\Psi}_{m}^{(0)}|\hat{H}'|\tilde{\Psi}_{k}^{(0)}\rangle
+	\end{equation}
+
+	Інтегральна форма:
+	\begin{equation}
+		c_{nm}(\tau) = -\frac{i}{\hbar}\int_{0}^{\tau}\sum_{k} c_{nk}\langle\tilde{\Psi}_{m}^{(0)}|\hat{H}'|\tilde{\Psi}_{k}^{(0)}\rangle dt
+	\end{equation}
+\end{frame}
+
+% Слайд 4 - Наближення
+\begin{frame}{Наближений розв'язок}
+	Шукаємо розв'язок у вигляді:
+	\begin{equation}
+		\tilde{\Psi}_n = \tilde{\Psi}^{(0)}_n + \Delta; \quad \Delta = \sum_{k \neq n} c_{nk}(t) \tilde{\Psi}^{(0)}_k
+	\end{equation}
+
+	Отримуємо:
+	\begin{equation}
+		i\hbar \frac{\partial}{\partial t} (c^{(1)}_{nm} + c^{(2)}_{nm} + \ldots) = \sum_k (\delta_{nk} + c^{(1)}_{nk} + \ldots) \langle \tilde{\Psi}^{(0)}_m | \hat{H}'| \tilde{\Psi}^{(0)}_k \rangle
+	\end{equation}
+\end{frame}
+
+% Слайд 5 - Перший порядок
+\begin{frame}{Теорія збурень першого порядку}
+	\begin{equation}
+		i\hbar \frac{\partial}{\partial t} c^{(1)}_{nm} = \langle \tilde{\Psi}^{(0)}_m | \hat{H}' | \tilde{\Psi}^{(0)}_n \rangle
+	\end{equation}
+
+	Розв'язок:
+	\begin{equation}
+		c^{(1)}_{nm}(\tau) = -\frac{i}{\hbar} \int_0^{\tau} \langle \tilde{\Psi}^{(0)}_m | \hat{H}' | \tilde{\Psi}^{(0)}_n \rangle dt
+	\end{equation}
+\end{frame}
+
+% Слайд 6 - Другий порядок
+\begin{frame}{Теорія збурень другого порядку}
+	\begin{equation}
+		i\hbar \frac{\partial}{\partial t} c^{(2)}_{nm} = \sum_k c^{(1)}_{nk} \langle \tilde{\Psi}^{(0)}_m | \hat{H}' | \tilde{\Psi}^{(0)}_k \rangle
+	\end{equation}
+
+	Розв'язок:
+	\begin{equation}
+		c^{(2)}_{nm}(\tau) = -\frac{i}{\hbar} \int_0^{\tau} \sum_k c^{(1)}_{nk} \langle \tilde{\Psi}^{(0)}_m | \hat{H}' | \tilde{\Psi}^{(0)}_k \rangle dt
+	\end{equation}
+\end{frame}
+
+% Слайд 7 - Фізична інтерпретація
+\begin{frame}{Фізична інтерпретація}
+	\begin{itemize}
+		\item Перший порядок: однофотонні процеси (поглинання та випромінювання)
+		\item Другий порядок: двофотонні процеси:
+		      \begin{itemize}
+			      \item Стоксове розсіяння
+			      \item Антистоксове розсіяння
+			      \item Релеївське розсіяння
+		      \end{itemize}
+	\end{itemize}
+
+	\begin{center}
+		\begin{figure}
+			%\includegraphics[width=0.5\textwidth]{processes.png}
+			\caption{Схема одно- та двофотонних процесів}
+		\end{figure}
+	\end{center}
+\end{frame}
 
 % ============================== Слайд ## ===================================
 \begin{frame}{Молекула під впливом зовнішнього поля}{}
@@ -320,8 +240,6 @@
 \end{frame}
 % ===========================================================================
 
-
-
 % ============================== Слайд #7 ===================================
 \begin{frame}{Електричні властивості як похідні енергії}{}
 	\begin{itemize}
@@ -348,7 +266,6 @@
 	\end{equation*}
 \end{frame}
 %============================================================================
-
 
 % ============================== Слайд ## ===================================
 \begin{frame}{Приклад теорії збурень}{}
@@ -378,8 +295,6 @@
 	\end{block}
 \end{frame}
 % ===========================================================================
-
-
 
 % ============================== Слайд ## ===================================
 \begin{frame}{Властивості, що обчислюються на основі дипольного моменту}{Інтенсивності дипольних переходів}
@@ -504,7 +419,6 @@
 \end{frame}
 % ===========================================================================
 
-
 %\begin{block}{}
 %    Компонента сили осцилятора:
 %    \begin{multline*}
@@ -520,12 +434,7 @@
 %\end{frame}
 % ===========================================================================
 
-
 \section{Теорія відгуку}
-
-
-
-
 
 % ============================== Слайд #8 ===================================
 \begin{frame}{Теорія відгуку}{Відгук --- реакція на збурення}
@@ -572,8 +481,6 @@
 \end{frame}
 %============================================================================
 
-
-
 %============================================================================
 \begin{frame}{Порядок похідної}{}
 	\begin{center}
@@ -614,9 +521,6 @@
 	\end{center}
 \end{frame}
 %============================================================================
-
-
-
 
 %============================================================================
 %\begin{frame}{Частоти коливань молекули}{Збурення --- відхилення від рівноважної геометрії}
@@ -665,9 +569,6 @@
 %\end{frame}
 %============================================================================
 
-
-
-
 %============================================================================
 %\begin{frame}{Електричні властивості молекул}{Збурення --- електричне поле $\vec{\mathcal{E}}$}
 %    \begin{block}{}\tiny\centering
@@ -682,7 +583,6 @@
 %    \left.\frac{dE(\vec{\mathcal{E}})}{d\mathcal{E}_i}\right|_{ \vec{\mathcal{E}} = 0} =
 %\opbracket{\Phi}{\frac{d\hat{H}^{(1)}(\vec{\mathcal{E}})}{d\mathcal{E}_i}}{\Phi} = -\mu_i
 %    \]
-
 
 %\begin{center}
 %            {\scriptsize Дипольний момент}
@@ -712,4 +612,5 @@
 %    \end{exampleblock}
 %\end{frame}
 %============================================================================
+
 \end{document}

@@ -1,0 +1,109 @@
+-------------------------------------------------------------
+----------------------- !PROPERTIES! ------------------------
+-------------------------------------------------------------
+# -----------------------------------------------------------
+$ SCF_Energy
+   description: The SCF energy
+   geom. index: 1
+   prop. index: 1
+        SCF Energy:     -113.9158631590
+# -----------------------------------------------------------
+$ MDCI_Energies
+   description: The MDCI energies
+   geom. index: 1
+   prop. index: 1
+        Total number of Electrons                                                     16
+        Number of correlated Electrons                                                12
+        Number of alpha correlated Electrons                                           6
+        Number of beta correlated Electrons                                            6
+        Reference Energy:                                                -113.9158631590
+        Total Correlation Energy:                                          -0.3998247748
+        Alpha-Alpha Pairs Correlation Energy (No (T))                      -0.0410977722
+        Beta-Beta Pairs Correlation Energy (No (T))                        -0.0410977722
+        Alpha-Beta Pairs Correlation Energy (No (T))                       -0.3176292288
+        Singlet pairs energy of double amplitudes (No (T))                 -0.2767957879
+        Triplet pairs energy of double amplitudes (No (T))                 -0.1233736295
+        Singlet pairs energy of quadratic single amplitudes (No (T))        0.0002643313
+        Triplet pairs energy of quadratic single amplitudes (No (T))        0.0000803128
+        Triples Correction Energy:                                          0.0000000000
+        Total MDCI Energy:                                               -114.3156879338
+# -----------------------------------------------------------
+$ Calculation_Info
+   description: Details of the calculation
+   geom. index: 1
+   prop. index: 1
+     Multiplicity:                          1
+     Charge:                                0
+     number of atoms:                       4
+     number of electrons:                   16
+     number of frozen core electrons:       1
+     number of correlated electrons:        0
+     number of basis functions:             74
+     number of aux C basis functions:       0
+     number of aux J basis functions:       0
+     number of aux JK basis functions:      0
+     number of aux CABS basis functions:    0
+     Total Energy                           -114.164807
+# -----------------------------------------------------------
+$ SCF_Electric_Properties
+   description: The SCF Calculated Electric Properties
+   geom. index: 1
+   prop. index: 1
+       Filename                          : d:\Projects\LaTeX\QChem\Control\control2\orca\a.scfp 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        2.7753869804
+        Electronic Contribution:
+                  0    
+      0      -0.000000
+      1       0.071280
+      2       1.153754
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1      -0.138571
+      2      -2.243578
+        Total Dipole moment:
+                  0    
+      0      -0.000000
+      1      -0.067291
+      2      -1.089824
+# -----------------------------------------------------------
+$ MDCI_Electric_Properties
+   description: The MDCI Calculated Electric Properties
+   geom. index: 1
+   prop. index: 1
+       Filename                          : d:\Projects\LaTeX\QChem\Control\control2\orca\a.mdcip 
+       Do Dipole Moment Calculation      : true 
+       Do Quadrupole Moment Calculation  : false 
+       Do Polarizability Calculation     : false 
+** Dipole moment part of electric properties **
+        Magnitude of dipole moment (Debye) :        2.1892196169
+        Electronic Contribution:
+                  0    
+      0      -0.000000
+      1       0.085489
+      2       1.383928
+        Nuclear Contribution:
+                  0    
+      0       0.000000
+      1      -0.138571
+      2      -2.243578
+        Total Dipole moment:
+                  0    
+      0      -0.000000
+      1      -0.053082
+      2      -0.859650
+# -------------------------------------------------------------
+----------------------- !GEOMETRIES! ------------------------
+# -------------------------------------------------------------
+------------------------ !GEOMETRY! -------------------------
+    Number of atoms:    4 
+    Geometry Index:     1 
+    Coordinates:
+               0 C     -0.000000007887   -0.049857734856    0.101994914555
+               1 O      0.000000004090    0.024074375410    1.299591414668
+               2 H      0.944952007068   -0.087108320583   -0.500793163395
+               3 H     -0.944952003271   -0.087108319970   -0.500793165827
