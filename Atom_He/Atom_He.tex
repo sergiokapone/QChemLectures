@@ -97,7 +97,7 @@
 \begin{frame}{Стаціонарне рівняння Шредінґера атома \ce{He}}{}
 	%----------------------------------------------------------------------------
 	\begin{equation*}
-		\tcbhighmath{\hat{H}\Phi(\vxi_1, \vxi_2) = E\Phi(\vxi_1, \vxi_2).}
+		\tcbhighmath{\hat{H}\Psi(\vxi_1, \vxi_2) = E\Psi(\vxi_1, \vxi_2).}
 	\end{equation*}
 	\begin{columns}[T]
 		\column{.7\textwidth} % column designated by a command
@@ -111,7 +111,7 @@
 		%    \end{enumerate}
 
 		\[
-			\Phi = \Phi (\vxi_1, \vxi_2)
+			\Psi = \Psi (\vxi_1, \vxi_2)
 		\]
 		\[
 			\vxi_1 = (\vec{r}_1, \sigma_1), \quad 	\vxi_2 = (\vec{r}_2, \sigma_2).
@@ -141,6 +141,30 @@
 
 
 
+\begin{frame}{Хімічна точність}
+
+
+\begin{block}{}
+    У квантовій хімії термін \textbf{«хімічна точність»} (\textit{chemical accuracy}) означає здатність методу відтворювати енергії молекулярних систем із похибкою не більше ніж приблизно
+\[
+1 \ \text{kcal/mol} \approx 4.184 \ \text{kJ/mol} \approx 0.043 \ \text{eV} \approx 1.6 \times 10^{-3} \ \text{a.u. (Hartree)}.
+\]
+\end{block}
+
+\begin{itemize}
+  \item Це порядок величини характерних енергій хімічних процесів: водневих зв’язків, ізомеризацій, активаційних бар’єрів.
+  \item Різниця навіть у $\sim 1$ ккал/моль може суттєво змінити передбачення рівноваги або константи швидкості реакції.
+  \item Якщо метод відтворює енергії з такою точністю, його можна вважати придатним для \textbf{надійного моделювання хімічних властивостей}.
+\end{itemize}
+
+
+\begin{alertblock}{}\justifying
+  У контексті квантових обчислень саме «chemical accuracy» вважається \textit{«священним Граалем»}: досягнення цієї точності для реальних молекул означає прорив.
+\end{alertblock}
+
+\end{frame}
+
+
 
 
 %============================================================================
@@ -152,16 +176,16 @@
 	\end{equation*}
 	де  $\hat{H}^0$~--- <<незбурений>> гамільтоніан:
 	\begin{equation*}
-		\hat{H}^0\phi_n^{(0)} = E_n\phi_n^{(0)}.
+		\hat{H}^0\psi_n^{(0)} = E_n\psi_n^{(0)}.
 	\end{equation*}
-	Функції $\{\phi_n^{(0)}\}$ --- орбіталі.% --- метод збурень природнім способом реалізує одноелектронне наближення.
+	Функції $\{\psi_n^{(0)}\}$ --- орбіталі.% --- метод збурень природнім способом реалізує одноелектронне наближення.
 
 	Доданок $\hat{V}$ в припущенні <<малості>> --- <<збурення>>.
 
 	Перше наближення теорії збурень:
 	\begin{equation*}\label{PerturbedValues}
-		E_n = E_n^{(0)} + \bracket<\phi_n^{(0)}|\hat{V}|\phi_n^{(0)}>, \quad
-		\phi_n = \phi_n^{(0)} + \sum\limits_{\substack{m\\m \neq n}} \frac{\bracket<\phi_n^{(0)}|\hat{V}|\phi_m^{(0)}>}{E_n^{(0)} - E_m^{(0)}} \phi_m^{(0)}.
+		E_n = E_n^{(0)} + \bracket<\psi_n^{(0)}|\hat{V}|\psi_n^{(0)}>, \quad
+		\psi_n = \psi_n^{(0)} + \sum\limits_{\substack{m\\m \neq n}} \frac{\bracket<\psi_n^{(0)}|\hat{V}|\psi_m^{(0)}>}{E_n^{(0)} - E_m^{(0)}} \psi_m^{(0)}.
 	\end{equation*}
 	%---------------------------------------------------------------------------
 \end{frame}
@@ -218,7 +242,7 @@
 			\coordinate (base) at (0, -0.5);
 		}:
 		\begin{equation*}
-			\Phi_0(\vec{r}_1, \vec{r}_2) = (1s)_1(1s)_2, \quad (1s) = \frac{Z^{3/2}}{\sqrt{4\pi}} e^{-Zr} .
+			\Psi_0(\vec{r}_1, \vec{r}_2) = (1s)_1(1s)_2, \quad (1s) = \frac{Z^{3/2}}{\sqrt{4\pi}} e^{-Zr} .
 		\end{equation*}
 
 		Енергія незбуреного основного стану являє собою суму енергій двох воднеподібних атомів:
@@ -228,7 +252,7 @@
 
 		Перша поправка до енергії в теорії збурень:
 		\begin{equation*}
-			E^{(1)} = \bracket<{\Phi_0}|{\hat{V}}|{\Phi_0}> \equiv J = \frac{Z^6}{\pi^2} \int\limits_{V_1}\int\limits_{V_2}\frac{1}{r_{12}} e^{-2Z(r_1 + r_2)} dV_1dV_2 = + \frac58 Z.
+			E^{(1)} = \bracket<{\Psi_0}|{\hat{V}}|{\Psi_0}> \equiv J = \frac{Z^6}{\pi^2} \int\limits_{V_1}\int\limits_{V_2}\frac{1}{r_{12}} e^{-2Z(r_1 + r_2)} dV_1dV_2 = + \frac58 Z.
 		\end{equation*}
 		$J$~--- кулонівський інтеграл.
 		Енергія атома \ce{He} :
@@ -270,51 +294,51 @@
 
 
 %============================================================================
-\begin{frame}{Теорія збурень}{Ортогелій}
-	%----------------------------------------------------------------------------
-	\only<1>{
-		Для ортогелію $\gamma = \alpha(1) \alpha(2)$
-		\tikz[scale=0.25, baseline = (base),
-			upspinarrow/.pic = {\draw[-latex, red] (0,-0.5) -- (0, 0.5);},
-			downspinarrow/.pic = {\draw[latex-,blue] (0,-0.5) -- (0, 0.5);}
-		]{
-			\def\distance{2.5}
-			\draw[ultra thick]  (0,0) -- pic[pos=0.3] {upspinarrow}  +(2, 0) node[right] {$n_1 = (1s)$};
-			\draw[ultra thick]  (0,\distance) -- pic[pos=0.7] {upspinarrow} +(2,0) node[right] {$n_2 = (2s)$};
-			\path (-1.5, -1) rectangle (1.5,2.5);
-			\coordinate (base) at (0, 1);
-		}:
-		\begin{equation*}
-			\Phi_0(\vec{r}_1, \vec{r}_2) = \frac1{\sqrt{2}}[(1s)_1(2s)_2 -(2s)_1(1s)_2],
-		\end{equation*}
-		\[
-			\quad (1s) = \frac{Z^{3/2}}{\sqrt{4\pi}} e^{-Zr}, (2s) = \frac{Z^{3/2}}{4\sqrt{2\pi}} (2 - Zr)e^{-\frac{Z}{2}r}
-		\]
-		Перша поправка до енергії в теорії збурень:
-		\begin{multline*}
-			E^{(1)} = \bracket<\Phi_0|\hat{V}|\Phi_0> = \\ = \bracket<(1s)_1(2s)_2|\hat{V}|(1s)_1(2s)_2> - \bracket<(1s)_1(2s)_2|\hat{V}|(2s)_1(1s)_2> = J - K.
-		\end{multline*}
-		$J$~--- кулонівський інтеграл, $K$~--- обмінний інтеграл.
-		\[
-			J = \pgfmathparse{11.41569905002/27.2113845}\pgfmathresult, \quad K =  \pgfmathparse{1.193796374161/27.2113845}\pgfmathresult
-		\]
-	}
-	\only<2>{
-	Для ортогелію $E = - 2 - \frac12 + J - K \approx \pgfmathparse{-2-0.5 + 11.41569905002/27.2113845 - 1.193796374161/27.2113845}\pgfmathresult$~Ха.
-
-	Експериментальне значення $-2.18$~Ха.
-
-	{\scriptsize \fullcite{VoicuDolocan}}
-
-	\begin{center}
-		\begin{tikzpicture}[scale=0.6, every node/.style={scale=0.6}]
-			\draw[ultra thick, red] (0,2) node[left, black] {$E_1 + E_2$} -- (2,2);
-			\draw[dashed](2,2) -- (3,3);
-			\draw[ultra thick, red] (3,3) -- (5,3) node[right, black] {$E_1 + E_2 + J - K$};
-		\end{tikzpicture}
-	\end{center}
-	}
-\end{frame}
+%\begin{frame}{Теорія збурень}{Ортогелій}
+%	%----------------------------------------------------------------------------
+%	\only<1>{
+%		Для ортогелію $\gamma = \alpha(1) \alpha(2)$
+%		\tikz[scale=0.25, baseline = (base),
+%			upspinarrow/.pic = {\draw[-latex, red] (0,-0.5) -- (0, 0.5);},
+%			downspinarrow/.pic = {\draw[latex-,blue] (0,-0.5) -- (0, 0.5);}
+%		]{
+%			\def\distance{2.5}
+%			\draw[ultra thick]  (0,0) -- pic[pos=0.3] {upspinarrow}  +(2, 0) node[right] {$n_1 = (1s)$};
+%			\draw[ultra thick]  (0,\distance) -- pic[pos=0.7] {upspinarrow} +(2,0) node[right] {$n_2 = (2s)$};
+%			\path (-1.5, -1) rectangle (1.5,2.5);
+%			\coordinate (base) at (0, 1);
+%		}:
+%		\begin{equation*}
+%			\Psi_0(\vec{r}_1, \vec{r}_2) = \frac1{\sqrt{2}}[(1s)_1(2s)_2 -(2s)_1(1s)_2],
+%		\end{equation*}
+%		\[
+%			\quad (1s) = \frac{Z^{3/2}}{\sqrt{4\pi}} e^{-Zr}, (2s) = \frac{Z^{3/2}}{4\sqrt{2\pi}} (2 - Zr)e^{-\frac{Z}{2}r}
+%		\]
+%		Перша поправка до енергії в теорії збурень:
+%		\begin{multline*}
+%			E^{(1)} = \bracket<\Psi_0|\hat{V}|\Psi_0> = \\ = \bracket<(1s)_1(2s)_2|\hat{V}|(1s)_1(2s)_2> - \bracket<(1s)_1(2s)_2|\hat{V}|(2s)_1(1s)_2> = J - K.
+%		\end{multline*}
+%		$J$~--- кулонівський інтеграл, $K$~--- обмінний інтеграл.
+%		\[
+%			J = \pgfmathparse{11.41569905002/27.2113845}\pgfmathresult, \quad K =  \pgfmathparse{1.193796374161/27.2113845}\pgfmathresult
+%		\]
+%	}
+%	\only<2>{
+%	Для ортогелію $E = - 2 - \frac12 + J - K \approx \pgfmathparse{-2-0.5 + 11.41569905002/27.2113845 - 1.193796374161/27.2113845}\pgfmathresult$~Ха.
+%
+%	Експериментальне значення $-2.18$~Ха.
+%
+%	{\scriptsize \fullcite{VoicuDolocan}}
+%
+%	\begin{center}
+%		\begin{tikzpicture}[scale=0.6, every node/.style={scale=0.6}]
+%			\draw[ultra thick, red] (0,2) node[left, black] {$E_1 + E_2$} -- (2,2);
+%			\draw[dashed](2,2) -- (3,3);
+%			\draw[ultra thick, red] (3,3) -- (5,3) node[right, black] {$E_1 + E_2 + J - K$};
+%		\end{tikzpicture}
+%	\end{center}
+%	}
+%\end{frame}
 
 
 
@@ -331,54 +355,54 @@
 \begin{frame}{Варіаційний метод}{}
 	%----------------------------------------------------------------------------
 	\only<1>{%
-		Енергію системи в стані $\Phi$ можна розрахувати як:
+		Енергію системи в стані $\Psi$ можна розрахувати як:
 		\begin{equation*}
-			E[\Phi]  = \bracket<{\Phi}|{\hat{H}}|{\Phi}> = \int \Phi^* \hat{H} \Phi d\xi, \quad \int \Phi^*  \Phi d\xi = 1.
+			E[\Psi]  = \bracket<{\Psi}|{\hat{H}}|{\Psi}> = \int \Psi^* \hat{H} \Psi d\xi, \quad \int \Psi^*  \Psi d\xi = 1.
 		\end{equation*}
 		Застосуємо варіаційний принцип $\delta E = 0$
 		\[
-			\delta E =  \int \delta \Phi^* \hat{H} \Phi d\xi + \int \Phi^* \hat{H} \delta \Phi d\xi = 0
+			\delta E =  \int \delta \Psi^* \hat{H} \Psi d\xi + \int \Psi^* \hat{H} \delta \Psi d\xi = 0
 		\]
 		Варіація умови нормування
 		\[
-			\delta \left(-\lambda \int \Phi^*  \Phi d\xi - 1\right)=  -\lambda \int \delta \Phi^* \Phi d\xi -\lambda  \int  \Phi^*  \delta \Phi d\xi = 0
+			\delta \left(-\lambda \int \Psi^*  \Psi d\xi - 1\right)=  -\lambda \int \delta \Psi^* \Psi d\xi -\lambda  \int  \Psi^*  \delta \Psi d\xi = 0
 		\]
 		\[
-			\int \delta \Phi^* \left( \hat{H} - \lambda\right) \Phi d\xi + \int \delta \Phi \left( \hat{H} - \lambda\right)^{\dagger} \Phi^* d\xi = 0  \rightarrow \hat{H}  \Phi = \lambda  \Phi, \lambda = E
+			\int \delta \Psi^* \left( \hat{H} - \lambda\right) \Psi d\xi + \int \delta \Psi \left( \hat{H} - \lambda\right)^{\dagger} \Psi^* d\xi = 0  \rightarrow \hat{H}  \Psi = \lambda  \Psi, \lambda = E
 		\]
-		Якщо ми знаємо точну функцію $\Phi$ $\rightarrow$ отримуємо рівняння Шредінґера.
+		Якщо ми знаємо точну функцію $\Psi$ $\rightarrow$ отримуємо рівняння Шредінґера.
 		\begin{center}
 			\alert{Зазвичай ми не знаємо точну функцію!}
 		\end{center}
 	}
 	\only<2>{%
-		Припустимо, що довільна функція $\tilde{\Phi} = \sum\limits_m C_m\Phi_m$ є розв'язком, $(\sum\limits_m|C_m|^2 = 1)$, $\bracket<\tilde{\Phi}|\tilde{\Phi}> = 1$, розкладена в ряд по точним (але невідомим) власним функціям гамільтоніана $\hat H$ :
+		Припустимо, що довільна функція $\tilde{\Psi} = \sum\limits_m C_m\Psi_m$ є розв'язком, $(\sum\limits_m|C_m|^2 = 1)$, $\bracket<\tilde{\Psi}|\tilde{\Psi}> = 1$, розкладена в ряд по точним (але невідомим) власним функціям гамільтоніана $\hat H$ :
 
 		\begin{equation*}
-			E[\Phi]  = \bracket<{\tilde\Phi}|{\hat{H}}|{\tilde\Phi}> = \sum\limits_m |C_m|^2 E_m.
+			E[\Psi]  = \bracket<{\tilde\Psi}|{\hat{H}}|{\tilde\Psi}> = \sum\limits_m |C_m|^2 E_m.
 		\end{equation*}
 
 		Нехай $E_0$ найменше  значення енергії основного стану гамільтоніана $\hat{H}$, тоді
 		\begin{equation*}
-			E[\tilde\Phi]  = \bracket<{\tilde\Phi}|{\hat{H}}|{\tilde\Phi}> = \sum\limits_m |C_m|^2 E_m \ge \sum\limits_m |C_m|^2 E_0  = E_0.
+			E[\tilde\Psi]  = \bracket<{\tilde\Psi}|{\hat{H}}|{\tilde\Psi}> = \sum\limits_m |C_m|^2 E_m \ge \sum\limits_m |C_m|^2 E_0  = E_0.
 		\end{equation*}
 		\begin{alertblock}{}\centering
-			Енергія обчислена з довільною функцією $\tilde\Phi$  буде оцінкою зверху для точного значення енергії основного стану
+			Енергія обчислена з довільною функцією $\tilde\Psi$  буде оцінкою зверху для точного значення енергії основного стану
 		\end{alertblock}
 	}
 	\only<3>%
 	{    \framesubtitle<3>{Реалізація методу}
-		Варіаційний метод полягає в тому, щоб використати для розв'язку якусь пробну функцію змінних системи  $\Phi (\lambda_i)$, що залежить від декількох параметрів $\lambda_i$, яка задовільняє умові нормування, тоді:
+		Варіаційний метод полягає в тому, щоб використати для розв'язку якусь пробну функцію змінних системи  $\Psi (\lambda_i)$, що залежить від декількох параметрів $\lambda_i$, яка задовільняє умові нормування, тоді:
 		\[
-			E[\tilde\Phi]  = E[\tilde\Phi(\lambda_1, \lambda_2, \ldots)],
+			E[\tilde\Psi]  = E[\tilde\Psi(\lambda_1, \lambda_2, \ldots)],
 		\]
-		умова мінімуму дає $\delta E[\Phi] = 0$:
+		умова мінімуму дає $\delta E[\Psi] = 0$:
 		\[
 			\frac{\partial E}{\partial \lambda_1} = 0, \quad \frac{\partial E}{\partial \lambda_2} = 0, \ldots.
 		\]
 		Система цих рівнянь визначає параметри $\lambda_{i_{\min}}$, для яких
 		\[
-			E_{\min}[\tilde\Phi(\lambda_{1_{\min}}, \lambda_{2_{\min}}, \ldots)] \ge E_0.
+			E_{\min}[\tilde\Psi(\lambda_{1_{\min}}, \lambda_{2_{\min}}, \ldots)] \ge E_0.
 		\]
 	}
 	%----------------------------------------------------------------------------
@@ -394,7 +418,7 @@
 	%----------------------------------------------------------------------------
 	<<Пробні>> орбіталі --- 1s-функції воднеподібного атому:
 	\begin{equation*}\label{coordinate_ground_state_parahelium}
-		\Phi_0(\vec{r}_1, \vec{r}_2) = (1s)_1(1s)_2 = \frac{\zeta^{3}}{\pi}e^{-\zeta(r_1 + r_2)}.
+		\Psi_0(\vec{r}_1, \vec{r}_2) = (1s)_1(1s)_2 = \frac{\zeta^{3}}{\pi}e^{-\zeta(r_1 + r_2)}.
 	\end{equation*}
 	Заряд ядра $\zeta$ --- параметр, який варіюється --- грунтується на інтуїтивно зрозумілій ідеї \alert{екранування} електронами заряду ядра. {\scriptsize Один із електронів екранує заряд ядра, в результаті чого інший електрон <<відчуває>> не величину $Z$, а вже дещо менше її значення $\zeta$. Для ефективності екранування вводять величину}
 	\begin{equation*}
@@ -517,21 +541,21 @@
 		\onslide<1>
 		Для реалізації метода необхідні припущення:
 		\begin{itemize}\small
-			\item Кожен електрон характеризується своєю хвильовою функцією: $\phi_1$ та $\phi_2$, відповідно, які нормовані $\int |\phi_1|^2 dV_1 = 1$,  $\int |\phi_2|^2 dV_2 = 1$;
-			\item Хвильова функція системи електронів задається у вигляді: $\Phi = \phi_1 \phi_2$;
+			\item Кожен електрон характеризується своєю хвильовою функцією: $\psi_1$ та $\psi_2$, відповідно, які нормовані $\int |\psi_1|^2 dV_1 = 1$,  $\int |\psi_2|^2 dV_2 = 1$;
+			\item Хвильова функція системи електронів задається у вигляді: $\Psi = \psi_1 \psi_2$;
 			\item Рівняння методу виводяться на основі варіаційного принципу.
 		\end{itemize}
 		\onslide<2>
 		Рівняння Хартрі (в атомній системі одиниць):
 		\begin{align*}
-			\left(-\frac12 \nabla_1^2  - \frac{1}{r_1} \right)\phi_1 + \int\frac{|\phi_2|^2}{r_{12}} dV_2 \cdot \phi_1 & = \varepsilon_1 \phi_1, \\
-			\left(-\frac12 \nabla_2^2  - \frac{1}{r_2}\right)\phi_2 + \int\frac{|\phi_1|^2}{r_{12}} dV_1 \cdot \phi_2  & = \varepsilon_2 \phi_2.
+			\left(-\frac12 \nabla_1^2  - \frac{1}{r_1} \right)\psi_1 + \int\frac{|\psi_2|^2}{r_{12}} dV_2 \cdot \psi_1 & = \varepsilon_1 \psi_1, \\
+			\left(-\frac12 \nabla_2^2  - \frac{1}{r_2}\right)\psi_2 + \int\frac{|\psi_1|^2}{r_{12}} dV_1 \cdot \psi_2  & = \varepsilon_2 \psi_2.
 		\end{align*}
 		\onslide<3>
-		Енергія атома методом Хартрі $E = \bracket<{\Phi}|{\hat{H}}|{\Phi}>$:
+		Енергія атома методом Хартрі $E = \bracket<{\Psi}|{\hat{H}}|{\Psi}>$:
 		\begin{multline*}
-			E =  \int \phi^*_1 \left( -\frac12 \nabla_1^2 - \frac{1}{r_{1}}\right) \phi_1 dV_1 + \int \phi^*_2 \left( -\frac12 \nabla_2и и ^2 - \frac{1}{r_{2}}\right) \phi_2 dV_2 + \\ +  \int\frac{|\phi_1|^2 |\phi_2|^2}{r_{12}} dV_1 dV_2
-			= \varepsilon_1 + \varepsilon_2 - \int\frac{|\phi_1|^2 |\phi_2|^2}{r_{12}} dV_1 dV_2.
+			E =  \int \psi^*_1 \left( -\frac12 \nabla_1^2 - \frac{1}{r_{1}}\right) \psi_1 dV_1 + \int \psi^*_2 \left( -\frac12 \nabla_2и и ^2 - \frac{1}{r_{2}}\right) \psi_2 dV_2 + \\ +  \int\frac{|\psi_1|^2 |\psi_2|^2}{r_{12}} dV_1 dV_2
+			= \varepsilon_1 + \varepsilon_2 - \int\frac{|\psi_1|^2 |\psi_2|^2}{r_{12}} dV_1 dV_2.
 		\end{multline*}
 	\end{overprint}
 	%----------------------------------------------------------------------------
@@ -556,10 +580,10 @@
 					decision/.style={diamond, minimum width=1cm, minimum height=0.5cm, text centered, draw=black, fill=green!30},
 				]
 
-				\node (node0) [io] {$\{\phi_1^{(0)}, \phi_2^{(0)}\}$};
-				\node (node1) [process, below of=node0]  {$\int \frac{|\phi_1^{(k)}|^2}{r_{12}} dV_1$, $\int \frac{|\phi_2^{(k)}|^2}{r_{12}} dV_2$};
+				\node (node0) [io] {$\{\psi_1^{(0)}, \psi_2^{(0)}\}$};
+				\node (node1) [process, below of=node0]  {$\int \frac{|\psi_1^{(k)}|^2}{r_{12}} dV_1$, $\int \frac{|\psi_2^{(k)}|^2}{r_{12}} dV_2$};
 				\node (node2) [process, below of=node1]               {Розв'язок рівняннь Хартрі};
-				\node (node3) [io, below=0.5cm of node2]               {$\{\phi_1^{(k)}, \phi_2^{(k)}\}$};
+				\node (node3) [io, below=0.5cm of node2]               {$\{\psi_1^{(k)}, \psi_2^{(k)}\}$};
 				\node (node4) [decision, below=0.5cm of node3]               {$\left| E^{(k)} - E^{(k - 1)}\right| \le \delta$};
 				\node (node5) [startstop, below=0.5cm of node4]               {Розрахунок енергії, властивостей...};
 
@@ -575,7 +599,7 @@
 		\begin{column}{0.55\linewidth}\footnotesize
 			\alert{Ітераційна} процедура була названа самоузгодженням, а тому метод Хартрі отримав назву методу самоузгодженого поля (SCF).
 			\begin{itemize}
-				\item  На першому етапі необхідно задати набір деяких початкових функцій $\{\phi_1^{(0)}, \phi_2^{(0)}\}$ в \alert{чисельному вигляді}. Можна вибрати функції можна обрати атомні орбіталі воднеподібного атома.
+				\item  На першому етапі необхідно задати набір деяких початкових функцій $\{\psi_1^{(0)}, \psi_2^{(0)}\}$ в \alert{чисельному вигляді}. Можна вибрати функції можна обрати атомні орбіталі воднеподібного атома.
 				\item Чим точніше вибрано початкові функції, тим менше буде ітерацій. Для зменшення циклів (можна взяти атомні воднеподібні орбіталі з урахуванням екранування).
 				\item Розрахунки цим методом дають лише чисельні результати.
 			\end{itemize}
@@ -593,7 +617,7 @@
 %============================================================================
 \begin{frame}{Недоліки методу Хартрі}{}
 	%----------------------------------------------------------------------------
-	Оскільки, для отримання $\Phi$-функції системи необхідно перемножити орбіталі, а тому:
+	Оскільки, для отримання $\Psi$-функції системи необхідно перемножити орбіталі, а тому:
 	\begin{itemize}
 		\item не враховується принцип Паулі для електронів;
 
@@ -615,12 +639,12 @@
 	%----------------------------------------------------------------------------
 	Для врахування принципу Паулі, В. Фок запропонував представити хвильову функцію у вигляді детермінанту Слейтера:
 	\begin{equation*}
-		\Phi (\vxi_1, \vxi_2)={\frac {1}{\sqrt {2}}}
+		\Psi (\vxi_1, \vxi_2)={\frac {1}{\sqrt {2}}}
 		\left|
 		{
 		\begin{matrix}
-			\vphi_{1}(\vxi_1) & \vphi_{2}(\vxi_1) \\
-			\vphi_{1}(\vxi_2) & \vphi_{2}(\vxi_2)
+			\psi_{1}(\vxi_1) & \psi_{2}(\vxi_1) \\
+			\psi_{1}(\vxi_2) & \psi_{2}(\vxi_2)
 		\end{matrix}
 		}
 		\right|.
@@ -630,29 +654,29 @@
 		\onslide<1>
 		Для реалізації метода необхідні припущення:
 		\begin{itemize}
-			\item Кожен електрон характеризується своєю хвильовою функцією: $\vphi_1$ та $\vphi_2$, відповідно, які нормовані $\int |\vphi_1|^2 dV_1 = 1$,  $\int |\vphi_2|^2 dV_2 = 1$;
+			\item Кожен електрон характеризується своєю хвильовою функцією: $\psi_1$ та $\psi_2$, відповідно, які нормовані $\int |\psi_1|^2 dV_1 = 1$,  $\int |\psi_2|^2 dV_2 = 1$;
 			\item Рівняння методу виводяться на основі варіаційного принципу.
 		\end{itemize}
 		\onslide<2>
 		Канонічні рівняння Хартрі-Фока (в атомній системі одиниць):
 		{\footnotesize
 		\begin{align*}
-			\hat{h}_1\vphi_1(\vxi_1) +
-			\int\frac{|\vphi_2(\vxi_2)|^2}{r_{12}} d(2) \cdot \vphi_1 (\vxi_1) -
-			\int \frac{\vphi_2(\vxi_2)\vphi_1(\vxi_2)}{r_{12}}d(2)\cdot\vphi_1(\vxi_1) \\
-			 & = \varepsilon_1 \vphi_1(\vxi_1),                                        \\
+			\hat{h}_1\psi_1(\vxi_1) +
+			\int\frac{|\psi_2(\vxi_2)|^2}{r_{12}} d(2) \cdot \psi_1 (\vxi_1) -
+			\int \frac{\psi_2(\vxi_2)\psi_1(\vxi_2)}{r_{12}}d(2)\cdot\psi_1(\vxi_1) \\
+			 & = \varepsilon_1 \psi_1(\vxi_1),                                        \\
 			% ----------------
-			\hat{h}_2\vphi_2(\vxi_2) +
-			\int\frac{|\vphi_1(\vxi_1)|^2}{r_{12}} d(1) \cdot \vphi_2 (\vxi_2) -
-			\int \frac{\vphi_1(\vxi_1)\vphi_2(\vxi_1)}{r_{12}}d(1)\cdot\vphi_2(\vxi_2) \\
-			 & = \varepsilon_2 \vphi_2(\vxi_2).
+			\hat{h}_2\psi_2(\vxi_2) +
+			\int\frac{|\psi_1(\vxi_1)|^2}{r_{12}} d(1) \cdot \psi_2 (\vxi_2) -
+			\int \frac{\psi_1(\vxi_1)\psi_2(\vxi_1)}{r_{12}}d(1)\cdot\psi_2(\vxi_2) \\
+			 & = \varepsilon_2 \psi_2(\vxi_2).
 		\end{align*}}
 		\onslide<3>
 		Канонічні рівняння Хартрі-Фока (в атомній системі одиниць):
 		\begin{align*}
-			\hat{F}_1\vphi_1(\vxi_1) & = \varepsilon_1 \vphi_1(\vxi_1), \\
+			\hat{F}_1\psi_1(\vxi_1) & = \varepsilon_1 \psi_1(\vxi_1), \\
 			% ----------------
-			\hat{F}_2\vphi_1(\vxi_2) & = \varepsilon_2 \vphi_1(\vxi_2),
+			\hat{F}_2\psi_1(\vxi_2) & = \varepsilon_2 \psi_1(\vxi_2),
 		\end{align*}
 		\noindent де $\hat{F} = \hat{h} + \hat{J} - \hat{K}$~--- оператор Фока (або фокіан),\\
 		\noindent $\varepsilon_1$ та $\varepsilon_2$~--- орбітальні енергії електронів.
@@ -663,16 +687,16 @@
             спільно з далекодіючою електростатичною або кулонівською силою.
         \end{block}
 		\onslide<4>
-		Енергія атома методом Хартрі-Фока $E = \bracket<{\Phi}|{\hat{H}}|{\Phi}>$:
+		Енергія атома методом Хартрі-Фока $E = \bracket<{\Psi}|{\hat{H}}|{\Psi}>$:
 		\begin{multline*}
-			E = 2 \int \vphi^*_1 \left( -\frac12 \nabla_1^2 - \frac{1}{r_{1}}\right) \vphi_1 d(1) +  \int\frac{|\vphi_1(1)|^2 |\phi_2(2)|^2}{r_{12}} d(1) d(2) - \\
-			- \int\frac{\vphi_1 (1) \vphi_2(2) \vphi_2 (1) \vphi_1(2)}{r_{12}} d(1) d(2)
+			E = 2 \int \psi^*_1 \left( -\frac12 \nabla_1^2 - \frac{1}{r_{1}}\right) \psi_1 d(1) +  \int\frac{|\psi_1(1)|^2 |\psi_2(2)|^2}{r_{12}} d(1) d(2) - \\
+			- \int\frac{\psi_1 (1) \psi_2(2) \psi_2 (1) \psi_1(2)}{r_{12}} d(1) d(2)
 			= \\
 			= \varepsilon_1 + \varepsilon_2 - \left(J_{12} - K_{12}\right) .
 		\end{multline*}
 		\onslide<5>
 		\(%
-		J_{12} = \int\dfrac{|\vphi_1(1)|^2 |\phi_2(2)|^2}{r_{12}} d(1) d(2)%
+		J_{12} = \int\dfrac{|\psi_1(1)|^2 |\psi_2(2)|^2}{r_{12}} d(1) d(2)%
 		\) -- кулонівський інтеграл.
 
 		\begin{block}{}\scriptsize\justifying
@@ -680,7 +704,7 @@
 		\end{block}
 
 		\(%
-		K_{12} = \int\dfrac{\vphi_1 (1) \vphi_2(2) \vphi_2 (1) \vphi_1(2)}{r_{12}} d(1) d(2)%
+		K_{12} = \int\dfrac{\psi_1 (1) \psi_2(2) \psi_2 (1) \psi_1(2)}{r_{12}} d(1) d(2)%
 		\) -- обмінний інтеграл.
 
 		\begin{block}{}\scriptsize\justifying
@@ -698,7 +722,7 @@
 %============================================================================
 \begin{frame}{Переваги і недоліки методу Хартрі-Фока}{}
 	%----------------------------------------------------------------------------
-	Оскільки, для отримання $\Phi$-функції системи необхідно перемножити орбіталі, а тому:
+	Оскільки, для отримання $\Psi$-функції системи необхідно перемножити орбіталі, а тому:
 	\begin{itemize}
 		\item Враховується принцип Паулі для електронів;
 
@@ -730,13 +754,13 @@
 
 		\medskip
 
-		У 1951 році Рутаан запропонував представляти орбіталі Хартрі-Фока у вигляді лінійної комбінації $\phi = \sum\limits_{s = 1}^\infty c_s \chi_s$ повного набору відомих функцій $\chi_s$, які називаються \alert{базисними функціями}.
+		У 1951 році Рутаан запропонував представляти орбіталі Хартрі-Фока у вигляді лінійної комбінації $\psi = \sum\limits_{s = 1}^\infty c_s \chi_s$ повного набору відомих функцій $\chi_s$, які називаються \alert{базисними функціями}.
 
 		\medskip}
 
 	На практиці, зазвичай, обирають лише $M$ базисних фукнцій $\chi_i$:
 	\begin{equation*}\label{}
-		\phi = \sum\limits_{s = 1}^M c_s \chi_s.
+		\psi = \sum\limits_{s = 1}^M c_s \chi_s.
 	\end{equation*}
 
 	\framesubtitle<2>{Рівняння Хартрі-Фока-Рутаана}
@@ -766,7 +790,7 @@
 	%----------------------------------------------------------------------------
 	В якості базисних функцій для розрахунків використовують орбіталі слейтерівського типу  (STO), нормалізована форма яких має вигляд:
 	\begin{equation*}
-		\chi_s = \frac{(2\zeta_s)^{n + 1/2}}{[(2n)!]^{1/2}} r^{n - 1}e^{-\zeta_s r} \cdot \mathrm{LinComb}\left(Y_{lm}(\theta, \phi)\right).
+		\chi_s = \frac{(2\zeta_s)^{n + 1/2}}{[(2n)!]^{1/2}} r^{n - 1}e^{-\zeta_s r} \cdot \mathrm{LinComb}\left(Y_{lm}(\theta, \psi)\right).
 	\end{equation*}
 	{\scriptsize \fullcite{Slater1930}}
 	\begin{columns}
@@ -827,9 +851,9 @@
 
 	\medskip
 
-	1s-Орбітальну функцію атома гелію $\phi$ можна представити як комбінацію двох 1s-орбіталей ($n = 1$) слейтерівського типу:
+	1s-Орбітальну функцію атома гелію $\psi$ можна представити як комбінацію двох 1s-орбіталей ($n = 1$) слейтерівського типу:
 	\begin{equation*}\label{}
-		\phi = \pi^{-1/2}\sum\limits_{s = 1}^2 c_s \zeta_s^{3/2}e^{-\zeta_s r},
+		\psi = \pi^{-1/2}\sum\limits_{s = 1}^2 c_s \zeta_s^{3/2}e^{-\zeta_s r},
 	\end{equation*}
 	де $\zeta_1 = 1.45363$ і $\zeta_2 = 2.91093$.
 
@@ -891,11 +915,11 @@
 	%----------------------------------------------------------------------------
 
 	\(
-	\underbrace{\tcbhighmath[drop fuzzy shadow, colframe=cyan]{\phi_{STO} =  \left( \frac{\zeta}{\pi}\right)^{1^{}/2} e^{-\zeta r}}}_{ST\tikzmark{1}O}
+	\underbrace{\tcbhighmath[drop fuzzy shadow, colframe=cyan]{\psi_{STO} =  \left( \frac{\zeta}{\pi}\right)^{1^{}/2} e^{-\zeta r}}}_{ST\tikzmark{1}O}
 	\)
 	\hfill
 	\(
-	\underbrace{\tcbhighmath[drop fuzzy shadow]{\phi_{GTO} =  \left( \frac{2\alpha}{\pi}\right)^{3^{}/4} e^{-\alpha r^2}}}_{GT\tikzmark{2}O}
+	\underbrace{\tcbhighmath[drop fuzzy shadow]{\psi_{GTO} =  \left( \frac{2\alpha}{\pi}\right)^{3^{}/4} e^{-\alpha r^2}}}_{GT\tikzmark{2}O}
 	\)
 
 	\begin{center}
@@ -1090,7 +1114,7 @@ end
 			\end{column}
 			\begin{column}{0.5\linewidth}
 				\begin{equation*}\label{}
-					\phi = c_1 (1s)_\text{CGTO}.
+					\psi = c_1 (1s)_\text{CGTO}.
 				\end{equation*}
 				де
 				\begin{multline*}
@@ -1118,7 +1142,7 @@ end
 					\CodeAfter
 					\begin{tikzpicture}[>=stealth, baseline=-2cm]
 						\node (1s)  [fit=(1-3)(1-3)] {} ;
-						\draw[<-] (1s.north) -- ++(0,0.5) node[above] (phi) {$\phi_{1s}$};
+						\draw[<-] (1s.north) -- ++(0,0.5) node[above] (phi) {$\psi_{1s}$};
 						\node (oe)  [draw=red,fit=(2-3)(2-3)] {} ;
 						\draw[<-] (oe.east) -- ++(0.75,0) node[right] {орбітальна енергія};
 						\node (pop) [draw=red,fit=(3-3)(3-3)] {} ;
@@ -1188,7 +1212,7 @@ end
 
 		Базис, в якому атомна орбіталь моделюється двома STO називається двічі розчепленими (\alert{double-zeta}):
 		\begin{equation*}
-			\phi = c_1 \chi(\zeta_1) + c_2 \chi(\zeta_2),
+			\psi = c_1 \chi(\zeta_1) + c_2 \chi(\zeta_2),
 		\end{equation*}
 		де кожна STO $\chi$ задаються окремими GTO.
 	\end{onlyenv}
@@ -1229,10 +1253,10 @@ end
 		\end{columns}
 		\vspace*{-1cm}
 		\[
-			\phi_{0} = 0.592081 \cdot \sum_{i = 1}^3 C_i GTO(\alpha_i)  + 0.513586 \cdot C_1  GTO(\alpha_1),
+			\psi_{0} = 0.592081 \cdot \sum_{i = 1}^3 C_i GTO(\alpha_i)  + 0.513586 \cdot C_1  GTO(\alpha_1),
 		\]
 		\begin{alertblock}\scriptsize
-			В результатах розрахунку з'являється ще одна орбіталь $\phi_1$ з коефіцієнтами $-1.149818$ та $1.186959$ і орбітальною енергією $1.39986$, яка не заселена електронами і є артефактом вибору базису. Така орбіталь називається \alert{віртуальною} і фізичного трактування при атомних розрахунках не має.
+			В результатах розрахунку з'являється ще одна орбіталь $\psi_1$ з коефіцієнтами $-1.149818$ та $1.186959$ і орбітальною енергією $1.39986$, яка не заселена електронами і є артефактом вибору базису. Така орбіталь називається \alert{віртуальною} і фізичного трактування при атомних розрахунках не має.
 		\end{alertblock}
 	\end{onlyenv}
 	\begin{onlyenv}<3>\scriptsize\color{blue}
@@ -1278,7 +1302,7 @@ Virial Ratio       :            2.00001409
 		\onslide<2>
 		Хіллераас вибрав функцію основного стану парагелію вигляді:
 		\begin{equation*}\label{}
-			\Phi = \phi_1(r_1)\phi_2(r_2)(1 - ar_{12}),
+			\Psi = \psi_1(r_1)\psi_2(r_2)(1 - ar_{12}),
 		\end{equation*}
 		де параметр $a$ який можна підібрати варіаційними методами і який враховує кореляцію (при $a = 0$ кореляції нема).
 
