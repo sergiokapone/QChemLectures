@@ -241,7 +241,7 @@ $Ry = 1.77576096 \cdot 10^{7}$~1/м
 	\only<1-2,4-5>{
 		Функції $Y(\theta, \psi)$ є власними функціями оператора $\hat L^2$:
 		\begin{equation}
-			\hat L^2 Y_{l,m}(\theta,\phi) = l(l+1)Y_{l,m}(\theta,\phi) \label{AngularMomentum},
+			\hat L^2 Y_l^m(\theta,\phi) = l(l+1)Y_l^m(\theta,\phi) \label{AngularMomentum},
 		\end{equation}
 		з власними значеннями:
 		\begin{equation}
@@ -250,9 +250,9 @@ $Ry = 1.77576096 \cdot 10^{7}$~1/м
 	}
 
 	\only<1>{
-		Функції $Y_{l,m}(\theta,\phi )$~--- називаються сферичними функціями (або сферичними гармоніками)  і мають вигляд:
+		Функції $Y_l^m(\theta,\phi )$~--- називаються сферичними функціями (або сферичними гармоніками)  і мають вигляд:
 		\begin{equation}\label{SpherHarmonics}
-			Y_{l,m}(\theta,\phi ) = \sqrt{\frac{2l+1}{4\pi} \frac{(l-|m|)!}{(l+|m|)!}} P_l^{|m|}(\cos\theta)e^{im\phi},
+			Y_l^m(\theta,\phi ) = \sqrt{\frac{2l+1}{4\pi} \frac{(l-|m|)!}{(l+|m|)!}} P_l^{|m|}(\cos\theta)e^{im\phi},
 		\end{equation}
 		де \(P_l^{|m|}(\cos\theta)\)~--- приєднані поліноми Лежандра ($x = \cos\theta$):
 		\begin{equation}\label{Legandre}
@@ -264,24 +264,35 @@ $Ry = 1.77576096 \cdot 10^{7}$~1/м
 
 		Сферичні функції нормовані умовою:
 		\begin{equation*}
-			\int\limits_{0}^{\pi}\int\limits_{0}^{2\pi}|Y_{l,m}|^2\sin\theta d\theta d\phi = 1.
+			\int\limits_{0}^{\pi}\int\limits_{0}^{2\pi}|Y_l^m|^2\sin\theta d\theta d\phi = 1.
 		\end{equation*}
 	}
 
 	\only<3>{
-		Явний вигляд кількох сферичних функцій наведений в таблиці.
-		\begin{table}[htbp!]
-			\caption{Сферичні гармоніки \label{tabl:SpherHarm}}
-			\begin{tabularx}{\textwidth}{*3{>{\arraybackslash}X}}
-				\toprule \rowcolor{cyan!40}
-				$l$ & $m$     & $Y_{l,m}$                                                   \\ \midrule
-				$0$ & $0$     & $\sqrt{\frac{1}{4\pi}}$                                     \\ \midrule
-				$1$ & $0$     & $\sqrt{\frac{3}{4\pi}} \cos\theta$                          \\
-				$1$ & $\pm 1$ & $\sqrt{\frac{3}{8\pi}} \sin\theta e^{\pm i\phi}$            \\ \midrule
-				$2$ & $0$     & $\sqrt{\frac{5}{16\pi}} (1 -3 \cos^2\theta)$                \\
-				$2$ & $\pm 1$ & $\sqrt{\frac{15}{8\pi}} \cos\theta\sin\theta e^{\pm i\phi}$ \\
-				$2$ & $\pm 2$ & $\sqrt{\frac{15}{32\pi}} \sin^2\theta e^{\pm 2i\phi}$       \\ \bottomrule
-			\end{tabularx}
+		Явний вигляд кількох сферичних гармонік наведений в таблиці.
+		\begin{table}[htbp!]\small
+%			\caption{Сферичні гармоніки \label{tabl:SpherHarm}}
+            \begin{tblr}{
+                colspec={X[l, m]X[l, m]X},
+                rowsep = 0pt,
+                row{1} = {l, bg=cyan!50}
+            }
+            \toprule
+            $l$ & $m$     & $Y_l^m(\theta,\phi)$                                           \\
+            \midrule
+            $0$ & $0$     & $\sqrt{\frac{1}{4\pi}}$                                     \\
+            \midrule
+            $1$ & $0$     & $\sqrt{\frac{3}{4\pi}} \cos\theta$                          \\
+            $1$ & $1$     & $-\sqrt{\frac{3}{8\pi}} \sin\theta \, e^{i\phi}  $           \\
+            $1$ & $-1$    & $\sqrt{\frac{3}{8\pi}} \sin\theta \, e^{-i\phi}    $         \\
+            \midrule
+            $2$ & $0$     &$ \sqrt{\frac{5}{16\pi}} (3 \cos^2\theta - 1)    $            \\
+            $2$ & $1$     &$ -\sqrt{\frac{15}{8\pi}} \sin\theta \cos\theta \, e^{i\phi} $\\
+            $2$ & $-1$    &$ \sqrt{\frac{15}{8\pi}} \sin\theta \cos\theta \, e^{-i\phi} $\\
+            $2$ & $2$     &$ \sqrt{\frac{15}{32\pi}} \sin^2\theta \, e^{2 i\phi}       $\\
+            $2$ & $-2$    &$ \sqrt{\frac{15}{32\pi}} \sin^2\theta \, e^{-2 i\phi}      $\\
+            \bottomrule
+            \end{tblr}
 		\end{table}
 	}
 
@@ -412,25 +423,29 @@ $Ry = 1.77576096 \cdot 10^{7}$~1/м
 	\only<1>{
 		Гармоніка $Y_{1,0}$  є дійсною функцією косинуса. Косинус має максимальну величину при $\theta = 0$ і $\theta = \pi$, що співпадає з напрямком осі $OZ$ декартової системи координат, тому цю функцію зручно назвати $p_z$, виразивши її через декартову координату $z$:
 		\begin{equation*}
-			Y_{1,0} = \sqrt{\frac{3}{4\pi}} \cos\theta = \sqrt{\frac{3}{4\pi}} \frac{x}{r} = p_z,
+			Y_{1}^0 = \sqrt{\frac{3}{4\pi}} \cos\theta = \sqrt{\frac{3}{4\pi}} \frac{z}{r} = p_z,
 		\end{equation*}
-		оскільки $x = r\cos\theta$. Однак дві інші функції, які відповідають тому ж самому орбітальному числу $l = 2$, мають складний вираз, кожна з яких містить уявний компонент $e^{im\phi}$ і не відповідає якомусь визначеному напрямку.
+		оскільки $z = r\cos\theta$. Однак дві інші функції, які відповідають тому ж самому орбітальному числу $l = 2$, мають складний вираз, кожна з яких містить уявний компонент $e^{im\phi}$ і не відповідає якомусь визначеному напрямку.
 	}
-	\only<2>{
-		\begin{tabularx}{\textwidth}{l*1{>{\centering\arraybackslash}X}l}
-			\toprule\rowcolor{cyan!40}
-			Назва стану & Суперпозиція                                   & Значення                               \\
-			\midrule
-			$p_x          $       & $ \frac{1}{\sqrt{2}} \left( Y_{1, +1} + Y_{1, -1}\right) $ & $\sqrt{\frac{3}{16\pi}} \frac{x}{r}          $ \\
-			$p_y          $       & $ \frac{i}{\sqrt{2}} \left( Y_{1, +1} - Y_{1, -1}\right) $ & $\sqrt{\frac{3}{16\pi}} \frac{y}{r}          $ \\
-			$p_z          $       & $ Y_{1,0}                                                $ & $\sqrt{\frac{3}{4\pi}} \frac{z}{r}           $ \\ \midrule
-			$d_{x^2 - y^2}$       & $ \frac{1}{\sqrt{2}} \left( Y_{2, +2} + Y_{2, -2}\right) $ & $\sqrt{\frac{15}{64\pi}} \frac{x^2 - y^2}{r} $ \\
-			$d_{xy}       $       & $ \frac{-i}{\sqrt{2}} \left( Y_{2, +2} - Y_{2, -2}\right)$ & $\sqrt{\frac{15}{64\pi}} \frac{xy}{r^2}      $ \\
-			$d_{xz}       $       & $ \frac{-1}{\sqrt{2}} \left( Y_{2, +1} - Y_{2, -1}\right)$ & $\sqrt{\frac{15}{64\pi}} \frac{xz}{r^2}      $ \\
-			$d_{yz}       $       & $ \frac{i}{\sqrt{2}} \left( Y_{2, +1} + Y_{2, -1}\right) $ & $\sqrt{\frac{15}{64\pi}} \frac{yz}{r^2}      $ \\
-			$d_{z^2}      $       & $ Y_{2,0}                                                $ & $\sqrt{\frac{15}{64\pi}} \frac{z^2}{r^2}     $ \\
-			\bottomrule
-		\end{tabularx}
+	\only<2>{\small
+		\begin{tblr}{
+            colspec={X[l, m]X[l, m]X[l, m]},
+            row{1} = {c, m, bg=cyan!50},
+        }
+        \toprule
+        Назва стану & Суперпозиція & Значення \\
+        \midrule
+        $p_x$ & $\frac{1}{\sqrt{2}} \left( Y_1^{-1} - Y_1^{+1} \right)$ & $\sqrt{\frac{3}{4\pi}} \frac{x}{r}$ \\
+        $p_y$ & $\frac{i}{\sqrt{2}} \left( Y_1^{-1} + Y_1^{+1} \right)$ & $\sqrt{\frac{3}{4\pi}} \frac{y}{r}$ \\
+        $p_z$ & $Y_1^0$ & $\sqrt{\frac{3}{4\pi}} \frac{z}{r}$ \\
+        \midrule
+        $d_{x^2 - y^2}$ & $\frac{1}{\sqrt{2}} \left( Y_2^{+2} + Y_2^{-2}\right)$ & $\sqrt{\frac{15}{16\pi}} \frac{x^2 - y^2}{r^2}$ \\
+        $d_{xy}$ & $\frac{-i}{\sqrt{2}} \left( Y_2^{+2} - Y_2^{-2}\right)$ & $\sqrt{\frac{15}{16\pi}} \frac{xy}{r^2}$ \\
+        $d_{xz}$ & $\frac{-1}{\sqrt{2}} \left( Y_2^{+1} - Y_2^{-1}\right)$ & $\sqrt{\frac{15}{16\pi}} \frac{xz}{r^2}$ \\
+        $d_{yz}$ & $\frac{i}{\sqrt{2}} \left( Y_2^{+1} + Y_2^{-1}\right)$ & $\sqrt{\frac{15}{16\pi}} \frac{yz}{r^2}$ \\
+        $d_{z^2}$ & $Y_2^0$ & $\sqrt{\frac{5}{16\pi}} \frac{3z^2 - r^2}{r^2}$ \\
+        \bottomrule
+		\end{tblr}
 	}
 
 	\only<3>{%

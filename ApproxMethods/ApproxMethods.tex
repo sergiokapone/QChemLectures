@@ -1,0 +1,232 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+% !BIB program = biber
+
+\documentclass[]{beamer}
+\usetheme{QuantumChemistry}
+\usepackage{QuantumChemistry}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage{tabularray}
+
+
+\graphicspath{{pictures/}}
+
+\addbibresource{d:/Projects/LaTeX/QChem/Textbook2/QChemBook.bib}
+\AtEveryCitekey{\clearfield{url}\clearfield{doi}}
+\usetikzlibrary{chains, positioning}
+\usepackage{ragged2e}
+\usepackage{ifthen}
+
+\newcommand\ddfrac[2]{\frac{\displaystyle #1}{\displaystyle #2}}
+
+
+
+\newcommand\vertarrowbox[3][6ex]{%
+  \begin{array}[t]{@{}c@{}} #2
+  \left\uparrow\vcenter{\hrule height #1}\right.\kern-\nulldelimiterspace\\
+  \makebox[0pt]{\scriptsize#3}
+  \end{array}%
+}
+\usepackage{pdfpages}
+\title[Лекції з квантової хімії]{\huge\bfseries Наближені методи квантової механіки}
+\subtitle{Лекції з квантової хімії}
+\author{Пономаренко С. М.}
+\date{}
+\let\vphi\varphi
+\def\vxi{\vec{\xi}}
+\begin{document}
+%============================================================================
+\usebackgroundtemplate{
+	\tikz\node[opacity=0.15]{\includegraphics[width=\paperwidth,height=\paperheight]{background}};%
+}
+\begin{frame}
+	\titlepage
+\end{frame}
+%============================================================================
+
+% ============================== Слайд ## ===================================
+\begin{frame}{Навіщо наближені методи?}{}
+	\begin{alertblock}{}\justifying
+		У квантовій механіці часто неможливо знайти точний розв'язок рівняння Шредінгера для складних систем. Тому використовують наближені методи. Серед основних методів --- стаціонарна теорія збурень та варіаційні методи.
+	\end{alertblock}
+\end{frame}
+% ===========================================================================
+
+\section{Стаціонарна теорія збурень}
+
+% ============================== Слайд ## ===================================
+\begin{frame}[t]{Стаціонарна теорія збурень}{}
+	\begin{equation*}
+		\tcbhighmath{\hat{H}\psi_n = E_n\psi_n} \qquad \hat{H} = \tikzmarknode[minimum height=1em, blue]{H0}{\hat{H}^{(0)}} + \tikzmarknode[minimum height=1.2em, red]{V}{\hat{V}} \qquad  \tcbhighmath{\hat{H}^0\psi_n^{(0)} = E^{(0)}_n\psi_n^{(0)}}
+		\tikz[remember picture, overlay, >=latex]{
+			\draw[blue, ->] (H0.south) -- ++(-0.3,-.3) node[below, font=\scriptsize, text width= 1.5cm, align=center, text=blue] {нульове\\ наближення};
+			\draw[red, ->] (V.south) -- ++(+.3,-.3) node[below, font=\scriptsize, text width= 1.5cm, align=center, text=red] {оператор збурення};
+		}
+	\end{equation*}
+
+	\vspace*{2em}
+
+	\begin{overprint}\small
+		\onslide<1>
+		\begin{block}{}\justifying\small
+
+			Оператором збурення може бути частина оператора Гамільтона, яка не враховувалася в ідеалізованій задачі, або потенціальна енергія зовнішнього впливу (поля).
+
+		\end{block}
+
+		\begin{alertblock}{}\justifying\small
+
+			Завданням теорії збурень є відшукання формул, що визначають енергію і хвильові функції стаціонарних станів через відомі значення енергій $E^{(0)}_n$ і хвильових функцій $\psi_n^{(0)}$ <<незбуреної>> системи, що описується гамільтоніаном $\hat{H}^{(0)}$.
+
+		\end{alertblock}
+		\onslide<2>
+		\begin{block}{}
+			\textcolor{blue}{Перше} наближення теорії збурень:
+			\begin{equation*}
+				E_n = E_n^{(0)} + \bracket<\psi_n^{(0)}|\hat{V}|\psi_n^{(0)}>, \quad
+				\psi_n = \psi_n^{(0)} + \sum\limits_{\substack{m\\m \neq n}} \frac{\bracket<\psi_n^{(0)}|\hat{V}|\psi_m^{(0)}>}{E_n^{(0)} - E_m^{(0)}} \psi_m^{(0)}.
+			\end{equation*}
+
+			\textcolor{blue}{Друге} наближення теорії збурень:
+			\(
+			E_n = E_n^{(0)} + V_{nn}  + \sum\limits_{\stackrel{m}{m \neq n}}\frac{|V_{nm}|^2}{E^{(0)}_n - E^{(0)}_m} \quad
+			\)
+
+		\end{block}
+		\begin{block}{}\justifying\scriptsize
+			Умову застосовності теорії збурень:
+			\(
+			\bracket<\psi_n^{(0)}|\hat{V}|\psi_n^{(0)}> = V_{nn} \ll |E_n^{(0)} - E_m^{(0)}|,\ \text{для}\ n \neq m.
+			\)
+		\end{block}
+	\end{overprint}
+\end{frame}
+% ===========================================================================
+
+\section{Варіаційний метод}
+
+% ============================== Слайд ## ===================================
+\begin{frame}{Варіаційний принцип}{}
+	\begin{block}{}\justifying
+		Суть методу полягає у тому, щоб \alert{підібрати хвильову функцію} так, щоб енергія системи була мінімальною. Чим краще підібрана функція, тим ближчий результат до істинної енергії основного стану:
+
+    	\begin{equation*}
+			E[\psi]  = \bracket<{\psi}|{\hat{H}}|{\psi}> = \int \psi^* \hat{H} \psi d\xi, \quad \int \psi^*  \psi d\xi = 1.
+		\end{equation*}
+
+        \bigskip
+
+		Метод заснований на принципі, що \alert{енергія, обчислена з будь-якою пробною хвильовою функцією, завжди буде не нижчою за істинну енергію}:
+
+        \begin{equation*}
+            E_{\min}[\psi_\text{trial}] \geqslant E_\text{true}
+        \end{equation*}
+
+        \bigskip
+
+		Це дає можливість тестувати різні функції, змінюючи їхні параметри, щоб знайти найкраще наближення.
+	\end{block}
+\end{frame}
+% ===========================================================================
+
+
+% ============================== Слайд ## ===================================
+\begin{frame}[t]{Варіаційний принцип і рівняння Шредінгера}{}
+        Припустимо, що ми знаємо \alert{точну хвильову функцію} \(\psi\)
+	\begin{block}{}\justifying
+
+
+		\textbf{Як врахувати нормування:} вводимо множник Лагранжа $\lambda$:
+		\[
+			F[\psi] = \bracket<\psi|\hat{H}|\psi> - \lambda (\bracket<\psi|\psi>-1)
+		\]
+
+		\bigskip
+		\textbf{Мінімізуємо функціонал:}
+		\[
+			\delta F[\psi] = 0 \quad \Rightarrow \quad (\hat{H} - \lambda)\psi = 0
+		\]
+	\end{block}
+
+\begin{alertblock}{}
+    	Якщо ми знаємо точну функцію $\psi$ $\rightarrow$ отримуємо рівняння Шредінґера.
+
+        \medskip
+
+		\begin{center}
+			\alert{Зазвичай ми не знаємо точну функцію!}
+		\end{center}
+	\end{alertblock}
+\end{frame}
+% ===========================================================================
+
+\subsection{Метод Рітца}
+
+%============================================================================
+\begin{frame}[t]{Варіаційний метод Рітца}
+	Точна хвильова функція $\phi$ в загальному випадку \emphs{апроксимується} у вигляді \emphs{обмеженої лінійної комбінації} лінійно незалежних функцій (\emphs{які можуть бути і не ортонормованими}): $\chi_1$, $\chi_2$, $\ldots$ , $\chi_n$:
+	\begin{equation}\label{eq:basis}
+		\phi = \sum_{j = 1}^n c_j \chi_j,
+	\end{equation}
+	\begin{overprint}
+		\onslide<1>
+		коефіцієнти $c_j$ є параметрами, які визначаються шляхом мінімізації варіаційного інтеграла:
+		\begin{equation}\label{key}
+			E = \ddfrac{\int \phi^* \hat{H} \phi\, d\tau}{\int \phi^* \phi\, d\tau}.
+		\end{equation}
+		\onslide<2>
+		\begin{multline*}\label{}
+			\int \phi^* \hat{H} \phi\, d\tau = \int \sum_{j = 1}^n c_j^* \chi_j^* \hat{H} \sum_{k = 1}^n c_k \chi_k = \\ = \sum_{j = 1}^n c_j^* c_k \sum_{k = 1}^n \int \chi_j^* \hat{H} \chi_k\, d\tau = \sum_{j = 1}^n \sum_{k = 1}^n c_j^* c_k H_{jk}.
+		\end{multline*}
+		\onslide<3>
+		\begin{multline*}\label{}
+			\int \phi^*  \phi\, d\tau = \int \sum_{j = 1}^n c_j^* \chi_j^*  \sum_{k = 1}^n c_k \chi_k = \\ = \sum_{j = 1}^n c_j^* c_k \sum_{k = 1}^n \int \chi_j^*  \chi_k\, d\tau = \sum_{j = 1}^n \sum_{k = 1}^n c_j^* c_k S_{jk}.
+		\end{multline*}
+		де $S_{jk} = \int \chi_j^*  \chi_k\, d\tau $ --- інтеграли перекривання.
+		\onslide<4>
+		Інтеграл $W$
+		\begin{equation}\label{}
+			E = \ddfrac{\sum_{j = 1}^n \sum_{k = 1}^n c_j^* c_k H_{jk}}{\sum_{j = 1}^n \sum_{k = 1}^n c_j^* c_k S_{jk}}.
+		\end{equation}
+		є функцією від $n$ незалежних змінних $c_1$, $c_2$, $\ldots$, $c_n$:
+		\begin{equation*}\label{}
+			E = W(c_1, c_2, \ldots, c_n).
+		\end{equation*}
+		\onslide<5-7>
+		\begin{onlyenv}<5>
+			Умовою мінімуму у функції $W = W(c_1, c_2, \ldots, c_n)$ є:
+			\begin{equation*}\label{}
+				\frac{\partial E}{\partial c_i} = 0, \quad i = 1,2, \ldots, n,
+			\end{equation*}
+
+		\end{onlyenv}
+		\begin{onlyenv}<5-6>
+			Яка приводить до рівнянь, розв'язками яких є коефіцієнти $c_i$:
+			\begin{equation}\label{eq:eq_c}
+				\sum_{k = 1}^n (H_{ik} - S_{ik} W) c_k = 0, \quad i = 1,2, \ldots, n.
+			\end{equation}
+		\end{onlyenv}
+		\noindent\only<6>{Отримана система лінійних однорідних рівнянь має \emphs{нетривіальні розв'язки} тільки тоді, коли її \emphs{детермінант дорівнює нулю}:}
+		\begin{onlyenv}<6-7>
+			\begin{equation}\label{}
+				\mathrm{det}(H_{ij} - S_{ij}W) = 0.
+			\end{equation}
+		\end{onlyenv}
+		\begin{onlyenv}<7>
+			Розв'язком цього характеристичного рівняння знаходять $n$ коренів $W_1$, $W_2$, $\ldots$, $W_n$:
+			\begin{equation*}
+				E_1 \le E_2 \le \ldots \le E_n.
+			\end{equation*}
+			Найменше значення $W_1$ є оцінкою зверзу енергії основного стану, решта коренів в рамках варіаційного методу Рітца є оцінками зверху для енергії відповідних \emphs{збуджених станів}.
+
+			%			Для знаходження хвильової функції основного стану необхідно найменший корінь рівняння підставити в систему рівнянь~\eqref{eq:eq_c} і знайти коефіцієнти $c_i$. Аналогічно знаходять хвильові функції збуджених станів.
+		\end{onlyenv}
+	\end{overprint}
+\end{frame}
+%============================================================================
+
+\section{Метод Самоузгодженого поля}
+
+\end{document}
