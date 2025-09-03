@@ -1,0 +1,392 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+% !BIB program = biber
+
+\documentclass{article}
+
+\usepackage[fontsize=14pt]{fontsize}
+\usepackage{fontsetup}
+\usepackage[english, ukrainian]{babel}
+
+\usepackage[autolang=other]{biblatex}
+
+\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{indentfirst}
+
+\usepackage[most]{tcolorbox}
+\tcbset{highlight math style={enhanced,
+  colframe=red,colback=white,arc=0pt,boxrule=1pt}}
+\tcbset{
+    mybox/.style={
+        enhanced,
+        colback=gray!5,
+        fonttitle=\bfseries,
+        sharp corners,
+        boxrule=0pt,
+        frame empty
+    }
+}
+\usepackage{subcaption}
+\captionsetup[subfigure]{justification=centering}
+\usepackage{hyperref}
+
+\usepackage{titlesec}
+\titlelabel{\thetitle.\space}
+\usepackage{minted}
+\usepackage{tikz, calc}
+\usetikzlibrary{backgrounds}
+
+\usepackage{enumitem}
+
+
+\addbibresource{d:/Projects/LaTeX/QChem/A_Documents/Syllabus_QChem/Syllabus_QChem.bib}
+
+%%                                                                        %%
+%%============================= Геометрія сторінки =======================%%
+%%                                                                        %%
+\usepackage[%
+	a4paper,%
+	footskip=1cm,%
+	headsep=0.3cm,%
+	top=2cm, %поле сверху
+	bottom=2cm, %поле снизу
+	left=2cm, %поле ліворуч
+	right=2cm, %поле праворуч
+    ]{geometry}
+%%                                                                        %%
+%%============================== Інтерліньяж  ============================%%
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepgfplotslibrary{units}
+\pgfplotsset{compat=newest}
+\usepackage{pgfplotstable}
+\usepgfplotslibrary{groupplots}
+\usepackage{xifthen}
+
+
+
+\def\C#1{{\color{teal}#1}}
+\def\a#1{{\color{magenta}#1}}
+\def\sgto#1{\left(\frac{2\cdot\a{#1}}{\pi}\right)^{3/4} e^{-\a{#1}\cdot r^2}}
+\NewDocumentCommand{\He}{}{
+\tikz[baseline=-5pt]{
+    \coordinate (dv) at (0,0);
+    \coordinate (base) at (50pt, 0pt);
+    \coordinate (height) at (0pt,50pt);
+    \coordinate (diag) at ($(base)+(height)$);
+    \path[draw=teal!80!black, rounded corners=2pt, fill=teal, thick] ($(dv)-.5*(diag)$) rectangle +(diag);
+    \node[white] at (dv) {\sffamily\huge He};
+    \node[white, inner sep=2pt] (dvtext) at ($(dv)-.5*(height)$) [anchor=south] {\sffamily\tiny Helium};
+    \node[white, inner sep=2pt] (dvnum) at ($(dv)+.5*(height)-.5*(base)$) [anchor=north west] {\sffamily\tiny 2};
+    \node[white, inner sep=2pt] (elestruct) at ($(dv)+.5*(height)+.1*(base)$) [anchor=north west] {\sffamily\tiny $1s^2$};
+}
+}
+
+\title{\bfseries Процедура розв'язку рівнянь Хартрі-Фока для атома \He}
+\date{}
+
+\begin{document}
+\maketitle
+
+
+\section{Рівняння Хартрі-Фока-Рутаана}
+
+\begin{equation}\label{eq:HFR}
+\sum_{s=1}^{b}c_{si}(F_{rs}-\varepsilon_{i}S_{rs}) =0,\qquad r=1,2,\ldots,b,
+\end{equation}
+де
+\begin{equation}\label{eq:Fock}
+F_{rs} =\langle\chi_{r}|\hat{F}|\chi_{s}\rangle,\qquad S_{rs}= \langle\chi_{r}|\chi_{s}\rangle
+\end{equation}
+
+
+Рівняння \eqref{eq:HFR} утворюють набір з \(b\) одночасних лінійних однорідних рівнянь з \(b\) невідомими \(c_{si}, s=1,2,\ldots,b\). Для нетривіального розв'язку має виконуватися умова
+
+\begin{equation}\label{eq:nontriv}
+\det(F_{rs}-\varepsilon_{i}S_{rs})\,=\,0
+\end{equation}
+
+
+Це секулярне рівняння, корені якого дають орбітальні енергії \(\varepsilon_{i}\). Рівняння \eqref{eq:HFR} мають бути розв'язані ітераційним процесом, оскільки інтеграли \(F_{rs}\) залежать від орбіталей \(\phi_{i}\) (через залежність \(\hat{F}\) від \(\phi_{i}\)), які, у свою чергу, залежать від невідомих коефіцієнтів \(c_{si}\).
+
+
+\section{Матриці}
+
+
+
+\subsection{Елементи матриці Фока}
+
+Для розв'язання рівнянь Рутаана \eqref{eq:HFR} спочатку необхідно виразити елементи матриці Фока (інтеграли) \(F_{rs}\) через базисні функції \(\chi\). Оператор Фока \(\hat{F}\) заданий (14.26), тому
+
+\begin{equation*}
+F_{rs} = \left\langle \chi_{r}(1) \middle| \hat{F}(1) \middle| \chi_{s}(1) \right\rangle
+\end{equation*}
+
+\begin{equation*}
+F_{rs} = \left\langle \chi_{r}(1) \middle| \hat{H}^{\text{core}}(1) \middle| \chi_{s}(1) \right\rangle + \sum_{j=1}^{n/2} \left[ 2\left\langle \chi_{r}(1) \middle| \hat{J}_{j}(1)\chi_{s}(1) \right\rangle - \left\langle \chi_{r}(1) \middle| \hat{K}_{j}(1)\chi_{s}(1) \right\rangle \right]
+\end{equation*}
+
+
+
+
+\begin{equation*}
+\hat{J}_{j}(1)\chi_{s}(1) = \chi_{s}(1)\int\frac{\phi_{j}^{*}(2)\phi_{j}(2)}{r_{12}}\,dv_{2} = \chi_{s}(1)\sum_{t}\sum_{u}c_{tj}^{*}c_{uj}\int\frac{\chi_{t}^{*}(2)\chi_{u}(2)}{r_{12}}\,dv_{2}
+\end{equation*}
+
+Множення на \(\chi_{r}^{*}(1)\) та інтегрування за координатами електрона 1 дає
+
+\begin{equation*}
+\left\langle \chi_{r}(1) \middle| \hat{J}_{j}(1)\chi_{s}(1) \right\rangle = \sum_{t}\sum_{u}c_{tj}^{*}c_{uj}\iint\frac{\chi_{r}^{*}(1)\chi_{s}(1)\chi_{t}^{*}(2)\chi_{u}(2)}{r_{12}}\,dv_{1}\,dv_{2}
+\end{equation*}
+
+\begin{equation}\label{eq:14.38}
+\left\langle \chi_{r}(1) \middle| \hat{J}_{j}(1)\chi_{s}(1) \right\rangle = \sum_{t=1}^{b}\sum_{u=1}^{b}c_{tj}^{*}c_{uj}(rs\,|\,tu)
+\end{equation}
+де \textbf{двоелектронний інтеграл відштовхування} \((rs\,|\,tu)\) визначено як
+
+\begin{equation}\label{eq:14.39}
+(rs\,|\,tu) \equiv \iint \frac{\chi_{r}^{*}(1)\chi_{s}(1)\chi_{t}^{*}(2)\chi_{u}(2)}{r_{12}}\,dv_{1}\,dv_{2}
+\end{equation}
+
+
+Широко використовуване позначення \eqref{eq:14.39} не слід сприймати як інтеграл перекривання. Використовуються інші позначення для інтегралів електронного відштовхування, деякі з яких взаємно суперечливі, тому завжди варто перевіряти визначення автора.
+
+Аналогічно:
+
+\begin{equation}\label{eq:14.40}
+\left\langle \chi_{r}(1) \middle| \hat{K}_{j}(1)\chi_{s}(1) \right\rangle = \sum_{t=1}^{b}\sum_{u=1}^{b}c_{tj}^{*}c_{uj}(ru\,|\,ts)
+\end{equation}
+
+
+Підставляючи \eqref{eq:14.40} та \eqref{eq:14.38} в \eqref{eq:Fock} та змінюючи порядок підсумовування, отримуємо бажаний вираз для \(F_{rs}\) через інтеграли за базисними функціями \(\chi\):
+
+\[
+F_{rs} = H^{\text{core}}_{rs} + \sum_{t=1}^{b}\sum_{u=1}^{b}\sum_{j=1}^{n/2}c_{tj}^{*}c_{uj}\left[2(rs\,|\,tu) - (ru\,|\,ts)\right]
+\]
+
+\begin{equation}\label{eq:14.41}
+F_{rs} = H^{\text{core}}_{rs} + \sum_{t=1}^{b}\sum_{u=1}^{b}P_{tu}\left[(rs\,|\,tu) - \tfrac{1}{2}(ru\,|\,ts)\right]
+\end{equation}
+
+\begin{equation}\label{eq:14.42}
+P_{tu} \equiv 2\sum_{j=1}^{n/2}c_{tj}^{*}c_{uj}, \quad t = 1, 2, \ldots, b, \quad u = 1, 2, \ldots, b
+\end{equation}
+
+
+\[
+H^{\text{core}}_{rs} \equiv \left\langle \chi_{r}(1) \middle| \hat{H}^{\text{core}}(1) \middle| \chi_{s}(1) \right\rangle
+\]
+
+Величини \(P_{tu}\) називаються \textbf{елементами матриці густини} або \textit{елементами матриці заряду, порядку зв'язку}. [Деякі дослідники використовують визначення \(P_{tu} \equiv \sum_{j}c_{tj}^{*}c_{uj}\).] Для електронної густини ймовірності \(\rho\) дає для замкнено-оболонкової молекули:
+
+\begin{equation}\label{eq:DencityMatrix}
+\rho = 2\sum_{j=1}^{n/2}\phi_{j}^{*}\phi_{j} = 2\sum_{r=1}^{b}\sum_{s=1}^{b}\sum_{j=1}^{n/2}c_{rj}^{*}c_{sj}\chi_{r}^{*}\chi_{s} = \sum_{r=1}^{b}\sum_{s=1}^{b}P_{rs}\chi_{r}^{*}\chi_{s}
+\end{equation}
+
+Виражаємо енергію Хартрі-Фока через інтеграли за базисними функціями \(\chi\):
+
+\[
+E_{\text{HF}} = \sum_{i=1}^{n/2}\varepsilon_{i} + \sum_{i=1}^{n/2}H^{\text{core}}_{ii} + V_{NN}
+\]
+
+Маємо:
+
+\[
+H^{\text{core}}_{ii} = \left\langle \phi_{i} \middle| \hat{H}^{\text{core}} \middle| \phi_{i} \right\rangle = \sum_{r}\sum_{s}c_{ri}^{*}c_{si}\left\langle \chi_{r} \middle| \hat{H}^{\text{core}} \middle| \chi_{s} \right\rangle = \sum_{r}\sum_{s}c_{ri}^{*}c_{si}H^{\text{core}}_{rs}
+\]
+
+\[
+E_{\text{HF}} = \sum_{i=1}^{n/2}\varepsilon_{i} + \sum_{r}\sum_{s}\sum_{i=1}^{n/2}c_{ri}^{*}c_{si}H^{\text{core}}_{rs} + V_{NN}
+\]
+
+\begin{equation}\label{eq:14.44}
+E_{\text{HF}} = \sum_{i=1}^{n/2}\varepsilon_{i} + \frac{1}{2}\sum_{r=1}^{b}\sum_{s=1}^{b}P_{rs}H^{\text{core}}_{rs} + V_{NN}
+\end{equation}
+
+
+\subsection{Альтернативний вираз для \(E_{\text{HF}}\)}
+
+Корисним є альтернативний вираз для \(E_{\text{HF}}\). Множення \(\hat{F}\phi_{i} = \varepsilon_{i}\phi_{i}\) [рівн. (14.25)] на \(\phi_{i}^{*}\) та інтегрування дає \(\varepsilon_{i} = \left\langle \phi_{i} \middle| \hat{F} \middle| \phi_{i} \right\rangle\). Підстановка \(\phi_{i} = \sum_{t=1}^{b}c_{ti}\chi_{t}\) [рівн. (14.33)] дає \(\varepsilon_{i} = \sum_{r}\sum_{s}c_{ri}^{*}c_{si}\left\langle \chi_{r} \middle| \hat{F} \middle| \chi_{s} \right\rangle = \sum_{r}\sum_{s}c_{ri}^{*}c_{si}F_{rs}\). Перша сума в (14.44) стає \(\sum_{i}\varepsilon_{i} = \sum_{r}\sum_{s}\sum_{i}c_{ri}^{*}c_{si}F_{rs} = \frac{1}{2}\sum_{r}\sum_{s}P_{rs}F_{rs}\), де було використано визначення \eqref{eq:14.42} для \(P_{rs}\). Рівняння \eqref{eq:14.44} набуває вигляду
+
+\begin{equation}\label{eq:14.45}
+E_{\text{HF}} = \frac{1}{2}\sum_{r=1}^{b}\sum_{s=1}^{b}P_{rs}(F_{rs} + H^{\text{core}}_{rs}) + V_{NN}
+\end{equation}
+
+яке виражає \(E_{\text{HF}}\) для замкнено-оболонкової молекули через елементи матриці густини, матриці Фока та матриці core-Гамільтоніана, обчислені з базисними функціями \(\chi_{r}\).
+
+
+\section{SFC процедура}
+
+Виконаємо SCF-розрахунок для основного стану атома гелію, використовуючи базисний набір з двох STO $1s$ з орбітальними експонентами $\xi_{1}=1.45$ та $\xi_{2}=2.91$. [Методом проб і помилок було визначено, що це оптимальні значення $\zeta$ для цього базисного набору; див. C. Roetti та E. Clementi, \textit{J. Chem. Phys.}, \textbf{60}, 4725 (1974).]
+
+Нормовані базисні функції (STO-орбіталі) мають вигляд (в атомних одиницях):
+%
+\begin{equation}\label{eq:STOs}
+\chi_{1}=2\xi_{1}^{3/2}e^{-\zeta_{1}r}Y_{0}^{0},\qquad\chi_{2}=2\xi_{2}^{3/2}e^{-\zeta_{2}r}Y_{0}^{0},\qquad\xi_{1}=1.45,\qquad\xi_{2}=2.91
+\end{equation}
+
+
+Для розв'язання рівнянь Рутаана \eqref{eq:HFR} нам потрібні інтеграли $F_{rs}$ та $S_{rs}$. Інтеграли перекривання $S_{rs}$ дорівнюють
+\begin{align*}
+S_{11} &= \langle \chi_{1} | \chi_{1} \rangle = 1, \qquad S_{22} = \langle \chi_{2} | \chi_{2} \rangle = 1 \\
+S_{12} &= S_{21} = \langle \chi_{1} | \chi_{2} \rangle = 4\xi_{1}^{3/2}\xi_{2}^{3/2}\int_{0}^{\infty}e^{-(\zeta_{1}+\xi_{2})r}r^{2}  dr = \frac{8\xi_{1}^{3/2}\xi_{2}^{3/2}}{(\xi_{1}+\xi_{2})^{3}} = 0.8366.
+\end{align*}
+%де було використано інтеграл з Додатку (A.8).
+
+Інтеграли $F_{rs}$ задаються \eqref{eq:14.41} та залежать від $H_{rs}^{\text{core}}$, $P_{tu}$, та $(rs | tu)$.  $\hat{H}^{\text{core}} = -\frac{1}{2}\nabla^{2} - 2/r = -\frac{1}{2}\nabla^{2} - Z/r + (Z-2)/r$ (де $Z=2$ для He).
+% Інтеграли $H_{rs}^{\text{core}}$ обчислюються так само, як і подібні інтеграли у варіаційному розгляді He у Розділі 9.4.
+ Знаходимо
+\begin{align*}
+H_{11}^{\text{core}} &= \langle \chi_{1} | \hat{H}^{\text{core}} | \chi_{1} \rangle = -\tfrac{1}{2}\xi_{1}^{2} + (\xi_{1}-2)\xi_{1} = \tfrac{1}{2}\xi_{1}^{2} - 2\xi_{1} = -1.8488 \\
+H_{22}^{\text{core}} &= \tfrac{1}{2}\xi_{2}^{2} - 2\xi_{2} = -1.5860 \\
+H_{12}^{\text{core}} &= H_{21}^{\text{core}} = \langle \chi_{1} | \hat{H}^{\text{core}} | \chi_{2} \rangle = -\tfrac{1}{2}\xi_{2}^{2}S_{12} + \frac{4(\xi_{2}-2)\xi_{1}^{3/2}\xi_{2}^{3/2}}{(\xi_{1}+\xi_{2})^{2}} \\
+H_{12}^{\text{core}} &= H_{21}^{\text{core}} = \frac{\xi_{1}^{3/2}\xi_{2}^{3/2}(4\xi_{1}\xi_{2} - 8\xi_{1} - 8\xi_{2})}{(\xi_{1}+\xi_{2})^{3}} = -1.8826
+\end{align*}
+
+Багато з інтегралів електронної взаємодії $(rs | tu)$ є рівними між собою. Для дійсних базисних функцій можна показати, що:
+\begin{equation}\label{eq:14.47}
+(rs | tu) = (sr | tu) = (rs | ut) = (sr | ut) = (tu | rs) = (ut | rs) = (tu | sr) = (ut | sr)
+\end{equation}
+
+
+Інтеграли електронної взаємодії обчислюються з використанням розкладу $1/r_{12}$:
+\begin{align*}
+(11 | 11) &= \frac{5}{8}\xi_{1} = 0.9062, \qquad (22 | 22) = \frac{5}{8}\xi_{2} = 1.8188 \\
+(11 | 22) &= (22 | 11) = (\xi_{1}^{4}\xi_{2} + 4\xi_{1}^{3}\xi_{2}^{2} + \xi_{1}\xi_{2}^{4} + 4\xi_{1}^{2}\xi_{2}^{3})/(\xi_{1}+\xi_{2})^{4} = 1.1826 \\
+(12 | 12) &= (21 | 12) = (12 | 21) = (21 | 21) = 20\xi_{1}^{3}\xi_{2}^{3}/(\xi_{1}+\xi_{2})^{5} = 0.9536 \\
+(11 | 12) &= (11 | 21) = (12 | 11) = (21 | 11) = \frac{16\xi_{1}^{9/2}\xi_{2}^{3/2}}{(2\xi_{1}+\xi_{2})^{3}}\left[\frac{12\xi_{1}+8\xi_{2}}{(\xi_{1}+\xi_{2})^{2}} + \frac{9\xi_{1}+\xi_{2}}{2\xi_{1}^{2}}\right] = 0.9033 \\
+(12 | 22) &= (22 | 12) = (21 | 22) = (22 | 21) = \text{вираз для } (11 | 12)\\
+& \text{ з індексом 1 та 2, поміняними місцями} = 1.2980
+\end{align*}
+
+Для початку розрахунку нам потрібен початкове наближення для коефіцієнтів розкладу AO основного стану $c_{si}$ в \eqref{eq:DencityMatrix}, щоб ми могли отримати початкову оцінку елементів матриці густини $P_{tu}$ в \eqref{eq:14.41}. Оптимальна орбітальна експонента для AO гелію, яка складається з одного STO $1s$, дорівнює $27/16 = 1.6875$. Оскільки орбітальна експонента $\xi_{1}$ набагато ближча до $1.6875$, ніж $\xi_{2}$, ми очікуємо, що коефіцієнт при $\chi_{1}$ в $\phi_{1} = c_{11}\chi_{1} + c_{21}\chi_{2}$ буде значно більшим за коефіцієнт при $\chi_{2}$. Візьмемо як початкове наближення $c_{11}/c_{21} \approx 2$. [Більш загальний метод отримання початкового наближення для коефіцієнтів $c_{si}$ полягає в тому, щоб знехтувати інтегралами електронної взаємодії в \eqref{eq:14.41} та наблизити $F_{rs}$ у секулярному рівнянні \eqref{eq:nontriv} як $F_{rs} \approx H^{\text{core}}_{rs}$; ми тоді розв'язуємо \eqref{eq:nontriv} та \eqref{eq:Fock}. Це дало б $c_{11}/c_{21} \approx 1.5$ ] Умова нормування $\int|\phi_{1}|^{2}  d\tau = 1$ дає для дійсних коефіцієнтів:
+\begin{equation}\label{eq:14.48}
+c_{21} = (1 + k^{2} + 2k S_{12})^{-1/2}, \qquad \text{де } k = c_{11}/c_{21}
+\end{equation}
+
+
+Підстановка $k = 2$ та $S_{12} = 0.8366$ дає $c_{21} \approx 0.3461$ та $c_{11} \approx 2c_{21} = 0.6922$.
+
+При $n = 2$ (кількість електронів) та $b = 2$ (кількість базисних функцій), рівн. \eqref{eq:14.42} дає
+\begin{equation}\label{eq:14.49}
+P_{11} = 2c_{11}^{*}c_{11}, \qquad P_{12} = 2c_{11}^{*}c_{21}, \qquad P_{21} = P_{12}^{*}, \qquad P_{22} = 2c_{21}^{*}c_{21}
+\end{equation}
+
+
+Початкове наближення $c_{11} \approx 0.6922$, $c_{21} \approx 0.3461$ дає як початкові елементи матриці густини:
+\begin{equation*}
+P_{11} \approx 0.9583,  P_{12} = P_{21} \approx 0.4791,  P_{22} \approx 0.2396
+\end{equation*}
+
+Елементи матриці Фока знаходяться з \eqref{eq:14.41} при $b = 2$. Використовуючи  \eqref{eq:14.47} та $P_{12} = P_{21}$ для дійсних функцій, отримуємо
+\begin{align*}
+F_{11} &= H^{\text{core}}_{11} + \tfrac{1}{2}P_{11}(11|11) + P_{12}(11|12) + P_{22}[(11|22) - \tfrac{1}{2}(12|21)] \\
+F_{12} &= F_{21} = H^{\text{core}}_{12} + \tfrac{1}{2}P_{11}(12|11) + P_{12}[\tfrac{3}{2}(12|12) - \tfrac{1}{2}(11|22)] + \tfrac{1}{2}P_{22}(12|22) \\
+F_{22} &= H^{\text{core}}_{22} + P_{11}[(22|11) - \tfrac{1}{2}(21|12)] + P_{12}(22|12) + \tfrac{1}{2}P_{22}(22|22)
+\end{align*}
+
+Підстановка значень інтегралів $H^{\text{core}}_{rs}$ та $(rs | tu)$, перелічених раніше, дає:
+\begin{align}
+F_{11} &= -1.8488 + 0.4531P_{11} + 0.9033P_{12} + 0.7058P_{22}  \label{eq:14.50} \\
+F_{12} &= F_{21} = -1.8826 + 0.4516P_{11} + 0.8391P_{12} + 0.6490P_{22}  \label{eq:14.51} \\
+F_{22} &= -1.5860 + 0.7058P_{11} + 1.2980P_{12} + 0.9094P_{22}  \label{eq:14.52}
+\end{align}
+
+Підстановка початкового наближення для $P_{tu}$ в \eqref{eq:14.50} -- \eqref{eq:14.52} дає як початкові оцінки елементів матриці $F_{rs}$:
+\begin{align*}
+F_{11} &\approx -0.813, & F_{12} = F_{21} &\approx -0.892, & F_{22} &\approx -0.070
+\end{align*}
+
+Початкова оцінка секулярного рівняння $\det(F_{rs} - S_{rs}\varepsilon_{i}) = 0$ має вигляд
+\[
+\begin{vmatrix}
+-0.813 - \varepsilon_{i} & -0.892 - 0.8366\varepsilon_{i} \\
+-0.892 - 0.8366\varepsilon_{i} & -0.070 - \varepsilon_{i}
+\end{vmatrix} = 0
+\]
+\[
+0.3001\varepsilon_{i}^{2} - 0.609\varepsilon_{i} - 0.739 = 0
+\]
+\[
+\varepsilon_{1} = -0.854, \quad \varepsilon_{2} = 2.885
+\]
+
+Підстановка нижнього кореня $\varepsilon_{1}$ у рівняння Рутаана \eqref{eq:HFR} для $r=2$ дає
+\begin{align*}
+c_{11}(F_{11} - \varepsilon_{i}S_{11}) + c_{21}(F_{12} - \varepsilon_{i}S_{12}) &= 0 \\
+c_{11}(F_{12} - \varepsilon_{i}S_{12}) + c_{21}(F_{22} - \varepsilon_{i}S_{22}) &= 0
+\end{align*}
+Використовуючи друге рівняння:
+\[
+(-0.892 - (-0.854)\cdot 0.8366)c_{11} + (-0.070 - (-0.854)\cdot 1)c_{21} = 0
+\]
+\[
+-0.177c_{11} + 0.784c_{21} = 0
+\]
+\[
+c_{11}/c_{21} = 4.42
+\]
+
+Підстановка $k = 4.42$ та $S_{12} = 0.8366$ в умову нормування \eqref{eq:14.48} дає
+\[
+c_{21} = 0.189, \quad c_{11} = k c_{21} = 0.836
+\]
+
+Підстановка цих уточнених коефіцієнтів у \eqref{eq:14.49} дає уточнені елементи матриці густини
+\begin{align*}
+P_{11} &= 1.398, & P_{12} = P_{21} &= 0.316, & P_{22} &= 0.071
+\end{align*}
+
+Підстановка цих уточнених $P_{tu}$ у \eqref{eq:14.50} -- \eqref{eq:14.52} дає уточнені значення $F_{rs}$
+\begin{align*}
+F_{11} &= -0.880, & F_{12} = F_{21} &= -0.940, & F_{22} &= -0.1246
+\end{align*}
+
+Уточнене секулярне рівняння має вигляд
+\[
+\begin{vmatrix}
+-0.880 - \varepsilon_{i} & -0.940 - 0.8366\varepsilon_{i} \\
+-0.940 - 0.8366\varepsilon_{i} & -0.1246 - \varepsilon_{i}
+\end{vmatrix} = 0
+\]
+\[
+\varepsilon_{1} = -0.918, \quad \varepsilon_{2} = 2.810
+\]
+
+Уточнене значення $\varepsilon_{1}$ дає $c_{11}/c_{21} = 4.61$ і
+\[
+c_{11} = 0.842, \quad c_{21} = 0.183
+\]
+
+Ще один цикл розрахунку дає
+\begin{align*}
+P_{11} &= 1.418, & P_{12} = P_{21} &= 0.308, & P_{22} &= 0.067 \\
+F_{11} &= -0.881, & F_{12} = F_{21} &= -0.940, & F_{22} &= -0.1245
+\end{align*}
+(14.53)
+\begin{align*}
+\varepsilon_{1} &= -0.918, & \varepsilon_{2} &= 2.809
+\end{align*}
+(14.54)
+\begin{align*}
+c_{11} &= 0.842, & c_{21} &= 0.183
+\end{align*}
+
+Ці останні значення $c$ збігаються з значеннями з попереднього циклу, отже, розрахунок зійшовся, і ми закінчили. SCF AO основного стану He для цього базисного набору
+\[
+\phi_{1} = 0.842\chi_{1} + 0.183\chi_{2}
+\]
+
+SCF енергія знаходиться з (14.44) при $n = 2$ та $b = 2$ як
+\begin{align*}
+E_{\text{HF}} &= \varepsilon_{1} + \tfrac{1}{2}\sum_{r=1}^{2}\sum_{s=1}^{2} P_{rs} H^{\text{core}}_{rs} \\
+&= -0.918 + \tfrac{1}{2}[1.418(-1.8488) + 2(0.308)(-1.8826) + 0.067(-1.5860)] \\
+&= -2.862 \text{ гартрі} = -77.9 \text{ еВ}
+\end{align*}
+
+Більш точний розрахунок з $\zeta_{1} = 1.45363$ та $\zeta_{2} = 2.91093$ дає SCF енергію $-2.8616726$ гартрі, порівняно з граничною енергією Хартрі-Фока $-2.8616799$ гартрі, знайденою з п'ятьма базисними функціями [C. Roetti та E. Clementi, \textit{J. Chem. Phys.}, \textbf{60}, 4725 (1974)].
+
+\end{document}
