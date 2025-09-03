@@ -1,4 +1,6 @@
 _minted*/
+.ipynb_checkpoints/
+.virtual_documents/
 *.aux
 *.synctex.gz
 *.log
