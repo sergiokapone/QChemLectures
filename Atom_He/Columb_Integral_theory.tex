@@ -1,0 +1,320 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+
+\documentclass{article}
+\usepackage[fontsize=14pt]{fontsize}
+\usepackage{fontsetup}
+\usepackage[english, russian, ukrainian]{babel}
+\usepackage{microtype}
+
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usetikzlibrary{3d}
+
+
+
+\usepackage[%
+	a4paper,%
+	footskip=1cm,%
+	headsep=0.3cm,%
+	top=2cm, %поле сверху
+	bottom=2cm, %поле снизу
+	left=2cm, %поле ліворуч
+	right=2cm, %поле праворуч
+    ]{geometry}
+
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{floatflt}
+
+\usepackage[%colorlinks=true,
+	%urlcolor = blue, %Colour for external hyperlinks
+	%linkcolor  = malina, %Colour of internal links
+	%citecolor  = green, %Colour of citations
+	bookmarks = true,
+	bookmarksnumbered=true,
+	unicode,
+	linktoc = all,
+	hypertexnames=false,
+	pdftoolbar=false,
+	pdfpagelayout=TwoPageRight,
+	pdfauthor={Ponomarenko S.M. aka sergiokapone},
+	pdfdisplaydoctitle=true,
+	pdfencoding=auto
+	]%
+	{hyperref}
+
+
+\usepackage{amsmath}
+\usepackage{titlesec}
+\titlelabel{\thetitle.\space}
+
+
+\NewDocumentCommand{\He}{}{
+\tikz[baseline=-5pt]{
+    \coordinate (dv) at (0,0);
+    \coordinate (base) at (50pt, 0pt);
+    \coordinate (height) at (0pt,50pt);
+    \coordinate (diag) at ($(base)+(height)$);
+    \path[draw=teal!80!black, rounded corners=2pt, fill=teal, thick] ($(dv)-.5*(diag)$) rectangle +(diag);
+    \node[white] at (dv) {\sffamily\huge He};
+    \node[white, inner sep=2pt] (dvtext) at ($(dv)-.5*(height)$) [anchor=south] {\sffamily\tiny Helium};
+    \node[white, inner sep=2pt] (dvnum) at ($(dv)+.5*(height)-.5*(base)$) [anchor=north west] {\sffamily\tiny 2};
+    \node[white, inner sep=2pt] (elestruct) at ($(dv)+.5*(height)+.1*(base)$) [anchor=north west] {\sffamily\tiny $1s^2$};
+}
+}
+
+\title{\bfseries \Large Кулонівський інтеграл для $1s$-стану \He}
+\date{}
+\begin{document}
+\maketitle
+
+\section{Суть задачі}
+
+
+
+
+Розглянемо двоелектронну систему в полі ядра. Загальний гамільтоніан у
+атомних одиницях має вигляд:
+\begin{equation}
+\hat{H} = \hat{h}(1) + \hat{h}(2) + \frac{1}{r_{12}}, \qquad
+\hat{h}(i) = -\tfrac{1}{2}\nabla_i^2 - \frac{Z}{r_i},
+\end{equation}
+де $r_{12}=|\mathbf r_1 - \mathbf r_2|$~--- відстань між електронами.
+Останній доданок $\tfrac{1}{r_{12}}$ відповідає за кулонівське
+взаємодіювання електрон--електрон.
+
+У наближенні незалежних орбіталей просторову хвильову функцію
+записують як добуток
+\begin{equation}
+\Phi(\mathbf r_1,\mathbf r_2) = \psi_a(\mathbf r_1)\,\psi_b(\mathbf r_2).
+\end{equation}
+Тоді математичне сподівання кулонівського оператора має вигляд
+\begin{equation}
+\langle \Phi | \tfrac{1}{r_{12}} | \Phi \rangle =
+\iint \psi_a^*(\mathbf r_1)\psi_b^*(\mathbf r_2)\,
+\frac{1}{r_{12}}\,
+\psi_a(\mathbf r_1)\psi_b(\mathbf r_2)\,dV_1\,dV_2.
+\end{equation}
+
+Цей вираз називається \emph{прямим кулонівським інтегралом} і позначається $J_{ab}$:
+\begin{equation}
+J_{ab} = \iint \frac{|\psi_a(\mathbf r_1)|^2 \, |\psi_b(\mathbf r_2)|^2}{r_{12}}
+\, dV_1\, dV_2.
+\end{equation}
+
+У випадку, коли обидва електрони перебувають в одній і тій самій
+орбіталі $1s$, тобто $\psi_a=\psi_b=\Psi_{100}$, отримуємо формулу
+\begin{equation}
+J = \iint \frac{|\Psi_{100}(\mathbf r_1)|^2\,|\Psi_{100}(\mathbf r_2)|^2}
+{|\mathbf r_1-\mathbf r_2|}\, dV_1\,dV_2,
+\label{eq:J_def}
+\end{equation}
+що й є предметом подальшого розгляду.
+
+%Потрібно знайти кулонівський інтеграл для електрона в стані $1s$:
+%\begin{equation}
+%J = \iint \frac{|\Psi_{100}(\mathbf r_1)|^2\,|\Psi_{100}(\mathbf r_2)|^2}{|\mathbf r_1-\mathbf r_2|}\, dV_1 dV_2.
+%\label{eq:J_def}
+%\end{equation}
+%Цей вираз описує середню кулонівську взаємодію між двома електронами, якщо обидва перебувають у стані $1s$.
+
+\section{Хвильова функція $1s$}
+
+У атомних одиницях (тобто $a_0=1$) для ядра із зарядом $Z$ маємо
+\begin{equation*}
+\Psi_{100}(\mathbf r) = \sqrt{\tfrac{Z^3}{\pi}}\, e^{-Zr},
+\qquad
+|\Psi_{100}(\mathbf r)|^2 = \tfrac{Z^3}{\pi} e^{-2Zr}.
+\end{equation*}
+
+\section{Геометрія інтеграла}
+
+
+\begin{figure}[h!]
+\centering
+% 3D AXIS with spherical coordinates
+\tdplotsetmaincoords{60}{110}
+\begin{tikzpicture}[scale=2,tdplot_main_coords, >=latex]
+
+  % VARIABLES
+  \def\rvec{3}
+  \def\thetavec{30}
+  \def\phivec{60}
+
+  % AXES
+  \coordinate (O) at (0,0,0);
+  \draw[thick,->] (0,0,0) -- (2,0,0) node[below left=-3]{$x$};
+  \draw[thick,->] (0,0,0) -- (0,2,0) node[right=-1]{$y$};
+  \draw[thick,->] (0,0,0) -- (0,0,2) node[above=-1]{$z$};
+
+  % VECTORS
+  \tdplotsetcoord{P}{\rvec}{\thetavec}{\phivec}
+    \node[inner sep=2pt, ball color=red, circle] (2) at (P) {};
+    \node[inner sep=2pt, ball color=red, circle] (1) at (0, 0, 1) {};
+  \draw[->] (O)  -- node[right] {$\vec{r}_2$} (2);
+\draw[->] (O)  -- node[left] {$\vec{r}_1$} (1);
+  \draw[dashed,red]   (O)  -- (Pxy);
+  \draw[dashed,red]   (P)  -- (Pxy);
+%  \draw[dashed,red]   (Py) -- (Pxy);
+%\draw[dashed,red]   (Px) -- (Pxy);
+
+  % ARCS
+  \tdplotdrawarc[->]{(O)}{0.5}{0}{\phivec}
+    {anchor=north}{$\varphi_2$}
+  \tdplotsetthetaplanecoords{\phivec}
+  \tdplotdrawarc[->,tdplot_rotated_coords]{(0,0,0)}{0.75}{0}{\thetavec}
+    {anchor=south west}{\hspace{-1mm}$\theta_2$}
+
+
+     \node[inner sep=2pt, ball color=red, circle] at (P) {};
+    \draw (1) -- node[above, sloped] {$r_{12}$} (2);
+\end{tikzpicture}
+
+\end{figure}
+
+%Щоб спростити, беремо вісь $z$ вздовж вектора $\mathbf r_1$. Тоді $\varphi_2$ зникає, і лишається лише $\theta_2$.
+%
+
+
+
+
+
+Щоб спростити інтеграл, беремо вісь $z$ вздовж вектора $\mathbf r_1$. Знаменник має вигляд
+\begin{equation*}
+|\mathbf r_1-\mathbf r_2| = \sqrt{r_1^2+r_2^2-2r_1r_2\cos\theta_2}.
+\end{equation*}
+
+% Тоді інтеграл по азимутальному куту $\varphi_2$ тривіальний і дає множник $2\pi$, лишаючи інтеграл по полярному куту $\theta_2$ і радіусу $r_2$.
+
+\begin{equation}
+J=\int dV_1\,|\Psi_{100}(\mathbf r_1)|^2
+\int |\Psi_{100}(\mathbf r_2)|^2
+\frac{r_2^2\sin\theta_2\,dr_2\,d\theta_2\,d\varphi_2}
+{\sqrt{r_1^2+r_2^2-2r_1r_2\cos\theta_2}}.
+\label{eq:J_split}
+\end{equation}
+
+Тепер інтеграл «складається в купу»: спочатку інтегруємо по $\theta_2$ (з використанням тотожності для похідної), потім по $r_2$, і нарешті по $r_1$.
+
+\section{Інтегрування по \texorpdfstring{$\theta_2$}{theta2} }
+
+Використаємо тотожність:
+\begin{equation*}
+\frac{\sin\theta_2}{\sqrt{r_1^2+r_2^2-2r_1r_2\cos\theta_2}}
+=\frac{1}{r_1r_2}\frac{d}{d\theta_2}\sqrt{r_1^2+r_2^2-2r_1r_2\cos\theta_2}.
+\end{equation*}
+
+Тоді
+\begin{equation*}
+\int_0^\pi\frac{\sin\theta_2\,d\theta_2}{\sqrt{r_1^2+r_2^2-2r_1r_2\cos\theta_2}}
+=\frac{\sqrt{r_1^2+r_2^2+2r_1r_2}-\sqrt{r_1^2+r_2^2-2r_1r_2}}{r_1r_2}.
+\end{equation*}
+
+Але
+\begin{equation*}
+\sqrt{r_1^2+r_2^2+2r_1r_2} = |r_1+r_2| = r_1+r_2 \quad (\text{бо завжди додатне}),
+\end{equation*}
+\begin{equation*}
+\sqrt{r_1^2+r_2^2-2r_1r_2} = |r_1-r_2|.
+\end{equation*}
+
+Тому
+\begin{equation*}
+\int_0^\pi\frac{\sin\theta_2\,d\theta_2}{\sqrt{r_1^2+r_2^2-2r_1r_2\cos\theta_2}}
+=\frac{(r_1+r_2)-|r_1-r_2|}{r_1r_2}.
+\end{equation*}
+
+Тепер розглянемо два можливих випадки:
+
+\begin{itemize}
+\item Якщо $r_1>r_2$, тоді $|r_1-r_2|=r_1-r_2$, і
+\begin{equation*}
+\frac{(r_1+r_2)-(r_1-r_2)}{r_1r_2} = \frac{2r_2}{r_1r_2}=\frac{2}{r_1}.
+\end{equation*}
+
+\item Якщо $r_2>r_1$, тоді $|r_1-r_2|=r_2-r_1$, і
+\begin{equation*}
+\frac{(r_1+r_2)-(r_2-r_1)}{r_1r_2} = \frac{2r_1}{r_1r_2}=\frac{2}{r_2}.
+\end{equation*}
+\end{itemize}
+
+Отже остаточно:
+\begin{equation*}
+\int_0^\pi\frac{\sin\theta_2\,d\theta_2}{\sqrt{r_1^2+r_2^2-2r_1r_2\cos\theta_2}}
+=
+\begin{cases}
+\dfrac{2}{r_1}, & r_1 > r_2, \\
+\dfrac{2}{r_2}, & r_2 > r_1.
+\end{cases}
+\end{equation*}
+
+Таким чином після інтегрування по куту залишаються лише радіальні інтеграли.
+
+\section{Розбиття інтеграла}
+
+Отримаємо
+\begin{multline}
+J = \int dV_1 \, |\Psi_{100}(\mathbf r_1)|^2
+\left( \int_0^{r_1} dr_2 \, r_2^2 e^{-2Z r_2}\frac{2}{r_1}
++ \int_{r_1}^\infty dr_2 \, r_2^2 e^{-2Z r_2}\frac{2}{r_2} \right) \\
+=\int dV_1 \, |\Psi_{100}(\mathbf r_1)|^2
+\left( \frac{\left(- Z r_{1} + e^{2 Z r_{1}} - 1\right) e^{- 2 Z r_{1}}}{r_{1}} \right).
+\label{eq:J_after_r2}
+\end{multline}
+
+\section{Остаточне інтегрування}
+
+Тепер виконуємо інтеграл по $r_1$:
+\begin{equation}
+J = \int\limits_{0}^{\infty} r_1^2  \sin\theta_1 dr_1 d\theta_1 d\phi_1
+\frac{Z^{3} e^{- 2 Z r_1}}{\pi}
+\left( \frac{\left(- Z r_{1} + e^{2 Z r_{1}} - 1\right) e^{- 2 Z r_{1}}}{r_{1}} \right).
+\end{equation}
+
+Інтегрування по кутум дає множник $4\pi$, після чого залишковий інтеграл легко обчислити:
+%\begin{equation}
+%J = 4Z^3\int\limits_{0}^{\infty} r_1 dr_1
+% e^{- 2 Z r_1}
+%\left( - Z r_1 + e^{2 Z r_1} - 1\right) e^{- 2 Z r_1} .
+%\end{equation}
+
+
+% Після кутової інтеграції (множник 4\pi) маємо
+\begin{align}
+J &= 4\pi \int_0^\infty r_1^2 \frac{Z^3}{\pi} e^{-2Z r_1}
+\left( \frac{(-Z r_1 + e^{2Z r_1} -1)e^{-2Z r_1}}{r_1} \right) dr_1 \\
+&= 4 Z^3 \int_0^\infty r_1^2 \frac{(-Z r_1 + e^{2Z r_1} -1) e^{-4Z r_1}}{r_1}\, dr_1 \\
+&= 4 Z^3 \int_0^\infty \bigl(-Z r_1^2 + r_1 e^{2Z r_1} - r_1\bigr) e^{-4Z r_1}\, dr_1 \\
+&= 4 Z^3 \left[ -Z \int_0^\infty r_1^2 e^{-4Z r_1}\,dr_1
++ \int_0^\infty r_1 e^{-2Z r_1}\,dr_1
+- \int_0^\infty r_1 e^{-4Z r_1}\,dr_1 \right].
+\end{align}
+
+\noindent Використовуючи формулу
+\[
+\int_0^\infty r^n e^{-a r}\,dr=\frac{n!}{a^{\,n+1}},
+\qquad a>0,
+\]
+маємо
+\begin{align*}
+\int_0^\infty r_1^2 e^{-4Z r_1}\,dr_1 = \frac{2!}{(4Z)^3} &= \frac{1}{32 Z^3}, \quad
+\int_0^\infty r_1 e^{-2Z r_1}\,dr_1 = \frac{1!}{(2Z)^2} = &\frac{1}{4 Z^2},\\
+\int_0^\infty r_1 e^{-4Z r_1}\,dr_1=\frac{1!}{(4Z)^2} = &\frac{1}{16 Z^2}.
+\end{align*}
+
+\noindent Підставляємо:
+\begin{multline*}
+J = 4 Z^3 \left[ -Z\cdot\frac{1}{32 Z^3} + \frac{1}{4 Z^2} - \frac{1}{16 Z^2} \right]
+= 4 Z^3 \left[ \frac{-1}{32 Z^2} + \frac{1}{4 Z^2} - \frac{1}{16 Z^2} \right] = \\
+= 4 Z^3 \cdot \frac{5}{32 Z^2} = \frac{20}{32}\,Z = \frac{5}{8}\,Z.
+\end{multline*}
+
+\noindent Отже,
+\[
+\boxed{J=\tfrac{5}{8}\,Z.}
+\]
+
+
+\end{document}

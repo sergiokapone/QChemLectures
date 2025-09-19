@@ -1,0 +1,333 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = russian-aot
+% !BIB program = biber
+
+\documentclass{article}
+
+\usepackage[%
+	a4paper,%
+	footskip=1cm,%
+	headsep=0.3cm,%
+	top=2cm, %поле сверху
+	bottom=2cm, %поле снизу
+	left=2cm, %поле ліворуч
+	right=2cm, %поле праворуч
+    ]{geometry}
+
+\usepackage[fontsize=14pt]{fontsize}
+\usepackage{fontsetup}
+\usepackage[english, russian, ukrainian]{babel}
+
+\usepackage{amsmath}
+\usepackage[most, many]{tcolorbox}
+
+
+% Defining custom commands for clarity
+\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\pdd}[2]{\frac{d^2 #1}{d #2^2}}
+
+% Starting the document
+\begin{document}
+
+\section{Решение уравнения Шрёдингера для задачи Келлера}
+
+Уравнение Шрёдингера для задачи Келлера имеет вид
+
+\begin{equation}
+\Delta \psi + \frac{8\pi m^2}{\hbar^2} \left( E + \frac{e^2Z}{r} \right) \psi = 0.
+\end{equation}
+
+Вводя сферические координаты \( r, \theta, \varphi \), приведем его к виду
+
+\begin{equation}
+\left\{ \frac{\partial^2}{\partial r^2} + \frac{2}{r} \frac{\partial}{\partial r} + \frac{1}{r^2} \frac{\partial^2}{\partial \theta^2} + \frac{\cot \theta}{r^2} \frac{\partial}{\partial \theta} + \frac{1}{r^2 \sin^2 \theta} \frac{\partial^2}{\partial \varphi^2} \right\} \psi +
+\frac{8\pi m^2}{\hbar^2} \left( E + \frac{e^2Z}{r} \right) \psi = 0.
+\end{equation}
+
+В этом уравнении переменные опять разделяются; если положить
+
+\begin{equation}
+\psi = R(r) \Theta(\theta) \Phi(\varphi),
+\end{equation}
+%
+то уравнение можно расщепить на три уравнения:
+
+\begin{equation}
+\left\{ \frac{d^2}{dr^2} + \frac{2}{r} \frac{d}{dr} + \frac{8\pi m^2}{\hbar^2} \left( E + \frac{e^2Z}{r} \right) - \frac{\lambda}{r^2} \right\} R = 0,
+\end{equation}
+
+\begin{equation}
+\left\{ \frac{d^2}{d\theta^2} + \cot \theta \frac{d}{d\theta} + \lambda - \frac{m^2}{\sin^2 \theta} \right\} \Theta = 0,
+\end{equation}
+
+\begin{equation}
+\frac{d^2 \Phi}{d\varphi^2} + m^2 \Phi = 0,
+\end{equation}
+%
+где \( m \) (как и раньше) и \( \lambda \) — параметры разделения. Решение третьего уравнения уже известно:
+
+\begin{equation}
+\Phi = \begin{bmatrix}
+\cos(m\varphi)\\
+\sin(m\varphi)
+\end{bmatrix}
+, \text{или} \quad \Phi = e^{im\varphi},
+\end{equation}
+%
+где \( m \) должно быть целым, иначе решение \( \Phi \) окажется неоднозначным.
+
+Второе уравнение — это уравнение, определяющее шаровые функции $P_l^m(\cos \theta)$, где $l$ принимает значения $l(l+1)$ а $|m| \leq l$. Для других значений уравнение не имеет конечных однозначных решений. Докажем это в общем виде, для чего объединим зависимость от $\theta$ и от $\phi$ в обобщенную шаровую функцию $Y_l(\theta, \phi)$. Если для краткости ввести обозначение
+
+\begin{equation}
+\Delta = \frac{1}{\sin \theta} \frac{\partial}{\partial \theta} \sin \theta \frac{\partial}{\partial \theta} + \frac{1}{\sin^2 \theta} \frac{\partial^2}{\partial \phi^2},
+\end{equation}
+%
+так что
+
+\begin{equation}
+\Delta = \frac{\partial^2}{\partial r^2} + \frac{2}{r} \frac{\partial}{\partial r} + \frac{\Lambda}{r^2},
+\end{equation}
+%
+то будет ясно, что функция $Y_l(\theta, \phi)$ должна удовлетворять дифференциальному уравнению
+
+\begin{equation}
+\Lambda Y_l + \lambda Y_l = 0.
+\end{equation}
+
+Общее решение этого уравнения подходит следующим образом. Рассмотрим однородные полиномы $U_l$ степени $l$ по $x$, $y$, $z$, удовлетворяющие уравнению Лапласа
+
+\begin{equation}
+\Delta U_l = 0.
+\end{equation}
+
+Определим теперь функцию $Y_l$ отношений $x/r$, $y/r$, $z/r$ (т. е. функцию, зависящую только от углов $\theta$ и $\phi$) при помощи уравнения
+
+\begin{equation}
+U_l = r^l Y_l.
+\end{equation}
+
+Затем подставим эту функцию в уравнение Лапласа $\Delta U_l = 0$. Выполнив дифференцирование по $r$, мы приходим к уравнению
+
+\begin{equation}
+\left( \frac{\partial^2}{\partial r^2} + \frac{2}{r} \frac{\partial}{\partial r} \right) r^l Y_l + \frac{\Lambda}{r^2} r^l Y_l = r^{l-2} \left\{ \Lambda Y_l + l(l+1) Y_l \right\} = 0.
+\end{equation}
+
+Таким образом, введенные выше функции являются решениями дифференциального уравнения $\Delta Y_l + \lambda Y_l = 0$, только если
+
+\begin{equation}
+\lambda = l(l+1).
+\end{equation}
+
+\begin{tcolorbox}[breakable]
+\section*{Вывод собственных значений оператора $\Lambda$}
+
+Рассмотрим задачу
+\begin{equation}
+\Lambda Y_l + \lambda Y_l = 0,
+\end{equation}
+где $\Lambda$~--- угловая часть лапласиана.
+Лапласиан в сферических координатах имеет вид
+\begin{equation}
+\Delta = \frac{\partial^2}{\partial r^2}
++ \frac{2}{r}\frac{\partial}{\partial r}
++ \frac{1}{r^2}\Lambda.
+\end{equation}
+
+\subsection*{Однородные гармонические многочлены}
+Пусть $U_l(x,y,z)$~--- однородный многочлен степени $l$, удовлетворяющий уравнению Лапласа
+\begin{equation}
+\Delta U_l = 0.
+\end{equation}
+Так как $U_l$ однороден, его можно записать в виде
+\begin{equation}
+U_l(x,y,z) = r^l Y_l\!\left(\tfrac{x}{r},\tfrac{y}{r},\tfrac{z}{r}\right),
+\end{equation}
+где функция $Y_l$ зависит только от углов $\theta,\phi$.
+
+\subsection*{Подстановка в лапласиан}
+Подставим $U_l = r^l Y_l$ в лапласиан:
+\begin{equation}
+\Delta U_l =
+\left( \frac{\partial^2}{\partial r^2}
++ \frac{2}{r}\frac{\partial}{\partial r} \right) r^l Y_l
++ \frac{1}{r^2}\Lambda(r^l Y_l).
+\end{equation}
+
+Вычислим радиальные производные:
+\begin{align}
+\frac{\partial}{\partial r}(r^l Y_l) &= l r^{l-1} Y_l, \\
+\frac{\partial^2}{\partial r^2}(r^l Y_l) &= l(l-1) r^{l-2} Y_l,
+\end{align}
+откуда
+\begin{equation}
+\left( \frac{\partial^2}{\partial r^2}
++ \frac{2}{r}\frac{\partial}{\partial r} \right) r^l Y_l
+= l(l+1) r^{l-2} Y_l.
+\end{equation}
+
+Угловая часть даёт
+\begin{equation}
+\frac{1}{r^2}\Lambda(r^l Y_l) = r^{l-2}\Lambda Y_l.
+\end{equation}
+
+Таким образом,
+\begin{equation}
+\Delta U_l = r^{l-2}\big( l(l+1) Y_l + \Lambda Y_l \big).
+\end{equation}
+
+\subsection*{Условие гармоничности}
+Так как $U_l$ гармонический многочлен, то
+\begin{equation}
+\Delta U_l = 0,
+\end{equation}
+следовательно
+\begin{equation}
+\Lambda Y_l + l(l+1) Y_l = 0.
+\end{equation}
+
+\subsection*{Собственные значения}
+Мы получили уравнение
+\begin{equation}
+\Lambda Y_l = -\,l(l+1) Y_l,
+\end{equation}
+т.~е. собственные значения оператора $\Lambda$ равны
+\begin{equation}
+\lambda = l(l+1).
+\end{equation}
+Таким образом, функции $Y_l(\theta,\phi)$, возникающие из однородных гармонических многочленов, являются собственными функциями углового лапласиана, то есть сферическими гармониками.
+
+\end{tcolorbox}
+
+Можно доказать, что никаких другие значения $\lambda$ не дают конечных, неприводимых к однообразным решений этого уравнения. В соответствии с этим соотношением
+\begin{equation*}
+    \Lambda Y_l + \lambda Y_l = 0
+\end{equation*}
+равны $l(l+1)$. Кроме того, число произвольных параметров в общем решении равно степени $l$ равно определено. Например, полином степени $l$ по $x$, $y$, $z$ содержит $\frac{1}{2}(l+1)(l+2)$ произвольных коэффициентов (он имеет $n$ членов с $x^n$, два члена с $x^{l-1}$, три с $x^{l-2}$ и т. д. Наконец, $(l+1)$ членов, больше не содержит $x$). Очевидно
+условие $\Delta U_l = 0$ приводит к определенной зависимости между постоянными; это условие эквивалентно $\frac{1}{2} l(l-1)$ уравнениям для определений коэффициентов, так как $\Delta U_l$ есть однородная функция степени $(l-2)$, тождественно равная нулю. Поэтому $U_l$ содержит
+
+\begin{equation}
+\frac{1}{2} \{ (l+1)(l+2) - l(l-1) \} = 2l + 1
+\end{equation}
+%
+независимых коэффициентов. В соответствии с этим имеется $2l+1$ линейно независимых шаровых функций степени $l$. Если записать их в обычной форме
+
+\begin{equation}
+Y_l^{(m)} = P_l^m e^{im\phi},
+\end{equation}
+%
+то они соответствуют $2l+1$ возможному значению третьего (магнитного) квантового числа $m$.
+
+Теперь перейдем к дифференциальному уравнению для радиальной функции $R$:
+
+\begin{equation}
+\left\{ \frac{d^2}{dr^2} + \frac{2}{r} \frac{d}{dr} + \frac{8\pi^2 m^2}{h^2} \left( E + \frac{e^2 Z}{r} \right) - \frac{l(l+1)}{r^2} \right\} R = 0.
+\end{equation}
+
+Его решения должны быть конечными и непрерывными при всех значениях $r$ от нуля до бесконечности. Здесь нас главным образом уравнение имеет решение, удовлетворяющее заданным условиям при которых это уравнение имеет решение $E$, при котором это решение не имеет конечных решений. В частности, займемся случаем $E<0$. В теории Бора это соответствует эллиптическим орбитам, когда для уравнения электрона на бесконечное расстояние от ядра необходимо придать ему дополнительную энергию. Случай $E>0$ соответствует гиперболическим орбитам.
+
+Для простоты введем относительные единицы. За единицу радиуса примем боровский радиус $h^2/4\pi^2 me^2 Z$, а за единицу энергии --- энергию основного состояния атома Бора, $-2\pi^2 me^4 Z^2/h^2$. Другими словами, положим (гл. V, § 1)
+
+\begin{equation}
+    r = \rho \frac{h^2}{4\pi^2 me^2 Z}, \quad E = \varepsilon \left( \frac{-2\pi^2 me^4 Z^2}{h^2} \right).
+\end{equation}
+
+Тогда волновое уравнение принимает более простой вид
+
+\begin{equation}
+\left\{ \frac{d^2}{d\rho^2} + \frac{2}{\rho} \frac{d}{d\rho} - \varepsilon + \frac{2}{\rho} - \frac{l(l+1)}{\rho^2} \right\} R = 0.
+\end{equation}
+
+Начнем с определения свойств функции $R$ при очень больших значениях $\rho$. Соответственно отгорим в дифференциальном уравнении члены с $1/\rho$ и $1/\rho^2$, так что поведение на бесконечности будет определяться уравнением
+
+\begin{equation}
+\left\{ \frac{d^2}{d\rho^2} - \varepsilon \right\} R_\infty = 0.
+\end{equation}
+
+Оно имеет решение
+
+\begin{equation}
+R_\infty = e^{\pm \rho \sqrt{\varepsilon}}.
+\end{equation}
+
+Однако решение со знаком «плюс» надо отбросить, так как волновая функция в этом случае неограниченно возрастает бы экспоненциальным образом при возрастании $r$ (или $\rho$) и поэтому не могла бы быть собственной функцией.
+
+Другая особенность находится у начала координат. Прежде всего уравнение при очень малых значениях $r$ стремится к бесконечности медленнее, чем $1/\rho^2$, при условии приближенное уравнение
+
+\begin{equation}
+\left\{ \frac{d^2}{d\rho^2} + \frac{2}{\rho} \frac{d}{d\rho} - \frac{l(l+1)}{\rho^2} \right\} R_0 = 0.
+\end{equation}
+
+Решением его будут функции $R_0 = \rho^l$ и $R_0 = \rho^{-l-1}$. Вторая из них неприемлема, так как обращается в бесконечность в нуле.
+
+Итак, мы знаем поведение искомой функции вблизи двух особых точек, $\rho = 0$ и $\rho = \infty$. Разумно предположить, что вся функция $R$ имеет вид
+
+\begin{equation}
+R = e^{-\rho \sqrt{\varepsilon}} \rho^l f(\rho),
+\end{equation}
+%
+где $f$ --- функция от $\rho$, которая, конечно, должна быть регулярной в обеих точках (т. е. на бесконечности не должна возрастать быстрее $e^{+\rho \sqrt{\varepsilon}}$ и которая определяет поведение интевалы в которых доминирует либо степенная $\rho^l$, либо экспоненциальная зависимость. Подставляем в дифференциальное уравнение для $R$ и приравниваем коэффициенты, так как $\Lambda Y_l + \lambda Y_l = 0$, только если
+
+\begin{equation}
+\frac{d^2 f}{d\rho^2} + \frac{2(l+1)}{\rho} \frac{df}{d\rho} - 2 \sqrt{\varepsilon} \frac{df}{d\rho} + \frac{2}{\rho} (1 - \sqrt{\varepsilon} (l+1)) f = 0.
+\end{equation}
+
+Попытаемся решить его, разложив $f$ в ряд по степеням $\rho$ (или, лучше, по степеням $2\rho \sqrt{\varepsilon}$); запишем соответственно
+
+\begin{equation}
+f = \sum_{v=0}^{\infty} a_v (2\rho \sqrt{\varepsilon})^v.
+\end{equation}
+
+Подставляя это выражение в дифференциальное уравнение и несколько иначе располагая члены, получаем
+
+\begin{equation}
+\sum_{v=0}^{\infty} a_v (2\rho \sqrt{\varepsilon})^{v-2v} (v + 2l + 1) - \sum_{v=0}^{\infty} a_v (2\rho \sqrt{\varepsilon})^{v-1} \left( v + l + 1 - \frac{1}{\sqrt{\varepsilon}} \right) = 0.
+\end{equation}
+
+Этот ряд должен тождественно обращаться в нуль; таким образом, мы приходим к рекуррентному соотношению для коэффициентов
+
+\begin{equation}
+a_{v+1} (v + 1)(v + 2l + 2) = a_v \left( v + l + 1 - \frac{1}{\sqrt{\varepsilon}} \right).
+\end{equation}
+
+Разумеется, в начале координат функция $f$ конечна и равна первому члену, как показывает подгоня анализ, быстрее, чем $e^{+\rho \sqrt{\varepsilon}}$ во всех случаях, кроме того, когда ряд для $f$ обрывается на каком-то члене, превращаясь в конечный полином. В этом последнем случае $f$ и обращается в бесконечность, но $R$ на бесконечности исчезает благодаря экспоненциальному множителю $e^{-\rho \sqrt{\varepsilon}}$. Условие, при котором происходит обрыв ряда, получается из рекуррентного соотношения. Ряд обрывается на $n_r$-м члене, если
+
+\begin{equation}
+n_r + l + 1 = \frac{1}{\sqrt{\varepsilon}}.
+\end{equation}
+
+Таким образом, $1/\sqrt{\varepsilon}$ должно быть положительным целым числом или
+
+\begin{equation}
+\varepsilon = \frac{1}{n^2},
+\end{equation}
+%
+где $n = n_r + l + 1$; число $n$ есть главное квантовое число, а $n_r$ — радиальное квантовое число.
+
+Итак, мы видим, что решения дифференциального уравнения, существуют только для некоторых дискретных значений параметров $\varepsilon$, именно для значений $\varepsilon = 1/n^2$. Значит, возможны лишь некоторые определенные энергетические уровни, именно
+
+\begin{equation}
+E_n = - \frac{2\pi^2 me^4 Z^2}{h^2 n^2} = - \frac{h R_\infty Z^2}{n^2},
+\end{equation}
+%
+которые и дает теория Бора.
+
+Для $n=1$ имеем $l=0$, $n_r=0$ и $f$ сводится к постоянной. Волновая функция $\psi$ не зависит от $\theta$ и $\phi$, и если принять нормировку
+
+\begin{equation}
+\int \psi^2 dr = 1,
+\end{equation}
+%
+получим просто
+
+\begin{equation}
+\psi = \frac{1}{\sqrt{\pi}} \left( \frac{Z}{a_1} \right)^{3/2} e^{-Z r / a_1}, \quad a_1 = \frac{h^2}{4 \pi^2 m e^2}.
+\end{equation}
+
+Можно видеть, что $\psi$ быстро уменьшается при $r > a_1/Z$. Величина $a_1/Z$ есть радиус первой боровской орбиты для атома с зарядом $Ze$.
+%
+Он равен среднему значению (см. приложение 25) $\overline{r} = \int \psi^2 r dr$ для электронного облака в состоянии $n=1$. Такие средние величины можно вычислить для всех высших состояний с $l=0$, и, как оказалось, они совпадают с главными полусами эллипсов теории Бора.
+
+Можно добавить, что полиномы $f$ --- это известные полиномы Лагерра. Однако мы не будем вдаваться в подробности; заметим только, что нули их определяют положение узловых поверхностей в нуле. Функция $R$ имеет $n_r$ узлов, не считая нулеи при $r=0$ (в случае $l>0$) и при $r=\infty$.
+
+\end{document}

@@ -1,0 +1,239 @@
+\documentclass{article}
+
+\usepackage[fontsize=14pt]{fontsize}
+\usepackage{fontsetup}
+\usepackage[english, russian, ukrainian]{babel}
+
+\usepackage[%
+	a4paper,%
+	footskip=1cm,%
+	headsep=0.3cm,%
+	top=2cm, %поле сверху
+	bottom=2cm, %поле снизу
+	left=2cm, %поле ліворуч
+	right=2cm, %поле праворуч
+    ]{geometry}
+
+\usepackage{amsmath}
+
+
+\usepackage[%colorlinks=true,
+	%urlcolor = blue, %Colour for external hyperlinks
+	%linkcolor  = malina, %Colour of internal links
+	%citecolor  = green, %Colour of citations
+	bookmarks = true,
+	bookmarksnumbered=true,
+	unicode,
+	linktoc = all,
+	hypertexnames=false,
+	pdftoolbar=false,
+	pdfpagelayout=TwoPageRight,
+	pdfauthor={Ponomarenko S.M. aka sergiokapone},
+	pdfdisplaydoctitle=true,
+	pdfencoding=auto
+	]%
+	{hyperref}
+
+\title{Виведення секулярного рівняння}
+\date{}
+\begin{document}
+\maketitle
+
+Точна хвильова функція $\phi$ апроксимується лінійною комбінацією базисних функцій:
+\begin{equation}
+\phi = \sum_{j=1}^n c_j \chi_j,
+\end{equation}
+де коефіцієнти $c_j$ є параметрами, які визначаються мінімізацією варіаційного інтегралу
+\begin{equation}
+E[c_1,\dots,c_n] = \frac{\langle \phi | \hat H | \phi \rangle}{\langle \phi | \phi \rangle}.
+\end{equation}
+
+Підставляючи $\phi = \sum_j c_j \chi_j$, отримуємо
+\begin{align}
+\langle \phi | \hat H | \phi \rangle &= \sum_{j=1}^n \sum_{k=1}^n c_j^* c_k H_{jk},
+\quad H_{jk} = \int \chi_j^* \hat H \chi_k \, d\tau, \\
+\langle \phi | \phi \rangle &= \sum_{j=1}^n \sum_{k=1}^n c_j^* c_k S_{jk},
+\quad S_{jk} = \int \chi_j^* \chi_k \, d\tau.
+\end{align}
+
+Тоді енергія як функція коефіцієнтів:
+\begin{equation}
+E(c_1,\dots,c_n) = \frac{\sum_{j,k=1}^n c_j^* c_k H_{jk}}{\sum_{j,k=1}^n c_j^* c_k S_{jk}}.
+\end{equation}
+
+Мінімізація по $c_i^*$:
+\begin{equation}
+\frac{\partial E}{\partial c_i^*} = 0, \quad i=1,\dots,n,
+\end{equation}
+
+Позначимо
+\[
+N = \sum_{jk} c_j^* c_k H_{jk}, \quad D = \sum_{jk} c_j^* c_k S_{jk}, \quad E = \frac{N}{D}.
+\]
+
+Беремо похідну по $c_i^*$:
+\begin{equation}
+\frac{\partial E}{\partial c_i^*} = \frac{\partial}{\partial c_i^*}\frac{N}{D}
+= \frac{\frac{\partial N}{\partial c_i^*} D - N \frac{\partial D}{\partial c_i^*}}{D^2}.
+\end{equation}
+
+Оскільки
+\[
+\frac{\partial N}{\partial c_i^*} = \sum_k H_{ik} c_k, \quad
+\frac{\partial D}{\partial c_i^*} = \sum_k S_{ik} c_k,
+\]
+умова мінімуму $\frac{\partial E}{\partial c_i^*} = 0$ дає
+\begin{equation}
+\left(\sum_k H_{ik} c_k \right) D - N \left(\sum_k S_{ik} c_k \right) = 0.
+\end{equation}
+
+Поділивши на $D \neq 0$ та підставивши $E = N/D$, отримуємо
+\begin{equation}
+\sum_{k=1}^n (H_{ik} - E S_{ik}) c_k = 0, \quad i=1,\dots,n.
+\end{equation}
+
+Нетривіальний розв'язок для $\mathbf{c}=(c_1,\dots,c_n)$ існує лише якщо
+\begin{equation}
+\det(H - E S) = 0,
+\end{equation}
+що і є \emph{секулярним рівнянням}.
+
+%дає систему лінійних рівнянь:
+%\begin{equation}
+%\sum_{k=1}^n (H_{ik} - E S_{ik}) c_k = 0, \quad i=1,\dots,n.
+%\label{eq:secular}
+%\end{equation}
+%
+%Це і є \emph{секулярне рівняння}. Воно визначає допустимі значення енергії $E$, для яких система \eqref{eq:secular} має нетривіальний розв'язок. Для знаходження $E$ треба розв'язати визначник:
+%\begin{equation}
+%\det(H - E S) = 0.
+%\end{equation}
+%
+%Власні значення $E$ відповідають енергіям, а власні вектори $(c_1,\dots,c_n)$ — коефіцієнтам для хвильової функції у вибраному базисі.
+
+\subsection*{Приклад: двофункціональний базис для гелію}
+
+Нехай хвильова функція електронів гелію апроксимується лінійною комбінацією двох 1s-функцій з різними екрануючими параметрами $\zeta_1$ і $\zeta_2$:
+\begin{equation}
+\phi = c_1 \chi_1 + c_2 \chi_2, \quad
+\chi_j = \left(\frac{\zeta_j^3}{\pi}\right)^{1/2} e^{-\zeta_j r}, \quad j=1,2.
+\end{equation}
+
+Тоді матриці Гамільтоніана та перекривання мають вигляд:
+\begin{equation}
+H =
+\begin{pmatrix}
+H_{11} & H_{12} \\
+H_{21} & H_{22}
+\end{pmatrix}, \quad
+S =
+\begin{pmatrix}
+1 & S_{12} \\
+S_{12} & 1
+\end{pmatrix},
+\end{equation}
+де
+\[
+H_{jk} = \int \chi_j^* \hat H \chi_k \, d\tau, \quad
+S_{12} = \int \chi_1^* \chi_2 \, d\tau.
+\]
+
+Секулярне рівняння:
+\begin{equation}
+\det(H - E S) = 0 \quad \Rightarrow \quad
+\det
+\begin{pmatrix}
+H_{11}-E & H_{12}-E S_{12} \\
+H_{12}-E S_{12} & H_{22}-E
+\end{pmatrix} = 0.
+\end{equation}
+
+Розкриваємо визначник:
+\begin{equation}
+(H_{11}-E)(H_{22}-E) - (H_{12}-E S_{12})^2 = 0.
+\end{equation}
+
+Це квадратне рівняння для $E$, яке легко розв'язати:
+\begin{equation}
+E = \frac{1}{2} \left[ H_{11}+H_{22} \pm \sqrt{(H_{11}-H_{22})^2 + 4(H_{12}-E S_{12})^2} \right].
+\end{equation}
+
+%Після знаходження $E$ підставляємо у систему
+%\begin{equation}
+%(H - E S) \begin{pmatrix} c_1 \\ c_2 \end{pmatrix} = 0
+%\end{equation}
+%і знаходимо **коефіцієнти $c_1, c_2$** для власної функції хвильової комбінації.
+
+%\textbf{Примітка:} В реальних обчисленнях для гелію $H_{jk}$ включає як одноелектронні енергії, так і кулонівські інтеграли між електронами, а $S_{12} = \langle \chi_1 | \chi_2 \rangle$ — це перекривання базисних орбіталей.
+
+\subsection*{Числовий приклад: гелій з двома 1s-базисами}
+
+Візьмемо два 1s-орбіталі з різними екрануючими параметрами:
+\[
+\zeta_1 = 1.7, \quad \zeta_2 = 2.0,
+\quad \chi_j = \left(\frac{\zeta_j^3}{\pi}\right)^{1/2} e^{-\zeta_j r}.
+\]
+
+Припустимо, що інтеграли Гамільтоніана та перекривання (обчислені аналітично або чисельно) мають значення:
+\[
+H = \begin{pmatrix} -2.85 & -2.65 \\ -2.65 & -3.00 \end{pmatrix}, \quad
+S = \begin{pmatrix} 1 & 0.85 \\ 0.85 & 1 \end{pmatrix}.
+\]
+
+Секулярне рівняння:
+\[
+\det(H - E S) = 0 \quad \Rightarrow \quad
+\det \begin{pmatrix} -2.85-E & -2.65-0.85 E \\ -2.65-0.85 E & -3.00-E \end{pmatrix} = 0.
+\]
+
+Розкриваємо визначник:
+\[
+(-2.85-E)(-3.00-E) - (-2.65-0.85 E)^2 = 0.
+\]
+
+Після розкриття дужок отримаємо квадратне рівняння для $E$:
+\[
+E^2 + 5.85 E + 0.4875 = 0.
+\]
+
+Розв’язок:
+\begin{align*}
+E = \frac{-5.85 \pm \sqrt{5.85^2 - 4\cdot0.4875}}{2}
+\approx -0.0835 \quad \text{(вищий)} , \\
+E \approx -5.7665 \quad \text{(нижчий, фізично значущий)}.
+\end{align*}
+
+Вибираємо нижчий (основний стан):
+\[
+E_0 \approx -5.767 \text{ a.u.}
+\]
+
+Підставляємо $E_0$ у систему
+\[
+(H - E_0 S) \begin{pmatrix} c_1 \\ c_2 \end{pmatrix} = 0
+\quad \Rightarrow \quad
+\begin{pmatrix} -2.85 - (-5.767) & -2.65 - 0.85(-5.767) \\ -2.65 -0.85(-5.767) & -3.00 - (-5.767) \end{pmatrix} \begin{pmatrix} c_1 \\ c_2 \end{pmatrix} = 0.
+\]
+
+Обчислюємо числово:
+\[
+\begin{pmatrix} 2.917 & 2.402 \\ 2.402 & 2.767 \end{pmatrix} \begin{pmatrix} c_1 \\ c_2 \end{pmatrix} = 0.
+\]
+
+Відношення коефіцієнтів:
+\[
+c_2/c_1 = -2.917/2.402 \approx -1.215.
+\]
+
+Нормуємо:
+\[
+c_1^2 + c_2^2 + 2 S_{12} c_1 c_2 = 1 \quad \Rightarrow \quad c_1 \approx 0.664, \quad c_2 \approx -0.806.
+\]
+
+\textbf{Отже, хвильова функція основного стану гелію у двобазисному наближенні:}
+\[
+\phi_0 \approx 0.664 \, \chi_1 - 0.806 \, \chi_2.
+\]
+
+
+\end{document}
