@@ -1,0 +1,454 @@
+\documentclass{article}
+\usepackage[fontsize=14pt]{fontsize}
+
+\usepackage{fontsetup}
+\usepackage[english, russian, ukrainian]{babel}
+
+
+\usepackage[dvipsnames]{xcolor}
+\newcommand{\psii}{\textcolor{blue}{\psi_i}}
+\newcommand{\phii}{\textcolor{blue}{\phi_i}}
+\newcommand{\psij}{\textcolor{red}{\psi_j}}
+\newcommand{\phij}{\textcolor{red}{\phi_j}}
+
+\renewcommand{\i}{\textcolor{blue}{i}}
+\renewcommand{\j}{\textcolor{red}{j}}
+
+\newcommand\I{\textcolor{blue}{(1)}}
+\newcommand\II{\textcolor{red}{(2)}}
+
+
+\allowdisplaybreaks
+\usepackage{cancel}
+
+\def\ket#1{\left| #1 \right\rangle }
+\def\bra#1{\left\langle #1 \right| }
+\def\bracket#1#2{\left\langle #1\left| #2 \right. \right\rangle }
+\def\opbracket#1#2#3{\left\langle #1\left| \textcolor{OliveGreen}{#2}\right|  #3 \right\rangle}
+\def\eff{e\kern-2.4pt{f\kern-2.65pt f}}
+\def\vxi{\vec{\xi}}
+\def\vr{\vec{r}}
+\let\vphi\varphi
+\let\ve\varepsilon
+
+\def\f{(\textcolor{red}{1})}
+\def\s{(\textcolor{blue}{2})}
+
+\def\F{\textcolor{red}{\mathbf{1}}}
+\def\S{\textcolor{blue}{\mathbf{2}}}
+
+\def\oa{\textcolor{red}{ \vphi_{\mathbf{1}}} }
+\def\ob{\textcolor{blue}{ \vphi_{\mathbf{2}}} }
+\def\cPhi{\oa\f \ob\s - \oa\s \ob\f} % лінійна Комбінація
+\def\h{\hat{h}}
+\def\ha{\h\f}
+\def\hb{\h\s}
+\def\V{\frac{1}{r_{12}}}
+\def\a{\oa\f \ob\s}
+\def\b{\ob\f \oa\s}
+\def\dt{\,.\,}
+%\def\sp{\textvisiblespace}
+
+\def\hr{\hrulefill\\*[10pt]}
+\def\hhr{\hrulefill\\[-0.9\baselineskip]\hrulefill\\*[10pt]}
+
+\usepackage{titlesec}
+
+% Налаштування для section
+\titleformat{\section}
+  {\normalfont\large\bfseries}  % формат тексту (розмір і жирність)
+  {\thesection.}                % формат номеру з точкою
+  {1em}                         % відступ між номером і текстом
+  {}
+  [\hrulefill]
+
+% Налаштування для section
+\titleformat{\subsection}
+  {\normalfont\bfseries}  % формат тексту (розмір і жирність)
+  {\thesubsection.}                % формат номеру з точкою
+  {1em}                         % відступ між номером і текстом
+  {}
+
+\usepackage[%
+	a4paper,%
+	footskip=1cm,%
+	headsep=0.3cm,%
+	top=2cm, %поле сверху
+	bottom=2cm, %поле снизу
+	left=2cm, %поле ліворуч
+	right=2cm, %поле праворуч
+    ]{geometry}
+
+\usepackage{amsmath}
+
+\begin{document}
+
+\title{Енергія атома гелію}
+\author{}
+\date{}
+\maketitle
+
+\section{Постановка задачі}
+
+\textbf{Гамільтоніан атома гелію:}
+\begin{equation}
+\hat{H} = -\frac{1}{2}\nabla_1^2 - \frac{1}{2}\nabla_2^2 - \frac{Z}{r_1} - \frac{Z}{r_2} + \frac{1}{r_{12}}
+\end{equation}
+
+\section{Антисиметризована пробна функція}
+
+\begin{equation}
+\psi(1,2) = \frac{1}{\sqrt{2}}[\psii\I\psij\II - \psii\II\psij\I]
+\end{equation}
+
+де
+%$\psii(i) = \varphi_i(i)\gamma_i(i)$, $\psij(i) = \varphi_j(i)\gamma_j(i)$
+%
+повна спін-орбіталь:
+\[
+\psi_p(\mathbf{x}) = \phi_p(\mathbf{r}) \, \gamma_p(\sigma),
+\qquad
+\gamma_p(\sigma) \in \{\alpha(\sigma), \beta(\sigma)\}.
+\]
+
+\section{Обчислення енергії}
+
+\begin{equation}
+E = \langle \psi | \hat{H} | \psi \rangle
+\end{equation}
+
+\begin{equation}
+E = \frac{1}{2}\langle \psii\I\psij\II - \psii\II\psij\I | \hat{H} | \psii\I\psij\II - \psii\II\psij\I \rangle
+\end{equation}
+
+Щоб не рябило в очах, вводимо нотацію:
+
+\begin{equation}
+E = \frac{1}{2}\langle \i\j - \j\i | \hat{H} | \i\j - \j\i \rangle
+\end{equation}
+
+
+Розкриваємо добуток:
+\begin{align*}
+E &= \frac{1}{2}[\langle \psii\I\psij\II | \hat{H} | \psii\I\psij\II \rangle - \langle \psii\I\psij\II | \hat{H} | \psii\II\psij\I \rangle \nonumber \\
+&\quad - \langle \psii\II\psij\I | \hat{H} | \psii\I\psij\II \rangle + \langle \psii\II\psij\I | \hat{H} | \psii\II\psij\I \rangle]
+\end{align*}
+
+або:
+
+\begin{align}
+E &= \frac{1}{2}[\langle \i\j | \hat{H} | \i\j \rangle - \langle \i\j | \hat{H} | \j\i \rangle \nonumber \\
+&\quad - \langle \j\i | \hat{H} | \i\j \rangle + \langle \j\i | \hat{H} | \j\i \rangle]
+\end{align}
+
+
+
+
+\section{Використання симетрії гамільтоніана}
+
+Перший і четвертий терми однакові, другий і третій теж однакові:
+
+\begin{equation}
+E = \langle \psii\I\psij\II | \hat{H} | \psii\I\psij\II \rangle - \langle \psii\I\psij\II | \hat{H} | \psii\II\psij\I \rangle,
+\end{equation}
+або в зручній нотації:
+\begin{equation}
+E = \langle \i\j   | \hat{H} |\i\j  \rangle - \langle \i\j | \hat{H} | \j\i \rangle,
+\end{equation}
+
+\section{Двоелектронні інтеграли зі спіновими функціями}
+
+\subsection{Спін-орбіталі}
+
+
+Ортонормованість спінових функцій:
+\begin{align*}
+\langle \alpha | \alpha \rangle = \int \alpha^*(\sigma)\alpha(\sigma)\,d\sigma = 1,
+\\
+\langle \beta | \beta \rangle = \int \beta^*(\sigma)\beta(\sigma)\,d\sigma = 1,
+\\
+\langle \alpha | \beta \rangle = \int \alpha^*(\sigma)\beta(\sigma)\,d\sigma = 0.
+\end{align*}
+
+
+\subsection{Двоелектронний інтеграл}
+
+Визначення двоелектронних інтегралів:
+\[
+\langle pq|rs \rangle
+= \iint \psi_p^*(\mathbf{x}_1)\psi_q(\mathbf{x}_2)\,
+\frac{1}{r_{12}}\,
+\psi_r^*(\mathbf{x}_1)\psi_s(\mathbf{x}_2)\,
+d\mathbf{x}_1 d\mathbf{x}_2.
+\]
+де:
+\begin{itemize}
+\item $p, q, r, s$ --- \textbf{індекси квантових станів} (орбіталей)
+\item $\mathbf{x}_1, \mathbf{x}_2$ --- \textbf{номери електронів} (координати  першого та другого електронів)
+\item $r_{12} = |r_1 - r_2|$ --- відстань між електронами
+\end{itemize}
+
+\subsubsection*{Позиційна нотація}
+
+\begin{equation*}
+    \langle pq | rs \rangle = \langle \underbrace{p}_{1}\underbrace{q}_{2} | \underbrace{r}_{1}\underbrace{s}_{2} \rangle
+\end{equation*}
+
+
+\begin{itemize}
+\item \textbf{Позиція 1:} електрон 1 --- орбіталі $i$ та $k$
+\item \textbf{Позиція 2:} електрон 2 --- орбіталі $j$ та $l$
+\end{itemize}
+
+Інтеграл описує ймовірність кулонівської взаємодії між двома електронами при переході з початкового стану $(p,q)$
+ в кінцевий стан $(r,s)$.
+
+\section{Двоелектронні інтеграли: кулонівський та обмінний}
+
+Розкладаємо $\mathbf{x}=(\mathbf{r},\gamma)$:
+\begin{multline*}
+\langle pq|rs \rangle =
+\underbrace{\iint \phi_p(\mathbf{r}_1)\phi_q(\mathbf{r}_2)
+\frac{1}{r_{12}}
+\phi_r(\mathbf{r}_1)\phi_s(\mathbf{r}_2)
+\,d\mathbf{r}_1 d\mathbf{r}_2}_{(pq|rs)}
+\cdot
+\underbrace{\int \gamma_p^*(\sigma_1)\gamma_r(\sigma_1)\,d\sigma_1}_{\delta_{pr}}\cdot\\
+\cdot
+\underbrace{\int \gamma_q^*(\sigma_2)\gamma_s(\sigma_2)\,d\sigma_2}_{\delta_{qs}}.
+\end{multline*}
+
+Отже:
+\[
+\langle pq|rs \rangle = (pq|rs)\,\delta_{pr}\,\delta_{qs}.
+\]
+
+
+
+\subsection{Кулонівський інтеграл $J$}
+
+Кулонівський інтеграл виникає тоді, коли перший електрон знаходиться на орбіталі $\i$, а другий електрон на орбіталі $\j$, тоді індекси групуються по парах:
+\begin{equation}
+    J_{\i\j} = \langle \i\j|\i\j \rangle = (\i\j|\i\j) \, \underbrace{\delta_{ii}}_{=1} \, \underbrace{\delta_{jj}}_{=1} = (\i\j|\i\j),
+\end{equation}
+або
+
+\begin{multline*}
+    J_{\i\j} =  \iint \phii^*(\mathbf{r}_1)\phij^*(\mathbf{r}_2) \frac{1}{r_{12}} \phii(\mathbf{r}_1)\phij(\mathbf{r}_2) \,d\mathbf{r}_1 d\mathbf{r}_2 = \\ =
+\iint \phii(\mathbf{r}_1)\phii(\mathbf{r}_1) \frac{1}{r_{12}} \phij(\mathbf{r}_2)\phij(\mathbf{r}_2) \,d\mathbf{r}_1 d\mathbf{r}_2 = \\ =
+\iint \frac{|\phii(\mathbf{r}_1)|^2 |\phij(\mathbf{r}_2)|^2}{r_{12}} \,d\mathbf{r}_1 d\mathbf{r}_2
+\end{multline*}
+
+Фізичний сенс ---  класичне електростатичне відштовхування між електронними хмарами.
+
+Він описує класичне кулонівське відштовхування між електронною густиною орбіталі $i$ та густиною орбіталі $j$.
+Спінові дельти тут завжди дорівнюють $1$, отже $J_{\i\j}$ не залежить від спіну.
+
+
+\subsection{Обмінний інтеграл $K$}
+
+\begin{equation}
+    K_{\i\j} = \langle \i\j|\j\i \rangle = (\i\j|\j\i)\,\delta_{\i\j} \delta_{\j\i} = (\i\j|\j\i)\,\delta_{\i\j}.
+\end{equation}
+
+Цей інтеграл існує лише для паралельних спінів, тобто коли $\gamma_i = \gamma_j$. Тобто, обмінна взаємодія можлива лише між електронами з паралельними спінами, що є прямим наслідком антисиметрії хвильової функції.
+
+Розпишемо:
+\begin{multline*}
+    K_{\i\j} =  \iint \phii^*(\mathbf{r}_1)\phij^*(\mathbf{r}_2) \frac{1}{r_{12}} \phij(\mathbf{r}_1)\phii(\mathbf{r}_2) \,d\mathbf{r}_1 d\mathbf{r}_2 = \\ =
+\iint \phii(\mathbf{r}_1)\phij(\mathbf{r}_1) \frac{1}{r_{12}} \phij(\mathbf{r}_2)\phii(\mathbf{r}_2) \,d\mathbf{r}_1 d\mathbf{r}_2
+\end{multline*}
+
+
+
+Обмінна енергія виникає через ідентичність електронів та можливість їх обміну між станами $i$ і $j$. Кожен електрон частково перебуває в стані $i$ і частково в стані $j$. <<Різні частини>> одного електрона взаємодіють між собою через {кулонівське відштовхування}, що дає \textbf{енергію взаємодії}, яку називають {обмінною енергією}.
+
+Ця енергія {не має класичного аналога} і є {чисто квантовим ефектом обміну електронів} між різними станами.
+
+
+
+
+
+\section{Детальний аналіз термів}
+
+\subsection{Перший терм (пряма взаємодія)}
+
+\begin{equation}
+\langle \psii\I\psij\II | \hat{H} | \psii\I\psij\II \rangle = \langle \i\j | \hat{H} | \i\j \rangle
+\end{equation}
+
+Розкладаємо гамільтоніан:
+\begin{multline}
+= \langle \psii\I\psij\II | \hat{h}\I + \hat{h}\II + \frac{1}{r_{12}} | \psii\I\psij\II \rangle = \\
+= \langle \i\j | \left(\hat{h}\I + \hat{h}\II + \frac{1}{r_{12}}\right) | \i\j \rangle
+\end{multline}
+
+\textbf{Одноелектронні терми:}
+\begin{multline}
+\langle \psii\I\psij\II | \hat{h}\I | \psii\I\psij\II \rangle = \langle \psii\I | \hat{h}\I | \psii\I \rangle \langle \psij\II | \psij\II \rangle = \\ = \langle \psii\I | \hat{h}\I | \psii\I \rangle = \\
+= \int \gamma_i^*\I \gamma_i\I \,  d\omega_1 \int \phii^*\I \hat{h}\I \phii\I\  dV_1\\
+=  1 \cdot ( i | \hat{h} | i ) = ( i | \hat{h} | i ) =  h_{ii}
+\end{multline}
+
+%\begin{multline}
+%\langle \psii\I\psij\II | \hat{h}\II | \psii\I\psij\II \rangle = \langle \psii\I | \psii\I \rangle \langle \psij\II | \hat{h}\II | \psij\II \rangle = \\
+%= \langle \i\j | \hat{h}\II |\i\j \rangle = \langle i | i \rangle \langle j | \hat{h}\II | j \rangle
+%= h_{jj}
+%\end{multline}
+
+
+%\begin{multline}
+%h_{jj} = \langle j | \hat{h} | j \rangle = \int dr_j \, \varphi_j^*(r_j) \hat{h}_j \varphi_j(r_j) \\
+%= \int d\omega_j \, \sigma_j^*(\omega_j) \sigma_j(\omega_j) \int dr_j \, \psi_{1/2}^*(r_j) \hat{h}_j \psi_{1/2}(r_j) \\
+%= \delta_{\sigma_j, \sigma_j} \langle j | \hat{h} | j \rangle = \langle j | \hat{h} | j \rangle
+%\end{multline}
+
+
+
+
+\textbf{Двоелектронний терм:}
+
+\begin{equation}
+\langle \psii\I\psij\II | \frac{1}{r_{12}} | \psii\I\psij\II \rangle = \langle \i\j|\i\j \rangle = (\i\j|\i\j) = J_{\i\j}
+\end{equation}
+
+
+\textbf{Підсумок:}
+\begin{equation}
+\langle \psii\I\psij\II | \hat{H} | \psii\I\psij\II \rangle = h_{ii} + h_{jj} + J_{\i\j}
+\end{equation}
+
+\subsection{Другий терм (обмінна взаємодія)}
+
+\begin{equation}
+\langle \psii\I\psij\II | \hat{H} | \psii\II\psij\I \rangle = \langle \i\j | \hat{H} | \j\i \rangle
+\end{equation}
+
+Розкладаємо гамільтоніан:
+\begin{equation}
+= \langle \psii\I\psij\II | \hat{h}\I + \hat{h}\II + \frac{1}{r_{12}} | \psii\II\psij\I \rangle
+\end{equation}
+
+\textbf{Одноелектронні терми:}
+\begin{multline}
+\langle \psii\I\psij\II | \hat{h}\I | \psii\II\psij\I \rangle = \langle \psii\I | \hat{h}\I | \psii\II \rangle \langle \psij\II | \psij\I \rangle = \\
+\langle \i\j | \hat{h}\I | \j\i \rangle = \langle i\cdot | \hat{h}\I | \cdot i \rangle \langle \cdot j |j \cdot \rangle
+\end{multline}
+
+Оскільки $\hat{h}\I$ діє тільки на координати електрона 1:
+\begin{multline}
+= \langle \varphi_i\I | \hat{h}\I | \varphi_i\II \rangle \langle \gamma_i\I | \gamma_i\II \rangle \langle \varphi_j\II | \varphi_j\I \rangle \langle \gamma_j\II | \gamma_j\I \rangle = \\
+=
+\left( i\cdot | \hat{h}\I | \cdot i \right) ( \cdot j | j \cdot ) \langle \gamma_i | \gamma_j \rangle  \langle \gamma_j | \gamma_i \rangle
+\end{multline}
+
+Але $\left( i\cdot | \hat{h}\I | \cdot i \right) = 0$ (різні координати), тому:
+\begin{equation}
+\langle \i\j | \hat{h}\I | \j\i \rangle = 0
+\end{equation}
+
+Аналогічно:
+\begin{equation}
+\langle \i\j | \hat{h}\II | \j\i \rangle = 0
+\end{equation}
+
+\textbf{Двоелектронний терм:}
+\begin{equation}
+\langle \psii\I\psij\II | \frac{1}{r_{12}} | \psii\II\psij\I \rangle = \langle \i\j | \frac{1}{r_{12}} | \j\i \rangle = \langle \i\j | \j\i \rangle  = (\i\j|\j\i) \delta_{\i\j} = K_{\i\j}
+\end{equation}
+
+%
+%
+%
+%
+%\textbf{Підсумок:}
+%\begin{equation}
+%\langle \psii\I\psij\II | \hat{H} | \psii\II\psij\I \rangle = \left( \i\j | \j\i \right) \delta_{\i\j}
+%\end{equation}
+%
+%де $\delta_{\i\j} = 1$ якщо спіни однакові, $\delta_{\i\j} = 0$ якщо спіни різні.
+
+
+
+\section{Підсумковий результат}
+
+\begin{equation}
+E = h_{ii} + h_{jj} + J_{\i\j} - K_{\i\j} = \varepsilon_1 + \varepsilon_2 + + J_{\i\j} - K_{\i\j}
+\end{equation}
+
+Результат ми можемо записати у вигляді суми:
+\begin{equation}
+    E = \sum\limits_{i=1}^2 \varepsilon_i + \frac12  \sum\limits_{i=1}^2 \sum\limits_{j=1}^2(J_{\i\j} - K_{\i\j}), \quad J_{\i\i} = 0, \ K_{\i\j} = 0
+\end{equation}
+
+\section{Отримання рівнянь Хартрі-Фока з варіаційного принципу}
+
+\begin{equation*}
+    F = E - \sum_{i = 1}^{2} \sum_{j = 1}^{2} (\ve_{ij} \bracket{\vphi_i}{\vphi_j} - \delta_{ij})
+\end{equation*}
+
+
+\begin{multline*}
+    \delta F =  \opbracket{\delta\F}{\h}{\F} + \opbracket{\delta\S}{\h}{\S} + \\
+    % for J
+    + \frac12\opbracket{\delta\F\S}{\V}{\F\S} + \frac12\opbracket{\F\delta\S}{\V}{\F\S} +
+    \frac12\opbracket{\delta\S\F}{\V}{\S\F} + \frac12\opbracket{\S\delta\F}{\V}{\S\F} - \\
+    % for K
+    - \frac12\opbracket{\delta\F\S}{\V}{\S\F} - \frac12\opbracket{\delta\S\F}{\V}{\F\S}
+    - \frac12\opbracket{\F\delta\S}{\V}{\S\F} - \frac12\opbracket{\S\delta\F}{\V}{\F\S} - \\
+    - \ve_{11} \bracket{\delta\F}{\F}
+    - \ve_{12} \bracket{\delta\F}{\S}
+    - \ve_{21} \bracket{\delta\S}{\F}
+    - \ve_{22} \bracket{\delta\S}{\S} + \\
+    + \text{c. c.} = 0
+\end{multline*}
+
+\begin{align*}
+    \left( \h + \frac12\opbracket{\dt\S}{\V}{\dt\S} + \frac12\opbracket{\S\dt}{\V}{\S\dt}
+    - \frac12 \opbracket{\dt\S}{\V}{\S\dt} - \frac12\opbracket{\S\,.}{\V}{\dt\S}
+    \right) \ket{\F} &= \ve_{11} \ket{\F} + \ve_{12}\ket{\S}
+    \\[1.1\baselineskip]%
+    \left( \h + \frac12\opbracket{.\,\F}{\V}{.\,\F} + \frac12\opbracket{\F\dt}{\V}{\F\dt}
+    - \frac12 \opbracket{\dt\F}{\V}{\F\dt} - \frac12\opbracket{\F\dt}{\V}{\dt\F}
+    \right) \ket{\S} &= \ve_{21} \ket{\F} + \ve_{22}\ket{\S}
+\end{align*}
+
+Canonical HF-Equations
+
+\begin{align*}
+    \left( \h + \opbracket{\dt\S}{\V}{\dt\S}
+    - \opbracket{\dt\S}{\V}{\S\dt}
+    \right) \ket{\F} &= \ve_{11} \ket{\F}
+    \\[1.1\baselineskip]%
+    \left( \h + \opbracket{\dt\F}{\V}{\dt\F}
+    -  \opbracket{\dt\F}{\V}{\F\dt}
+    \right) \ket{\S} &= \ve_{22} \ket{\S}
+\end{align*}
+
+Columb operator
+
+\begin{equation*}
+   \hat{J}_{\S}\ket{\F} = \opbracket{\dt\S}{\V}{\dt\S} \ket{\F} = \int \frac{\dt\ob\s\dt\ob\s}{r_{12}} d\s \cdot \oa\f =  \int \frac{\dt\ob\s\oa\f\ob\s}{r_{12}} d\s
+\end{equation*}
+
+Columb integral
+
+\begin{equation*}
+   \bra{\F}\hat{J}_{\S}\ket{\F} = \bra{\F}\opbracket{\dt\S}{\V}{\dt\S} \ket{\F} = \iint \frac{\oa\f\ob\s\oa\f\ob\s}{r_{12}} d\s d\f
+\end{equation*}
+
+Exchange operator
+
+\begin{equation*}
+    \hat{K}_{\S}\ket{\F} = \opbracket{\dt\S}{\V}{\S\dt}\ket{\F} = \int \frac{\dt\ob\s \ob\f\dt}{r_{12}} d\s \cdot \oa\f = \int \frac{\dt\ob\s \ob\f\oa\s}{r_{12}} d\s
+\end{equation*}
+
+Exchange integral
+
+\begin{equation*}
+    \bra{\F}\hat{K}_{\S}\ket{\F} = \bra{\F}\opbracket{\dt\S}{\V}{\S\dt}\ket{\F} = \iint \frac{\oa\f\ob\s \ob\f\oa\s}{r_{12}} d\s d\f
+\end{equation*}
+
+
+
+\end{document}
