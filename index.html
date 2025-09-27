@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лекції з дисципліни "Квантова хімія та методи квантово-механічних обчислень"</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Основные стили для страницы */
+        html, body {
+            overflow: hidden;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        h1 {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            color: #2c3e50;
+        }
+
+        p {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            color: #7f8c8d;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            padding: 10px 0;
+            z-index: 1000;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .container {
+            width: 80%;
+            margin: 100px auto 50px auto; /* Оставляем место для header и footer */
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(100vh - 160px); /* Высота окна с учетом header и footer */
+            overflow-y: auto;
+        }
+
+        /* Стиль для списка лекций */
+        ol {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            display: flex;
+            flex-direction: column;
+            margin: 20px 0;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        li:hover {
+            transform: translateY(-10px);
+        }
+
+        .lecture-content {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+
+        .lecture-content a {
+            flex: 1;
+            margin-right: 20px;
+            text-decoration: none;
+            color: #2980b9;
+            font-size: 16px;
+        }
+
+        .lecture-content iframe {
+            flex: 2;
+            border: none;
+        }
+
+        /* Стиль для ссылки */
+        a:hover {
+            color: #e74c3c;
+        }
+
+        /* Анимация для фреймов и ссылок */
+        a, iframe {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        a:hover {
+            transform: scale(1.05);
+            opacity: 0.8;
+        }
+
+        /* Стили для маленьких экранов */
+        @media (max-width: 768px) {
+            .lecture-content {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .lecture-content a {
+                margin-bottom: 10px;
+                text-align: center;
+            }
+
+            .lecture-content iframe {
+                width: 100%;
+                height: 400px;
+            }
+        }
+        h2 {
+            margin-top: 40px;
+            padding: 10px;
+            background-color: #eef;
+            color: #2c3e50;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Лекції з дисципліни "Квантова хімія та методи квантово-механічних обчислень"</h1>
+        <p>Конспекти-презентації лекцій</p>
+    </header>
+
+    <div class="container">
+        <ol>
+        <h2>Документація з дисципліни</h2><!-- Силабус -->
+        <li>
+            <div class="lecture-content">
+                <a href="./A_Documents/Syllabus_QChem/Syllabus_QChem.pdf" target="_blank">Силабус дисципліни</a>
+                <iframe src="./A_Documents/Syllabus_QChem/Syllabus_QChem.pdf" width="50%" height="500px"></iframe>
+            </div>
+        </li>
+
+        </ol>
+    </div>
+    <footer>
+        &copy; Пономаренко Сергій Миколайович
+    </footer>
+</body>
+</html>
+

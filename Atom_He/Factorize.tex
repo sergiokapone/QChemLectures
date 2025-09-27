@@ -1,0 +1,674 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+
+\documentclass[]{article}
+\usepackage[fontsize=14pt]{fontsize}
+
+\usepackage{fontspec}
+\setsansfont{CMU Sans Serif}%{Arial}
+\setmainfont{CMU Serif}%{Times New Roman}
+\setmonofont{CMU Typewriter Text}%{Consolas}
+
+\defaultfontfeatures{Ligatures={TeX}}
+\usepackage[math-style=TeX]{unicode-math}
+\usepackage[russian, english, ukrainian]{babel}
+
+\usepackage{biblatex}
+
+\usepackage{microtype}
+\usepackage{xurl}
+\usepackage{indentfirst}
+
+\usepackage[most]{tcolorbox}
+\tcbset{highlight math style={enhanced,
+  colframe=red,colback=white,arc=0pt,boxrule=1pt}}
+\tcbset{
+    mybox/.style={
+        enhanced,
+        colback=gray!5,
+        fonttitle=\bfseries,
+        sharp corners,
+        boxrule=0pt,
+        frame empty
+    }
+}
+\usepackage{subcaption}
+\captionsetup[subfigure]{justification=centering}
+\usepackage{hyperref}
+
+\usepackage{titlesec}
+
+% Налаштування для section
+\titleformat{\section}
+  {\normalfont\large\bfseries}  % формат тексту (розмір і жирність)
+  {\thesection.}                % формат номеру з точкою
+  {1em}                         % відступ між номером і текстом
+  {}
+  [\hrulefill]
+
+\titleformat{\subsection}
+  {\normalfont\bfseries}  % формат тексту (розмір і жирність)
+  {\thesubsection.}                % формат номеру з точкою
+  {1em}                         % відступ між номером і текстом
+  {}
+
+
+\usepackage{minted}
+\usepackage{tikz, calc}
+\usetikzlibrary{backgrounds}
+
+\usepackage{enumitem}
+
+
+\addbibresource{../Bibliography/QuantumChemistry.bib}
+
+%%                                                                        %%
+%%============================= Геометрія сторінки =======================%%
+%%                                                                        %%
+\usepackage[%
+	a4paper,%
+	footskip=1cm,%
+	headsep=0.3cm,%
+	top=2cm, %поле сверху
+	bottom=2cm, %поле снизу
+	left=2cm, %поле ліворуч
+	right=2cm, %поле праворуч
+    ]{geometry}
+%%                                                                        %%
+%%============================== Інтерліньяж  ============================%%
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepgfplotslibrary{units}
+\pgfplotsset{compat=newest}
+\usepackage{pgfplotstable}
+\usepgfplotslibrary{groupplots}
+
+
+
+
+\title{Атом гелію}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Атом гелію без міжелектронної взаємодії}
+
+\subsection{Гамільтоніан системи}
+
+Розглянемо атом гелію ($Z = 2$) з двома електронами. В атомній системі одиниць повний гамільтоніан має вигляд:
+
+\begin{equation}
+\hat{H} = -\frac{1}{2}\nabla_1^2 - \frac{1}{2}\nabla_2^2 - \frac{Z}{r_1} - \frac{Z}{r_2} + \frac{1}{r_{12}}
+\end{equation}
+
+де:
+\begin{itemize}
+\item перші два доданки --- кінетична енергія електронів
+\item третій і четвертий доданки --- притягання електронів до ядра ($Z = 2$)
+\item останній доданок --- кулонівська взаємодія між електронами
+\end{itemize}
+
+\subsection{Наближення незалежних електронів}
+
+\textbf{Припущення:} знехтуємо міжелектронною взаємодією $1/r_{12}$.
+
+Тоді гамільтоніан спрощується:
+\begin{equation}
+\hat{H}_0 = -\frac{1}{2}\nabla_1^2 - \frac{1}{2}\nabla_2^2 - \frac{Z}{r_1} - \frac{Z}{r_2}
+\end{equation}
+
+Це можна переписати як суму незалежних одноелектронних гамільтоніанів:
+\begin{equation}
+\hat{H}_0 = \hat{h}_1 + \hat{h}_2
+\end{equation}
+
+де:
+\begin{align}
+\hat{h}_1 &= -\frac{1}{2}\nabla_1^2 - \frac{Z}{r_1} \\
+\hat{h}_2 &= -\frac{1}{2}\nabla_2^2 - \frac{Z}{r_2}
+\end{align}
+
+\subsection{Розділення змінних та факторизація}
+
+\textbf{Ключовий момент:} оскільки гамільтоніан розділяється на суму $\hat{H}_0 = \hat{h}_1 + \hat{h}_2$, хвильова функція може бути факторизована:
+
+\begin{equation}
+\Psi(\mathbf{r}_1, \mathbf{r}_2) = \psi_1(\mathbf{r}_1) \psi_2(\mathbf{r}_2)
+\end{equation}
+
+\textbf{Фізичний сенс:} електрони рухаються незалежно один від одного, кожен у полі ядра.
+
+\subsection{Розв'язання рівняння Шредінгера}
+
+Рівняння Шредінгера:
+\begin{equation}
+\hat{H}_0 \Psi = E \Psi
+\end{equation}
+
+Підставляючи факторизовану функцію:
+\begin{equation}
+(\hat{h}_1 + \hat{h}_2) \psi_1(\mathbf{r}_1) \psi_2(\mathbf{r}_2) = E \psi_1(\mathbf{r}_1) \psi_2(\mathbf{r}_2)
+\end{equation}
+
+Ділимо на $\Psi = \psi_1 \psi_2$:
+\begin{equation}
+\frac{\hat{h}_1 \psi_1(\mathbf{r}_1)}{\psi_1(\mathbf{r}_1)} + \frac{\hat{h}_2 \psi_2(\mathbf{r}_2)}{\psi_2(\mathbf{r}_2)} = E
+\end{equation}
+
+\textbf{Ключове спостереження:} перший доданок залежить тільки від $\mathbf{r}_1$, другий --- тільки від $\mathbf{r}_2$. Щоб їх сума була константою, кожен доданок повинен дорівнювати константі:
+
+\begin{align}
+\hat{H}_1 \psi_1(\mathbf{r}_1) &= E_1 \psi_1(\mathbf{r}_1) \\
+\hat{H}_2 \psi_2(\mathbf{r}_2) &= E_2 \psi_2(\mathbf{r}_2)
+\end{align}
+
+де $E = E_1 + E_2$.
+
+\subsection{Водневоподібні атоми}
+
+Кожне з рівнянь описує водневоподібний атом з ядерним зарядом $Z = 2$:
+
+\textbf{Енергії:}
+\begin{equation}
+E_n = -\frac{Z^2}{2n^2} = -\frac{2}{n^2} \text{ а.о.}
+\end{equation}
+
+\textbf{Хвильові функції:}
+\begin{equation}
+\psi_{nlm}(r,\theta,\phi) = R_{nl}(r) Y_l^m(\theta,\phi)
+\end{equation}
+
+\textbf{Основний стан атома гелію (наближення):}
+\begin{align}
+\Psi_{gs} &= \psi_{1s}(\mathbf{r}_1) \psi_{1s}(\mathbf{r}_2) \\
+E_{gs} &= 2 \times E_{1s} = 2 \times \left(-\frac{4}{2}\right) = -4 \text{ а.о.}
+\end{align}
+
+\section{Атом гелію з міжелектронною взаємодією}
+
+\subsection{Повний гамільтоніан}
+
+Повертаємося до повного гамільтоніана з взаємодією:
+\begin{equation}
+\hat{H} = \hat{h}_1 + \hat{h}_2 + \frac{1}{r_{12}}
+\end{equation}
+
+\subsection{Неможливість точної факторизації}
+
+\textbf{Проблема:} доданок $1/r_{12}$ не може бути розділений на суму функцій від $\mathbf{r}_1$ та $\mathbf{r}_2$ окремо:
+
+\begin{equation}
+\frac{1}{r_{12}} = \frac{1}{|\mathbf{r}_1 - \mathbf{r}_2|} \neq f(\mathbf{r}_1) + g(\mathbf{r}_2)
+\end{equation}
+
+\textbf{Математичний доказ неможливості факторизації:}
+
+Припустимо, що $\Psi(\mathbf{r}_1, \mathbf{r}_2) = \psi_1(\mathbf{r}_1) \psi_2(\mathbf{r}_2)$. Тоді:
+
+\begin{equation}
+\hat{H}_{full} \Psi = \left(\hat{h}_1 + \hat{h}_2 + \frac{1}{r_{12}}\right) \psi_1(\mathbf{r}_1) \psi_2(\mathbf{r}_2)
+\end{equation}
+
+\begin{equation}
+= \hat{h}_1 \psi_1(\mathbf{r}_1) \psi_2(\mathbf{r}_2) + \psi_1(\mathbf{r}_1) \hat{h}_2 \psi_2(\mathbf{r}_2) + \frac{1}{r_{12}} \psi_1(\mathbf{r}_1) \psi_2(\mathbf{r}_2)
+\end{equation}
+
+Ділячи на $\psi_1 \psi_2$:
+\begin{equation}
+\frac{\hat{h}_1 \psi_1(\mathbf{r}_1)}{\psi_1(\mathbf{r}_1)} + \frac{\hat{h}_2 \psi_2(\mathbf{r}_2)}{\psi_2(\mathbf{r}_2)} + \frac{1}{r_{12}} = E
+\end{equation}
+
+\textbf{Висновок:} доданок $1/r_{12}$ залежить від обох координат одночасно, тому неможливо розділити змінні. Факторизація не працює!
+
+\subsection{Фізичні наслідки}
+
+\textbf{Кореляція електронів:} через взаємодію $1/r_{12}$ рух електронів стає скорельованим --- позиція одного електрона впливає на ймовірність знаходження іншого.
+
+\textbf{Квантова заплутаність:} електрони утворюють заплутаний квантовий стан, який не може бути описаний добутком індивідуальних хвильових функцій.
+
+\section{Теорія збурень для атома гелію}
+
+\subsection{Чому теорія збурень?}
+
+З попереднього розділу ми побачили, що:
+\begin{itemize}
+\item \textbf{Без взаємодії} $1/r_{12}$: можемо точно розв'язати (факторизація працює)
+\item \textbf{З взаємодією} $1/r_{12}$: точний розв'язок неможливий (факторизація не працює)
+\end{itemize}
+
+\textbf{Ідея:} якщо взаємодія між електронами ``не дуже сильна'' порівняно з взаємодією з ядром, то можна використати теорію збурень:
+\begin{itemize}
+\item ``Головна'' частина: електрони в полі ядра (знаємо точний розв'язок)
+\item ``Мале'' збурення: взаємодія між електронами
+\end{itemize}
+
+\textbf{Обґрунтування:} в атомі гелію $Z = 2$, тому притягання до ядра сильніше за відштовхування між електронами. Це робить теорію збурень розумним наближенням.
+
+\subsection{Постановка задачі}
+
+Представимо повний гамільтоніан у вигляді:
+\begin{equation}
+\hat{H} = \hat{H}_0 + \hat{V}
+\end{equation}
+
+де:
+\begin{align}
+\hat{H}_0 &= \hat{h}_1 + \hat{h}_2 \quad \text{(незбурений гамільтоніан)} \\
+\hat{V} &= \frac{1}{r_{12}} \quad \text{(збурення)}
+\end{align}
+
+\subsection{Незбурені власні функції та енергії}
+
+З попереднього розділу знаємо:
+\begin{align}
+\hat{H}_0 \Psi_n^{(0)} &= E_n^{(0)} \Psi_n^{(0)} \\
+\Psi_n^{(0)} &= \psi_{n_1}(\mathbf{r}_1) \psi_{n_2}(\mathbf{r}_2) \\
+E_n^{(0)} &= E_{n_1} + E_{n_2}
+\end{align}
+
+\subsection{Основний стан}
+
+Для основного стану ($1s^2$ конфігурація):
+\begin{align}
+\Psi_{gs}^{(0)} &= \psi_{1s}(\mathbf{r}_1) \psi_{1s}(\mathbf{r}_2) \\
+E_{gs}^{(0)} &= 2E_{1s} = 2 \times \left(-\frac{Z^2}{2}\right) = -Z^2 = -4 \text{ а.о.}
+\end{align}
+
+\subsection{Перша поправка до енергії}
+
+Згідно з теорією збурень першого порядку:
+\begin{equation}
+E_{gs}^{(1)} = \langle \Psi_{gs}^{(0)} | \hat{V} | \Psi_{gs}^{(0)} \rangle
+\end{equation}
+
+Підставляючи:
+\begin{equation}
+E_{gs}^{(1)} = \left\langle \psi_{1s}(\mathbf{r}_1) \psi_{1s}(\mathbf{r}_2) \left| \frac{1}{r_{12}} \right| \psi_{1s}(\mathbf{r}_1) \psi_{1s}(\mathbf{r}_2) \right\rangle
+\end{equation}
+
+\begin{equation}
+E_{gs}^{(1)} = \iint \psi_{1s}^*(\mathbf{r}_1) \psi_{1s}^*(\mathbf{r}_2) \frac{1}{r_{12}} \psi_{1s}(\mathbf{r}_1) \psi_{1s}(\mathbf{r}_2) d^3r_1 d^3r_2
+\end{equation}
+
+Оскільки $\psi_{1s}$ --- дійсна функція:
+\begin{equation}
+E_{gs}^{(1)} = \iint \psi_{1s}^2(\mathbf{r}_1) \psi_{1s}^2(\mathbf{r}_2) \frac{1}{r_{12}} d^3r_1 d^3r_2
+\end{equation}
+
+\subsection{Кулонівський інтеграл}
+
+Позначимо цей інтеграл як кулонівський інтеграл $J$:
+\begin{equation}
+J = E_{gs}^{(1)} = \iint \psi_{1s}^2(\mathbf{r}_1) \psi_{1s}^2(\mathbf{r}_2) \frac{1}{r_{12}} d^3r_1 d^3r_2
+\end{equation}
+
+\textbf{Фізичний сенс кулонівського інтеграла:}
+
+Інтеграл $J$ представляє електростатичну взаємодію між двома електронними зарядовими хмарами:
+\begin{itemize}
+\item $|\psi_{1s}(\mathbf{r}_1)|^2$ --- густина ймовірності першого електрона
+\item $|\psi_{1s}(\mathbf{r}_2)|^2$ --- густина ймовірності другого електрона
+\item $1/r_{12}$ --- кулонівська взаємодія між елементами зарядових хмар
+\end{itemize}
+
+\textbf{Інтерпретація:} $J$ --- це енергія відштовхування між двома сферично симетричними електронними хмарами в $1s$ стані.
+
+\subsection{Загальна енергія основного стану}
+
+Енергія основного стану в першому порядку теорії збурень:
+\begin{equation}
+E_{gs} = E_{gs}^{(0)} + E_{gs}^{(1)} = -Z^2 + J = -4 + J
+\end{equation}
+
+\textbf{Чисельне значення:} точне обчислення дає $J = 5/8 Z = 1.25$ а.о.
+
+Таким чином:
+\begin{equation}
+E_{gs} = -4 + 1.25 = -2.75 \text{ а.о.}
+\end{equation}
+
+\textbf{Порівняння з експериментом:}
+\begin{itemize}
+\item Теорія збурень: $E_{gs} = -2.75$ а.о.
+\item Експеримент: $E_{gs} = -2.90$ а.о.
+\item Похибка: $\sim 5\%$
+\end{itemize}
+
+\subsection{Фізичні висновки}
+
+\begin{enumerate}
+\item Міжелектронна взаємодія \textbf{підвищує} загальну енергію (робить атом менш зв'язаним)
+\item Кулонівський інтеграл $J > 0$ представляє енергію відштовхування електронів
+\item Теорія збурень дає розумне наближення для основного стану
+\end{enumerate}
+
+\subsection{Недоліки теорії збурень}
+
+
+\begin{enumerate}
+\item  Відсутність кореляційних ефектів:
+ Теорія збурень першого порядку не враховує:
+ \begin{itemize}
+ \item \textbf{Динамічні кореляції:} електрони ``уникають'' один одного в реальному часі
+ \item \textbf{Кутові кореляції:} електрони мають тенденцію знаходитися на протилежних сторонах ядра
+ \end{itemize}
+
+\item Математичні проблеми:
+ \begin{itemize}
+ \item Ряд теорії збурень може розходитися для сильних збурень
+ \item Вищі порядки стають все складнішими для обчислення
+ \end{itemize}
+
+\end{enumerate}
+\textbf{Висновок:} теорія збурень --- хороший початок, але потрібні більш досконалі методи для точного опису багатоелектронних атомів.
+
+
+\section{Метод Хартрі}
+
+\subsection{Мотивація методу}
+
+Після аналізу недоліків теорії збурень постає питання: чи можна знайти кращий спосіб врахувати міжелектронну взаємодію, зберігши при цьому можливість факторизації?
+
+\textbf{Ідея Хартрі:} замінити точну миттєву взаємодію між електронами на взаємодію кожного електрона з усередненим електростатичним полем, створеним усіма іншими електронами.
+
+\subsection{Основна концепція}
+
+\textbf{Фізична картина:}
+\begin{itemize}
+\item Кожен електрон рухається незалежно
+\item Але в ефективному полі, створеному ``розмазаними'' іншими електронами
+\item Розподіл інших електронів визначається їх хвільовими функціями
+\end{itemize}
+
+\textbf{Математично:} шукаємо розв'язок у факторизованому вигляді:
+\begin{equation}
+\Psi(\mathbf{r}_1, \mathbf{r}_2) = \psi_1(\mathbf{r}_1) \psi_2(\mathbf{r}_2)
+\end{equation}
+
+але тепер $\psi_i$ визначаються самоузгоджено з урахуванням взаємодії.
+
+%\subsection{Вивід рівнянь Хартрі}
+%
+%\textbf{Крок 1:} Енергія системи як функціонал орбіталей.
+%
+%Середня енергія системи:
+%\begin{equation}
+%E[\psi_1, \psi_2] = \langle \Psi | \hat{H} | \Psi \rangle
+%\end{equation}
+%
+%\begin{align}
+%E &= \int \psi_1^*(\mathbf{r}_1) \psi_2^*(\mathbf{r}_2) \left[ \hat{h}_1 + \hat{h}_2 + \frac{1}{r_{12}} \right] \psi_1(\mathbf{r}_1) \psi_2(\mathbf{r}_2) d^3r_1 d^3r_2
+%\end{align}
+%
+%\begin{align}
+%E &= \int |\psi_1(\mathbf{r}_1)|^2 \hat{h}_1 d^3r_1 + \int |\psi_2(\mathbf{r}_2)|^2 \hat{h}_2 d^3r_2 \\
+%&\quad + \iint |\psi_1(\mathbf{r}_1)|^2 |\psi_2(\mathbf{r}_2)|^2 \frac{1}{r_{12}} d^3r_1 d^3r_2
+%\end{align}
+%
+%\textbf{Крок 2:} Варіаційний принцип.
+%
+%Мінімізуємо енергію за умови нормування орбіталей:
+%\begin{equation}
+%\frac{\delta}{\delta \psi_i^*} \left[ E - \varepsilon_i \left( \int |\psi_i|^2 d^3r - 1 \right) \right] = 0
+%\end{equation}
+
+\subsection{Рівняння Хартрі}
+
+Рівняння Хартрі:
+
+\textbf{Для першого електрона:}
+\begin{equation}
+\left[ \hat{h}_1 + \int \frac{|\psi_2(\mathbf{r}_2)|^2}{r_{12}} d^3r_2 \right] \psi_1(\mathbf{r}_1) = \varepsilon_1 \psi_1(\mathbf{r}_1)
+\end{equation}
+
+\textbf{Для другого електрона:}
+\begin{equation}
+\left[ \hat{h}_2 +  \int \frac{|\psi_1(\mathbf{r}_1)|^2}{r_{12}} d^3r_1 \right] \psi_2(\mathbf{r}_2) = \varepsilon_2 \psi_2(\mathbf{r}_2)
+\end{equation}
+
+де хартрівські потенціали:
+\begin{align}
+V_H^{(2)}(\mathbf{r}_1) &= \int \frac{|\psi_2(\mathbf{r}_2)|^2}{r_{12}} d^3r_2 \\
+V_H^{(1)}(\mathbf{r}_2) &= \int \frac{|\psi_1(\mathbf{r}_1)|^2}{r_{12}} d^3r_1
+\end{align}
+
+\subsection{Фізичний сенс і одноелектронне наближення}
+
+\textbf{Хартрівський потенціал $V_H^{(2)}(\mathbf{r}_1)$:}
+\begin{itemize}
+\item Представляє електростатичний потенціал, створений зарядовою густиною $-|\psi_2(\mathbf{r}_2)|^2$ другого електрона
+\item Перший електрон ``бачить'' другий як розмазану хмару
+\item Статичний потенціал (не залежить від часу)
+\end{itemize}
+
+\textbf{Ключове спостереження:} хоча електрони реально взаємодіють, рівняння Хартрі дозволяють розглядати кожен електрон окремо.
+
+\textbf{Як це працює:}
+\begin{itemize}
+\item Кожен електрон рухається в індивідуальному одноелектронному рівнянні
+\item Взаємодія з іншими електронами ``захована'' в хартрівському потенціалі $V_H$
+\item Електрон ``не знає'' точних координат інших електронів
+\item Відчуває тільки усереднене електростатичне поле від них
+\end{itemize}
+
+\textbf{Фізична аналогія:} електрон рухається як ``одинока'' частинка в ефективному полі, створеному розмазаними зарядовими хмарами інших електронів.
+
+\textbf{Математичні наслідки:}
+\begin{equation}
+\Psi(\mathbf{r}_1, \mathbf{r}_2) = \psi_1(\mathbf{r}_1) \psi_2(\mathbf{r}_2)
+\end{equation}
+
+Факторизація знову стає можливою! Але тепер орбіталі $\psi_i$ визначаються самоузгоджено, а не як прості водневоподібні функції.
+
+\textbf{Зв'язок з попередніми методами:}
+\begin{itemize}
+\item \textbf{Незалежні електрони:} $V_H = 0$, факторизація точна
+\item \textbf{Теорія збурень:} $V_H$ замінюється на ``малу поправку''
+\item \textbf{Метод Хартрі:} $V_H$ визначається самоузгоджено з орбіталей
+\end{itemize}
+
+\subsection{Самоузгодженість --- ітераційна процедура}
+
+\textbf{Проблема:} щоб знайти $\psi_1$, потрібно знати $\psi_2$, і навпаки!
+
+\textbf{Розв'язок --- ітераційна процедура:}
+\begin{enumerate}
+\item Задати початкові наближення $\psi_1^{(0)}$, $\psi_2^{(0)}$
+\item Обчислити $V_H^{(2)}$ з $\psi_2^{(0)}$ та розв'язати рівняння для $\psi_1^{(1)}$
+\item Обчислити $V_H^{(1)}$ з $\psi_1^{(1)}$ та розв'язати рівняння для $\psi_2^{(1)}$
+\item Повторювати до збіжності: $\psi_i^{(n+1)} \approx \psi_i^{(n)}$
+\end{enumerate}
+
+\textbf{Самоузгодженість означає:} кожен електрон створює електростатичне поле, в якому рухається інший електрон, і це поле узгоджується з розподілом електронів.
+
+
+\section{Принцип Паулі та недоліки методу Хартрі}
+
+\subsection{Проблема з факторизацією в методі Хартрі}
+
+Хоча метод Хартрі покращує теорію збурень, він має принципову проблему: \textbf{не враховує принцип Паулі}.
+
+\subsection{Принцип Паулі}
+
+\textbf{Формулювання:} хвильова функція системи ферміонів (електронів) повинна бути антисиметричною відносно перестановки будь-яких двох частинок.
+
+Для двох електронів:
+\begin{equation}
+\Psi(\mathbf{r}_1, \mathbf{r}_2) = -\Psi(\mathbf{r}_2, \mathbf{r}_1)
+\end{equation}
+
+\subsection{Проблема простої факторизації}
+
+У методі Хартрі ми використовуємо:
+\begin{equation}
+\Psi_{Hartree}(\mathbf{r}_1, \mathbf{r}_2) = \psi_1(\mathbf{r}_1) \psi_2(\mathbf{r}_2)
+\end{equation}
+
+\textbf{Перевірка антисиметрії:}
+\begin{align}
+\Psi_{Hartree}(\mathbf{r}_2, \mathbf{r}_1) &= \psi_1(\mathbf{r}_2) \psi_2(\mathbf{r}_1) \\
+&\neq -\psi_1(\mathbf{r}_1) \psi_2(\mathbf{r}_2) = -\Psi_{Hartree}(\mathbf{r}_1, \mathbf{r}_2)
+\end{align}
+
+\textbf{Висновок:} проста факторизація Хартрі \textbf{не є антисиметричною} і порушує принцип Паулі!
+
+\subsection{Приклад: основний стан гелію}
+
+Для основного стану гелію ($1s^2$) обидва електрони мають протилежні спіни, тому принцип Паулі дозволяє їм займати одну і ту ж орбіталь $1s$.
+
+\textbf{Правильна антисиметрична функція:}
+\begin{equation}
+\Psi(\mathbf{r}_1, \mathbf{r}_2) = \frac{1}{\sqrt{2}} \left[ \phi_{1s}(\mathbf{r}_1)\alpha(1) \phi_{1s}(\mathbf{r}_2)\beta(2) - \phi_{1s}(\mathbf{r}_2)\alpha(2) \phi_{1s}(\mathbf{r}_1)\beta(1) \right]
+\end{equation}
+
+де $\alpha$, $\beta$ --- спінові функції.
+
+\textbf{Спрощено (просторова частина):}
+\begin{equation}
+\Phi_\text{spatial} = \phi_{1s}(\mathbf{r}_1) \phi_{1s}(\mathbf{r}_2)
+\end{equation}
+
+У цьому випадку метод Хартрі дає правильний результат, бо спінова частина автоматично антисиметрична.
+
+\subsection{Коли метод Хартрі особливо неточний}
+
+\textbf{Збуджені стани з однаковими спінами:}
+Наприклад, стан $1s^1 2s^1$ з паралельними спінами. Тут принцип Паулі критично важливий, а метод Хартрі дає принципово неправильні результати.
+
+\textbf{Висновок:} потрібен метод, який поєднує переваги Хартрі (самоузгодженість) з правильною антисиметрією (принцип Паулі).
+
+\section{Метод Хартрі-Фока}
+
+\subsection{Мотивація}
+
+Метод Хартрі-Фока поєднує переваги методу Хартрі (самоузгодженість, одноелектронне наближення) з правильним врахуванням принципу Паулі через антисиметричну хвильову функцію.
+
+\subsection{Антисиметрична хвильова функція --- детермінант Слейтера}
+
+Для системи двох електронів правильна антисиметрична хвильова функція будується у вигляді детермінанта Слейтера:
+
+\begin{equation}
+\Psi(\mathbf{r}_1, \mathbf{r}_2) = \frac{1}{\sqrt{2}} \begin{vmatrix}
+\psi_1(\mathbf{r}_1) & \psi_2(\mathbf{r}_1) \\
+\psi_1(\mathbf{r}_2) & \psi_2(\mathbf{r}_2)
+\end{vmatrix}
+\end{equation}
+
+\begin{equation}
+= \frac{1}{\sqrt{2}} \left[ \chi_1(\mathbf{r}_1)\chi_2(\mathbf{r}_2) - \chi_2(\mathbf{r}_1)\chi_1(\mathbf{r}_2) \right]
+\end{equation}
+
+де $\psi_i(\mathbf{r})$ --- спін-орбіталі, які включають і просторову, і спінову частини:
+\begin{equation}
+\psi_i(\mathbf{r}) = \phi_i(\mathbf{r}) \gamma_i
+\end{equation}
+
+$\gamma_i$ --- спінові функції $\alpha$ або $\beta$.
+
+\subsection{Перевірка антисиметрії}
+
+При перестановці електронів 1 ↔ 2:
+\begin{align}
+\Psi(\mathbf{r}_2, \mathbf{r}_1) &= \frac{1}{\sqrt{2}} \left[ \psi_1(\mathbf{r}_2)\psi_2(\mathbf{r}_1) - \psi_2(\mathbf{r}_2)\psi_1(\mathbf{r}_1) \right] \\
+&= -\frac{1}{\sqrt{2}} \left[ \psi_1(\mathbf{r}_1)\psi_2(\mathbf{r}_2) - \psi_2(\mathbf{r}_1)\psi_1(\mathbf{r}_2) \right] \\
+&= -\Psi(\mathbf{r}_1, \mathbf{r}_2)
+\end{align}
+
+\textbf{Антисиметрія виконується!}
+
+%\subsection{Основний стан гелію}
+%
+%Для основного стану ($1s^2$) з протилежними спінами:
+%\begin{align}
+%\chi_1(\mathbf{r}) &= \psi_{1s}(\mathbf{r}) \alpha \\
+%\chi_2(\mathbf{r}) &= \psi_{1s}(\mathbf{r}) \beta
+%\end{align}
+%
+%Детермінант Слейтера:
+%\begin{equation}
+%\Psi(\mathbf{r}_1, \mathbf{r}_2) = \frac{1}{\sqrt{2}} \left[ \psi_{1s}(\mathbf{r}_1)\alpha(1) \psi_{1s}(\mathbf{r}_2)\beta(2) - \psi_{1s}(\mathbf{r}_2)\alpha(2) \psi_{1s}(\mathbf{r}_1)\beta(1) \right]
+%\end{equation}
+%
+%\textbf{Спрощення:} для основного стану гелію спінова частина автоматично антисиметрична, тому просторова частина залишається симетричною:
+%\begin{equation}
+%\Psi_{spatial} = \psi_{1s}(\mathbf{r}_1) \psi_{1s}(\mathbf{r}_2)
+%\end{equation}
+%
+%\textbf{Висновок:} для основного стану гелію методи Хартрі та Хартрі-Фока дають однакові результати!
+%
+%\subsection{Збуджені стани --- де проявляється різниця}
+%
+%Розглянемо збуджений стан $1s^1 2s^1$ з паралельними спінами:
+%\begin{align}
+%\chi_1(\mathbf{r}) &= \psi_{1s}(\mathbf{r}) \alpha \\
+%\chi_2(\mathbf{r}) &= \psi_{2s}(\mathbf{r}) \alpha
+%\end{align}
+%
+%\textbf{Детермінант Слейтера:}
+%\begin{equation}
+%\Psi(\mathbf{r}_1, \mathbf{r}_2) = \frac{1}{\sqrt{2}} \left[ \psi_{1s}(\mathbf{r}_1)\psi_{2s}(\mathbf{r}_2) - \psi_{2s}(\mathbf{r}_1)\psi_{1s}(\mathbf{r}_2) \right] \alpha(1)\alpha(2)
+%\end{equation}
+%
+%\textbf{Ключова різниця:} просторова частина тепер антисиметрична, на відміну від простої факторизації Хартрі.
+%
+%\subsection{Рівняння Хартрі-Фока}
+
+Застосовуючи варіаційний принцип до детермінанта Слейтера, отримуємо рівняння Хартрі-Фока:
+
+\begin{equation}
+\hat{f}_i \chi_i(\mathbf{r}) = \varepsilon_i \chi_i(\mathbf{r})
+\end{equation}
+
+де $\hat{f}_i$ --- оператор Фока:
+\begin{equation}
+\hat{f}_i = \hat{h}_i + \sum_{j \neq i} \left( \hat{J}_j - \hat{K}_j \right)
+\end{equation}
+
+\textbf{Компоненти оператора Фока:}
+\begin{itemize}
+\item $\hat{h}_i$ --- одноелектронний гамільтоніан (кінетична енергія + ядерне притягання)
+\item $\hat{J}_j$ --- кулонівський (хартрівський) оператор
+\item $\hat{K}_j$ --- обмінний оператор (новий!)
+\end{itemize}
+
+\subsection{Кулонівський та обмінний оператори}
+
+\textbf{Кулонівський оператор:}
+\begin{equation}
+\hat{J}_j \chi_i(\mathbf{r}_1) = \left[ \int \frac{|\chi_j(\mathbf{r}_2)|^2}{r_{12}} d\mathbf{r}_2 \right] \chi_i(\mathbf{r}_1)
+\end{equation}
+
+\textbf{Обмінний оператор:}
+\begin{equation}
+\hat{K}_j \chi_i(\mathbf{r}_1) = \left[ \int \frac{\chi_j^*(\mathbf{r}_2) \chi_i(\mathbf{r}_2)}{r_{12}} d\mathbf{r}_2 \right] \chi_j(\mathbf{r}_1)
+\end{equation}
+
+\subsection{Фізичний сенс обмінної взаємодії}
+
+\textbf{Кулонівська взаємодія $\hat{J}_j$:}
+\begin{itemize}
+\item Класична електростатична відштовхування
+\item Електрон відчуває усереднене поле зарядової густини інших електронів
+\item Аналогічно до методу Хартрі
+\end{itemize}
+
+\textbf{Обмінна взаємодія $\hat{K}_j$:}
+\begin{itemize}
+\item Чисто квантово-механічний ефект
+\item Виникає з антисиметрії хвильової функції
+\item Діє тільки між електронами з паралельними спінами
+\item Створює ефективне ``відштовхування'' без класичного аналогу
+\end{itemize}
+
+\textbf{Обмінна енергія завжди від'ємна}, тому знижує загальну енергію системи.
+
+\end{document}
