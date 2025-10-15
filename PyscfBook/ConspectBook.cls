@@ -71,7 +71,7 @@
 \ifluatex
 	\RequirePackage{fontspec}
 	%    \RequirePackage[sfdefault,regular]{roboto}
-	\setmainfont{BookmanOldStyle}%{alegreya}%{CMU Serif}
+	\setmainfont{CMU Serif}%{alegreya}%{BookmanOldStyle}
 	\setsansfont{Roboto}%{Arial}
 	\setmonofont{Consolas}%{JetBrains Mono}
 	\defaultfontfeatures{Ligatures={TeX}}
@@ -539,7 +539,7 @@ postaction={ decorate,
 {\normalsize\bfseries}{\thesection.}{1em}{#1}
 
 \titleformat{\subsection}[runin]
-{\normalsize\bfseries}
+{\normalsize\bfseries\itshape}
 {\thesubsection.}
 {1em}
 {#1}

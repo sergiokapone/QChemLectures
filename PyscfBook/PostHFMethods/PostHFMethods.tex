@@ -1,0 +1,866 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+% !TeX root =../PyscfBook.tex
+
+%=========================================================
+\Opensolutionfile{answer}[\currfilebase/\currfilebase-Answers]
+\chapter{Пост-Гартрі-Фоківські методи}\label{\currfilebase}
+%=========================================================
+
+%% --------------------------------------------------------
+\section{Вступ до електронної кореляції}
+%% --------------------------------------------------------
+
+
+%% --------------------------------------------------------
+\subsection{Що таке електронна кореляція?}
+%% --------------------------------------------------------
+
+Електронна кореляція --- це різниця між точною енергією системи та енергією, отриманою методом Хартрі-Фока:
+
+\begin{equation}
+E_{\text{corr}} = E_{\text{exact}} - E_{\text{HF}}
+\end{equation}
+
+Метод Хартрі-Фока не враховує миттєву кореляцію рухів електронів, оскільки кожен електрон рухається в усередненому полі всіх інших електронів. Насправді ж електрони "уникають" один одного через кулонівське відштовхування.
+
+%% --------------------------------------------------------
+\subsection{Типи електронної кореляції}
+%% --------------------------------------------------------
+
+\paragraph{Динамічна кореляція}
+Пов'язана з миттєвими флуктуаціями електронної густини. Проявляється на коротких відстанях між електронами. Може бути враховані методами:
+\begin{itemize}
+    \item Теорія збурень Møller-Plesset (MP2, MP3, MP4)
+    \item Coupled Cluster (CCSD, CCSD(T))
+    \item Configuration Interaction (CISD, QCISD)
+\end{itemize}
+
+\paragraph{Статична (нединамічна) кореляція}
+Виникає, коли кілька конфігурацій близькі за енергією. Важлива для:
+\begin{itemize}
+    \item Розриву хімічних зв'язків
+    \item Збуджених станів
+    \item Діелектронних систем
+    \item Перехідних металів з близькими d-орбіталями
+\end{itemize}
+
+Методи: CASSCF, CASPT2, MRCI.
+
+%% --------------------------------------------------------
+\subsection{Кореляційна енергія атомів}
+%% --------------------------------------------------------
+
+Для атомів кореляційна енергія становить 1--5\% від повної енергії, але вона критична для точних розрахунків:
+
+\begin{table}[h]
+\centering
+\caption{Кореляційна енергія атомів (Ha)}
+\label{tab:correlation_energy}
+\begin{tabular}{lccccc}
+\hline
+\textbf{Атом} & \textbf{$E_{HF}$} & \textbf{$E_{exact}$} & \textbf{$E_{corr}$} & \textbf{\% від $E_{HF}$} \\
+\hline
+He  & -2.8617  & -2.9037  & -0.0420 & 1.5\% \\
+Be  & -14.573  & -14.667  & -0.094  & 0.6\% \\
+Ne  & -128.547 & -128.937 & -0.390  & 0.3\% \\
+Ar  & -526.817 & -527.540 & -0.723  & 0.1\% \\
+\hline
+\end{tabular}
+\end{table}
+
+%% --------------------------------------------------------
+\subsection{Ієрархія методів}
+%% --------------------------------------------------------
+
+Post-HF методи утворюють ієрархію за точністю та обчислювальною складністю:
+
+\begin{enumerate}
+    \item \textbf{HF} --- базовий рівень, без кореляції
+    \item \textbf{MP2} --- $\mathcal{O}(N^5)$ --- найпростіша кореляція
+    \item \textbf{MP3, MP4} --- $\mathcal{O}(N^6), \mathcal{O}(N^7)$ --- вищі порядки теорії збурень
+    \item \textbf{CCSD} --- $\mathcal{O}(N^6)$ --- надійна динамічна кореляція
+    \item \textbf{CCSD(T)} --- $\mathcal{O}(N^7)$ --- "золотий стандарт" квантової хімії
+    \item \textbf{Full CI} --- $\mathcal{O}(e^N)$ --- точний розв'язок (у межах базису)
+\end{enumerate}
+
+\begin{minted}{python}
+from pyscf import gto, scf, mp, cc, ci
+import numpy as np
+
+def correlation_energy_demo(symbol, spin, basis='cc-pvdz'):
+    """
+    Демонстрація кореляційної енергії
+    """
+
+    mol = gto.M(
+        atom=f'{symbol} 0 0 0',
+        basis=basis,
+        spin=spin,
+        verbose=0
+    )
+
+    print(f'\nКореляційна енергія атома {symbol} (базис: {basis})')
+    print('='*70)
+
+    # HF розрахунок
+    if spin == 0:
+        mf = scf.RHF(mol)
+    else:
+        mf = scf.UHF(mol)
+
+    mf.verbose = 0
+    mf.conv_tol = 1e-10
+    e_hf = mf.kernel()
+
+    print(f'HF енергія:           {e_hf:.8f} Ha')
+
+    # MP2
+    if spin == 0:
+        mp2 = mp.MP2(mf)
+    else:
+        mp2 = mp.UMP2(mf)
+
+    mp2.verbose = 0
+    e_mp2, t2 = mp2.kernel()
+    e_total_mp2 = e_hf + e_mp2
+
+    print(f'MP2 кореляція:        {e_mp2:.8f} Ha')
+    print(f'MP2 повна енергія:    {e_total_mp2:.8f} Ha')
+
+    # CCSD (якщо атом не дуже великий)
+    if mol.nelectron <= 10:
+        if spin == 0:
+            mycc = cc.CCSD(mf)
+        else:
+            mycc = cc.UCCSD(mf)
+
+        mycc.verbose = 0
+        e_ccsd, t1, t2 = mycc.kernel()
+        e_total_ccsd = e_hf + e_ccsd
+
+        print(f'CCSD кореляція:       {e_ccsd:.8f} Ha')
+        print(f'CCSD повна енергія:   {e_total_ccsd:.8f} Ha')
+
+        # CCSD(T)
+        e_t = mycc.ccsd_t()
+        e_total_ccsdt = e_total_ccsd + e_t
+
+        print(f'(T) корекція:         {e_t:.8f} Ha')
+        print(f'CCSD(T) повна енергія:{e_total_ccsdt:.8f} Ha')
+    else:
+        print('CCSD пропущено (атом занадто великий для демо)')
+
+    print('='*70)
+
+    # Аналіз
+    print(f'\nАналіз:')
+    print(f'Кореляція складає {abs(e_mp2/e_hf)*100:.2f}% від HF енергії')
+
+    if mol.nelectron <= 10:
+        print(f'MP2 відновлює {abs(e_mp2/e_ccsd)*100:.1f}% '
+              f'CCSD кореляції')
+
+# Приклади
+correlation_energy_demo('He', spin=0)
+correlation_energy_demo('Be', spin=0)
+correlation_energy_demo('C', spin=2)
+correlation_energy_demo('Ne', spin=0)
+\end{minted}
+
+\subsection{Важливість кореляції для різних властивостей}
+
+\begin{center}
+
+\captionof{figure}{Вплив електронної кореляції на різні властивості}
+\label{tab:correlation_importance}
+\small
+\begin{tabular}{lll}
+\hline
+\textbf{Властивість} & \textbf{Важливість кореляції} & \textbf{Рекомендований метод} \\
+\hline
+Абсолютні енергії & Помірна & MP2, DFT \\
+Енергії іонізації & Висока & CCSD(T) \\
+Електронна спорідненість & Дуже висока & CCSD(T) + дифузні \\
+Енергії збудження & Висока & EOM-CCSD, TD-DFT \\
+Відстані між станами & Висока & CASPT2, MRCI \\
+Дисоціація & Критична & CASSCF, MRCI \\
+Слабкі взаємодії & Критична & CCSD(T), MP2-F12 \\
+\hline
+\end{tabular}
+\end{center}
+
+
+%% --------------------------------------------------------
+\subsection{Порівняння методів для \ce{He}}
+%% --------------------------------------------------------
+
+Розглянемо найпростішу багатоелектронну систему --- атом Гелію:
+
+\begin{minted}{python}
+from pyscf import gto, scf, mp, cc, fci
+import numpy as np
+import matplotlib.pyplot as plt
+
+def helium_correlation_study():
+    """
+    Детальне дослідження кореляції у атомі He
+    """
+
+    # Різні базисні набори
+    basis_sets = ['cc-pvdz', 'cc-pvtz', 'cc-pvqz', 'cc-pv5z']
+
+    results = {
+        'HF': [],
+        'MP2': [],
+        'CCSD': [],
+        'CCSD(T)': [],
+        'FCI': []
+    }
+
+    print('Збіжність до базисної межі для He')
+    print('='*80)
+    print(f'{"Базис":12s} {"HF":15s} {"MP2":15s} {"CCSD":15s} '
+          f'{"CCSD(T)":15s} {"FCI":15s}')
+    print('-'*80)
+
+    for basis in basis_sets:
+        mol = gto.M(atom='He 0 0 0', basis=basis, verbose=0)
+
+        # HF
+        mf = scf.RHF(mol)
+        mf.verbose = 0
+        mf.conv_tol = 1e-12
+        e_hf = mf.kernel()
+        results['HF'].append(e_hf)
+
+        # MP2
+        mymp2 = mp.MP2(mf)
+        mymp2.verbose = 0
+        e_mp2_corr, _ = mymp2.kernel()
+        e_mp2 = e_hf + e_mp2_corr
+        results['MP2'].append(e_mp2)
+
+        # CCSD
+        mycc = cc.CCSD(mf)
+        mycc.verbose = 0
+        e_ccsd_corr, _, _ = mycc.kernel()
+        e_ccsd = e_hf + e_ccsd_corr
+        results['CCSD'].append(e_ccsd)
+
+        # CCSD(T)
+        e_t = mycc.ccsd_t()
+        e_ccsdt = e_ccsd + e_t
+        results['CCSD(T)'].append(e_ccsdt)
+
+        # FCI (точний у даному базисі)
+        myfci = fci.FCI(mf)
+        e_fci = myfci.kernel()[0]
+        results['FCI'].append(e_fci)
+
+        print(f'{basis:12s} {e_hf:15.10f} {e_mp2:15.10f} '
+              f'{e_ccsd:15.10f} {e_ccsdt:15.10f} {e_fci:15.10f}')
+
+    print('='*80)
+
+    # Експериментальне значення
+    e_exp = -2.90372  # Ha
+    print(f'\nЕкспериментальна енергія He: {e_exp:.10f} Ha')
+
+    # Похибки для найбільшого базису
+    print(f'\nПохибки (cc-pv5z):')
+    for method in results.keys():
+        error = (results[method][-1] - e_exp) * 1000  # mHa
+        print(f'{method:10s}: {error:8.4f} mHa')
+
+    # Графік збіжності
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
+
+    # Абсолютні енергії
+    x = np.arange(len(basis_sets))
+    for method, energies in results.items():
+        ax1.plot(x, energies, 'o-', label=method, linewidth=2,
+                markersize=8)
+
+    ax1.axhline(y=e_exp, color='red', linestyle='--', linewidth=2,
+               label='Експеримент')
+    ax1.set_xticks(x)
+    ax1.set_xticklabels(basis_sets, rotation=45)
+    ax1.set_xlabel('Базисний набір', fontsize=12)
+    ax1.set_ylabel('Енергія (Ha)', fontsize=12)
+    ax1.set_title('Збіжність енергії He', fontsize=14)
+    ax1.legend()
+    ax1.grid(True, alpha=0.3)
+
+    # Кореляційна енергія
+    for method in ['MP2', 'CCSD', 'CCSD(T)', 'FCI']:
+        corr_energies = [results[method][i] - results['HF'][i]
+                        for i in range(len(basis_sets))]
+        ax2.plot(x, corr_energies, 'o-', label=method, linewidth=2,
+                markersize=8)
+
+    ax2.set_xticks(x)
+    ax2.set_xticklabels(basis_sets, rotation=45)
+    ax2.set_xlabel('Базисний набір', fontsize=12)
+    ax2.set_ylabel('Кореляційна енергія (Ha)', fontsize=12)
+    ax2.set_title('Кореляційна енергія He', fontsize=14)
+    ax2.legend()
+    ax2.grid(True, alpha=0.3)
+
+    plt.tight_layout()
+    plt.savefig('he_correlation_convergence.pdf')
+    plt.show()
+
+helium_correlation_study()
+\end{minted}
+
+%% --------------------------------------------------------
+\subsection{Концепція одно- та багатоконфігураційних методів}
+%% --------------------------------------------------------
+
+\paragraph{Одноконфігураційні методи}
+Базуються на одному детермінанті Слейтера (HF) і додають кореляцію через збудження:
+\begin{itemize}
+    \item MP2, MP3, MP4 --- теорія збурень
+    \item CCSD, CCSD(T) --- coupled cluster
+    \item CISD, QCISD --- configuration interaction
+\end{itemize}
+
+Добрі для: основного стану з одним домінуючим детермінантом.
+
+\paragraph{Багатоконфігураційні методи}
+Використовують лінійну комбінацію кількох детермінантів:
+\begin{itemize}
+    \item CASSCF --- вибір активного простору
+    \item CASPT2 --- додавання динамічної кореляції до CASSCF
+    \item MRCI --- multireference CI
+\end{itemize}
+
+Необхідні для: розриву зв'язків, збуджених станів, діелектронних систем.
+
+\begin{minted}{python}
+from pyscf import gto, scf, mcscf
+
+def multiconfigurational_demo():
+    """
+    Демонстрація багатоконфігураційного характеру
+    """
+
+    # Атом Be: [He] 2s²
+    # Близькі за енергією 2s² та 2p²
+
+    mol = gto.M(
+        atom='Be 0 0 0',
+        basis='cc-pvtz',
+        spin=0,
+        verbose=0
+    )
+
+    print('Багатоконфігураційний характер Be')
+    print('='*60)
+
+    # RHF
+    mf = scf.RHF(mol)
+    mf.verbose = 0
+    e_hf = mf.kernel()
+
+    print(f'RHF енергія: {e_hf:.8f} Ha')
+
+    # CASSCF(4,8): 4 електрони у 8 орбіталях (2s, 2p, 3s, 3p)
+    mc = mcscf.CASSCF(mf, 8, 4)
+    mc.verbose = 0
+    e_casscf = mc.kernel()[0]
+
+    print(f'CASSCF(4,8) енергія: {e_casscf:.8f} Ha')
+    print(f'Статична кореляція: {(e_casscf - e_hf)*1000:.4f} mHa')
+
+    # Аналіз конфігурацій
+    print(f'\nОсновні конфігурації (вага > 1%):')
+
+    # Отримання CI коефіцієнтів
+    ci_coeff = mc.ci
+
+    # Для детального аналізу потрібен додатковий код
+    print('(детальний аналіз потребує додаткової обробки)')
+
+    print('='*60)
+
+multiconfigurational_demo()
+\end{minted}
+
+%% --------------------------------------------------------
+\subsection{Коли потрібні post-HF методи?}
+%% --------------------------------------------------------
+
+\begin{enumerate}
+    \item \textbf{Спектроскопічна точність} --- похибка < 1 kcal/mol (0.04 eV)
+    \item \textbf{Порівняння близьких станів} --- різниці енергій між мультиплетами
+    \item \textbf{Електронна спорідненість} --- HF і DFT часто не достатньо
+    \item \textbf{Еталонні розрахунки} --- для валідації DFT функціоналів
+    \item \textbf{Системи з сильною кореляцією} --- перехідні метали, f-елементи
+\end{enumerate}
+
+
+%% --------------------------------------------------------
+\section{Теорія збурень Møller-Plesset (MP2)}
+%% --------------------------------------------------------
+
+%% --------------------------------------------------------
+\subsection{Теоретичні основи MP2}
+%% --------------------------------------------------------
+
+Теорія збурень Møller-Plesset розділяє гамільтоніан на незбурену частину (HF) та збурення:
+
+\begin{equation}
+\hat{H} = \hat{H}_0 + \lambda \hat{V}
+\end{equation}
+
+де $\hat{H}_0$ --- оператор Фока, а $\hat{V}$ --- різниця між точним гамільтоніаном та HF.
+
+Енергія розкладається в ряд за степенями $\lambda$:
+
+\begin{equation}
+E = E^{(0)} + E^{(1)} + E^{(2)} + E^{(3)} + \ldots
+\end{equation}
+
+де:
+\begin{itemize}
+    \item $E^{(0)} + E^{(1)} = E_{HF}$ --- енергія Хартрі-Фока
+    \item $E^{(2)}$ --- MP2 корекція (перший порядок кореляції)
+    \item $E^{(3)}, E^{(4)}$ --- вищі порядки (MP3, MP4)
+\end{itemize}
+
+
+%% --------------------------------------------------------
+\subsection{Формула MP2 кореляційної енергії}
+%% --------------------------------------------------------
+
+Для замкненої оболонки (RMP2):
+
+\begin{equation}
+E^{(2)} = -\sum_{i<j}^{\text{occ}} \sum_{a<b}^{\text{virt}} \frac{|\langle ij||ab \rangle|^2}{\varepsilon_i + \varepsilon_j - \varepsilon_a - \varepsilon_b}
+\end{equation}
+
+де:
+\begin{itemize}
+    \item $i, j$ --- заповнені орбіталі
+    \item $a, b$ --- віртуальні орбіталі
+    \item $\langle ij||ab \rangle$ --- антисиметризовані двоелектронні інтеграли
+    \item $\varepsilon$ --- орбітальні енергії
+\end{itemize}
+
+\subsection{MP2 розрахунок атома Неону}
+
+\begin{minted}{python}
+from pyscf import gto, scf, mp
+import numpy as np
+
+def mp2_neon_calculation(basis='cc-pvtz'):
+    """
+    Детальний MP2 розрахунок атома Ne
+    """
+
+    mol = gto.M(
+        atom='Ne 0 0 0',
+        basis=basis,
+        spin=0,
+        verbose=0
+    )
+
+    print(f'\nMP2 розрахунок атома Неону (базис: {basis})')
+    print('='*70)
+
+    # Крок 1: HF розрахунок
+    print('\nКрок 1: Hartree-Fock розрахунок')
+    mf = scf.RHF(mol)
+    mf.verbose = 4
+    mf.conv_tol = 1e-12
+    e_hf = mf.kernel()
+
+    print(f'\nHF енергія: {e_hf:.10f} Ha')
+    print(f'HF енергія: {e_hf * 27.211386:.6f} eV')
+
+    # Крок 2: MP2 розрахунок
+    print('\nКрок 2: MP2 кореляція')
+    mymp2 = mp.MP2(mf)
+    mymp2.verbose = 4
+    e_mp2_corr, t2 = mymp2.kernel()
+
+    e_total_mp2 = e_hf + e_mp2_corr
+
+    print(f'\nMP2 кореляційна енергія: {e_mp2_corr:.10f} Ha')
+    print(f'MP2 повна енергія: {e_total_mp2:.10f} Ha')
+    print(f'MP2 повна енергія: {e_total_mp2 * 27.211386:.6f} eV')
+
+    # Аналіз
+    print('\nАналіз:')
+    print(f'Кореляція становить {abs(e_mp2_corr/e_hf)*100:.3f}% '
+          f'від HF енергії')
+
+    # Порівняння з експериментом
+    e_exp = -128.937  # Ha (експериментальна енергія Ne)
+    error_hf = (e_hf - e_exp) * 1000
+    error_mp2 = (e_total_mp2 - e_exp) * 1000
+
+    print(f'\nПорівняння з експериментом ({e_exp:.6f} Ha):')
+    print(f'  HF похибка:  {error_hf:8.4f} mHa')
+    print(f'  MP2 похибка: {error_mp2:8.4f} mHa')
+    print(f'  Покращення: {abs(error_hf - error_mp2):8.4f} mHa')
+    print(f'  MP2 відновлює {(1 - error_mp2/error_hf)*100:.1f}% '
+          f'похибки HF')
+
+    # Інформація про розміри
+    print(f'\nОбчислювальні деталі:')
+    print(f'  Заповнених орбіталей: {mol.nelectron // 2}')
+    print(f'  Віртуальних орбіталей: {mol.nao_nr() - mol.nelectron // 2}')
+    print(f'  Розмір t2 амплітуд: {t2.shape}')
+
+    return e_hf, e_total_mp2, e_mp2_corr
+
+e_hf, e_mp2, e_corr = mp2_neon_calculation()
+\end{minted}
+
+
+%% --------------------------------------------------------
+\subsection{MP2 для відкритих оболонок (UMP2)}
+%% --------------------------------------------------------
+
+Для систем з неспареними електронами використовується UMP2:
+
+\begin{minted}{python}
+from pyscf import gto, scf, mp
+
+def ump2_calculation(symbol, spin, basis='cc-pvtz'):
+    """
+    UMP2 розрахунок для відкритої оболонки
+    """
+
+    mol = gto.M(
+        atom=f'{symbol} 0 0 0',
+        basis=basis,
+        spin=spin,
+        verbose=0
+    )
+
+    print(f'\nUMP2 розрахунок {symbol} (2S={spin})')
+    print('='*70)
+
+    # UHF
+    mf = scf.UHF(mol)
+    mf.verbose = 0
+    mf.conv_tol = 1e-10
+    e_hf = mf.kernel()
+
+    print(f'UHF енергія: {e_hf:.10f} Ha')
+
+    # Забруднення спіном
+    s2_hf = mf.spin_square()[0]
+    expected_s2 = spin * (spin + 2) / 4
+    print(f'<S²> (UHF): {s2_hf:.6f} (очікується {expected_s2:.6f})')
+
+    # UMP2
+    mymp2 = mp.UMP2(mf)
+    mymp2.verbose = 0
+    e_mp2_corr, t2 = mymp2.kernel()
+
+    e_total = e_hf + e_mp2_corr
+
+    print(f'\nUMP2 кореляція: {e_mp2_corr:.10f} Ha')
+    print(f'UMP2 повна енергія: {e_total:.10f} Ha')
+
+    # MP2 не виправляє забруднення спіном
+    # (для цього потрібні інші методи)
+
+    return e_hf, e_total, e_mp2_corr
+
+# Приклади
+e_hf_li, e_mp2_li, _ = ump2_calculation('Li', spin=1)
+e_hf_c, e_mp2_c, _ = ump2_calculation('C', spin=2)
+e_hf_n, e_mp2_n, _ = ump2_calculation('N', spin=3)
+e_hf_o, e_mp2_o, _ = ump2_calculation('O', spin=2)
+\end{minted}
+
+
+%% --------------------------------------------------------
+\subsection{Систематичне порівняння HF vs MP2}
+%% --------------------------------------------------------
+
+\begin{minted}{python}
+from pyscf import gto, scf, mp
+import numpy as np
+import matplotlib.pyplot as plt
+
+def hf_vs_mp2_comparison(atoms_list, basis='cc-pvtz'):
+    """
+    Систематичне порівняння HF та MP2 для списку атомів
+    """
+
+    results = {
+        'atoms': [],
+        'e_hf': [],
+        'e_mp2': [],
+        'e_corr': [],
+        'corr_percent': []
+    }
+
+    print(f'\nПорівняння HF та MP2 (базис: {basis})')
+    print('='*80)
+    print(f'{"Атом":6s} {"Спін":4s} {"E(HF), Ha":15s} {"E(MP2), Ha":15s} '
+          f'{"E_corr, mHa":12s} {"% від HF":10s}')
+    print('-'*80)
+
+    for symbol, spin in atoms_list:
+        mol = gto.M(
+            atom=f'{symbol} 0 0 0',
+            basis=basis,
+            spin=spin,
+            verbose=0
+        )
+
+        # HF
+        if spin == 0:
+            mf = scf.RHF(mol)
+            mp_method = mp.MP2
+        else:
+            mf = scf.UHF(mol)
+            mp_method = mp.UMP2
+
+        mf.verbose = 0
+        mf.conv_tol = 1e-10
+        e_hf = mf.kernel()
+
+        # MP2
+        mymp2 = mp_method(mf)
+        mymp2.verbose = 0
+        e_mp2_corr, _ = mymp2.kernel()
+        e_mp2 = e_hf + e_mp2_corr
+
+        # Зберігаємо результати
+        results['atoms'].append(symbol)
+        results['e_hf'].append(e_hf)
+        results['e_mp2'].append(e_mp2)
+        results['e_corr'].append(e_mp2_corr)
+
+        corr_percent = abs(e_mp2_corr / e_hf) * 100
+        results['corr_percent'].append(corr_percent)
+
+        print(f'{symbol:6s} {spin:4d} {e_hf:15.8f} {e_mp2:15.8f} '
+              f'{e_mp2_corr*1000:12.4f} {corr_percent:10.4f}')
+
+    print('='*80)
+
+    # Статистика
+    avg_corr = np.mean(results['corr_percent'])
+    print(f'\nСередній % кореляції: {avg_corr:.4f}%')
+
+    # Графіки
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
+
+    x = np.arange(len(results['atoms']))
+
+    # Абсолютні енергії
+    ax1.plot(x, results['e_hf'], 'o-', label='HF',
+            linewidth=2, markersize=8, color='blue')
+    ax1.plot(x, results['e_mp2'], 's-', label='MP2',
+            linewidth=2, markersize=8, color='red')
+    ax1.set_xticks(x)
+    ax1.set_xticklabels(results['atoms'])
+    ax1.set_xlabel('Атом', fontsize=12)
+    ax1.set_ylabel('Енергія (Ha)', fontsize=12)
+    ax1.set_title('HF vs MP2 енергії', fontsize=14)
+    ax1.legend()
+    ax1.grid(True, alpha=0.3)
+
+    # Кореляційна енергія
+    ax2.bar(x, np.array(results['e_corr'])*1000, color='green',
+           alpha=0.7)
+    ax2.set_xticks(x)
+    ax2.set_xticklabels(results['atoms'])
+    ax2.set_xlabel('Атом', fontsize=12)
+    ax2.set_ylabel('Кореляційна енергія (mHa)', fontsize=12)
+    ax2.set_title('MP2 кореляційна енергія', fontsize=14)
+    ax2.grid(True, alpha=0.3, axis='y')
+
+    plt.tight_layout()
+    plt.savefig('hf_vs_mp2_comparison.pdf')
+    plt.show()
+
+    return results
+
+# Атоми другого періоду
+atoms_2nd = [
+    ('He', 0), ('Li', 1), ('Be', 0), ('B', 1),
+    ('C', 2), ('N', 3), ('O', 2), ('F', 1), ('Ne', 0)
+]
+
+results = hf_vs_mp2_comparison(atoms_2nd)
+\end{minted}
+
+
+%% --------------------------------------------------------
+\subsection{Залежність MP2 від базисного набору}
+%% --------------------------------------------------------
+
+MP2 сильно залежить від базису, особливо потрібні функції високих $l$:
+
+\begin{minted}{python}
+from pyscf import gto, scf, mp
+import matplotlib.pyplot as plt
+
+def mp2_basis_convergence(symbol, spin):
+    """
+    Дослідження збіжності MP2 від базису
+    """
+
+    basis_sets = ['cc-pvdz', 'cc-pvtz', 'cc-pvqz', 'cc-pv5z']
+
+    print(f'\nЗбіжність MP2 енергії {symbol} від базису')
+    print('='*70)
+    print(f'{"Базис":12s} {"N_bas":6s} {"E(HF)":15s} {"E(MP2)":15s} '
+          f'{"E_corr, mHa":12s}')
+    print('-'*70)
+
+    e_hf_list = []
+    e_mp2_list = []
+    e_corr_list = []
+    n_bas_list = []
+
+    for basis in basis_sets:
+        mol = gto.M(
+            atom=f'{symbol} 0 0 0',
+            basis=basis,
+            spin=spin,
+            verbose=0
+        )
+
+        # HF
+        if spin == 0:
+            mf = scf.RHF(mol)
+            mp_method = mp.MP2
+        else:
+            mf = scf.UHF(mol)
+            mp_method = mp.UMP2
+
+        mf.verbose = 0
+        mf.conv_tol = 1e-11
+        e_hf = mf.kernel()
+
+        # MP2
+        mymp2 = mp_method(mf)
+        mymp2.verbose = 0
+        e_corr, _ = mymp2.kernel()
+        e_mp2 = e_hf + e_corr
+
+        n_bas = mol.nao_nr()
+
+        e_hf_list.append(e_hf)
+        e_mp2_list.append(e_mp2)
+        e_corr_list.append(e_corr)
+        n_bas_list.append(n_bas)
+
+        print(f'{basis:12s} {n_bas:6d} {e_hf:15.8f} {e_mp2:15.8f} '
+              f'{e_corr*1000:12.4f}')
+
+    print('='*70)
+
+    # Екстраполяція до CBS
+    # E(X) = E_CBS + A/X^3
+    X = np.array([2, 3, 4, 5])  # D, T, Q, 5
+
+    # CBS для HF (швидша збіжність)
+    A_hf = (e_hf_list[-1]*5**3 - e_hf_list[-2]*4**3) / (5**3 - 4**3)
+    e_hf_cbs = e_hf_list[-1] - A_hf / 5**3
+
+    # CBS для кореляції
+    A_corr = (e_corr_list[-1]*5**3 - e_corr_list[-2]*4**3) / (5**3 - 4**3)
+    e_corr_cbs = e_corr_list[-1] - A_corr / 5**3
+
+    e_mp2_cbs = e_hf_cbs + e_corr_cbs
+
+    print(f'\nЕкстраполяція до CBS:')
+    print(f'E(HF/CBS):  {e_hf_cbs:.10f} Ha')
+    print(f'E(MP2/CBS): {e_mp2_cbs:.10f} Ha')
+    print(f'E_corr(CBS): {e_corr_cbs*1000:.4f} mHa')
+
+    # Графік
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
+
+    # Повна енергія
+    ax1.plot(n_bas_list, e_hf_list, 'o-', label='HF',
+            linewidth=2, markersize=8)
+    ax1.plot(n_bas_list, e_mp2_list, 's-', label='MP2',
+            linewidth=2, markersize=8)
+    ax1.axhline(y=e_hf_cbs, color='blue', linestyle='--',
+               alpha=0.5, label='HF CBS')
+    ax1.axhline(y=e_mp2_cbs, color='orange', linestyle='--',
+               alpha=0.5, label='MP2 CBS')
+    ax1.set_xlabel('Кількість базисних функцій', fontsize=12)
+    ax1.set_ylabel('Енергія (Ha)', fontsize=12)
+    ax1.set_title(f'Збіжність енергії {symbol}', fontsize=14)
+    ax1.legend()
+    ax1.grid(True, alpha=0.3)
+
+    # Кореляційна енергія
+    ax2.plot(n_bas_list, np.array(e_corr_list)*1000, 'o-',
+            linewidth=2, markersize=8, color='green')
+    ax2.axhline(y=e_corr_cbs*1000, color='green', linestyle='--',
+               alpha=0.5, label='CBS')
+    ax2.set_xlabel('Кількість базисних функцій', fontsize=12)
+    ax2.set_ylabel('Кореляційна енергія (mHa)', fontsize=12)
+    ax2.set_title(f'Збіжність кореляції {symbol}', fontsize=14)
+    ax2.legend()
+    ax2.grid(True, alpha=0.3)
+
+    plt.tight_layout()
+    plt.savefig(f'{symbol}_mp2_basis_convergence.pdf')
+    plt.show()
+
+# Приклади
+mp2_basis_convergence('Ne', spin=0)
+mp2_basis_convergence('C', spin=2)
+\end{minted}
+
+%% --------------------------------------------------------
+\subsection{Переваги та недоліки MP2}
+%% --------------------------------------------------------
+
+\paragraph{Переваги:}
+\begin{itemize}
+    \item Відносно швидкий ($\mathcal{O}(N^5)$) порівняно з іншими post-HF
+    \item Добре відновлює динамічну кореляцію
+    \item Size-consistent (правильне масштабування для великих систем)
+    \item Доступний для великих атомів/молекул
+    \item Добрий базис для вищих методів (MP3, MP4)
+\end{itemize}
+
+\paragraph{Недоліки:}
+\begin{itemize}
+    \item Не виправляє забруднення спіном UHF
+    \item Може розходитись для систем з малим gap HOMO-LUMO
+    \item Погано працює для сильно корельованих систем
+    \item Потребує великих базисів для точних результатів
+    \item Не варіаційний (може давати енергію нижчу за точну)
+\end{itemize}
+
+%% --------------------------------------------------------
+\subsection{Рекомендації по використанню MP2}
+%% --------------------------------------------------------
+
+\begin{table}[h]
+\centering
+\caption{Коли використовувати MP2}
+\label{tab:mp2_recommendations}
+\small
+\begin{tabular}{ll}
+\hline
+\textbf{Добре для:} & \textbf{Погано для:} \\
+\hline
+Замкнені оболонки & Системи з малим HOMO-LUMO gap \\
+Якісні оцінки кореляції & Розрив зв'язків \\
+Великі системи & Збуджені стани \\
+Слабкі взаємодії & Перехідні стани \\
+Відносні енергії & Діелектронні системи \\
+\hline
+\end{tabular}
+\end{table}
