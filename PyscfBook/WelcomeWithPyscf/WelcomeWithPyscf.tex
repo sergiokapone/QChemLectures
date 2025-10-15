@@ -1,0 +1,406 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+% !TeX root =../PyscfBook.tex
+
+%=========================================================
+\Opensolutionfile{answer}[\currfilebase/\currfilebase-Answers]
+\chapter{Знайомство з PySCF}\label{\currfilebase}
+%=========================================================
+
+
+\section{Що таке PySCF: можливості та переваги}
+
+PySCF (Python-based Simulations of Chemistry Framework) --- це сучасний програмний пакет з відкритим вихідним кодом для квантово-хімічних розрахунків, написаний переважно на мові Python з критичними для продуктивності частинами на C. Розроблений групою під керівництвом професора Garnet Chan, PySCF надає потужний та гнучкий інструментарій для проведення ab initio розрахунків молекулярних та атомних систем.
+
+\subsection{Основні можливості PySCF}
+
+PySCF підтримує широкий спектр квантово-хімічних методів:
+
+\begin{itemize}
+    \item \emph{Метод Хартрі-Фока (HF):} restricted (RHF), unrestricted (UHF), та restricted open-shell (ROHF) варіанти
+    \item \emph{Теорія функціоналу густини (DFT):} з великою бібліотекою функціоналів обміну-кореляції через інтеграцію з libxc
+    \item \emph{Post-Hartree-Fock методи:} MP2, CCSD, CCSD(T), CASSCF, CASPT2, NEVPT2
+    \item \emph{Configuration Interaction (CI):} CISD, full CI для малих систем
+    \item \emph{Явна кореляція:} F12 методи
+    \item \emph{Багаторівневі методи:} ONIOM, embedding
+    \item \emph{Періодичні системи:} через модуль PBC (Periodic Boundary Conditions)
+\end{itemize}
+
+\subsection{Переваги використання PySCF}
+
+\paragraph{Відкритий код та безкоштовність.}
+PySCF розповсюджується під ліцензією Apache 2.0, що робить його повністю безкоштовним для академічного та комерційного використання. Доступ до вихідного коду дозволяє глибоко зрозуміти реалізацію методів та за потреби модифікувати програму.
+
+\paragraph{Гнучкість та розширюваність.}
+Завдяки використанню Python як основної мови, PySCF надзвичайно гнучкий. Користувачі можуть легко:
+\begin{itemize}
+    \item Комбінувати різні методи в одному скрипті.
+    \item Створювати власні workflow для складних розрахунків.
+    \item Інтегрувати PySCF з іншими Python бібліотеками (NumPy, SciPy, matplotlib).
+    \item Розробляти власні модулі та методи.
+\end{itemize}
+
+\paragraph{Сучасна архітектура.}
+PySCF використовує об'єктно-орієнтований підхід, що робить код зрозумілим та легким для модифікації. Модульна структура дозволяє використовувати тільки потрібні компоненти.
+
+\paragraph{Активна розробка.}
+Проект активно розвивається, регулярно додаються нові функції та покращується продуктивність. Спільнота користувачів надає підтримку через GitHub та форуми.
+
+\paragraph{Продуктивність.}
+Незважаючи на використання Python, критичні обчислювальні частини написані на C та оптимізовані. PySCF ефективно використовує сучасні бібліотеки лінійної алгебри (BLAS, LAPACK) та може працювати на багатоядерних системах.
+
+\subsection{Порівняння з іншими програмами}
+
+У таблиці~\ref{tab:comparison} наведено порівняння PySCF з іншими популярними квантово-хімічними пакетами.
+
+\begin{table}[h]
+\centering
+\caption{Порівняння квантово-хімічних програм}
+\label{tab:comparison}
+\begin{tblr}{lccccc}
+\hline
+\textbf{Програма} & \textbf{Ліцензія} & \textbf{Мова} & \textbf{Гнучкість} & \textbf{Навчання} \\
+\hline
+PySCF & Відкрита & Python/C & Висока & Середнє \\
+Gaussian & Комерційна & Fortran & Низька & Легке \\
+ORCA & Академічна & C++ & Середня & Легке \\
+Q-Chem & Комерційна & C/C++ & Середня & Середнє \\
+Psi4 & Відкрита & C++/Python & Висока & Середнє \\
+\hline
+\end{tblr}
+\end{table}
+
+\section{Встановлення PySCF}
+
+\subsection{Системні вимоги}
+
+Для роботи з PySCF необхідно:
+\begin{itemize}
+    \item Python 3.7 або новіший
+    \item NumPy версії 1.13.0 або новішої
+    \item SciPy версії 1.0.0 або новішої
+    \item H5py (для збереження великих масивів даних)
+    \item 4--8 ГБ оперативної пам'яті (мінімум)
+    \item Сучасний процесор (бажано багатоядерний)
+\end{itemize}
+
+\subsection{Встановлення в Linux}
+
+Найпростіший спосіб встановлення PySCF у Linux --- використання pip:
+
+\begin{minted}{bash}
+# Оновлення pip
+pip install --upgrade pip
+
+# Встановлення PySCF
+pip install pyscf
+\end{minted}
+
+Для встановлення з додатковими можливостями:
+
+\begin{minted}{bash}
+# З підтримкою XC функціоналів
+pip install pyscf[geomopt,dftd3,dmrgscf]
+\end{minted}
+
+Альтернативно, можна встановити з вихідного коду:
+
+\begin{minted}{bash}
+git clone https://github.com/pyscf/pyscf.git
+cd pyscf
+pip install -e .
+\end{minted}
+
+\subsection{Встановлення в Windows}
+
+Для Windows рекомендується використання Anaconda:
+
+\begin{minted}{bash}
+# Створення нового середовища
+conda create -n pyscf_env python=3.10
+conda activate pyscf_env
+
+# Встановлення PySCF
+conda install -c pyscf pyscf
+\end{minted}
+
+Або через pip у PowerShell/Command Prompt:
+
+\begin{minted}{bash}
+pip install pyscf
+\end{minted}
+
+\subsection{Встановлення в macOS}
+
+Для macOS процес аналогічний до Linux:
+
+\begin{minted}{bash}
+# Встановлення через pip
+pip3 install pyscf
+
+# Або через Homebrew + pip
+brew install python3
+pip3 install pyscf
+\end{minted}
+
+\subsection{Перевірка встановлення}
+
+Після встановлення перевіримо, чи PySCF працює коректно:
+
+\begin{minted}{python}
+import pyscf
+
+# Вивід версії
+print(pyscf.__version__)
+
+# Простий тест
+from pyscf import gto, scf
+
+mol = gto.M(atom='H 0 0 0; H 0 0 0.74', basis='sto-3g')
+mf = scf.RHF(mol)
+energy = mf.kernel()
+print(f'Енергія H2: {energy:.6f} Ha')
+\end{minted}
+
+Якщо програма виводить версію та обчислює енергію молекули H$_2$, встановлення виконано успішно.
+
+\section{Базова структура програми на PySCF}
+
+\subsection{Загальна схема розрахунку}
+
+Типовий розрахунок у PySCF складається з трьох основних етапів:
+
+\begin{enumerate}
+    \item \textbf{Створення молекулярного об'єкта} --- визначення геометрії системи, базисного набору, заряду та спіну
+    \item \textbf{Вибір та налаштування методу} --- вибір квантово-хімічного методу (HF, DFT, CC тощо)
+    \item \textbf{Виконання розрахунку} --- запуск обчислень та отримання результатів
+\end{enumerate}
+
+\subsection{Мінімальний приклад}
+
+Розглянемо найпростіший приклад розрахунку атома Гідрогену:
+
+\begin{minted}{python}
+from pyscf import gto, scf
+
+# Етап 1: Створення молекулярного об'єкта
+mol = gto.M(
+    atom='H 0 0 0',      # Координати атома
+    basis='sto-3g',       # Базисний набір
+    spin=1                # 2S (1 неспарений електрон)
+)
+
+# Етап 2: Вибір методу (UHF для відкритої оболонки)
+mf = scf.UHF(mol)
+
+# Етап 3: Виконання розрахунку
+energy = mf.kernel()
+
+# Виведення результатів
+print(f'Енергія атома H: {energy:.8f} Hartree')
+print(f'Енергія атома H: {energy * 27.211386:.6f} eV')
+\end{minted}
+
+\subsection{Структура для атома Гелію}
+
+Для атома з двома електронами у замкненій оболонці:
+
+\begin{minted}{python}
+from pyscf import gto, scf
+
+# Атом Гелію
+mol = gto.M(
+    atom='He 0 0 0',
+    basis='6-31g',
+    spin=0,               # Всі електрони спарені
+    charge=0              # Нейтральний атом
+)
+
+# RHF для замкненої оболонки
+mf = scf.RHF(mol)
+energy = mf.kernel()
+
+print(f'Енергія He: {energy:.8f} Ha')
+\end{minted}
+
+\subsection{Розрахунок з аналізом результатів}
+
+Більш детальний приклад з виведенням додаткової інформації:
+
+\begin{minted}{python}
+from pyscf import gto, scf
+
+# Атом Літію
+mol = gto.M(
+    atom='Li 0 0 0',
+    basis='cc-pvdz',
+    spin=1                # Один неспарений електрон
+)
+
+# UHF розрахунок
+mf = scf.UHF(mol)
+mf.verbose = 4            # Детальний вивід
+energy = mf.kernel()
+
+# Аналіз результатів
+print('\n=== Результати розрахунку ===')
+print(f'Енергія: {energy:.8f} Ha')
+print(f'Кількість базисних функцій: {mol.nao_nr()}')
+print(f'Кількість електронів: {mol.nelectron}')
+print(f'Спін: {mol.spin}')
+
+# Заселеності Малікена
+from pyscf import lo
+pop = mf.mulliken_pop()
+print('\nАналіз заселеностей Малікена:')
+print(pop)
+
+# Енергії орбіталей
+print('\nЕнергії орбіталей (альфа):')
+for i, e in enumerate(mf.mo_energy[0][:5]):
+    print(f'  MO {i+1}: {e:.6f} Ha ({e*27.211386:.4f} eV)')
+\end{minted}
+
+\section{Система одиниць та конвенції}
+
+\subsection{Атомні одиниці}
+
+PySCF використовує атомну систему одиниць (atomic units, a.u.), де:
+
+\begin{align*}
+\hbar &= 1 \\
+m_e &= 1 \quad \text{(маса електрона)} \\
+e &= 1 \quad \text{(елементарний заряд)} \\
+4\pi\epsilon_0 &= 1 \quad \text{(електрична константа)}
+\end{align*}
+
+У цій системі:
+\begin{itemize}
+    \item Енергія вимірюється в Hartree (Ha): 1 Ha = 27.211386 eV = 627.509 kcal/mol
+    \item Відстань вимірюється в Bohr (a$_0$): 1 Bohr = 0.529177 Å
+    \item Час вимірюється у a.u.: 1 a.u. = 2.4189 $\times$ 10$^{-17}$ s
+\end{itemize}
+
+\subsection{Конвертація одиниць}
+
+PySCF надає модуль для конвертації:
+
+\begin{minted}{python}
+from pyscf import lib
+
+# Конвертація енергії
+energy_ha = -2.85516
+energy_ev = energy_ha * lib.param.HARTREE2EV
+energy_kcal = energy_ha * lib.param.HARTREE2KCAL
+
+print(f'{energy_ha:.6f} Ha = {energy_ev:.4f} eV')
+print(f'{energy_ha:.6f} Ha = {energy_kcal:.2f} kcal/mol')
+
+# Конвертація відстані
+dist_bohr = 2.0
+dist_angstrom = dist_bohr * lib.param.BOHR
+
+print(f'{dist_bohr:.2f} Bohr = {dist_angstrom:.4f} Å')
+\end{minted}
+
+\subsection{Системні константи}
+
+Доступ до фізичних констант:
+
+\begin{minted}{python}
+from pyscf.data import nist
+
+print(f'Швидкість світла: {nist.LIGHT_SPEED} a.u.')
+print(f'Константа Планка: {nist.PLANCK} J·s')
+print(f'Число Авогадро: {nist.AVOGADRO} mol^-1')
+\end{minted}
+
+\subsection{Конвенції для атомів}
+
+При визначенні атомів у PySCF:
+
+\paragraph{Координати.}
+Координати задаються у формі рядка або списку. За замовчуванням використовуються ангстреми (Ångström), але можна вказати одиниці:
+
+\begin{minted}{python}
+# Координати в Ångströм (за замовчуванням)
+mol = gto.M(atom='C 0 0 0')
+
+# Явне вказання одиниць
+mol = gto.M(atom='C 0 0 0', unit='Angstrom')
+
+# Координати в Bohr
+mol = gto.M(atom='C 0 0 0', unit='Bohr')
+\end{minted}
+
+\paragraph{Спін.}
+Параметр \texttt{spin} визначає $2S = N_\alpha - N_\beta$, де $N_\alpha$ та $N_\beta$ --- кількість альфа та бета електронів:
+
+\begin{minted}{python}
+# Атом H (1 неспарений електрон): S=1/2, 2S=1
+mol = gto.M(atom='H 0 0 0', spin=1)
+
+# Атом He (всі спарені): S=0, 2S=0
+mol = gto.M(atom='He 0 0 0', spin=0)
+
+# Атом O у триплетному стані: S=1, 2S=2
+mol = gto.M(atom='O 0 0 0', spin=2)
+\end{minted}
+
+\paragraph{Симетрія.}
+За замовчуванням PySCF використовує повну точкову симетрію системи:
+
+\begin{minted}{python}
+# Автоматичне визначення симетрії
+mol = gto.M(atom='Ne 0 0 0', symmetry=True)
+print(f'Точкова група: {mol.groupname}')
+
+# Вимкнення симетрії
+mol = gto.M(atom='Ne 0 0 0', symmetry=False)
+\end{minted}
+
+\section{Документація та ресурси}
+
+\subsection{Офіційна документація}
+
+\begin{center}
+\begin{tblr}{
+colspec={lX[l,m, font=\small]},
+row{1} = {c, m, font=\bfseries},
+}
+\hline
+{Ресурс} & {URL} \\
+\hline
+Головний сайт & \url{https://pyscf.org} \\
+GitHub репозиторій & \url{https://github.com/pyscf/pyscf} \\
+Документація API & \url{https://pyscf.org/pyscf_api_docs/pyscf.html} \\
+Приклади коду & \url{https://github.com/pyscf/pyscf/tree/master/examples} \\
+\hline
+\end{tblr}
+\end{center}
+
+
+\subsection{Основні публікації}
+
+Ключові статті для цитування при використанні PySCF:
+
+\addtocategoryNoCi{pyscf}{%
+sun2018pyscf, sun2020pyscf,
+}
+
+\printbibliography[category=pyscf, heading=none]
+
+\section{Резюме}
+
+У цьому розділі ми познайомились з PySCF --- потужним інструментом для квантово-хімічних розрахунків. Основні моменти:
+
+\begin{itemize}
+    \item PySCF є сучасним, відкритим та гнучким програмним пакетом
+    \item Встановлення здійснюється просто через pip або conda
+    \item Базова структура програми включає три етапи: створення системи, вибір методу, виконання розрахунку
+    \item PySCF використовує атомну систему одиниць
+    \item Доступна велика кількість документації та навчальних матеріалів
+\end{itemize}
+
+У наступному розділі ми детально розглянемо базові об'єкти PySCF та навчимось налаштовувати параметри розрахунків для атомних систем.
