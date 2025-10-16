@@ -35,7 +35,7 @@
 \begin{equation}
 \hat{f} \psi_i = \varepsilon_i \psi_i
 \end{equation}
-
+%
 де $\hat{f}$ --- оператор Фока:
 
 \begin{equation}
@@ -43,6 +43,35 @@
 \end{equation}
 
 Тут $\hat{h}$ --- одноелектронний оператор (кінетична енергія + притягання до ядра), $\hat{J}_j$ --- кулонівський оператор, $\hat{K}_j$ --- обмінний оператор.
+
+%% --------------------------------------------------------
+\subsection{Енергія Хартрі-Фока}
+%% --------------------------------------------------------
+
+Повна енергія системи у методі HF:
+
+\begin{equation}
+E_{HF} = \sum_{i=1}^{N} h_{ii} + \frac{1}{2} \sum_{i,j}^{N} (J_{ij} - K_{ij}) + V_{NN}
+\end{equation}
+
+де:
+\begin{itemize}
+    \item $h_{ii}$ --- одноелектронні інтеграли
+    \item $J_{ij}$ --- кулонівські інтеграли
+    \item $K_{ij}$ --- обмінні інтеграли
+    \item $V_{NN}$ --- енергія міжядерного відштовхування (= 0 для атомів)
+\end{itemize}
+
+\paragraph{Віральне співвідношення.}
+Для будь-якої стаціонарної хвильової функції (зокрема, у наближенні HF) повинно виконуватись \textbf{віральне співвідношення}:
+\[
+2 \langle T \rangle + \langle V \rangle = 0,
+\]
+або еквівалентно:
+\[
+\frac{\langle V \rangle}{\langle T \rangle} = -2.
+\]
+Цей критерій є важливим тестом коректності збіжного SCF-розв’язку.
 
 %% --------------------------------------------------------
 \subsection{Варіанти методу Хартрі-Фока}
@@ -84,24 +113,6 @@ ROHF --- компроміс між RHF та UHF. Спарені електрон
 \end{cases}
 \end{equation}
 
-%% --------------------------------------------------------
-\subsection{Енергія Хартрі-Фока}
-%% --------------------------------------------------------
-
-Повна енергія системи у методі HF:
-
-\begin{equation}
-E_{HF} = \sum_{i=1}^{N} h_{ii} + \frac{1}{2} \sum_{i,j}^{N} (J_{ij} - K_{ij}) + V_{NN}
-\end{equation}
-
-де:
-\begin{itemize}
-    \item $h_{ii}$ --- одноелектронні інтеграли
-    \item $J_{ij}$ --- кулонівські інтеграли
-    \item $K_{ij}$ --- обмінні інтеграли
-    \item $V_{NN}$ --- енергія міжядерного відштовхування (= 0 для атомів)
-\end{itemize}
-
 
 %% --------------------------------------------------------
 \section{Розрахунок атома Гідрогену}
@@ -125,32 +136,7 @@ E_1 = -\frac{1}{2}\ \text{Ha}.
 Атом Гідрогену є одноелектронною системою, тому метод Гартрі–Фока (HF) не містить жодних апроксимацій, окрім обмежень базисного набору.
 У звичайних багатoелектронних атомах HF наближає взаємодію електронів середнім потенціалом, але для H відсутнє електрон–електронне відштовхування, тож метод дає \emph{точну} хвильову функцію для обраного базису.
 
-\begin{minted}{python}
-from pyscf import gto, scf
-import numpy as np
-
-# Створення атома Гідрогену
-mol = gto.M(
-    atom='H 0 0 0',   # координати ядра
-    basis='sto-3g',   # мінімальний базис
-    spin=1,           # один неспарений електрон
-    verbose=4         # рівень деталізації виводу
-)
-
-print(f'Кількість електронів: {mol.nelectron}')
-print(f'Базисних функцій: {mol.nao_nr()}')
-
-# Розрахунок методом UHF (необмежений Гартрі-Фок)
-mf = scf.UHF(mol)
-energy = mf.kernel()
-
-print(f'\nЕнергія H (STO-3G): {energy:.8f} Ha')
-print(f'Енергія H (STO-3G): {energy * 27.211386:.6f} eV')
-
-# Теоретичне значення
-print(f'Теоретична енергія: -0.5 Ha')
-print(f'Похибка базису: {abs(energy + 0.5):.6f} Ha')
-\end{minted}
+\inputcode{code_1.py}
 
 Отримане значення енергії наближається до \(-0.5\) Ha, але точність залежить від базису. STO-3G --- це мінімальний базис, де кожна орбіталь апроксимується трьома гаусовими функціями, тому результат має невелику похибку (близько \(10^{-3}\) Ha).
 
@@ -164,48 +150,7 @@ print(f'Похибка базису: {abs(energy + 0.5):.6f} Ha')
 
 У коді нижче порівнюються кілька популярних базисів, від найменшого STO-3G до розширених кореляційно-узгоджених наборів cc-pV5Z. Для кожного базису обчислюється енергія та похибка відносно \(-0.5\) Ha.
 
-\begin{minted}{python}
-from pyscf import gto, scf
-import matplotlib.pyplot as plt
-
-basis_sets = ['sto-3g', '3-21g', '6-31g', '6-311g',
-              'cc-pvdz', 'cc-pvtz', 'cc-pvqz', 'cc-pv5z']
-
-energies = []
-n_basis = []
-
-print('Базис           N_bas    Енергія (Ha)    Похибка (mHa)')
-print('-' * 60)
-
-for basis in basis_sets:
-    try:
-        mol = gto.M(atom='H 0 0 0', basis=basis, spin=1, verbose=0)
-        mf = scf.UHF(mol)
-        e = mf.kernel()
-
-        n = mol.nao_nr()
-        error = (e + 0.5) * 1000  # похибка в міліГартрі
-
-        energies.append(e)
-        n_basis.append(n)
-
-        print(f'{basis:15s} {n:3d}    {e:12.8f}    {error:8.4f}')
-    except:
-        print(f'{basis:15s} --- недоступний')
-
-# Побудова графіка збіжності
-plt.figure(figsize=(10, 6))
-plt.plot(n_basis, energies, 'o-', linewidth=2, markersize=8)
-plt.axhline(y=-0.5, color='r', linestyle='--', label='Точне значення')
-plt.xlabel('Кількість базисних функцій', fontsize=12)
-plt.ylabel('Енергія (Ha)', fontsize=12)
-plt.title('Збіжність енергії атома H від базисного набору', fontsize=14)
-plt.grid(True, alpha=0.3)
-plt.legend()
-plt.tight_layout()
-plt.savefig('h_atom_basis_convergence.pdf')
-plt.show()
-\end{minted}
+\inputcode{code_2.py}
 
 З графіка видно, що зі збільшенням кількості базисних функцій енергія швидко наближається до точного значення \(-0.5\) Ha.
 Набори типу \texttt{cc-pVQZ} або \texttt{cc-pV5Z} практично дають збіжність до повного базисного ліміту (CBS limit).
@@ -217,29 +162,7 @@ plt.show()
 Хоча в атома Гідрогену існує лише одна заповнена орбіталь (1s), PySCF дозволяє вивести енергетичні рівні для всіх функцій базису, а також дослідити матрицю густини.
 Цей підхід зручний для демонстрації структури HF-розрахунку.
 
-\begin{minted}{python}
-from pyscf import gto, scf
-import numpy as np
-
-mol = gto.M(atom='H 0 0 0', basis='cc-pvtz', spin=1)
-mf = scf.UHF(mol)
-energy = mf.kernel()
-
-# Орбітальні енергії
-print('\nОрбітальні енергії (альфа-спін):')
-print('-' * 50)
-for i, (e, label) in enumerate(zip(mf.mo_energy[0], mol.ao_labels())):
-    occ = '(occ)' if i < mol.nelec[0] else '(virt)'
-    print(f'{i+1:2d}. {label:20s}: {e:10.6f} Ha {occ}')
-
-print(f'\nЕнергія 1s орбіталі: {mf.mo_energy[0][0]:.8f} Ha')
-print(f'Теоретична енергія:  -0.50000000 Ha')
-
-# Матриця густини
-dm = mf.make_rdm1()
-print(f'\nМатриця густини (альфа): {dm[0].shape}')
-print(f'След dm: {np.trace(dm[0]):.1f} (має дорівнювати 1)')
-\end{minted}
+\inputcode{code_3.py}
 
 Матриця густини (\texttt{dm}) відображає заповнення орбіталей. Її слід дорівнює кількості електронів (тут --- 1).
 Такі розрахунки є основою для подальшого аналізу електронної густини, побудови орбіталей і візуалізації електронної хмари.
@@ -256,6 +179,8 @@ print(f'След dm: {np.trace(dm[0]):.1f} (має дорівнювати 1)')
 \end{itemize}
 
 
+
+
 %% ========================================================
 \section{Розрахунок атома Гелію}
 %% ========================================================
@@ -264,49 +189,35 @@ print(f'След dm: {np.trace(dm[0]):.1f} (має дорівнювати 1)')
 \subsection{Двоелектронна система}
 %% --------------------------------------------------------
 
-Атом гелію є фундаментальним прикладом для демонстрації методів \textbf{Хартрі–Фока (HF)}.
-Це перша система, де проявляється \textbf{електрон–електронна кореляція}, відсутня в атомі водню.
-
-Два електрони гелію мають протилежні спіни й заповнюють одну й ту саму орбіталь $1s$, тому це \emph{замкнена оболонка}
+Атом гелію є фундаментальним прикладом для демонстрації методів \textbf{Хартрі–Фока (HF)}. Два електрони гелію мають протилежні спіни й заповнюють одну й ту саму орбіталь $1s$, тому це \emph{замкнена оболонка}
 зі спіном $S = 0$ (синглет, $M = 1$).
 
-\begin{minted}{python}
-from pyscf import gto, scf
+%Це перша система, де проявляється \textbf{електрон–електронна кореляція}, відсутня в атомі водню.
 
-# Атом He (основний стан ¹S)
-mol = gto.M(
-    atom='He 0 0 0',
-    basis='cc-pvtz',
-    spin=0,  # Замкнена оболонка
-    verbose=4
-)
+Після завершення SCF-розрахунку \texttt{PySCF} надає доступ до одноелектронних інтегралів
+(\inlinecode{int1e\_kin}, \inlinecode{int1e\_nuc}) та до двоелектронної частини (\inlinecode{get\_veff}).
+Це дозволяє безпосередньо обчислити всі компоненти енергії та перевірити віральне співвідношення.
 
-print(f'Електронна конфігурація: 1s²')
-print(f'Кількість електронів: {mol.nelectron}')
-
-# RHF для замкненої оболонки
-mf = scf.RHF(mol)
-energy = mf.kernel()
-
-print(f'\nЕнергія He (HF): {energy:.8f} Ha')
-print(f'Енергія He (HF): {energy * 27.211386:.6f} eV')
-
-# Експериментальна енергія He: -2.90372 Ha
-exp_energy = -2.90372
-correlation_energy = exp_energy - energy
-
-print(f'\nЕкспериментальна енергія: {exp_energy:.6f} Ha')
-print(f'Кореляційна енергія: {correlation_energy:.6f} Ha')
-print(f'Відносна похибка HF: {abs(correlation_energy/exp_energy)*100:.2f}%')
-\end{minted}
+\inputcode{HeHF.py}
 
 \textbf{Коментар.}
-Метод RHF нехтує кореляцією між електронами, тобто вважає, що хвильова функція є добутком одноелектронних орбіталей.
-Тому енергія HF завжди \emph{вище} (менш від’ємна), ніж точна. Для гелію похибка складає близько \(\sim 1.7\%\).
-Ця різниця --- це \textbf{кореляційна енергія}:
-\[
-E_{\text{corr}} = E_{\text{exact}} - E_{\text{HF}}
-\]
+Якщо розрахунок збіжний і фізично коректний, то відношення
+\(\langle V \rangle / \langle T \rangle \approx -2.00 \pm 0.01\),
+що підтверджує виконання віральної теореми.
+Будь-яке суттєве відхилення (наприклад, $-1.7$ чи $-2.3$) свідчить про помилку збіжності або неадекватність базисного набору.
+
+%
+%
+%
+%\inputcode{code_4.py}
+%
+%\textbf{Коментар.}
+%Метод RHF нехтує кореляцією між електронами, тобто вважає, що хвильова функція є добутком одноелектронних орбіталей.
+%Тому енергія HF завжди \emph{вище} (менш від’ємна), ніж точна. Для гелію похибка складає близько \(\sim 1.7\%\).
+%Ця різниця --- це \textbf{кореляційна енергія}:
+%\[
+%E_{\text{corr}} = E_{\text{exact}} - E_{\text{HF}}
+%\]
 
 
 %% --------------------------------------------------------
@@ -317,34 +228,11 @@ E_{\text{corr}} = E_{\text{exact}} - E_{\text{HF}}
 і \textbf{UHF} (unrestricted HF) --- дають ідентичні результати.
 UHF дозволяє $\alpha$ та $\beta$ орбіталям відрізнятися, але тут ця свобода не використовується.
 
-\begin{minted}{python}
-from pyscf import gto, scf
-
-mol = gto.M(atom='He 0 0 0', basis='6-31g', spin=0)
-
-# RHF розрахунок
-mf_rhf = scf.RHF(mol)
-mf_rhf.verbose = 0
-e_rhf = mf_rhf.kernel()
-
-# UHF розрахунок
-mf_uhf = scf.UHF(mol)
-mf_uhf.verbose = 0
-e_uhf = mf_uhf.kernel()
-
-print(f'RHF енергія: {e_rhf:.10f} Ha')
-print(f'UHF енергія: {e_uhf:.10f} Ha')
-print(f'Різниця: {abs(e_rhf - e_uhf):.2e} Ha')
-
-# Перевірка симетрії спіну
-s2_uhf = mf_uhf.spin_square()
-print(f'\n<S²> (UHF): {s2_uhf[0]:.6f}')
-print(f'<S²> (точно): 0.000000')
-\end{minted}
+\inputcode{code_5.py}
 
 \textbf{Коментар.}
 UHF може порушувати спінову симетрію (\textit{spin conta\-mination}), особливо для відкрито-оболонкових систем.
-Тут же $S^2 = 0$, тобто спінова симетрія зберігається, і RHF ≡ UHF.
+Тут же $S^2 = 0$, тобто спінова симетрія зберігається, і RHF $\equiv$ UHF.
 
 
 %% --------------------------------------------------------
@@ -362,51 +250,19 @@ UHF може порушувати спінову симетрію (\textit{spin 
 У PySCF ці стани можна моделювати за допомогою відповідного значення параметра \texttt{spin}
 та методу \texttt{ROHF} для частково заповнених оболонок.
 
-\begin{minted}{python}
-from pyscf import gto, scf
-
-def he_excited_state(config='1s2s', spin=0, basis='cc-pvdz'):
-    """
-    Розрахунок збуджених станів He
-
-    config: '1s2s' (синглет або триплет)
-    spin: 0 для синглету, 2 для триплету
-    """
-    mol = gto.M(atom='He 0 0 0', basis=basis, spin=spin)
-
-    if spin == 0:
-        # Синглет: 1s² → 1s2s ¹S
-        mf = scf.RHF(mol)
-    else:
-        # Триплет: 1s² → 1s2s ³S
-        mf = scf.ROHF(mol)
-
-    # Для збуджених станів можна використати MOM (maximum overlap method)
-    mf = scf.addons.mom_occ(mf, mf.make_rdm1(), mf.get_occ())
-    mf.verbose = 0
-    energy = mf.kernel()
-
-    return energy
-
-# Основний стан
-mol_gs = gto.M(atom='He 0 0 0', basis='cc-pvdz', spin=0)
-mf_gs = scf.RHF(mol_gs)
-mf_gs.verbose = 0
-e_gs = mf_gs.kernel()
-
-print('Стани атома Гелію (cc-pVDZ):')
-print('-' * 50)
-print(f'1s² (¹S, основний): {e_gs:.6f} Ha')
-print(f'  = {e_gs * 27.211386:.2f} eV')
-
-# Примітка: для збуджених станів
-# краще використовувати методи типу TD-DFT або CASSCF
-\end{minted}
+\inputcode{code_6.py}
 
 \textbf{Коментар.}
-Метод \texttt{MOM (Maximum Overlap Method)} дозволяє стабілізувати SCF для збуджених станів,
-зберігаючи певну орбітальну конфігурацію. Проте результати залишаються наближеними.
-Для точного опису необхідно застосовувати багатоконфігураційні підходи (наприклад, CASSCF, CI, TD-DFT).
+Метод \texttt{MOM (Maximum Overlap Method)} --- це модифікація самозгодженої процедури HF, у якій вибір зайнятих орбіталей на кожній ітерації здійснюється не за найменшими енергіями, а за критерієм \textbf{максимального перекриття} з орбіталями попередньої ітерації:
+\[
+O_{ij} = \left| \langle \phi_i^{(n)} \mid \phi_j^{(n-1)} \rangle \right|^2.
+\]
+Таким чином, MOM «закріплює» бажану орбітальну конфігурацію (наприклад, $1s2s$) і не дозволяє хвильовій функції сповзати назад до основного стану ($1s^2$), що часто трапляється у звичайному HF.
+
+Попри те, що MOM стабілізує збуджені конфігурації, він залишається одно-детермінантним наближенням і не враховує електронної кореляції, тому не належить до post-HF методів.
+Отримані стани є лише самозгодженими розв’язками рівнянь HF, а не справжніми власними станами гамільтоніана.
+Для точного опису енергій і спектрів збудження слід застосовувати багатоконфігураційні або збурювальні підходи (\texttt{CASSCF}, \texttt{CI}, \texttt{TD-DFT}).
+
 
 
 \textbf{Підсумок:}
@@ -435,46 +291,7 @@ print(f'  = {e_gs * 27.211386:.2f} eV')
 Через наявність неспареного електрона метод \textbf{UHF} (Unrestricted Hartree–Fock) є природним вибором.
 UHF дозволяє альфа- та бета-орбіталям відрізнятися, тобто хвильова функція не змушена мати однакову просторову форму для різних спінів.
 
-\begin{minted}{python}
-from pyscf import gto, scf
-
-# Li: [He] 2s¹, основний стан ²S
-mol = gto.M(
-    atom='Li 0 0 0',
-    basis='cc-pvdz',
-    spin=1,   # один неспарений електрон (S=1/2)
-    symmetry=True
-)
-
-print('Літій (Li):')
-print(f'  Конфігурація: [He] 2s¹')
-print(f'  Основний стан: ²S')
-print(f'  Електронів: {mol.nelectron}')
-
-# UHF розрахунок
-mf = scf.UHF(mol)
-energy = mf.kernel()
-
-print(f'\nЕнергія Li: {energy:.8f} Ha')
-print(f'Енергія Li: {energy * 27.211386:.4f} eV')
-
-# Аналіз заселеностей
-print('\nЗаселеності Малікена:')
-pop = mf.mulliken_pop()
-
-# Орбітальний аналіз
-print('\nАльфа-орбіталі (заповнені):')
-for i in range(mol.nelec[0]):
-    print(f'  α-MO {i+1}: {mf.mo_energy[0][i]:10.6f} Ha')
-
-print('\nБета-орбіталі (заповнені):')
-for i in range(mol.nelec[1]):
-    print(f'  β-MO {i+1}: {mf.mo_energy[1][i]:10.6f} Ha')
-
-# Спінова густина
-s2 = mf.spin_square()
-print(f'\n<S²> = {s2[0]:.6f} (очікується 0.75)')
-\end{minted}
+\inputcode{code_7.py}
 
 \paragraph{Коментарі.}
 \begin{itemize}
@@ -496,35 +313,10 @@ print(f'\n<S²> = {s2[0]:.6f} (очікується 0.75)')
 \[
 \text{Be: } 1s^2 2s^2.
 \]
-Тут усі орбіталі парні, тому спінова поляризація відсутня, і зручно використовувати \textbf{RHF} (Restricted Hartree–Fock).
+Тут усі орбіталі парні, тому спінова поляризація відсутня, і зручно використовувати \texttt{RHF} (Restricted Hart\-ree–Fock).
 Обидва електрони у підоболонці \(2s\) мають протилежні спіни, тож система має мультиплетність \(1S\) (синглетний стан).
 
-\begin{minted}{python}
-from pyscf import gto, scf
-
-# Be: [He] 2s², основний стан ¹S
-mol = gto.M(
-    atom='Be 0 0 0',
-    basis='cc-pvtz',
-    spin=0,        # замкнена оболонка
-    symmetry=True
-)
-
-print('Берилій (Be):')
-print(f'  Конфігурація: [He] 2s²')
-print(f'  Основний стан: ¹S')
-
-# RHF розрахунок
-mf = scf.RHF(mol)
-energy = mf.kernel()
-
-print(f'\nЕнергія Be: {energy:.8f} Ha')
-
-# Порівняння з експериментом
-exp_be = -14.6674  # Ha (експериментальна повна енергія)
-print(f'Експериментальна: {exp_be:.4f} Ha')
-print(f'Кореляційна енергія: {exp_be - energy:.4f} Ha')
-\end{minted}
+\inputcode{code_8.py}
 
 \paragraph{Обговорення.}
 \begin{itemize}
@@ -568,73 +360,15 @@ print(f'Кореляційна енергія: {exp_be - energy:.4f} Ha')
 \paragraph{Мета дослідження.}
 Провести розрахунок енергій Гартрі–Фока для атомів другого періоду в однаковому базисі \texttt{cc-pVDZ}, оцінити правильність спінового стану (через \(\langle S^2 \rangle\)) та проаналізувати систематичні тенденції.
 
-\begin{minted}{python}
-from pyscf import gto, scf
-import numpy as np
-
-# Дані про атоми другого періоду
-atoms_data = [
-    ('Li', 1, '²S', '[He] 2s¹'),
-    ('Be', 0, '¹S', '[He] 2s²'),
-    ('B',  1, '²P', '[He] 2s² 2p¹'),
-    ('C',  2, '³P', '[He] 2s² 2p²'),
-    ('N',  3, '⁴S', '[He] 2s² 2p³'),
-    ('O',  2, '³P', '[He] 2s² 2p⁴'),
-    ('F',  1, '²P', '[He] 2s² 2p⁵'),
-    ('Ne', 0, '¹S', '[He] 2s² 2p⁶')
-]
-
-basis = 'cc-pvdz'
-print(f'Розрахунок атомів 2-го періоду (базис: {basis})')
-print('=' * 70)
-print(f'{"Атом":4s} {"Спін":4s} {"Терм":4s} {"E(HF), Ha":15s} '
-      f'{"E(HF), eV":12s}')
-print('-' * 70)
-
-energies = {}
-
-for symbol, spin, term, config in atoms_data:
-    mol = gto.M(
-        atom=f'{symbol} 0 0 0',
-        basis=basis,
-        spin=spin,
-        symmetry=True,
-        verbose=0
-    )
-
-    # Вибір методу SCF
-    if spin == 0:
-        mf = scf.RHF(mol)
-    else:
-        mf = scf.UHF(mol)
-
-    mf.verbose = 0
-    mf.conv_tol = 1e-10
-    energy = mf.kernel()
-    energies[symbol] = energy
-
-    e_ev = energy * 27.211386
-    print(f'{symbol:4s} {spin:4d} {term:4s} {energy:15.8f} {e_ev:12.2f}')
-
-    # Додаткова інформація для відкритих оболонок
-    if spin > 0:
-        s2 = mf.spin_square()
-        expected_s2 = spin * (spin + 2) / 4
-        print(f'     <S²> = {s2[0]:.4f} (очікується {expected_s2:.4f})')
-
-print('=' * 70)
-
-# Збереження результатів
-np.savez('second_period_hf.npz', **energies)
-\end{minted}
+\inputcode{code_9.py}
 
 \paragraph{Коментарі до коду.}
 \begin{itemize}
   \item Для кожного атома автоматично обирається тип SCF: \texttt{RHF} (для замкнених оболонок, $S=0$) або \texttt{UHF} (для відкритих).
-  \item Параметр \texttt{spin} у PySCF означає різницю між кількістю альфа- та бета-електронів:
+  \item Параметр \inlinecode{spin} у PySCF означає різницю між кількістю альфа- та бета-електронів:
         \(\text{spin} = N_\alpha - N_\beta = 2S.\)
   \item Розрахунок \(\langle S^2 \rangle\) дозволяє перевірити правильність спінового стану. Для ідеального випадку значення має збігатися з теоретичним \(S(S+1)\).
-  \item У файлі \texttt{second\_period\_hf.npz} зберігаються всі енергії для подальшого аналізу або побудови графіків.
+  \item У файлі \inlinecode{second\_period\_hf.npz} зберігаються всі енергії для подальшого аналізу або побудови графіків.
 \end{itemize}
 
 \paragraph{Очікувані тенденції.}
@@ -649,8 +383,8 @@ np.savez('second_period_hf.npz', **energies)
 Цей розрахунок демонструє фундаментальну властивість методу Гартрі–Фока:
 він добре описує загальну структуру енергетичних рівнів і тенденції в періодичній таблиці, але не враховує електронну кореляцію, через що абсолютні значення енергії мають систематичну похибку.
 
-\paragraph{Подальші кроки.}
-Наступним логічним етапом є додавання пост-Гартрі–Фок методів (MP2, CI, CCSD), щоб показати, як кореляція електронів уточнює енергії і дозволяє досягати експериментальної точності.
+%\paragraph{Подальші кроки.}
+%Наступним логічним етапом є додавання пост-Гартрі–Фок методів (MP2, CI, CCSD), щоб показати, як кореляція електронів уточнює енергії і дозволяє досягати експериментальної точності.
 
 
 %% --------------------------------------------------------
@@ -666,92 +400,11 @@ I = E(A^+) - E(A)
 Для ізольованих атомів другого періоду така процедура дозволяє отримати якісно правильну послідовність енергій іонізації, навіть попри те, що метод HF систематично недооцінює абсолютні значення через відсутність кореляційних ефектів.
 
 
-\begin{minted}{python}
-from pyscf import gto, scf
-
-def ionization_energy(symbol, charge_neutral=0, spin_neutral=None,
-                     spin_cation=None, basis='cc-pvtz'):
-    """
-    Розрахунок енергії іонізації атома
-    IE = E(A⁺) - E(A)
-    """
-    # Нейтральний атом
-    mol_neutral = gto.M(
-        atom=f'{symbol} 0 0 0',
-        basis=basis,
-        charge=charge_neutral,
-        spin=spin_neutral,
-        verbose=0
-    )
-
-    if spin_neutral == 0:
-        mf_neutral = scf.RHF(mol_neutral)
-    else:
-        mf_neutral = scf.UHF(mol_neutral)
-
-    mf_neutral.verbose = 0
-    e_neutral = mf_neutral.kernel()
-
-    # Катіон
-    mol_cation = gto.M(
-        atom=f'{symbol} 0 0 0',
-        basis=basis,
-        charge=charge_neutral + 1,
-        spin=spin_cation,
-        verbose=0
-    )
-
-    if spin_cation == 0:
-        mf_cation = scf.RHF(mol_cation)
-    else:
-        mf_cation = scf.UHF(mol_cation)
-
-    mf_cation.verbose = 0
-    e_cation = mf_cation.kernel()
-
-    # Енергія іонізації
-    ie_ha = e_cation - e_neutral
-    ie_ev = ie_ha * 27.211386
-
-    return ie_ev, e_neutral, e_cation
-
-# Розрахунок IE для атомів 2-го періоду
-atoms_ie = [
-    ('Li', 1, 0),  # Li → Li⁺
-    ('Be', 0, 1),  # Be → Be⁺
-    ('B',  1, 0),  # B → B⁺
-    ('C',  2, 1),  # C → C⁺
-    ('N',  3, 2),  # N → N⁺
-    ('O',  2, 3),  # O → O⁺
-    ('F',  1, 2),  # F → F⁺
-    ('Ne', 0, 1),  # Ne → Ne⁺
-]
-
-# Експериментальні значення (eV)
-exp_ie = {
-    'Li': 5.39, 'Be': 9.32, 'B': 8.30, 'C': 11.26,
-    'N': 14.53, 'O': 13.62, 'F': 17.42, 'Ne': 21.56
-}
-
-print('Енергії іонізації атомів 2-го періоду')
-print('=' * 65)
-print(f'{"Атом":4s} {"IE(HF), eV":12s} {"IE(exp), eV":12s} {"Похибка, eV":12s}')
-print('-' * 65)
-
-for symbol, spin_n, spin_c in atoms_ie:
-    ie_calc, e_n, e_c = ionization_energy(symbol, 0, spin_n, spin_c)
-    ie_experimental = exp_ie[symbol]
-    error = ie_calc - ie_experimental
-
-    print(f'{symbol:4s} {ie_calc:12.2f} {ie_experimental:12.2f} '
-          f'{error:12.2f}')
-
-print('=' * 65)
-\end{minted}
+\inputcode{code_10.py}
 
 Результатом буде таблиця іонізаційних енергій у електронвольтах.
 Порівнюючи їх з експериментальними, можна оцінити якість базисного набору та межі методу Гартрі–Фока.
-Для більш точних результатів використовують після-HF методи, наприклад MP2 або CCSD, які враховують електронну кореляцію.
+%Для більш точних результатів використовують після-HF методи, наприклад MP2 або CCSD, які враховують електронну кореляцію.
 
 %% --------------------------------------------------------
 \section{Аналіз енергій та орбіталей}
@@ -766,87 +419,7 @@ print('=' * 65)
 Енергетичні діаграми орбіталей є наочним способом представлення енергетичного спектру молекулярних орбіталей (МО), що виникають у результаті розв’язання рівнянь Гартрі–Фока.
 
 
-\begin{minted}{python}
-from pyscf import gto, scf
-import matplotlib.pyplot as plt
-import numpy as np
-
-def plot_orbital_diagram(symbol, spin, basis='cc-pvdz'):
-    """Побудова діаграми орбітальних енергій"""
-
-    mol = gto.M(
-        atom=f'{symbol} 0 0 0',
-        basis=basis,
-        spin=spin,
-        verbose=0
-    )
-
-    if spin == 0:
-        mf = scf.RHF(mol)
-    else:
-        mf = scf.UHF(mol)
-
-    mf.verbose = 0
-    mf.kernel()
-
-    fig, ax = plt.subplots(figsize=(8, 10))
-
-    if spin == 0:
-        # RHF: одна колонка орбіталей
-        energies = mf.mo_energy * 27.211386  # eV
-        n_occ = mol.nelec[0]
-
-        for i, e in enumerate(energies[:n_occ+5]):
-            color = 'blue' if i < n_occ else 'red'
-            label = mol.ao_labels()[i] if i < len(mol.ao_labels()) else ''
-            ax.hlines(e, 0.2, 0.8, colors=color, linewidth=2)
-            ax.text(0.85, e, f'{label}', fontsize=10, va='center')
-
-            # Стрілки для електронів
-            if i < n_occ:
-                ax.arrow(0.35, e+0.3, 0, -0.25, head_width=0.05,
-                        head_length=0.1, fc='black', ec='black')
-                ax.arrow(0.65, e-0.3, 0, 0.25, head_width=0.05,
-                        head_length=0.1, fc='black', ec='black')
-    else:
-        # UHF: дві колонки (альфа та бета)
-        e_alpha = mf.mo_energy[0] * 27.211386
-        e_beta = mf.mo_energy[1] * 27.211386
-        n_alpha, n_beta = mol.nelec
-
-        # Альфа орбіталі
-        for i, e in enumerate(e_alpha[:n_alpha+3]):
-            color = 'blue' if i < n_alpha else 'red'
-            ax.hlines(e, 0.1, 0.4, colors=color, linewidth=2)
-            if i < n_alpha:
-                ax.arrow(0.25, e+0.3, 0, -0.25, head_width=0.04,
-                        head_length=0.1, fc='black', ec='black')
-
-        # Бета орбіталі
-        for i, e in enumerate(e_beta[:n_beta+3]):
-            color = 'blue' if i < n_beta else 'red'
-            ax.hlines(e, 0.6, 0.9, colors=color, linewidth=2)
-            if i < n_beta:
-                ax.arrow(0.75, e-0.3, 0, 0.25, head_width=0.04,
-                        head_length=0.1, fc='black', ec='black')
-
-        ax.text(0.25, min(e_alpha[:5])-2, 'α', fontsize=14, ha='center')
-        ax.text(0.75, min(e_beta[:5])-2, 'β', fontsize=14, ha='center')
-
-    ax.set_xlim(0, 1)
-    ax.set_ylabel('Енергія (eV)', fontsize=12)
-    ax.set_title(f'Діаграма орбіталей {symbol}', fontsize=14)
-    ax.set_xticks([])
-    ax.grid(True, alpha=0.3, axis='y')
-
-    plt.tight_layout()
-    plt.savefig(f'{symbol}_orbital_diagram.pdf')
-    plt.show()
-
-# Приклади
-plot_orbital_diagram('C', spin=2)   # Вуглець
-plot_orbital_diagram('Ne', spin=0)  # Неон
-\end{minted}
+\inputcode{code_11.py}
 
 %% --------------------------------------------------------
 \subsection{Розподіл електронної густини}
@@ -867,84 +440,23 @@ plot_orbital_diagram('Ne', spin=0)  # Неон
 \subsubsection{Обчислення густини вздовж осі $z$}
 %% --------------------------------------------------------
 
-У наведеному прикладі реалізовано функцію \texttt{plot\_density\_profile}, що обчислює електронну густину вздовж осі $z$ для атома.
+У наведеному прикладі реалізовано функцію \inlinecode{plot\_density\_profile}, що обчислює електронну густину вздовж осі $z$ для атома.
 Це дозволяє побудувати одноосний «профіль густини» та простежити, як електронна густина спадає при віддаленні від ядра.
 
-\begin{itemize}
-  \item Молекулярний об’єкт створюється через \texttt{gto.M}, де вказується атом, базис та спінова мультиплічність.
-  \item Виконується розрахунок за методом Гартрі–Фока (RHF або UHF залежно від спіну).
-  \item Для кожної точки $z$ обчислюється матриця базисних функцій $\phi_i(\mathbf{r})$, і далі густина:
+Для кожної точки $z$ обчислюється матриця базисних функцій $\phi_i(\mathbf{r})$, і далі густина:
   \[
-  \rho(\mathbf{r}) = \sum_{ij} \phi_i(\mathbf{r}) D_{ij} \phi_j(\mathbf{r}),
+  \rho(\mathbf{r}) = \sum_{ij} \chi_i(\mathbf{r}) D_{ij} \chi_j(\mathbf{r}),
   \]
-  де $D_{ij}$ --- елементи матриці щільності.
-\end{itemize}
+ де $D_{ij}$ --- елементи матриці щільності.
+
 
 Результат зображається графічно: густина $\rho(0,0,z)$ як функція відстані від ядра.
 Для нейтральних атомів крива має різкий максимум біля ядра, який швидко спадає експоненційно.
 
-\begin{minted}{python}
-from pyscf import gto, scf
-from pyscf.tools import cubegen
-import numpy as np
-import matplotlib.pyplot as plt
-
-def plot_density_profile(symbol, spin, basis='cc-pvdz'):
-    """Радіальний розподіл густини"""
-
-    mol = gto.M(
-        atom=f'{symbol} 0 0 0',
-        basis=basis,
-        spin=spin,
-        verbose=0
-    )
-
-    if spin == 0:
-        mf = scf.RHF(mol)
-    else:
-        mf = scf.UHF(mol)
-
-    mf.verbose = 0
-    mf.kernel()
-
-    # Розрахунок густини вздовж осі z
-    r_points = np.linspace(0, 5, 200)  # Bohr
-    density = []
-
-    dm = mf.make_rdm1()
-
-    for r in r_points:
-        coords = np.array([[0, 0, r]])
-        rho = mol.eval_gto('GTOval_sph', coords)
-
-        if spin == 0:
-            dens = np.einsum('pi,ij,pj->p', rho, dm, rho)[0]
-        else:
-            dens_a = np.einsum('pi,ij,pj->p', rho, dm[0], rho)[0]
-            dens_b = np.einsum('pi,ij,pj->p', rho, dm[1], rho)[0]
-            dens = dens_a + dens_b
-
-        density.append(dens)
-
-    # Побудова графіка
-    plt.figure(figsize=(10, 6))
-    plt.plot(r_points, density, linewidth=2)
-    plt.xlabel('Відстань від ядра (Bohr)', fontsize=12)
-    plt.ylabel('Електронна густина (e/Bohr³)', fontsize=12)
-    plt.title(f'Радіальний розподіл густини {symbol}', fontsize=14)
-    plt.grid(True, alpha=0.3)
-    plt.tight_layout()
-    plt.savefig(f'{symbol}_density.pdf')
-    plt.show()
-
-    return r_points, density
-
-# Приклад
-r, rho = plot_density_profile('Ne', spin=0)
-\end{minted}
+\inputcode{code_12.py}
 
 \paragraph{Інтерпретація результатів.}
-На побудованому графіку $\rho(r)$ спостерігаються чіткі області локалізації електронів:
+На побудованому графіку $\rho(0,0,z)$ спостерігаються чіткі області локалізації електронів:
 внутрішні електрони формують центральний пік, тоді як зовнішні оболонки проявляються у вигляді плавних плечей.
 Для важчих атомів густина стає більш «зосередженою» біля ядра через сильніше притягання кулонівським потенціалом.
 
@@ -968,106 +480,7 @@ P(r) = 4\pi r^2 \rho(r),
 \]
 що описує, яка частка електронів перебуває у сферичному шарі товщини $dr$ на відстані $r$ від ядра.
 
-\begin{minted}{python}
-from pyscf import gto, scf
-import numpy as np
-import matplotlib.pyplot as plt
-
-def spherical_averaged_density(symbol, spin, basis='cc-pvdz'):
-    """Сферично усереднена електронна густина"""
-
-    mol = gto.M(
-        atom=f'{symbol} 0 0 0',
-        basis=basis,
-        spin=spin,
-        verbose=0
-    )
-
-    if spin == 0:
-        mf = scf.RHF(mol)
-    else:
-        mf = scf.UHF(mol)
-
-    mf.verbose = 0
-    mf.kernel()
-
-    dm = mf.make_rdm1()
-
-    # Радіальні точки
-    r_points = np.linspace(0.01, 8, 300)
-
-    # Кути для інтегрування (метод Монте-Карло)
-    n_angles = 100
-    theta = np.random.uniform(0, np.pi, n_angles)
-    phi = np.random.uniform(0, 2*np.pi, n_angles)
-
-    density_sph = []
-
-    for r in r_points:
-        rho_avg = 0
-
-        for t, p in zip(theta, phi):
-            x = r * np.sin(t) * np.cos(p)
-            y = r * np.sin(t) * np.sin(p)
-            z = r * np.cos(t)
-
-            coords = np.array([[x, y, z]])
-            ao_value = mol.eval_gto('GTOval_sph', coords)
-
-            if spin == 0:
-                rho_point = np.einsum('pi,ij,pj->p',
-                                     ao_value, dm, ao_value)[0]
-            else:
-                rho_a = np.einsum('pi,ij,pj->p',
-                                 ao_value, dm[0], ao_value)[0]
-                rho_b = np.einsum('pi,ij,pj->p',
-                                 ao_value, dm[1], ao_value)[0]
-                rho_point = rho_a + rho_b
-
-            rho_avg += rho_point
-
-        rho_avg /= n_angles
-        density_sph.append(rho_avg)
-
-    # Радіальна функція розподілу 4πr²ρ(r)
-    radial_dist = 4 * np.pi * r_points**2 * np.array(density_sph)
-
-    # Графіки
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
-
-    # Густина ρ(r)
-    ax1.plot(r_points, density_sph, linewidth=2)
-    ax1.set_xlabel('r (Bohr)', fontsize=12)
-    ax1.set_ylabel('ρ(r) (e/Bohr³)', fontsize=12)
-    ax1.set_title(f'Електронна густина {symbol}', fontsize=14)
-    ax1.grid(True, alpha=0.3)
-    ax1.set_yscale('log')
-
-    # Радіальна функція розподілу
-    ax2.plot(r_points, radial_dist, linewidth=2, color='red')
-    ax2.set_xlabel('r (Bohr)', fontsize=12)
-    ax2.set_ylabel('4πr²ρ(r)', fontsize=12)
-    ax2.set_title(f'Радіальна функція розподілу {symbol}',
-                  fontsize=14)
-    ax2.grid(True, alpha=0.3)
-
-    plt.tight_layout()
-    plt.savefig(f'{symbol}_spherical_density.pdf')
-    plt.show()
-
-    # Перевірка нормування
-    dr = r_points[1] - r_points[0]
-    total_electrons = np.sum(radial_dist) * dr
-    print(f'\nІнтеграл 4πr²ρ(r)dr = {total_electrons:.2f}')
-    print(f'Очікується: {mol.nelectron} електронів')
-
-    return r_points, density_sph, radial_dist
-
-# Приклади для різних атомів
-r, rho, rdf = spherical_averaged_density('He', spin=0)
-r, rho, rdf = spherical_averaged_density('C', spin=2)
-r, rho, rdf = spherical_averaged_density('Ne', spin=0)
-\end{minted}
+\inputcode{code_13.py}
 
 
 \paragraph{Методика обчислення.}
@@ -1090,12 +503,12 @@ r, rho, rdf = spherical_averaged_density('Ne', spin=0)
 що відповідає найбільш ймовірній відстані електрона від ядра у $1s$-стані.
 Для вуглецю або неону виникають додаткові піки, пов’язані з електронами на $2s$ та $2p$ оболонках.
 
-\paragraph{Перевірка нормування.}
-Наприкінці виконання функції виводиться значення
-\[
-\int 4\pi r^2 \rho(r) dr,
-\]
-яке має збігатися з кількістю електронів у системі, що є корисним тестом правильності побудованої густини.
+%\paragraph{Перевірка нормування.}
+%Наприкінці виконання функції виводиться значення
+%\[
+%\int 4\pi r^2 \rho(r) dr,
+%\]
+%яке має збігатися з кількістю електронів у системі, що є корисним тестом правильності побудованої густини.
 
 
 %% --------------------------------------------------------
@@ -1114,130 +527,46 @@ r, rho, rdf = spherical_averaged_density('Ne', spin=0)
     \item візуально оцінити зв’язок між структурою густини та положенням елемента в періодичній системі.
 \end{itemize}
 
-У програмі нижче реалізовано функцію порівняння радіальних профілів густини для кількох атомів одночасно.
-Вона виконує незалежні розрахунки SCF для кожного атома, будує $\rho(r)$ та радіальну функцію $4\pi r^2 \rho(r)$, і виводить результати на одному графіку для порівняння.
-
-\subsubsection{Коментар до реалізації}
-
-Ключові кроки програми:
-\begin{enumerate}
-    \item Створення об'єкта \texttt{Mole} для кожного атома з базисом \texttt{cc-pvdz} або \texttt{cc-pvtz}.
-    \item Проведення SCF-розрахунку типу RHF або UHF залежно від спіну.
-    \item Побудова масиву радіальних точок уздовж осі $z$:
-    $$ r \in [0, 6] \ \text{Bohr} $$
-    \item Обчислення електронної густини як:
-    \[
-    \rho(r) = \sum_{i,j} \phi_i(r) D_{ij} \phi_j(r),
-    \]
-    де $\phi_i$ --- атомні орбіталі, $D_{ij}$ --- елементи матриці щільності.
-    \item Для кожного атома будується:
-    \begin{itemize}
-        \item крива $\rho(r)$ --- логарифмічний масштаб показує різке спадання густини;
-        \item радіальний розподіл $4\pi r^2\rho(r)$ --- для аналізу оболонкової структури.
-    \end{itemize}
-\end{enumerate}
-
-\begin{minted}{python}
-from pyscf import gto, scf
-import numpy as np
-import matplotlib.pyplot as plt
-
-def compare_densities(atoms_list, basis='cc-pvdz'):
-    """Порівняння електронної густини різних атомів"""
-
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
-
-    colors = plt.cm.tab10(np.linspace(0, 1, len(atoms_list)))
-
-    for (symbol, spin), color in zip(atoms_list, colors):
-        mol = gto.M(
-            atom=f'{symbol} 0 0 0',
-            basis=basis,
-            spin=spin,
-            verbose=0
-        )
-
-        if spin == 0:
-            mf = scf.RHF(mol)
-        else:
-            mf = scf.UHF(mol)
-
-        mf.verbose = 0
-        mf.kernel()
-
-        dm = mf.make_rdm1()
-
-        # Густина вздовж осі z
-        r_points = np.linspace(0.01, 6, 200)
-        density = []
-
-        for r in r_points:
-            coords = np.array([[0, 0, r]])
-            ao = mol.eval_gto('GTOval_sph', coords)
-
-            if spin == 0:
-                rho = np.einsum('pi,ij,pj->p', ao, dm, ao)[0]
-            else:
-                rho = (np.einsum('pi,ij,pj->p', ao, dm[0], ao)[0] +
-                       np.einsum('pi,ij,pj->p', ao, dm[1], ao)[0])
-
-            density.append(rho)
-
-        # Графіки
-        ax1.plot(r_points, density, linewidth=2,
-                label=f'{symbol} (Z={mol.atom_charge(0)})',
-                color=color)
-
-        # Радіальна функція
-        radial = 4 * np.pi * r_points**2 * np.array(density)
-        ax2.plot(r_points, radial, linewidth=2,
-                label=f'{symbol}', color=color)
-
-    ax1.set_xlabel('r (Bohr)', fontsize=12)
-    ax1.set_ylabel('ρ(r) (e/Bohr³)', fontsize=12)
-    ax1.set_title('Електронна густина', fontsize=14)
-    ax1.set_yscale('log')
-    ax1.legend()
-    ax1.grid(True, alpha=0.3)
-
-    ax2.set_xlabel('r (Bohr)', fontsize=12)
-    ax2.set_ylabel('4πr²ρ(r)', fontsize=12)
-    ax2.set_title('Радіальний розподіл', fontsize=14)
-    ax2.legend()
-    ax2.grid(True, alpha=0.3)
-
-    plt.tight_layout()
-    plt.savefig('atoms_density_comparison.pdf')
-    plt.show()
-
-# Порівняння атомів благородних газів
-noble_gases = [
-    ('He', 0), ('Ne', 0), ('Ar', 0)
-]
-compare_densities(noble_gases, basis='cc-pvtz')
-
-# Порівняння атомів 2-го періоду
-second_period = [
-    ('Li', 1), ('C', 2), ('N', 3), ('O', 2), ('F', 1)
-]
-compare_densities(second_period, basis='6-31g*')
-\end{minted}
-
-\subsubsection{Аналіз результатів}
-
-На графіку для \textbf{благородних газів} (\ce{He}, \ce{Ne}, \ce{Ar}) чітко видно:
-\begin{itemize}
-    \item з ростом $Z$ максимум густини зміщується ближче до ядра --- електрони сильніше притягуються кулонівським полем;
-    \item протяжність хвоста $\rho(r)$ зменшується, атоми стають компактнішими;
-    \item радіальні криві $4\pi r^2\rho(r)$ демонструють послідовне збільшення кількості максимумів, що відповідає заповненню нових оболонок.
-\end{itemize}
-
-Для \textbf{атомів другого періоду} (\ce{Li} -- \ce{F}) спостерігається:
-\begin{itemize}
-    \item різке зростання центральної густини у міру збільшення $Z$;
-    \item поява другорядного максимуму в $4\pi r^2\rho(r)$, що відповідає електронам $2s$-оболонки;
-    \item звуження зовнішньої частини електронної хмари.
-\end{itemize}
+%У програмі нижче реалізовано функцію порівняння радіальних профілів густини для кількох атомів одночасно.
+%Вона виконує незалежні розрахунки SCF для кожного атома, будує $\rho(r)$ та радіальну функцію $4\pi r^2 \rho(r)$, і виводить результати на одному графіку для порівняння.
+%
+%\subsubsection{Коментар до реалізації}
+%
+%Ключові кроки програми:
+%\begin{enumerate}
+%    \item Створення об'єкта \texttt{Mole} для кожного атома з базисом \texttt{cc-pvdz} або \texttt{cc-pvtz}.
+%    \item Проведення SCF-розрахунку типу RHF або UHF залежно від спіну.
+%    \item Побудова масиву радіальних точок уздовж осі $z$:
+%    $$ r \in [0, 6] \ \text{Bohr} $$
+%    \item Обчислення електронної густини як:
+%    \[
+%    \rho(r) = \sum_{i,j} \chi_i(r) D_{ij} \chi_j(r),
+%    \]
+%    де $\chi_i$ --- атомні орбіталі, $D_{ij}$ --- елементи матриці густини.
+%    \item Для кожного атома будується:
+%    \begin{itemize}
+%        \item крива $\rho(r)$ --- логарифмічний масштаб показує різке спадання густини;
+%        \item радіальний розподіл $4\pi r^2\rho(r)$ --- для аналізу оболонкової структури.
+%    \end{itemize}
+%\end{enumerate}
+%
+%\inputcode{code_14.py}
+%
+%\subsubsection{Аналіз результатів}
+%
+%На графіку для \textbf{благородних газів} (\ce{He}, \ce{Ne}, \ce{Ar}) чітко видно:
+%\begin{itemize}
+%    \item з ростом $Z$ максимум густини зміщується ближче до ядра --- електрони сильніше притягуються кулонівським полем;
+%    \item протяжність хвоста $\rho(r)$ зменшується, атоми стають компактнішими;
+%    \item радіальні криві $4\pi r^2\rho(r)$ демонструють послідовне збільшення кількості максимумів, що відповідає заповненню нових оболонок.
+%\end{itemize}
+%
+%Для \textbf{атомів другого періоду} (\ce{Li} -- \ce{F}) спостерігається:
+%\begin{itemize}
+%    \item різке зростання центральної густини у міру збільшення $Z$;
+%    \item поява другорядного максимуму в $4\pi r^2\rho(r)$, що відповідає електронам $2s$-оболонки;
+%    \item звуження зовнішньої частини електронної хмари.
+%\end{itemize}
 
 \subsubsection{Зв’язок із електронними оболонками}
 
@@ -1265,7 +594,7 @@ compare_densities(second_period, basis='6-31g*')
 %% --------------------------------------------------------
 
 \begin{enumerate}
-  \item Для легких атомів (\texttt{H}, \texttt{He}, \texttt{Li}) можна порівняти результати з аналітичними розв’язками рівняння Шредінгера.
+%  \item Для легких атомів (\texttt{H}, \texttt{He}, \texttt{Li}) можна порівняти результати з аналітичними розв’язками рівняння Шредінгера.
   \item Змінюючи базис (наприклад, \texttt{STO-3G}, \texttt{6-31G}, \texttt{cc-pVTZ}), можна дослідити, як збільшується точність відтворення радіального профілю.
   \item Для відкритих оболонок (атомів з неспареними електронами) потрібно враховувати спінову поляризацію --- використовується \texttt{UHF}.
 \end{enumerate}
@@ -1278,18 +607,161 @@ compare_densities(second_period, basis='6-31g*')
 %% --------------------------------------------------------
 
 У квантово-хімічних розрахунках вибір типу наближення Гартрі–Фока залежить від спінового стану системи.
-Методи \textbf{RHF}, \textbf{UHF} та \textbf{ROHF} відрізняються тим, як вони поводяться із спіновими функціями електронів --- тобто, чи допускають різні орбіталі для $\alpha$- і $\beta$-електронів.
+Методи \texttt{RHF}, \texttt{UHF} та \texttt{ROHF} відрізняються тим, як вони поводяться із спіновими функціями електронів — тобто, чи допускають різні орбіталі для $\alpha$- і $\beta$-електронів.
 
 \begin{itemize}
-    \item \textbf{RHF (Restricted Hartree–Fock)} --- усі електрони спарені, кожна просторова орбіталь заповнена двома електронами з протилежними спінами.
+    \item \texttt{RHF (Restricted Hartree–Fock)} --- усі електрони спарені, кожна просторова орбіталь заповнена двома електронами з протилежними спінами.
     Підходить лише для синглетних закритих оболонок.
 
-    \item \textbf{UHF (Unrestricted Hartree–Fock)} --- орбіталі для $\alpha$- і $\beta$-електронів дозволено різні.
-    Цей метод придатний для відкритих оболонок (наприклад, атомів з неспареними електронами), однак може страждати від \emph{спінового забруднення}.
+    \item \texttt{UHF (Unrestricted Hartree–Fock)} --- орбіталі для $\alpha$- і $\beta$-електронів дозволено різні.
+    Цей метод придатний для відкритих оболонок (наприклад, атомів з неспареними електронами), однак може страждати від \emph{спінового забруднення (spin contamination)}.
 
-    \item \textbf{ROHF (Restricted Open-Shell Hartree–Fock)} --- компроміс: спільні орбіталі для парних електронів і різні --- лише для неспарених.
+    \item \texttt{ROHF (Restricted Open-Shell Hartree–Fock)} --- компроміс: спільні орбіталі для парних електронів і різні --- лише для неспарених.
     Це забезпечує правильний спіновий симетрійний стан без забруднення.
 \end{itemize}
+
+\subsubsection{Енергетичне порівняння}
+
+\texttt{UHF} зазвичай дає трохи нижчу енергію, ніж ROHF, оскільки має більше варіаційної свободи.
+Різниця $\Delta E = E_{\mathrm{UHF}} - E_{\mathrm{ROHF}}$ зазвичай незначна (менше кількох міліГартрі), однак у системах з сильним спіновим змішуванням може бути суттєвою.
+
+\subsubsection{Орбітальні енергії}
+
+\texttt{UHF} формує два набори орбіталей --- для $\alpha$- і $\beta$-електронів.
+Тому орбітальні енергії можуть відрізнятись:
+\[
+\varepsilon_i^{(\alpha)} \neq \varepsilon_i^{(\beta)}.
+\]
+У \texttt{ROHF} усі парні орбіталі спільні, тож орбітальні енергії чітко впорядковані відповідно до симетрії та спіну.
+
+%% --------------------------------------------------------
+\subsection{Спінове забруднення}
+%% --------------------------------------------------------
+
+У системах з відкритими оболонками метод \texttt{UHF} часто використовується як простіше наближення, що дозволяє займати незалежні орбіталі електронам зі спінами $\alpha$ та $\beta$.
+Однак відсутність суворого обмеження на спінову симетрію призводить до важливого недоліку --- \textbf{спінового забруднення}.
+
+
+\subsubsection*{Математична суть явища}
+
+\texttt{UHF}-хвильова функція не є власним станом оператора $\hat{S}^2$, хоч і залишається власним станом $\hat{S}_z$:
+\[
+\hat{S}_z \Psi_{\text{UHF}} = M_S \Psi_{\text{UHF}}, \qquad
+\hat{S}^2 \Psi_{\text{UHF}} \neq S(S+1)\Psi_{\text{UHF}}.
+\]
+Отже, очікуване значення
+\[
+\langle S^2 \rangle = \langle \Psi_{\text{UHF}} | \hat{S}^2 | \Psi_{\text{UHF}} \rangle
+\]
+зазвичай перевищує істинне $S(S+1)$, тобто:
+\[
+\Delta S^2 = \langle S^2 \rangle - S(S+1) > 0.
+\]
+
+\subsubsection*{Фізичне тлумачення}
+
+UHF-хвильова функція може бути подана як суперпозиція чистих спінових станів:
+\[
+\Psi_{\text{UHF}} = c_0 \Psi_{S} + c_1 \Psi_{S+1} + c_2 \Psi_{S+2} + \cdots,
+\]
+де присутність коефіцієнтів $c_i \ne 0$ для $i>0$ означає змішування різних мультиплетів.
+Наприклад, для триплетного стану ($S=1$) теоретичне значення $\langle S^2 \rangle = 2.0$, але якщо розрахунок UHF дає $2.25$, це означає, що хвильова функція містить домішку п’ятичленного ($S=2$) стану.
+
+\subsubsection*{Вплив на результати}
+
+\begin{itemize}
+    \item \textbf{Енергія.} \texttt{UHF} може давати занадто низьку енергію через змішування спінів і штучне зменшення кулонівського відштовхування.
+    \item \textbf{Електронна густина.} Спінова густина стає несиметричною, особливо поблизу атомів з неспареними електронами.
+    \item \textbf{Магнітні властивості.} Похибки у спіновій густині ведуть до помилкових магнітних моментів і спотворених мультиплетних розщеплень.
+\end{itemize}
+
+%% --------------------------------------------------------
+\subsubsection{Як обчислюється спінове забруднення}
+%% --------------------------------------------------------
+
+Програми квантово-хімічних розрахунків (зокрема \texttt{PySCF}, \texttt{Gaussian}, \texttt{ORCA}) обчислюють спінове забруднення не безпосередньо через оператор $\hat{S}^2$, а через перекриття між орбіталями спінів $\alpha$ і $\beta$.
+
+Основна формула для середнього значення $\langle S^2 \rangle$ у наближенні \texttt{UHF} має вигляд:
+\[
+\boxed{
+\langle S^2 \rangle =
+\frac{(N_\alpha - N_\beta)^2}{4}
++ \frac{N_\alpha + N_\beta}{2}
+- \sum_{i=1}^{N_\alpha} \sum_{j=1}^{N_\beta}
+|\langle \phi_i^\alpha | \phi_j^\beta \rangle|^2
+}
+\]
+де:
+\begin{itemize}
+    \item $N_\alpha$, $N_\beta$ — кількість електронів зі спінами $\alpha$ та $\beta$ відповідно;
+    \item $\phi_i^\alpha$, $\phi_j^\beta$ --- молекулярні(атомні) орбіталі для спінів $\alpha$ і $\beta$;
+    \item $\langle \phi_i^\alpha | \phi_j^\beta \rangle$ --- перекриття між орбіталями різних спінів.
+\end{itemize}
+
+Якщо орбіталі $\alpha$ і $\beta$ однакові, тобто $\phi_i^\alpha = \phi_i^\beta$, то:
+\[
+\langle S^2 \rangle = \frac{(N_\alpha - N_\beta)^2}{4},
+\]
+і для синглету ($N_\alpha = N_\beta$) це дорівнює нулю --- спінове забруднення відсутнє.
+
+\subsubsection*{Інтерпретація}
+
+Якщо орбіталі $\alpha$ і $\beta$ подібні, перекриття $S_{\alpha\beta}$ велике, тому $\Sigma$ наближається до $N_\beta$, і $\langle S^2 \rangle$ близьке до теоретичного $S(S+1)$ — тобто забруднення мінімальне.
+Якщо ж орбіталі сильно відрізняються (наприклад, при розриві зв’язку або в радикалах), $\Sigma$ зменшується, і $\langle S^2 \rangle$ зростає — з’являється суттєве спінове забруднення.
+
+
+\subsubsection*{Діагностика та критерії}
+
+Значення $\langle S^2 \rangle$ зазвичай друкується у вихідних даних програми.
+Практичні межі:
+\[
+\Delta S^2 = \langle S^2 \rangle - S(S+1),
+\]
+\[
+\begin{cases}
+\Delta S^2 < 0.05 & \text{— незначне забруднення, прийнятно;}\\
+0.05 < \Delta S^2 < 0.10 & \text{— помірне, бажано перевірити;}\\
+\Delta S^2 > 0.10 & \text{— суттєве, слід перейти до ROHF або проєкційних методів.}
+\end{cases}
+\]
+
+
+\subsubsection*{Приклад чисельного розрахунку}
+
+Для системи з $N_\alpha = 5$, $N_\beta = 4$ (очікувано $S=\frac{1}{2}$, $\langle S^2 \rangle = 0.75$):
+
+\begin{itemize}
+    \item якщо $\Sigma = 3.9$, тоді
+    \[
+    \langle S^2 \rangle = \frac{1}{4} + \frac{9}{2} - 3.9 = 0.85,
+    \]
+    \[
+    \Delta S^2 = 0.85 - 0.75 = 0.10,
+    \]
+    тобто забруднення перебуває на межі суттєвого;
+
+    \item якщо $\Sigma = 3.4$, тоді
+    \[
+    \langle S^2 \rangle = \frac{1}{4} + \frac{9}{2} - 3.4 = 1.35,
+    \]
+    \[
+    \Delta S^2 = 1.35 - 0.75 = 0.60,
+    \]
+    що свідчить про сильне спінове забруднення.
+\end{itemize}
+
+\subsubsection*{Як зменшити спінове забруднення}
+
+\begin{enumerate}
+    \item \textbf{ROHF:} обмежена відкрита схема Гартрі–Фока, що зберігає спінову симетрію.
+    \item \textbf{Спін-проекційні методи:} після варіації застосовується оператор проєкції
+    \[
+    \Psi_{\text{proj}} = \hat{P}_S \Psi_{\text{UHF}},
+    \]
+    який видаляє небажані компоненти.
+    \item \textbf{Методи після HF:} MP2, CISD, CCSD частково компенсують спінове забруднення через багатоконфігураційність.
+\end{enumerate}
+
 
 %% --------------------------------------------------------
 \subsection{Тестовий випадок: атом Вуглецю}
@@ -1300,172 +772,28 @@ compare_densities(second_period, basis='6-31g*')
 
 Далі наведено приклад прямого порівняння результатів методів UHF і ROHF для атома C у триплетному стані з використанням базису \texttt{cc-pVTZ}.
 
-\begin{minted}{python}
-from pyscf import gto, scf
-
-# Атом C: [He] 2s² 2p², основний стан ³P
-basis = 'cc-pvtz'
-
-print('Порівняння методів для атома Вуглецю (³P)')
-print('='*70)
-
-# Молекула
-mol = gto.M(
-    atom='C 0 0 0',
-    basis=basis,
-    spin=2,  # Триплет
-    symmetry=True,
-    verbose=0
-)
-
-# UHF
-print('\n1. Unrestricted Hartree-Fock (UHF)')
-print('-'*70)
-mf_uhf = scf.UHF(mol)
-mf_uhf.verbose = 4
-e_uhf = mf_uhf.kernel()
-
-s2_uhf = mf_uhf.spin_square()
-print(f'\nЕнергія (UHF): {e_uhf:.8f} Ha')
-print(f'<S²> (UHF): {s2_uhf[0]:.6f} (очікується 2.0)')
-print(f'Забруднення спіном: {s2_uhf[0] - 2.0:.6f}')
-
-# ROHF
-print('\n2. Restricted Open-shell Hartree-Fock (ROHF)')
-print('-'*70)
-mf_rohf = scf.ROHF(mol)
-mf_rohf.verbose = 4
-e_rohf = mf_rohf.kernel()
-
-s2_rohf = mf_rohf.spin_square()
-print(f'\nЕнергія (ROHF): {e_rohf:.8f} Ha')
-print(f'<S²> (ROHF): {s2_rohf[0]:.6f} (очікується 2.0)')
-
-# Порівняння
-print('\n' + '='*70)
-print('ПОРІВНЯННЯ')
-print('='*70)
-print(f'ΔE (UHF-ROHF): {(e_uhf - e_rohf)*1000:.4f} mHa')
-print(f'ΔE (UHF-ROHF): {(e_uhf - e_rohf)*627.509:.4f} kcal/mol')
-
-print(f'\nЗабруднення спіном:')
-print(f'  UHF:  {s2_uhf[0] - 2.0:.6f}')
-print(f'  ROHF: {s2_rohf[0] - 2.0:.6f}')
-
-# Орбітальні енергії
-print(f'\nОрбітальні енергії (Ha):')
-print(f'{"Орбіталь":15s} {"UHF (α)":12s} {"UHF (β)":12s} {"ROHF":12s}')
-print('-'*70)
-
-n_show = 5
-for i in range(n_show):
-    label = mol.ao_labels()[i] if i < len(mol.ao_labels()) else f'MO{i+1}'
-    e_uhf_a = mf_uhf.mo_energy[0][i]
-    e_uhf_b = mf_uhf.mo_energy[1][i]
-    e_rohf_i = mf_rohf.mo_energy[i]
-
-    print(f'{label:15s} {e_uhf_a:12.6f} {e_uhf_b:12.6f} {e_rohf_i:12.6f}')
-\end{minted}
-
-%% --------------------------------------------------------
-\subsection{Теоретичний аналіз результатів}
-%% --------------------------------------------------------
-
-\subsubsection{Спінове забруднення}
-
-Для триплетного стану очікується:
-\[
-\langle S^2 \rangle = S(S+1) = 1(1+1) = 2.0.
-\]
-Якщо результат UHF дає $\langle S^2 \rangle > 2.0$, це свідчить про \textit{спінове забруднення} --- хвильова функція містить домішку інших спінових станів (наприклад, $^5S$).
-Це відбувається через те, що UHF не примушує $\alpha$- і $\beta$-орбіталі бути ортогональними, тому спінова симетрія порушується.
-
-\textbf{ROHF}, на відміну від цього, зберігає точне спінове квантове число, тому $\langle S^2 \rangle$ збігається з теоретичним значенням.
-
-\subsubsection{Енергетичне порівняння}
-
-UHF зазвичай дає трохи нижчу енергію, ніж ROHF, оскільки має більше варіаційної свободи.
-Різниця $\Delta E = E_{\mathrm{UHF}} - E_{\mathrm{ROHF}}$ зазвичай незначна (менше кількох мілігаусів), однак у системах з сильним спіновим змішуванням може бути суттєвою.
-
-\subsubsection{Орбітальні енергії}
-
-UHF формує два набори орбіталей --- для $\alpha$- і $\beta$-електронів.
-Тому орбітальні енергії можуть відрізнятись:
-\[
-\varepsilon_i^{(\alpha)} \neq \varepsilon_i^{(\beta)}.
-\]
-У ROHF усі парні орбіталі спільні, тож орбітальні енергії чітко впорядковані відповідно до симетрії та спіну.
-
-
-%% --------------------------------------------------------
-\subsection{Систематичне порівняння для всіх атомів}
-%% --------------------------------------------------------
+\inputcode{code_15.py}
 
 Щоб узагальнити різницю між методами UHF та ROHF, виконаємо серію розрахунків для
 кількох відкритооболонкових атомів перших двох періодів. Це дозволить оцінити
-енергетичну різницю $\Delta E = E_{\text{UHF}} - E_{\text{ROHF}}$ і побачити,
+енергетичну різницю $\Delta E$ і побачити,
 чи зберігає ROHF спінову симетрію без втрати точності.
 
 
 
-\begin{minted}{python}
-from pyscf import gto, scf
-import numpy as np
-
-atoms_open_shell = [
-    ('H',  1), ('Li', 1), ('B', 1), ('C', 2),
-    ('N',  3), ('O',  2), ('F', 1)
-]
-
-basis = '6-31g*'
-
-print(f'Порівняння UHF vs ROHF (базис: {basis})')
-print('='*80)
-print(f'{"Атом":4s} {"Спін":4s} {"E(UHF), Ha":15s} {"E(ROHF), Ha":15s} '
-      f'{"ΔE, mHa":10s}')
-print('-'*80)
-
-for symbol, spin in atoms_open_shell:
-    mol = gto.M(
-        atom=f'{symbol} 0 0 0',
-        basis=basis,
-        spin=spin,
-        verbose=0
-    )
-
-    # UHF
-    mf_uhf = scf.UHF(mol)
-    mf_uhf.verbose = 0
-    mf_uhf.conv_tol = 1e-10
-    e_uhf = mf_uhf.kernel()
-
-    # ROHF
-    mf_rohf = scf.ROHF(mol)
-    mf_rohf.verbose = 0
-    mf_rohf.conv_tol = 1e-10
-    e_rohf = mf_rohf.kernel()
-
-    delta = (e_uhf - e_rohf) * 1000  # mHa
-
-    print(f'{symbol:4s} {spin:4d} {e_uhf:15.8f} {e_rohf:15.8f} {delta:10.4f}')
-
-print('='*80)
-print('\nПримітка: UHF зазвичай дає нижчу енергію, але з')
-print('          забрудненням спіну. ROHF зберігає чисту')
-print('          спінову симетрію.')
-\end{minted}
+\inputcode{code_16.py}
 
 
 \noindent
 \textbf{Інтерпретація результатів.}
 Як правило, для легких атомів (H, Li, B) енергії UHF і ROHF майже збігаються.
 Для атомів із більшою кількістю незапарених електронів (C, N, O, F)
-різниця у кілька міллігаусів відображає більшу гнучкість UHF,
+різниця у кілька mHa відображає більшу гнучкість UHF,
 що дозволяє частково знизити енергію ціною забруднення спіном
 ($\langle S^2 \rangle > S(S+1)$).
 
-Таким чином, ROHF --- це більш строгий метод із правильною спіновою симетрією,
-а UHF --- енергетично вигідніший, але менш «фізично чистий». У практичних
+Таким чином, \texttt{ROHF} --- це більш строгий метод із правильною спіновою симетрією,
+а \texttt{UHF} --- енергетично вигідніший, але менш «фізично чистий». У практичних
 обчисленнях ROHF часто слугує базовою точкою для подальших кореляційних
 методів (MP2, CCSD, CASSCF).
 
@@ -1483,7 +811,7 @@ print('          спінову симетрію.')
 \begin{enumerate}
     \item Повторіть розрахунок для атомів \ce{O} (спін = 2) і \ce{N} (спін = 3).
     Порівняйте $\langle S^2 \rangle$ для UHF і ROHF.
-    \item Для кожного атома побудуйте різницю енергій UHF–ROHF у мілігаусах.
+    \item Для кожного атома побудуйте різницю енергій UHF–ROHF у mHa.
     \item Проаналізуйте, як спінове забруднення зростає зі збільшенням кількості неспарених електронів.
 \end{enumerate}
 
@@ -1493,293 +821,109 @@ print('          спінову симетрію.')
 \section{Складні випадки та збіжність}
 %% --------------------------------------------------------
 
-Розрахунки у квантовій хімії не завжди проходять гладко. Навіть для, здавалося б, простих атомів або малих молекул можуть виникати проблеми збіжності --- коли ітераційний процес самозгодженого поля (SCF) не може досягти стабільного рішення.
-Особливо це стосується перехідних металів, систем із сильною кореляцією електронів або випадків із виродженими орбіталями.
-У цьому розділі наведено практичні прийоми, які допомагають стабілізувати розрахунок, а також приклади програмного коду на базі бібліотеки \texttt{PySCF}.
+Розрахунки у квантовій хімії не завжди проходять гладко. Навіть для простих систем ітераційна процедура самозгодженого поля (SCF) може не досягати стабільного рішення.
+Найчастіше проблеми збіжності виникають для перехідних металів, відкритих оболонок та систем із виродженими орбіталями.
+У цьому розділі розглянемо основні джерела труднощів та методи їх подолання.
 
+\subsection{Причини поганої збіжності}
 
-Основні джерела труднощів:
+Типові джерела нестабільності SCF:
 \begin{itemize}
-  \item сильна електронна кореляція в незаповнених $d$- та $f$-оболонках;
+  \item сильна електронна кореляція у незаповнених $d$- і $f$-оболонках;
   \item мала різниця енергій між орбіталями (виродження);
-  \item вибір невдалого початкового наближення хвильової функції;
-  \item надто жорсткі або надто м’які критерії збіжності.
+  \item невдалий початковий вектор коефіцієнтів (погане стартове наближення);
+  \item занадто жорсткі або занадто м’які критерії збіжності.
 \end{itemize}
 
-У наступних підрозділах ми розглянемо конкретні стратегії для подолання таких труднощів.
+Через ці фактори енергія може осцилювати, DIIS — розходитись, а результат — бути нефізичним.
 
-%% --------------------------------------------------------
 \subsection{Перехідні метали}
-%% --------------------------------------------------------
 
-
-Перехідні метали є одними з найпроблемніших систем для збіжності SCF.
-Причини --- сильна кореляція електронів \(d\)-оболонки,
-множинність близьких за енергією станів спіну та
-значна роль релятивістичних ефектів.
-Навіть у межах методу Гартрі–Фока
-функціонал енергії має кілька локальних мінімумів,
-і звичайна ітераційна процедура може «застрягнути» в некоректному стані.
-
-У PySCF це часто проявляється у вигляді:
+Перехідні елементи (Fe, Co, Ni, Cr, Mn тощо) — класичні приклади систем із поганою збіжністю SCF.
+Причини:
 \begin{itemize}
-  \item осциляцій енергії між ітераціями,
-  \item дивергентного DIIS,
-  \item різкої зміни спінового моменту між кроками.
+  \item близькість енергетичних рівнів $3d$ і $4s$-орбіталей;
+  \item можливість декількох спінових станів, близьких за енергією;
+  \item наявність кількох локальних мінімумів функціоналу енергії.
 \end{itemize}
 
-Типовий приклад — атоми Fe, Co, Ni або їхні оксиди,
-де різниця між конфігураціями високого й низького спіну
-становить лише декілька сотих гартрі.
-
-\begin{minted}{python}
-from pyscf import gto, scf
-
-mol = gto.M(atom='Co 0 0 0', basis='def2-svp', spin=3)
-mf = scf.UHF(mol).run()
-print('Converged?', mf.converged)
-\end{minted}
-
-Перехідні метали є класичним прикладом систем, де звичайні методи SCF часто не конвергують або дають фізично некоректний результат.
-Це зумовлено тим, що у таких атомів одночасно заповнюються $3d$- та $4s$-орбіталі, енергії яких близькі. У результаті електрон може ``перестрибувати'' між орбіталями під час ітерацій, порушуючи стабільність процесу.
-
-У прикладі нижче подано універсальну функцію для обчислення енергії атомів перехідних металів із урахуванням практичних порад:
-
+У PySCF це проявляється як:
 \begin{itemize}
-  \item використовується метод UHF (неспарені електрони важливі для коректного опису спіну);
-  \item уведено \texttt{level shift}, що зміщує енергетичний спектр і полегшує збіжність;
-  \item застосовано розширений DIIS-простір (метод прискорення збіжності);
-  \item при необхідності переходять до Ньютона–Рафсона для уточнення рішення;
-  \item результати контролюються через значення $\langle S^2 \rangle$.
+  \item осциляції енергії між ітераціями;
+  \item розбігання DIIS;
+  \item стрибки значення $\langle S^2 \rangle$ між кроками.
 \end{itemize}
 
-Після кожного розрахунку порівнюється очікуване значення спіну зі знайденим, а також обчислюється ``забруднення спіном'' --- показник, наскільки рішення відхиляється від ідеального стану.
+Нижче наведено приклад універсальної функції для стабільного розрахунку атомів перехідних металів із урахуванням практичних прийомів:
 
-\begin{minted}{python}
-from pyscf import gto, scf
+\begin{itemize}
+  \item використовується UHF (для врахування спіну);
+  \item застосовується зсув рівнів (\inlinecode{level\_shift});
+  \item розширюється DIIS-простір (\inlinecode{diis\_space});
+  \item у разі потреби вмикається уточнення Ньютона–Рафсона;
+  \item контролюється спін-забруднення через $\langle S^2 \rangle$.
+\end{itemize}
 
-def transition_metal_calculation(symbol, spin, basis='def2-svp'):
-    """
-    Розрахунок атома перехідного металу
-    Часто потребує спеціальних налаштувань
-    """
+\inputcode{code_18.py}
 
-    print(f'\nРозрахунок {symbol} (2S={spin})')
-    print('='*60)
+Такий підхід забезпечує стабільність навіть для важких атомів, де стандартний SCF часто не сходиться.
 
-    mol = gto.M(
-        atom=f'{symbol} 0 0 0',
-        basis=basis,
-        spin=spin,
-        symmetry=False,  # Іноді краще без симетрії
-        verbose=0
-    )
+\subsection{Вироджені орбіталі та дробові заповнення}
 
-    mf = scf.UHF(mol)
+Якщо в системі наявні вироджені або майже вироджені орбіталі, SCF може ``коливатись'', не вибираючи між ними.
+Для таких випадків ефективним є застосування \textit{дробових заповнень орбіталей} (\textit{fractional occupations}), що згладжують різницю між рівнями енергії.
 
-    # Налаштування для важких випадків
-    mf.conv_tol = 1e-8
-    mf.max_cycle = 200
-    mf.level_shift = 0.5  # Level shift допомагає конвергенції
-    mf.diis_space = 12
-    mf.init_guess = 'atom'
-
-    print('Спроба 1: UHF з level shift...')
-    mf.verbose = 4
-    energy = mf.kernel()
-
-    if not mf.converged:
-        print('\nНе конвергувало! Спроба 2: Newton-Raphson...')
-        mf = mf.newton()
-        mf.max_cycle = 50
-        energy = mf.kernel()
-
-    if mf.converged:
-        s2 = mf.spin_square()
-        expected_s2 = spin * (spin + 2) / 4
-
-        print(f'\nРезультати:')
-        print(f'  Енергія: {energy:.8f} Ha')
-        print(f'  <S²>: {s2[0]:.4f} (очікується {expected_s2:.4f})')
-        print(f'  Забруднення: {s2[0] - expected_s2:.4f}')
-    else:
-        print('\nНЕ ВДАЛОСЯ ДОСЯГТИ КОНВЕРГЕНЦІЇ!')
-
-    return mf, energy if mf.converged else None
-
-# Приклади перехідних металів
-# Sc: [Ar] 3d¹ 4s², ²D
-mf_sc, e_sc = transition_metal_calculation('Sc', spin=1)
-
-# Ti: [Ar] 3d² 4s², ³F
-mf_ti, e_ti = transition_metal_calculation('Ti', spin=2)
-
-# Cr: [Ar] 3d⁵ 4s¹, ⁷S
-mf_cr, e_cr = transition_metal_calculation('Cr', spin=6)
-
-# Mn: [Ar] 3d⁵ 4s², ⁶S
-mf_mn, e_mn = transition_metal_calculation('Mn', spin=5)
-
-# Fe: [Ar] 3d⁶ 4s², ⁵D
-mf_fe, e_fe = transition_metal_calculation('Fe', spin=4)
-\end{minted}
-
-Такий підхід забезпечує стабільність навіть для важких атомів --- наприклад, Cr, Mn або Fe, де стандартний SCF часто не сходиться.
-
-%% --------------------------------------------------------
-\subsection{Використання дробових заповнень}
-%% --------------------------------------------------------
-
-Ще одна причина проблем зі збіжністю --- наявність вироджених або майже вироджених орбіталей. У таких випадках система ``вагається'', яку саме конфігурацію обрати, і стандартний SCF може осцилювати без досягнення стабільного мінімуму.
-
-Один із ефективних підходів --- застосування \textit{дробових заповнень орбіталей} (англ. \textit{fractional occupations}).
-Ідея полягає у тому, що замість жорсткого заповнення $0$ або $1$ для кожної орбіталі вводиться часткове заповнення, яке імітує теплове розмазування Фермі–Дірака:
+Ідея полягає у введенні ефективного теплового розмазування Фермі–Дірака:
 \[
 f_i = \frac{1}{1 + e^{(\varepsilon_i - \mu)/kT}},
 \]
-де $f_i$ --- ефективне заповнення $i$-ї орбіталі, $\varepsilon_i$ --- її енергія, $\mu$ --- хімічний потенціал, а $kT$ --- параметр ``розмазування''.
+де $f_i$ — часткове заповнення орбіталі $i$, $\varepsilon_i$ — її енергія, $\mu$ — хімічний потенціал, а $kT$ — параметр розмазування.
 
-Цей підхід згладжує різкі переходи між виродженими орбіталями і дозволяє SCF знайти стабільне рішення.
+Цей підхід дозволяє SCF уникнути нестійких перестрибувань між виродженими рівнями.
 
-Нижче наведено приклад для атома ванадію, у якого типово спостерігаються проблеми збіжності через близькість енергетичних рівнів $3d$ і $4s$.
+У PySCF для цього достатньо викликати \inlinecode{scf.addons.frac\_occ(mf)}.
+Методика добре працює для атомів (V, Cr), радикалів та малих кластерів перехідних металів.
+
+\inputcode{code_19.py}
 
 
-\begin{minted}{python}
-from pyscf import gto, scf
 
-# Важкий випадок: атом з близькими за енергією орбіталями
-mol = gto.M(
-    atom='V 0 0 0',
-    basis='cc-pvdz',
-    spin=3,
-    verbose=0
-)
+\subsection{Стратегія досягнення збіжності SCF}
 
-print('Розрахунок V з дробовими заповненнями')
-print('='*60)
+Для надійного отримання фізично коректного рішення рекомендується послідовна стратегія стабілізації SCF — від простих прийомів до складніших:
 
-# Стандартний UHF може не конвергувати
-mf = scf.UHF(mol)
-mf.verbose = 0
-mf.max_cycle = 100
-
-try:
-    energy = mf.kernel()
-    if not mf.converged:
-        raise RuntimeError('Не конвергувало')
-except:
-    print('Стандартний UHF не конвергував')
-
-# Використання дробових заповнень (smearing)
-print('\nСпроба з дробовими заповненнями...')
-
-mf = scf.UHF(mol)
-mf = scf.addons.frac_occ(mf)
-mf.verbose = 4
-energy = mf.kernel()
-
-if mf.converged:
-    print(f'\nУспішно! Енергія: {energy:.8f} Ha')
-else:
-    print('\nВсе одно не конвергувало')
-\end{minted}
-
-Як видно, якщо звичайний UHF не конвергує, можна скористатися \texttt{scf.addons.frac\_occ(mf)}, що вмикає дробові заповнення.
-Методика добре працює для окремих атомів, радикалів і навіть для малих кластерів перехідних металів.
-
-%% --------------------------------------------------------
-\subsection{Стратегії досягнення конвергенції}
-%% --------------------------------------------------------
-
-Проблема збіжності --- одна з найчастіших у практиці квантово-хімічних розрахунків.
-Ітераційна процедура самозгодженого поля (SCF) повинна забезпечити стабільне розв’язання рівнянь Гартрі–Фока, однак у реальних системах --- особливо для відкритих оболонок, перехідних металів або вироджених станів --- енергія може коливатися, DIIS може втрачати стабільність, а розрахунок сходиться до нефізичного мінімуму.
-
-Для таких випадків доцільно застосовувати \textit{послідовну стратегію стабілізації SCF}, у якій різні методи збільшення стійкості перевіряються крок за кроком --- від простих до складніших.
-
-\medskip
-
-\noindent\textbf{Основні прийоми стабілізації:}
 \begin{enumerate}
   \item стандартний UHF;
-  \item зсув рівнів (\texttt{level\_shift}), що зменшує вплив віртуальних орбіталей;
-  \item збільшення DIIS-простору (\texttt{diis\_space});
-  \item атомне початкове наближення (\texttt{init\_guess='atom'});
+  \item зсув рівнів (\inlinecode{level\_shift});
+  \item збільшення DIIS-простору (\inlinecode{diis\_space});
+  \item атомне початкове наближення (\inlinecode{init\_guess='atom'});
   \item уточнення за методом Ньютона–Рафсона;
-  \item дробові заповнення (\texttt{frac\_occ}) при вироджених станах.
+  \item дробові заповнення (\inlinecode{frac\_occ}) для вироджених станів.
 \end{enumerate}
 
-\noindent Нижче подано узагальнений алгоритм, який автоматично перебирає ці стратегії для пошуку збіжного рішення.
+\inputcode{code_20.py}
 
-\begin{minted}{python}
-from pyscf import gto, scf
-
-def convergence_strategies(symbol, spin, basis='def2-svp'):
-    """
-    Покрокова стабілізація SCF для складних систем
-    """
-    mol = gto.M(atom=f'{symbol} 0 0 0', basis=basis, spin=spin, verbose=0)
-
-    strategies = [
-        ('Стандартний UHF', {}),
-        ('UHF з level shift', {'level_shift': 0.3}),
-        ('UHF з більшим DIIS', {'diis_space': 15}),
-        ('UHF з атомним guess', {'init_guess': 'atom'}),
-        ('Метод Ньютона–Рафсона', {'newton': True}),
-        ('Дробові заповнення', {'frac_occ': True}),
-    ]
-
-    print(f'=== Тестування стратегій конвергенції для {symbol} ===')
-
-    for name, params in strategies:
-        print(f'\n→ {name}')
-        mf = scf.UHF(mol)
-        mf.max_cycle = 100
-        mf.conv_tol = 1e-9
-
-        for k, v in params.items():
-            if k in ('newton', 'frac_occ'):
-                continue
-            setattr(mf, k, v)
-
-        try:
-            if params.get('newton'):
-                mf = mf.newton()
-            if params.get('frac_occ'):
-                mf = scf.addons.frac_occ(mf)
-            energy = mf.kernel()
-            if mf.converged:
-                print(f'✓ Успіх: E = {energy:.8f} Ha')
-                return mf, energy
-            else:
-                print('✗ Не конвергувало')
-        except Exception as e:
-            print(f'✗ Помилка: {e}')
-    print('\n⚠ Жодна стратегія не спрацювала.')
-    return None, None
-
-# Приклад: перехідний метал
-mf, e = convergence_strategies('Co', spin=3)
-\end{minted}
-
-\paragraph{Фізичний сенс прийомів.}
+\paragraph{Фізичний зміст прийомів.}
 \begin{itemize}
-  \item \textbf{Level shift.} Тимчасово підвищує енергії віртуальних орбіталей, запобігаючи коливанням поля.
-  \item \textbf{DIIS-простір.} Збільшення пам’яті історії ітерацій покращує апроксимацію самозгодженого стану.
-  \item \textbf{Atom guess.} Використовує атомні орбіталі як старт, що ближче до фізичного рішення.
-  \item \textbf{Newton–Raphson.} Прискорює збіжність у зоні поблизу мінімуму функціоналу енергії.
-  \item \textbf{Fractional occupations.} Згладжують виродження, дозволяючи системі знайти стабільний середній стан.
+  \item \textbf{Level shift} — підвищує енергії віртуальних орбіталей, запобігаючи коливанням.
+  \item \textbf{DIIS-простір} — збільшення пам’яті ітерацій покращує апроксимацію поля.
+  \item \textbf{Atom guess} — старт з атомних орбіталей ближчий до реального розв’язку.
+  \item \textbf{Newton–Raphson} — забезпечує квадратичну збіжність поблизу мінімуму.
+  \item \textbf{Fractional occupations} — стабілізують вироджені стани, забезпечуючи плавний перехід.
 \end{itemize}
 
 \paragraph{Практичні рекомендації.}
 \begin{itemize}
-  \item Для великих систем зменшіть точність (\texttt{conv\_tol=1e-6}) для попереднього тесту.
-  \item Якщо спостерігаються осциляції енергії --- додайте \texttt{level\_shift=0.5}.
-  \item Якщо \texttt{UHF} не сходиться --- спробуйте \texttt{init\_guess='atom'} або \texttt{symmetry=False}.
-  \item Завжди перевіряйте фізичність розв’язку через $\langle S^2 \rangle$.
+  \item Для великих систем на перших етапах можна зменшити точність: \inlinecode{conv\_tol=1e-6}.
+  \item Якщо енергія осцилює — увімкніть \inlinecode{level\_shift=0.5}.
+  \item Якщо \texttt{UHF} не сходиться — використайте \inlinecode{init\_guess='atom'} або вимкніть симетрію (\inlinecode{symmetry=False}).
+  \item Завжди перевіряйте фізичність результату через $\langle S^2 \rangle$.
 \end{itemize}
 
-Таким чином, навіть якщо стандартний SCF не збігається,
-послідовне застосування описаних методів практично гарантує знаходження стабільного фізично коректного рішення.
+\medskip
+
+\noindent Таким чином, навіть якщо стандартна процедура SCF не збігається,
+послідовне застосування описаних прийомів практично гарантує стабільне та фізично обґрунтоване рішення.
 
 
 
@@ -1791,72 +935,26 @@ mf, e = convergence_strategies('Co', spin=3)
 \subsection{Завдання 1: Систематичне дослідження}
 %% --------------------------------------------------------
 
-\begin{minted}{python}
-"""
-ЗАВДАННЯ 1: Розрахуйте енергії всіх атомів першого періоду
-(H, He) з різними базисними наборами. Побудуйте графік
-збіжності енергії до базисної межі.
-
-Базиси: sto-3g, 6-31g, cc-pvdz, cc-pvtz, cc-pvqz, cc-pv5z
-"""
-
-from pyscf import gto, scf
-import matplotlib.pyplot as plt
-
-# Ваш код тут
-\end{minted}
+\inputcode{code_21.py}
 
 %% --------------------------------------------------------
 \subsection{Завдання 2: Енергії іонізації}
 %% --------------------------------------------------------
 
-\begin{minted}{python}
-"""
-ЗАВДАННЯ 2: Обчисліть першу та другу енергії іонізації
-для атомів Li, Be, B, C, N, O, F, Ne. Порівняйте з
-експериментальними значеннями.
-
-IE₁ = E(A⁺) - E(A)
-IE₂ = E(A²⁺) - E(A⁺)
-
-Використайте базис cc-pvtz
-"""
-
-# Ваш код тут
-\end{minted}
+\inputcode{code_22.py}
 
 
 %% --------------------------------------------------------
 \subsection{Завдання 3: Спектроскопічні константи}
 %% --------------------------------------------------------
 
-\begin{minted}{python}
-"""
-ЗАВДАННЯ 3: Для атома Карбону розрахуйте енергетичну
-різницю між основним триплетним станом (³P) та
-збудженими станами (¹D та ¹S).
-
-Підказка: використайте різні спінові конфігурації
-"""
-
-# Ваш код тут
-\end{minted}
+\inputcode{code_23.py}
 
 %% --------------------------------------------------------
 \subsection{Завдання 4: Залежність від базису}
 %% --------------------------------------------------------
 
-\begin{minted}{python}
-"""
-ЗАВДАННЯ 4: Дослідіть, як додавання дифузних функцій
-впливає на енергію та дипольну поляризованість атома
-Кисню (O).
-
-Порівняйте: cc-pvdz vs aug-cc-pvdz, cc-pvtz vs aug-cc-pvtz
-"""
-
-# Ваш код тут
-\end{minted}
+\inputcode{code_24.py}
 
 %% --------------------------------------------------------
 \section{Резюме}

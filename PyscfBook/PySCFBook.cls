@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}[1994/06/01]
-\ProvidesClass{ConspectBook}[2024/12/21]
+\ProvidesClass{PySCFBook}[2024/12/21]
 \LoadClass[onecolumn, twoside]{book}
 %\LoadClass[]{tufte-book}
 
@@ -73,7 +73,7 @@
 	%    \RequirePackage[sfdefault,regular]{roboto}
 	\setmainfont{CMU Serif}%{alegreya}%{BookmanOldStyle}
 	\setsansfont{Roboto}%{Arial}
-	\setmonofont{Consolas}%{JetBrains Mono}
+	\setmonofont{CMU Typewriter Text}%{JetBrains Mono}%{Consolas}
 	\defaultfontfeatures{Ligatures={TeX}}
 	%	\newfontfamily\Annabelle{Annabelle}
 	\newfontfamily\Alexander{Alexander}
@@ -216,6 +216,11 @@
     breaklines,
     autogobble
 }
+
+\NewDocumentCommand{\inputcode}{m}{%
+  \inputminted[label={\detokenize{#1}}]{python}{\currfilebase/code/#1}%
+}
+
 % ---------------------------- Фалові операції ---------------------------------
 \RequirePackage{currfile}
 % ---------------------------- Пакети LaTeX3 -----------------------------------
@@ -250,6 +255,20 @@
 					size=fbox,
 				},
 		},
+}
+
+\newtcbox{\inlinecode}{  % имя команды: \inlinecode{твой код}
+  on line,                % inline-режим (встраивается в строку)
+  boxrule=0.5pt,          % тонкая рамка
+  arc=2pt,                % скруглённые углы
+  boxsep=1pt,             % внутренний отступ
+  left=1pt, right=1pt,    % горизонтальные отступы
+  top=0.5pt, bottom=0.5pt,    % вертикальные (минимум, чтоб не жирно)
+  colback=cyan!10,        % светло-серый фон
+  colframe=blue!40,       % серый цвет рамки
+  coltext=black,          % чёрный текст
+  fontupper=\ttfamily\footnotesize,  % моноширинный шрифт, чуть меньше
+  enhanced                  % для теней/эффектов (опционально)
 }
 
 %===============================================================================
@@ -535,15 +554,18 @@ postaction={ decorate,
 		\hfill{\LARGE#1}\\
 		\rule{\dimexpr\textwidth-\chapnumb\relax}{0.4pt}}}
 
-\titleformat{\section}
-{\normalsize\bfseries}{\thesection.}{1em}{#1}
+\titleformat{\section}[block]
+  {\large\sffamily\bfseries\color{themecolordark}}  % цвет для всего заголовка
+  {\thesection.}                                   % номер в цвете
+  {1em}
+  {#1\rule{\textwidth}{0.2pt}}                     % заголовок + линия (линия тоже в цвете, т.к. перед ней #1)
+  [\vspace{0.5em}]
 
-\titleformat{\subsection}[runin]
-{\normalsize\bfseries\itshape}
-{\thesubsection.}
-{1em}
-{#1}
-[.]
+\titleformat{\subsection}[block]
+  {\normalsize\sffamily\bfseries\color{gray}}    % сероватый оттенок для подуровня (или замени на themecolordark!80 для светлее)
+  {\thesubsection.}
+  {0.5em}
+  {#1}                                             % заголовок в цвете
 
 
 \newpagestyle{main}{\headrule%

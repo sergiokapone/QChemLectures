@@ -20,7 +20,7 @@
 Електронна кореляція --- це різниця між точною енергією системи та енергією, отриманою методом Хартрі-Фока:
 
 \begin{equation}
-E_{\text{corr}} = E_{\text{exact}} - E_{\text{HF}}
+    E_{\text{corr}} = E_{\text{exact}} - E_{\text{HF}}
 \end{equation}
 
 Метод Хартрі-Фока не враховує миттєву кореляцію рухів електронів, оскільки кожен електрон рухається в усередненому полі всіх інших електронів. Насправді ж електрони "уникають" один одного через кулонівське відштовхування.
@@ -42,7 +42,7 @@ E_{\text{corr}} = E_{\text{exact}} - E_{\text{HF}}
 \begin{itemize}
     \item Розриву хімічних зв'язків
     \item Збуджених станів
-    \item Діелектронних систем
+    \item Диелектронних систем
     \item Перехідних металів з близькими d-орбіталями
 \end{itemize}
 
@@ -54,283 +54,79 @@ E_{\text{corr}} = E_{\text{exact}} - E_{\text{HF}}
 
 Для атомів кореляційна енергія становить 1--5\% від повної енергії, але вона критична для точних розрахунків:
 
-\begin{table}[h]
-\centering
-\caption{Кореляційна енергія атомів (Ha)}
-\label{tab:correlation_energy}
-\begin{tabular}{lccccc}
-\hline
-\textbf{Атом} & \textbf{$E_{HF}$} & \textbf{$E_{exact}$} & \textbf{$E_{corr}$} & \textbf{\% від $E_{HF}$} \\
-\hline
-He  & -2.8617  & -2.9037  & -0.0420 & 1.5\% \\
-Be  & -14.573  & -14.667  & -0.094  & 0.6\% \\
-Ne  & -128.547 & -128.937 & -0.390  & 0.3\% \\
-Ar  & -526.817 & -527.540 & -0.723  & 0.1\% \\
-\hline
-\end{tabular}
-\end{table}
-
-%% --------------------------------------------------------
-\subsection{Ієрархія методів}
-%% --------------------------------------------------------
-
-Post-HF методи утворюють ієрархію за точністю та обчислювальною складністю:
-
-\begin{enumerate}
-    \item \textbf{HF} --- базовий рівень, без кореляції
-    \item \textbf{MP2} --- $\mathcal{O}(N^5)$ --- найпростіша кореляція
-    \item \textbf{MP3, MP4} --- $\mathcal{O}(N^6), \mathcal{O}(N^7)$ --- вищі порядки теорії збурень
-    \item \textbf{CCSD} --- $\mathcal{O}(N^6)$ --- надійна динамічна кореляція
-    \item \textbf{CCSD(T)} --- $\mathcal{O}(N^7)$ --- "золотий стандарт" квантової хімії
-    \item \textbf{Full CI} --- $\mathcal{O}(e^N)$ --- точний розв'язок (у межах базису)
-\end{enumerate}
-
-\begin{minted}{python}
-from pyscf import gto, scf, mp, cc, ci
-import numpy as np
-
-def correlation_energy_demo(symbol, spin, basis='cc-pvdz'):
-    """
-    Демонстрація кореляційної енергії
-    """
-
-    mol = gto.M(
-        atom=f'{symbol} 0 0 0',
-        basis=basis,
-        spin=spin,
-        verbose=0
-    )
-
-    print(f'\nКореляційна енергія атома {symbol} (базис: {basis})')
-    print('='*70)
-
-    # HF розрахунок
-    if spin == 0:
-        mf = scf.RHF(mol)
-    else:
-        mf = scf.UHF(mol)
-
-    mf.verbose = 0
-    mf.conv_tol = 1e-10
-    e_hf = mf.kernel()
-
-    print(f'HF енергія:           {e_hf:.8f} Ha')
-
-    # MP2
-    if spin == 0:
-        mp2 = mp.MP2(mf)
-    else:
-        mp2 = mp.UMP2(mf)
-
-    mp2.verbose = 0
-    e_mp2, t2 = mp2.kernel()
-    e_total_mp2 = e_hf + e_mp2
-
-    print(f'MP2 кореляція:        {e_mp2:.8f} Ha')
-    print(f'MP2 повна енергія:    {e_total_mp2:.8f} Ha')
-
-    # CCSD (якщо атом не дуже великий)
-    if mol.nelectron <= 10:
-        if spin == 0:
-            mycc = cc.CCSD(mf)
-        else:
-            mycc = cc.UCCSD(mf)
-
-        mycc.verbose = 0
-        e_ccsd, t1, t2 = mycc.kernel()
-        e_total_ccsd = e_hf + e_ccsd
-
-        print(f'CCSD кореляція:       {e_ccsd:.8f} Ha')
-        print(f'CCSD повна енергія:   {e_total_ccsd:.8f} Ha')
-
-        # CCSD(T)
-        e_t = mycc.ccsd_t()
-        e_total_ccsdt = e_total_ccsd + e_t
-
-        print(f'(T) корекція:         {e_t:.8f} Ha')
-        print(f'CCSD(T) повна енергія:{e_total_ccsdt:.8f} Ha')
-    else:
-        print('CCSD пропущено (атом занадто великий для демо)')
-
-    print('='*70)
-
-    # Аналіз
-    print(f'\nАналіз:')
-    print(f'Кореляція складає {abs(e_mp2/e_hf)*100:.2f}% від HF енергії')
-
-    if mol.nelectron <= 10:
-        print(f'MP2 відновлює {abs(e_mp2/e_ccsd)*100:.1f}% '
-              f'CCSD кореляції')
-
-# Приклади
-correlation_energy_demo('He', spin=0)
-correlation_energy_demo('Be', spin=0)
-correlation_energy_demo('C', spin=2)
-correlation_energy_demo('Ne', spin=0)
-\end{minted}
-
-\subsection{Важливість кореляції для різних властивостей}
-
 \begin{center}
-
-\captionof{figure}{Вплив електронної кореляції на різні властивості}
-\label{tab:correlation_importance}
-\small
-\begin{tabular}{lll}
-\hline
-\textbf{Властивість} & \textbf{Важливість кореляції} & \textbf{Рекомендований метод} \\
-\hline
-Абсолютні енергії & Помірна & MP2, DFT \\
-Енергії іонізації & Висока & CCSD(T) \\
-Електронна спорідненість & Дуже висока & CCSD(T) + дифузні \\
-Енергії збудження & Висока & EOM-CCSD, TD-DFT \\
-Відстані між станами & Висока & CASPT2, MRCI \\
-Дисоціація & Критична & CASSCF, MRCI \\
-Слабкі взаємодії & Критична & CCSD(T), MP2-F12 \\
-\hline
-\end{tabular}
+    \captionof{table}{Кореляційна енергія атомів (Ha)}
+    \label{tab:correlation_energy}
+    \begin{tabular}{lccccc}
+        \hline
+        \textbf{Атом} & \textbf{$E_{HF}$} & \textbf{$E_{exact}$} & \textbf{$E_{corr}$} & \textbf{\% від $E_{HF}$} \\
+        \hline
+        He            & $-2.8617 $        & $-2.9037  $          & $-0.0420 $          & $1.5$\%                  \\
+        Be            & $-14.573 $        & $-14.667  $          & $-0.094  $          & $0.6$\%                  \\
+        Ne            & $-128.547$        & $-128.937 $          & $-0.390  $          & $0.3$\%                  \\
+        Ar            & $-526.817$        & $-527.540 $          & $-0.723  $          & $0.1$\%                  \\
+        \hline
+    \end{tabular}
 \end{center}
 
-
-%% --------------------------------------------------------
-\subsection{Порівняння методів для \ce{He}}
-%% --------------------------------------------------------
-
-Розглянемо найпростішу багатоелектронну систему --- атом Гелію:
-
-\begin{minted}{python}
-from pyscf import gto, scf, mp, cc, fci
-import numpy as np
-import matplotlib.pyplot as plt
-
-def helium_correlation_study():
-    """
-    Детальне дослідження кореляції у атомі He
-    """
-
-    # Різні базисні набори
-    basis_sets = ['cc-pvdz', 'cc-pvtz', 'cc-pvqz', 'cc-pv5z']
-
-    results = {
-        'HF': [],
-        'MP2': [],
-        'CCSD': [],
-        'CCSD(T)': [],
-        'FCI': []
-    }
-
-    print('Збіжність до базисної межі для He')
-    print('='*80)
-    print(f'{"Базис":12s} {"HF":15s} {"MP2":15s} {"CCSD":15s} '
-          f'{"CCSD(T)":15s} {"FCI":15s}')
-    print('-'*80)
-
-    for basis in basis_sets:
-        mol = gto.M(atom='He 0 0 0', basis=basis, verbose=0)
-
-        # HF
-        mf = scf.RHF(mol)
-        mf.verbose = 0
-        mf.conv_tol = 1e-12
-        e_hf = mf.kernel()
-        results['HF'].append(e_hf)
-
-        # MP2
-        mymp2 = mp.MP2(mf)
-        mymp2.verbose = 0
-        e_mp2_corr, _ = mymp2.kernel()
-        e_mp2 = e_hf + e_mp2_corr
-        results['MP2'].append(e_mp2)
-
-        # CCSD
-        mycc = cc.CCSD(mf)
-        mycc.verbose = 0
-        e_ccsd_corr, _, _ = mycc.kernel()
-        e_ccsd = e_hf + e_ccsd_corr
-        results['CCSD'].append(e_ccsd)
-
-        # CCSD(T)
-        e_t = mycc.ccsd_t()
-        e_ccsdt = e_ccsd + e_t
-        results['CCSD(T)'].append(e_ccsdt)
-
-        # FCI (точний у даному базисі)
-        myfci = fci.FCI(mf)
-        e_fci = myfci.kernel()[0]
-        results['FCI'].append(e_fci)
-
-        print(f'{basis:12s} {e_hf:15.10f} {e_mp2:15.10f} '
-              f'{e_ccsd:15.10f} {e_ccsdt:15.10f} {e_fci:15.10f}')
-
-    print('='*80)
-
-    # Експериментальне значення
-    e_exp = -2.90372  # Ha
-    print(f'\nЕкспериментальна енергія He: {e_exp:.10f} Ha')
-
-    # Похибки для найбільшого базису
-    print(f'\nПохибки (cc-pv5z):')
-    for method in results.keys():
-        error = (results[method][-1] - e_exp) * 1000  # mHa
-        print(f'{method:10s}: {error:8.4f} mHa')
-
-    # Графік збіжності
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
-
-    # Абсолютні енергії
-    x = np.arange(len(basis_sets))
-    for method, energies in results.items():
-        ax1.plot(x, energies, 'o-', label=method, linewidth=2,
-                markersize=8)
-
-    ax1.axhline(y=e_exp, color='red', linestyle='--', linewidth=2,
-               label='Експеримент')
-    ax1.set_xticks(x)
-    ax1.set_xticklabels(basis_sets, rotation=45)
-    ax1.set_xlabel('Базисний набір', fontsize=12)
-    ax1.set_ylabel('Енергія (Ha)', fontsize=12)
-    ax1.set_title('Збіжність енергії He', fontsize=14)
-    ax1.legend()
-    ax1.grid(True, alpha=0.3)
-
-    # Кореляційна енергія
-    for method in ['MP2', 'CCSD', 'CCSD(T)', 'FCI']:
-        corr_energies = [results[method][i] - results['HF'][i]
-                        for i in range(len(basis_sets))]
-        ax2.plot(x, corr_energies, 'o-', label=method, linewidth=2,
-                markersize=8)
-
-    ax2.set_xticks(x)
-    ax2.set_xticklabels(basis_sets, rotation=45)
-    ax2.set_xlabel('Базисний набір', fontsize=12)
-    ax2.set_ylabel('Кореляційна енергія (Ha)', fontsize=12)
-    ax2.set_title('Кореляційна енергія He', fontsize=14)
-    ax2.legend()
-    ax2.grid(True, alpha=0.3)
-
-    plt.tight_layout()
-    plt.savefig('he_correlation_convergence.pdf')
-    plt.show()
-
-helium_correlation_study()
-\end{minted}
 
 %% --------------------------------------------------------
 \subsection{Концепція одно- та багатоконфігураційних методів}
 %% --------------------------------------------------------
 
+
 \paragraph{Одноконфігураційні методи}
+
 Базуються на одному детермінанті Слейтера (HF) і додають кореляцію через збудження:
+
+У найпростішому випадку хвильова функція є одним детермінантом:
+\begin{equation}
+    |\Psi_{\text{SR}}\rangle = |\Phi_0\rangle
+    = |\phi_1 \phi_2 \dots \phi_N|.
+\end{equation}
+
+Далі на нього накладають кореляційні поправки --- не у вигляді нових детермінантів у самій хвильовій функції, а через операторні або збурювальні члени у виразі для енергії.
+Це дає <<однореференсні>> методи:
+
+\[
+    E = E_{\text{HF}} + E_{\text{corr}},
+\]
+де \(E_{\text{corr}}\) визначається з теорії збурень (MP2, MP3...), або з експоненційного кластерного розкладу
+\[
+    |\Psi_{\text{CC}}\rangle = e^{\hat{T}}|\Phi_0\rangle,
+    \quad
+    \hat{T} = \hat{T}_1 + \hat{T}_2 + \dots,
+\]
+у методі CCSD тощо.
+
+До однодетермінантних методів належать наступні:
 \begin{itemize}
     \item MP2, MP3, MP4 --- теорія збурень
     \item CCSD, CCSD(T) --- coupled cluster
     \item CISD, QCISD --- configuration interaction
 \end{itemize}
 
-Добрі для: основного стану з одним домінуючим детермінантом.
+Добре працюють для основних станів, де один детермінант домінує у хвильовій функції.
+
 
 \paragraph{Багатоконфігураційні методи}
-Використовують лінійну комбінацію кількох детермінантів:
+
+Коли один детермінант не здатен описати систему (наприклад, при розриві хімічного зв’язку), хвильова функція має вигляд:
+\begin{equation}
+    |\Psi_{\text{MR}}\rangle = \sum_I c_I |\Phi_I\rangle.
+\end{equation}
+
+Кожен детермінант \(|\Phi_I\rangle\) утворюється перестановкою заповнених і вільних орбіталей у певному активному просторі.
+Наприклад, у методі CASSCF(4,4) ми розглядаємо всі можливі розподіли 4 електронів по 4 активних орбіталях.
+Це породжує набір детермінантів:
+\[
+    \{|\Phi_I\rangle\} =
+    \{ |(2s)^2(2p_x)^2|,\ |(2s)^1(2p_x)^1(2p_y)^2|,\ \dots \},
+\]
+а хвильова функція є їхньою суперпозицією з коефіцієнтами \(c_I\), які обчислюються варіаційно.
+
+
+До багатоконфігураційних належать методи:
 \begin{itemize}
     \item CASSCF --- вибір активного простору
     \item CASPT2 --- додавання динамічної кореляції до CASSCF
@@ -339,55 +135,7 @@ helium_correlation_study()
 
 Необхідні для: розриву зв'язків, збуджених станів, діелектронних систем.
 
-\begin{minted}{python}
-from pyscf import gto, scf, mcscf
-
-def multiconfigurational_demo():
-    """
-    Демонстрація багатоконфігураційного характеру
-    """
-
-    # Атом Be: [He] 2s²
-    # Близькі за енергією 2s² та 2p²
-
-    mol = gto.M(
-        atom='Be 0 0 0',
-        basis='cc-pvtz',
-        spin=0,
-        verbose=0
-    )
-
-    print('Багатоконфігураційний характер Be')
-    print('='*60)
-
-    # RHF
-    mf = scf.RHF(mol)
-    mf.verbose = 0
-    e_hf = mf.kernel()
-
-    print(f'RHF енергія: {e_hf:.8f} Ha')
-
-    # CASSCF(4,8): 4 електрони у 8 орбіталях (2s, 2p, 3s, 3p)
-    mc = mcscf.CASSCF(mf, 8, 4)
-    mc.verbose = 0
-    e_casscf = mc.kernel()[0]
-
-    print(f'CASSCF(4,8) енергія: {e_casscf:.8f} Ha')
-    print(f'Статична кореляція: {(e_casscf - e_hf)*1000:.4f} mHa')
-
-    # Аналіз конфігурацій
-    print(f'\nОсновні конфігурації (вага > 1%):')
-
-    # Отримання CI коефіцієнтів
-    ci_coeff = mc.ci
-
-    # Для детального аналізу потрібен додатковий код
-    print('(детальний аналіз потребує додаткової обробки)')
-
-    print('='*60)
-
-multiconfigurational_demo()
-\end{minted}
+\inputcode{code_3.py}
 
 %% --------------------------------------------------------
 \subsection{Коли потрібні post-HF методи?}
@@ -413,7 +161,7 @@ multiconfigurational_demo()
 Теорія збурень Møller-Plesset розділяє гамільтоніан на незбурену частину (HF) та збурення:
 
 \begin{equation}
-\hat{H} = \hat{H}_0 + \lambda \hat{V}
+    \hat{H} = \hat{H}_0 + \lambda \hat{V}
 \end{equation}
 
 де $\hat{H}_0$ --- оператор Фока, а $\hat{V}$ --- різниця між точним гамільтоніаном та HF.
@@ -421,7 +169,7 @@ multiconfigurational_demo()
 Енергія розкладається в ряд за степенями $\lambda$:
 
 \begin{equation}
-E = E^{(0)} + E^{(1)} + E^{(2)} + E^{(3)} + \ldots
+    E = E^{(0)} + E^{(1)} + E^{(2)} + E^{(3)} + \ldots
 \end{equation}
 
 де:
@@ -439,7 +187,7 @@ E = E^{(0)} + E^{(1)} + E^{(2)} + E^{(3)} + \ldots
 Для замкненої оболонки (RMP2):
 
 \begin{equation}
-E^{(2)} = -\sum_{i<j}^{\text{occ}} \sum_{a<b}^{\text{virt}} \frac{|\langle ij||ab \rangle|^2}{\varepsilon_i + \varepsilon_j - \varepsilon_a - \varepsilon_b}
+    E^{(2)} = -\sum_{i<j}^{\text{occ}} \sum_{a<b}^{\text{virt}} \frac{|\langle ij||ab \rangle|^2}{\varepsilon_i + \varepsilon_j - \varepsilon_a - \varepsilon_b}
 \end{equation}
 
 де:
@@ -452,74 +200,7 @@ E^{(2)} = -\sum_{i<j}^{\text{occ}} \sum_{a<b}^{\text{virt}} \frac{|\langle ij||a
 
 \subsection{MP2 розрахунок атома Неону}
 
-\begin{minted}{python}
-from pyscf import gto, scf, mp
-import numpy as np
-
-def mp2_neon_calculation(basis='cc-pvtz'):
-    """
-    Детальний MP2 розрахунок атома Ne
-    """
-
-    mol = gto.M(
-        atom='Ne 0 0 0',
-        basis=basis,
-        spin=0,
-        verbose=0
-    )
-
-    print(f'\nMP2 розрахунок атома Неону (базис: {basis})')
-    print('='*70)
-
-    # Крок 1: HF розрахунок
-    print('\nКрок 1: Hartree-Fock розрахунок')
-    mf = scf.RHF(mol)
-    mf.verbose = 4
-    mf.conv_tol = 1e-12
-    e_hf = mf.kernel()
-
-    print(f'\nHF енергія: {e_hf:.10f} Ha')
-    print(f'HF енергія: {e_hf * 27.211386:.6f} eV')
-
-    # Крок 2: MP2 розрахунок
-    print('\nКрок 2: MP2 кореляція')
-    mymp2 = mp.MP2(mf)
-    mymp2.verbose = 4
-    e_mp2_corr, t2 = mymp2.kernel()
-
-    e_total_mp2 = e_hf + e_mp2_corr
-
-    print(f'\nMP2 кореляційна енергія: {e_mp2_corr:.10f} Ha')
-    print(f'MP2 повна енергія: {e_total_mp2:.10f} Ha')
-    print(f'MP2 повна енергія: {e_total_mp2 * 27.211386:.6f} eV')
-
-    # Аналіз
-    print('\nАналіз:')
-    print(f'Кореляція становить {abs(e_mp2_corr/e_hf)*100:.3f}% '
-          f'від HF енергії')
-
-    # Порівняння з експериментом
-    e_exp = -128.937  # Ha (експериментальна енергія Ne)
-    error_hf = (e_hf - e_exp) * 1000
-    error_mp2 = (e_total_mp2 - e_exp) * 1000
-
-    print(f'\nПорівняння з експериментом ({e_exp:.6f} Ha):')
-    print(f'  HF похибка:  {error_hf:8.4f} mHa')
-    print(f'  MP2 похибка: {error_mp2:8.4f} mHa')
-    print(f'  Покращення: {abs(error_hf - error_mp2):8.4f} mHa')
-    print(f'  MP2 відновлює {(1 - error_mp2/error_hf)*100:.1f}% '
-          f'похибки HF')
-
-    # Інформація про розміри
-    print(f'\nОбчислювальні деталі:')
-    print(f'  Заповнених орбіталей: {mol.nelectron // 2}')
-    print(f'  Віртуальних орбіталей: {mol.nao_nr() - mol.nelectron // 2}')
-    print(f'  Розмір t2 амплітуд: {t2.shape}')
-
-    return e_hf, e_total_mp2, e_mp2_corr
-
-e_hf, e_mp2, e_corr = mp2_neon_calculation()
-\end{minted}
+\inputcode{code_4.py}
 
 
 %% --------------------------------------------------------
@@ -528,174 +209,14 @@ e_hf, e_mp2, e_corr = mp2_neon_calculation()
 
 Для систем з неспареними електронами використовується UMP2:
 
-\begin{minted}{python}
-from pyscf import gto, scf, mp
-
-def ump2_calculation(symbol, spin, basis='cc-pvtz'):
-    """
-    UMP2 розрахунок для відкритої оболонки
-    """
-
-    mol = gto.M(
-        atom=f'{symbol} 0 0 0',
-        basis=basis,
-        spin=spin,
-        verbose=0
-    )
-
-    print(f'\nUMP2 розрахунок {symbol} (2S={spin})')
-    print('='*70)
-
-    # UHF
-    mf = scf.UHF(mol)
-    mf.verbose = 0
-    mf.conv_tol = 1e-10
-    e_hf = mf.kernel()
-
-    print(f'UHF енергія: {e_hf:.10f} Ha')
-
-    # Забруднення спіном
-    s2_hf = mf.spin_square()[0]
-    expected_s2 = spin * (spin + 2) / 4
-    print(f'<S²> (UHF): {s2_hf:.6f} (очікується {expected_s2:.6f})')
-
-    # UMP2
-    mymp2 = mp.UMP2(mf)
-    mymp2.verbose = 0
-    e_mp2_corr, t2 = mymp2.kernel()
-
-    e_total = e_hf + e_mp2_corr
-
-    print(f'\nUMP2 кореляція: {e_mp2_corr:.10f} Ha')
-    print(f'UMP2 повна енергія: {e_total:.10f} Ha')
-
-    # MP2 не виправляє забруднення спіном
-    # (для цього потрібні інші методи)
-
-    return e_hf, e_total, e_mp2_corr
-
-# Приклади
-e_hf_li, e_mp2_li, _ = ump2_calculation('Li', spin=1)
-e_hf_c, e_mp2_c, _ = ump2_calculation('C', spin=2)
-e_hf_n, e_mp2_n, _ = ump2_calculation('N', spin=3)
-e_hf_o, e_mp2_o, _ = ump2_calculation('O', spin=2)
-\end{minted}
+\inputcode{code_5.py}
 
 
 %% --------------------------------------------------------
 \subsection{Систематичне порівняння HF vs MP2}
 %% --------------------------------------------------------
 
-\begin{minted}{python}
-from pyscf import gto, scf, mp
-import numpy as np
-import matplotlib.pyplot as plt
-
-def hf_vs_mp2_comparison(atoms_list, basis='cc-pvtz'):
-    """
-    Систематичне порівняння HF та MP2 для списку атомів
-    """
-
-    results = {
-        'atoms': [],
-        'e_hf': [],
-        'e_mp2': [],
-        'e_corr': [],
-        'corr_percent': []
-    }
-
-    print(f'\nПорівняння HF та MP2 (базис: {basis})')
-    print('='*80)
-    print(f'{"Атом":6s} {"Спін":4s} {"E(HF), Ha":15s} {"E(MP2), Ha":15s} '
-          f'{"E_corr, mHa":12s} {"% від HF":10s}')
-    print('-'*80)
-
-    for symbol, spin in atoms_list:
-        mol = gto.M(
-            atom=f'{symbol} 0 0 0',
-            basis=basis,
-            spin=spin,
-            verbose=0
-        )
-
-        # HF
-        if spin == 0:
-            mf = scf.RHF(mol)
-            mp_method = mp.MP2
-        else:
-            mf = scf.UHF(mol)
-            mp_method = mp.UMP2
-
-        mf.verbose = 0
-        mf.conv_tol = 1e-10
-        e_hf = mf.kernel()
-
-        # MP2
-        mymp2 = mp_method(mf)
-        mymp2.verbose = 0
-        e_mp2_corr, _ = mymp2.kernel()
-        e_mp2 = e_hf + e_mp2_corr
-
-        # Зберігаємо результати
-        results['atoms'].append(symbol)
-        results['e_hf'].append(e_hf)
-        results['e_mp2'].append(e_mp2)
-        results['e_corr'].append(e_mp2_corr)
-
-        corr_percent = abs(e_mp2_corr / e_hf) * 100
-        results['corr_percent'].append(corr_percent)
-
-        print(f'{symbol:6s} {spin:4d} {e_hf:15.8f} {e_mp2:15.8f} '
-              f'{e_mp2_corr*1000:12.4f} {corr_percent:10.4f}')
-
-    print('='*80)
-
-    # Статистика
-    avg_corr = np.mean(results['corr_percent'])
-    print(f'\nСередній % кореляції: {avg_corr:.4f}%')
-
-    # Графіки
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
-
-    x = np.arange(len(results['atoms']))
-
-    # Абсолютні енергії
-    ax1.plot(x, results['e_hf'], 'o-', label='HF',
-            linewidth=2, markersize=8, color='blue')
-    ax1.plot(x, results['e_mp2'], 's-', label='MP2',
-            linewidth=2, markersize=8, color='red')
-    ax1.set_xticks(x)
-    ax1.set_xticklabels(results['atoms'])
-    ax1.set_xlabel('Атом', fontsize=12)
-    ax1.set_ylabel('Енергія (Ha)', fontsize=12)
-    ax1.set_title('HF vs MP2 енергії', fontsize=14)
-    ax1.legend()
-    ax1.grid(True, alpha=0.3)
-
-    # Кореляційна енергія
-    ax2.bar(x, np.array(results['e_corr'])*1000, color='green',
-           alpha=0.7)
-    ax2.set_xticks(x)
-    ax2.set_xticklabels(results['atoms'])
-    ax2.set_xlabel('Атом', fontsize=12)
-    ax2.set_ylabel('Кореляційна енергія (mHa)', fontsize=12)
-    ax2.set_title('MP2 кореляційна енергія', fontsize=14)
-    ax2.grid(True, alpha=0.3, axis='y')
-
-    plt.tight_layout()
-    plt.savefig('hf_vs_mp2_comparison.pdf')
-    plt.show()
-
-    return results
-
-# Атоми другого періоду
-atoms_2nd = [
-    ('He', 0), ('Li', 1), ('Be', 0), ('B', 1),
-    ('C', 2), ('N', 3), ('O', 2), ('F', 1), ('Ne', 0)
-]
-
-results = hf_vs_mp2_comparison(atoms_2nd)
-\end{minted}
+\inputcode{code_6.py}
 
 
 %% --------------------------------------------------------
@@ -704,122 +225,7 @@ results = hf_vs_mp2_comparison(atoms_2nd)
 
 MP2 сильно залежить від базису, особливо потрібні функції високих $l$:
 
-\begin{minted}{python}
-from pyscf import gto, scf, mp
-import matplotlib.pyplot as plt
-
-def mp2_basis_convergence(symbol, spin):
-    """
-    Дослідження збіжності MP2 від базису
-    """
-
-    basis_sets = ['cc-pvdz', 'cc-pvtz', 'cc-pvqz', 'cc-pv5z']
-
-    print(f'\nЗбіжність MP2 енергії {symbol} від базису')
-    print('='*70)
-    print(f'{"Базис":12s} {"N_bas":6s} {"E(HF)":15s} {"E(MP2)":15s} '
-          f'{"E_corr, mHa":12s}')
-    print('-'*70)
-
-    e_hf_list = []
-    e_mp2_list = []
-    e_corr_list = []
-    n_bas_list = []
-
-    for basis in basis_sets:
-        mol = gto.M(
-            atom=f'{symbol} 0 0 0',
-            basis=basis,
-            spin=spin,
-            verbose=0
-        )
-
-        # HF
-        if spin == 0:
-            mf = scf.RHF(mol)
-            mp_method = mp.MP2
-        else:
-            mf = scf.UHF(mol)
-            mp_method = mp.UMP2
-
-        mf.verbose = 0
-        mf.conv_tol = 1e-11
-        e_hf = mf.kernel()
-
-        # MP2
-        mymp2 = mp_method(mf)
-        mymp2.verbose = 0
-        e_corr, _ = mymp2.kernel()
-        e_mp2 = e_hf + e_corr
-
-        n_bas = mol.nao_nr()
-
-        e_hf_list.append(e_hf)
-        e_mp2_list.append(e_mp2)
-        e_corr_list.append(e_corr)
-        n_bas_list.append(n_bas)
-
-        print(f'{basis:12s} {n_bas:6d} {e_hf:15.8f} {e_mp2:15.8f} '
-              f'{e_corr*1000:12.4f}')
-
-    print('='*70)
-
-    # Екстраполяція до CBS
-    # E(X) = E_CBS + A/X^3
-    X = np.array([2, 3, 4, 5])  # D, T, Q, 5
-
-    # CBS для HF (швидша збіжність)
-    A_hf = (e_hf_list[-1]*5**3 - e_hf_list[-2]*4**3) / (5**3 - 4**3)
-    e_hf_cbs = e_hf_list[-1] - A_hf / 5**3
-
-    # CBS для кореляції
-    A_corr = (e_corr_list[-1]*5**3 - e_corr_list[-2]*4**3) / (5**3 - 4**3)
-    e_corr_cbs = e_corr_list[-1] - A_corr / 5**3
-
-    e_mp2_cbs = e_hf_cbs + e_corr_cbs
-
-    print(f'\nЕкстраполяція до CBS:')
-    print(f'E(HF/CBS):  {e_hf_cbs:.10f} Ha')
-    print(f'E(MP2/CBS): {e_mp2_cbs:.10f} Ha')
-    print(f'E_corr(CBS): {e_corr_cbs*1000:.4f} mHa')
-
-    # Графік
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
-
-    # Повна енергія
-    ax1.plot(n_bas_list, e_hf_list, 'o-', label='HF',
-            linewidth=2, markersize=8)
-    ax1.plot(n_bas_list, e_mp2_list, 's-', label='MP2',
-            linewidth=2, markersize=8)
-    ax1.axhline(y=e_hf_cbs, color='blue', linestyle='--',
-               alpha=0.5, label='HF CBS')
-    ax1.axhline(y=e_mp2_cbs, color='orange', linestyle='--',
-               alpha=0.5, label='MP2 CBS')
-    ax1.set_xlabel('Кількість базисних функцій', fontsize=12)
-    ax1.set_ylabel('Енергія (Ha)', fontsize=12)
-    ax1.set_title(f'Збіжність енергії {symbol}', fontsize=14)
-    ax1.legend()
-    ax1.grid(True, alpha=0.3)
-
-    # Кореляційна енергія
-    ax2.plot(n_bas_list, np.array(e_corr_list)*1000, 'o-',
-            linewidth=2, markersize=8, color='green')
-    ax2.axhline(y=e_corr_cbs*1000, color='green', linestyle='--',
-               alpha=0.5, label='CBS')
-    ax2.set_xlabel('Кількість базисних функцій', fontsize=12)
-    ax2.set_ylabel('Кореляційна енергія (mHa)', fontsize=12)
-    ax2.set_title(f'Збіжність кореляції {symbol}', fontsize=14)
-    ax2.legend()
-    ax2.grid(True, alpha=0.3)
-
-    plt.tight_layout()
-    plt.savefig(f'{symbol}_mp2_basis_convergence.pdf')
-    plt.show()
-
-# Приклади
-mp2_basis_convergence('Ne', spin=0)
-mp2_basis_convergence('C', spin=2)
-\end{minted}
+\inputcode{code_7.py}
 
 %% --------------------------------------------------------
 \subsection{Переваги та недоліки MP2}
@@ -848,19 +254,781 @@ mp2_basis_convergence('C', spin=2)
 %% --------------------------------------------------------
 
 \begin{table}[h]
+    \centering
+    \caption{Коли використовувати MP2}
+    \label{tab:mp2_recommendations}
+    \small
+    \begin{tabular}{ll}
+        \hline
+        \textbf{Добре для:}     & \textbf{Погано для:}          \\
+        \hline
+        Замкнені оболонки       & Системи з малим HOMO-LUMO gap \\
+        Якісні оцінки кореляції & Розрив зв'язків               \\
+        Великі системи          & Збуджені стани                \\
+        Слабкі взаємодії        & Перехідні стани               \\
+        Відносні енергії        & Діелектронні системи          \\
+        \hline
+    \end{tabular}
+\end{table}
+
+%% --------------------------------------------------------
+\section{Coupled Cluster методи (CCSD, CCSD(T))}
+%% --------------------------------------------------------
+
+%% --------------------------------------------------------
+\subsection{Теоретичні основи Coupled Cluster}
+%% --------------------------------------------------------
+
+Coupled Cluster (CC) --- один з найточніших методів для врахування електронної кореляції. На відміну від CI, CC є size-extensive (правильно масштабується для великих систем).
+
+Хвильова функція у CC записується через експоненціальний оператор збудження:
+
+\begin{equation}
+    |\Psi_{CC}\rangle = e^{\hat{T}} |\Phi_0\rangle
+\end{equation}
+
+де $|\Phi_0\rangle$ --- HF детермінант, а $\hat{T}$ --- оператор кластерів:
+
+\begin{equation}
+    \hat{T} = \hat{T}_1 + \hat{T}_2 + \hat{T}_3 + \ldots
+\end{equation}
+
+\paragraph{CCSD (Coupled Cluster Singles and Doubles)}
+Враховує тільки $\hat{T}_1$ (одиночні збудження) та $\hat{T}_2$ (подвійні збудження):
+
+\begin{align}
+    \hat{T}_1 & = \sum_{i}^{\text{occ}} \sum_{a}^{\text{virt}} t_i^a \, \hat{a}^\dagger_a \hat{a}_i                                                 \\
+    \hat{T}_2 & = \frac{1}{4} \sum_{ij}^{\text{occ}} \sum_{ab}^{\text{virt}} t_{ij}^{ab} \, \hat{a}^\dagger_a \hat{a}^\dagger_b \hat{a}_j \hat{a}_i
+\end{align}
+
+\paragraph{CCSD(T) --- <<золотий стандарт>>}
+Додає пертурбативну корекцію для потрійних збуджень $\hat{T}_3$:
+
+\begin{equation}
+    E_{CCSD(T)} = E_{CCSD} + E_{(T)}
+\end{equation}
+
+де $E_{(T)}$ обчислюється за формулами четвертого порядку теорії збурень.
+
+
+%% --------------------------------------------------------
+\subsection{CCSD розрахунок атома Гелію}
+%% --------------------------------------------------------
+
+\inputcode{code_8.py}
+
+%% --------------------------------------------------------
+\subsection{CCSD для відкритих оболонок (UCCSD)}
+%% --------------------------------------------------------
+
+\inputcode{code_9.py}
+
+%% --------------------------------------------------------
+\subsection{Порівняння ієрархії методів}
+%% --------------------------------------------------------
+
+\inputcode{code_10.py}
+
+%% --------------------------------------------------------
+\subsection{T1 діагностика та багатоконфігураційний характер}
+%% --------------------------------------------------------
+
+T1 діагностика --- індикатор того, наскільки система є одноконфігураційною:
+
+\begin{equation}
+    T_1 = \frac{\|t_1\|}{\sqrt{N_{\text{elec}}}}
+\end{equation}
+
+\inputcode{code_11.py}
+
+%% --------------------------------------------------------
+\subsection{Обчислювальна складність та масштабування}
+%% --------------------------------------------------------
+
+\begin{table}[h]
+    \centering
+    \caption{Порівняння обчислювальної складності методів}
+    \label{tab:cc_complexity}
+    \begin{tabular}{lccc}
+        \hline
+        \textbf{Метод} & \textbf{Масштабування} & \textbf{Пам'ять}   & \textbf{Disk}      \\
+        \hline
+        HF             & $\mathcal{O}(N^4)$     & $\mathcal{O}(N^2)$ & Мало               \\
+        MP2            & $\mathcal{O}(N^5)$     & $\mathcal{O}(N^4)$ & $\mathcal{O}(N^4)$ \\
+        CCSD           & $\mathcal{O}(N^6)$     & $\mathcal{O}(N^4)$ & $\mathcal{O}(N^4)$ \\
+        CCSD(T)        & $\mathcal{O}(N^7)$     & $\mathcal{O}(N^4)$ & $\mathcal{O}(N^4)$ \\
+        CCSDT          & $\mathcal{O}(N^8)$     & $\mathcal{O}(N^6)$ & $\mathcal{O}(N^6)$ \\
+        FCI            & $\mathcal{O}(e^N)$     & $\mathcal{O}(e^N)$ & $\mathcal{O}(e^N)$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+де $N$ --- характерний розмір системи (базисних функцій або електронів).
+
+%% --------------------------------------------------------
+\section{Configuration Interaction (CI) та Full CI}
+%% --------------------------------------------------------
+
+%% --------------------------------------------------------
+\subsection{Основи Configuration Interaction}
+%% --------------------------------------------------------
+
+Configuration Interaction (CI) --- варіаційний метод, де хвильова функція представлена як лінійна комбінація детермінантів Слейтера:
+
+\begin{equation}
+    |\Psi_{CI}\rangle = c_0 |\Phi_0\rangle + \sum_i^{\text{occ}} \sum_a^{\text{virt}} c_i^a |\Phi_i^a\rangle + \sum_{i<j} \sum_{a<b} c_{ij}^{ab} |\Phi_{ij}^{ab}\rangle + \ldots
+\end{equation}
+
+де:
+\begin{itemize}
+    \item $|\Phi_0\rangle$ --- HF детермінант (основна конфігурація)
+    \item $|\Phi_i^a\rangle$ --- одиночно збуджені детермінанти (S)
+    \item $|\Phi_{ij}^{ab}\rangle$ --- подвійно збуджені детермінанти (D)
+    \item $|\Phi_{ijk}^{abc}\rangle$ --- потрійно збуджені детермінанти (T)
+    \item і т.д.
+\end{itemize}
+
+\paragraph{Варіанти CI методу:}
+\begin{itemize}
+    \item \textbf{CIS} (CI Singles) --- тільки одиночні збудження (для збуджених станів)
+    \item \textbf{CISD} (CI Singles and Doubles) --- S + D
+    \item \textbf{CISDT} --- S + D + T
+    \item \textbf{Full CI} --- всі можливі збудження (точний у межах базису)
+\end{itemize}
+
+
+%% --------------------------------------------------------
+\subsection{Full CI --- точний розв'язок}
+%% --------------------------------------------------------
+
+Full CI включає всі можливі детермінанти і дає точну хвильову функцію та енергію в межах обраного базису:
+
+\begin{equation}
+    E_{FCI} = \min_{\{c_i\}} \langle \Psi_{FCI} | \hat{H} | \Psi_{FCI} \rangle
+\end{equation}
+
+\textbf{Проблема:} Кількість детермінантів зростає як:
+\begin{equation}
+    N_{det} = \binom{N_{orb}}{N_{\alpha}} \times \binom{N_{orb}}{N_{\beta}}
+\end{equation}
+
+Для 10 електронів у 20 орбіталях: $N_{det} \approx 10^{10}$ детермінантів!
+
+\inputcode{FullCI.py}
+%% --------------------------------------------------------
+\subsection{CISD розрахунки}
+%% --------------------------------------------------------
+
+CISD --- практичний варіант CI, але не є size-extensive:
+
+\inputcode{CISDcalc.py}
+
+%% --------------------------------------------------------
+\subsection{Порівняння CI та CC методів}
+%% --------------------------------------------------------
+
+\inputcode{CIvsCD.py}
+
+%% --------------------------------------------------------
+\subsection{Size-extensivity проблема CI}
+%% --------------------------------------------------------
+
+Важлива відмінність між CI та CC:
+
+\begin{equation}
+    E_{CI}(2A) \neq 2 \times E_{CI}(A)
+\end{equation}
+
+\begin{equation}
+    E_{CC}(2A) = 2 \times E_{CC}(A)
+\end{equation}
+
+\inputcode{SizeExtensivityExample.py}
+
+
+%% --------------------------------------------------------
+\subsection{Коли використовувати CI vs CC}
+%% --------------------------------------------------------
+\nopagebreak
+\begin{center}
+    \captionof{table}{Порівняння CI та CC методів}
+    \label{tab:ci_vs_cc}
+    \small
+    \begin{tblr}{lll}
+        \hline
+        \textbf{Критерій}       & \textbf{CI}      & \textbf{CC}      \\
+        \hline
+        Варіаційність           & Так              & Ні               \\
+        Size-extensivity        & Ні (окрім FCI)   & Так              \\
+        Точність                & CISD < CCSD      & CCSD(T) ≈ FCI    \\
+        Збуджені стани          & EOM-CI, CIS      & EOM-CC           \\
+        Швидкість               & CISD швидше CCSD & Повільніше       \\
+        Стабільність            & Варіаційна межа  & Може розходитись \\
+        Багатоконфігураційність & Природно (FCI)   & Потребує MRCC    \\
+        \hline
+    \end{tblr}
+\end{center}
+
+\textbf{Рекомендації:}
+\begin{itemize}
+    \item \textbf{Використовуйте FCI} для малих систем як еталон
+    \item \textbf{Використовуйте CCSD(T)} для точних розрахунків одноконфігураційних систем
+    \item \textbf{Використовуйте CISD} для швидких оцінок кореляції
+    \item \textbf{Для багатоконфігураційних систем} використовуйте CASSCF/CASPT2
+\end{itemize}
+
+%%% --------------------------------------------------------
+%\subsection{Ієрархія методів}
+%%% --------------------------------------------------------
+%
+%Post-HF методи утворюють ієрархію за точністю та обчислювальною складністю:
+%
+%\begin{enumerate}
+%    \item \textbf{HF} --- базовий рівень, без кореляції
+%    \item \textbf{MP2} --- $\mathcal{O}(N^5)$ --- найпростіша кореляція
+%    \item \textbf{MP3, MP4} --- $\mathcal{O}(N^6), \mathcal{O}(N^7)$ --- вищі порядки теорії збурень
+%    \item \textbf{CCSD} --- $\mathcal{O}(N^6)$ --- надійна динамічна кореляція
+%    \item \textbf{CCSD(T)} --- $\mathcal{O}(N^7)$ --- "золотий стандарт" квантової хімії
+%    \item \textbf{Full CI} --- $\mathcal{O}(e^N)$ --- точний розв'язок (у межах базису)
+%\end{enumerate}
+%
+%\inputcode{code_1.py}
+
+%\subsection{Важливість кореляції для різних властивостей}
+%
+%\begin{center}
+%\captionof{table}{Вплив електронної кореляції на різні властивості}
+%\label{tab:correlation_importance}
+%\small
+%\begin{tblr}{lll}
+%\hline
+%\textbf{Властивість} & \textbf{Важливість кореляції} & \textbf{Рекомендований метод} \\
+%\hline
+%Абсолютні енергії & Помірна & MP2, DFT \\
+%Енергії іонізації & Висока & CCSD(T) \\
+%Електронна спорідненість & Дуже висока & CCSD(T) + дифузні \\
+%Енергії збудження & Висока & EOM-CCSD, TD-DFT \\
+%Відстані між станами & Висока & CASPT2, MRCI \\
+%Дисоціація & Критична & CASSCF, MRCI \\
+%Слабкі взаємодії & Критична & CCSD(T), MP2-F12 \\
+%\hline
+%\end{tblr}
+%\end{center}
+%
+%
+%%% --------------------------------------------------------
+%\subsection{Порівняння методів для \ce{He}}
+%%% --------------------------------------------------------
+%
+%Розглянемо найпростішу багатоелектронну систему --- атом Гелію:
+%
+%\inputcode{code_2.py}
+
+%% --------------------------------------------------------
+\section{CASSCF --- багатоконфігураційний метод}
+%% --------------------------------------------------------
+
+%% --------------------------------------------------------
+\subsection{Ідея Complete Active Space Self-Consistent Field}
+%% --------------------------------------------------------
+
+CASSCF (Complete Active Space SCF) --- багатоконфігураційний метод, який поєднує:
+\begin{itemize}
+    \item \textbf{Активний простір} --- набір орбіталей, де проводиться Full CI
+    \item \textbf{SCF оптимізацію} --- орбіталі та CI коефіцієнти оптимізуються одночасно
+\end{itemize}
+
+Орбіталі розділяються на три групи:
+\begin{enumerate}
+    \item \textbf{Core (остов)} --- завжди подвійно заповнені, не беруть участь у кореляції
+    \item \textbf{Active (активні)} --- електрони розподілені по всіх можливих способах (Full CI)
+    \item \textbf{Virtual (віртуальні)} --- завжди порожні
+\end{enumerate}
+
+\begin{equation}
+    |\Psi_{CASSCF}\rangle = \sum_I c_I |\Phi_I^{\text{active}}\rangle \otimes |\text{core}\rangle
+\end{equation}
+
+%% --------------------------------------------------------
+\subsection{Позначення CASSCF(n,m)}
+%% --------------------------------------------------------
+
+CASSCF(n,m) означає:
+\begin{itemize}
+    \item $n$ --- кількість електронів в активному просторі
+    \item $m$ --- кількість орбіталей в активному просторі
+\end{itemize}
+
+\textbf{Приклади:}
+\begin{itemize}
+    \item \textbf{Be}: CASSCF(4,8) --- 4 валентні електрони у 8 орбіталях (2s, 2p, 3s, 3p)
+    \item \textbf{C}: CASSCF(4,4) --- 4 валентні електрони у 4 орбіталях (2s, 2p)
+    \item \textbf{Cr}: CASSCF(6,5) --- 6 електронів у 5 d-орбіталях
+\end{itemize}
+
+%% --------------------------------------------------------
+\subsection{CASSCF розрахунок атома Берилію}
+%% --------------------------------------------------------
+
+Берилій має близькі за енергією конфігурації 2s² та 2p², що робить його класичним прикладом для CASSCF:
+
+\inputcode{CASSCFBe.py}
+
+%% --------------------------------------------------------
+\subsection{CASSCF для перехідних металів}
+%% --------------------------------------------------------
+
+
+Для перехідних металів d-орбіталі часто близькі за енергією, потребуючи багатоконфігураційного підходу:
+
+\inputcode{CASSCFTransitionMetals.py}
+
+
+%% --------------------------------------------------------
+\subsection{Вибір активного простору}
+%% --------------------------------------------------------
+
+Правильний вибір активного простору критичний для CASSCF:
+
+\begin{table}[h]
+    \centering
+    \caption{Рекомендації по вибору активного простору}
+    \label{tab:casscf_active_space}
+    \small
+    \begin{tabular}{lll}
+        \hline
+        \textbf{Система} & \textbf{Активний простір} & \textbf{Коментар}          \\
+        \hline
+        Be               & (4,8): 2s,2p,3s,3p        & Враховує 2s²↔2p²           \\
+        C                & (4,4): 2s,2p              & Мінімальний валентний      \\
+        O                & (6,6): 2s,2p + корел.     & З кореляційними орбіталями \\
+        3d метали        & (n,5): 3d                 & Тільки d-орбіталі          \\
+        3d метали        & (n+2,6): 3d,4s            & d + s орбіталі             \\
+        Лантаноїди       & (n,7): 4f                 & f-орбіталі                 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\textbf{Принципи вибору:}
+\begin{enumerate}
+    \item Включити орбіталі, близькі за енергією
+    \item Включити орбіталі з значною хімічною активністю
+    \item Більший простір → точніше, але експоненційно повільніше
+    \item Перевірити заселеності природних орбіталей
+    \item Якщо заселеності ≈ 2 або ≈ 0, можна виключити з активного простору
+\end{enumerate}
+
+
+%% --------------------------------------------------------
+\subsection{State-averaged CASSCF}
+%% --------------------------------------------------------
+
+Для розрахунку декількох станів одночасно (наприклад, різних мультиплетів):
+
+\inputcode{StateAvaragedCASSCF.py}
+
+%% --------------------------------------------------------
+\subsection{CASPT2 --- динамічна кореляція поверх CASSCF}
+%% --------------------------------------------------------
+
+CASSCF враховує тільки статичну кореляцію. Для повної точності потрібно додати динамічну кореляцію через CASPT2:
+
+\inputcode{CASPT2.py}
+
+%% --------------------------------------------------------
+\subsection{Переваги та недоліки CASSCF}
+%% --------------------------------------------------------
+
+\paragraph{Переваги:}
+\begin{itemize}
+    \item Правильно описує статичну кореляцію
+    \item Може розрахувати декілька станів одночасно
+    \item Варіаційний метод
+    \item Підходить для розриву зв'язків, збуджених станів
+    \item Дає природні орбіталі та заселеності
+\end{itemize}
+
+\paragraph{Недоліки:}
+\begin{itemize}
+    \item Вибір активного простору не завжди очевидний
+    \item Експоненційне масштабування з розміром активного простору
+    \item Не враховує динамічну кореляцію (потрібен CASPT2)
+    \item Може бути проблеми з конвергенцією
+    \item Потребує досвіду для правильного використання
+\end{itemize}
+
+\paragraph{Коли використовувати CASSCF:}
+\begin{itemize}
+    \item T1 діагностика > 0.05 (сильна багатоконфігураційність)
+    \item Перехідні метали з близькими d-орбіталями
+    \item Збуджені стани атомів
+    \item Діелектронні системи
+    \item Відкрито-оболонкові синглети
+\end{itemize}
+
+
+%% --------------------------------------------------------
+\subsection{Ієрархія методів}
+%% --------------------------------------------------------
+
+Post-HF методи утворюють ієрархію за точністю та обчислювальною складністю:
+
+\begin{enumerate}
+    \item \textbf{HF} --- базовий рівень, без кореляції
+    \item \textbf{MP2} --- $\mathcal{O}(N^5)$ --- найпростіша кореляція
+    \item \textbf{MP3, MP4} --- $\mathcal{O}(N^6), \mathcal{O}(N^7)$ --- вищі порядки теорії збурень
+    \item \textbf{CCSD} --- $\mathcal{O}(N^6)$ --- надійна динамічна кореляція
+    \item \textbf{CCSD(T)} --- $\mathcal{O}(N^7)$ --- "золотий стандарт" квантової хімії
+    \item \textbf{Full CI} --- $\mathcal{O}(e^N)$ --- точний розв'язок (у межах базису)
+\end{enumerate}
+
+
+%% --------------------------------------------------------
+\subsection{Важливість кореляції для різних властивостей}
+%% --------------------------------------------------------
+
+\begin{center}
+    \captionof{table}{Вплив електронної кореляції на різні властивості}
+    \label{tab:correlation_importance}
+    \small
+    \begin{tblr}{lll}
+        \hline
+        \textbf{Властивість}     & \textbf{Важливість кореляції} & \textbf{Рекомендований метод} \\
+        \hline
+        Абсолютні енергії        & Помірна                       & MP2, DFT                      \\
+        Енергії іонізації        & Висока                        & CCSD(T)                       \\
+        Електронна спорідненість & Дуже висока                   & CCSD(T) + дифузні             \\
+        Енергії збудження        & Висока                        & EOM-CCSD, TD-DFT              \\
+        Відстані між станами     & Висока                        & CASPT2, MRCI                  \\
+        Дисоціація               & Критична                      & CASSCF, MRCI                  \\
+        Слабкі взаємодії         & Критична                      & CCSD(T), MP2-F12              \\
+        \hline
+    \end{tblr}
+\end{center}
+
+\inputcode{code_12.py}
+
+
+%% --------------------------------------------------------
+\subsection{Порівняння методів для He}
+%% --------------------------------------------------------
+
+Розглянемо найпростішу багатоелектронну систему --- атом Гелію:
+
+\inputcode{code_13.py}
+
+
+\section{Практичні завдання}
+
+\subsection{Завдання 1: Порівняння методів для He}
+
+\begin{minted}{python}
+"""
+ЗАВДАННЯ 1: Для атома Гелію розрахуйте енергії методами
+HF, MP2, CCSD, CCSD(T) та FCI з базисами cc-pVDZ, cc-pVTZ,
+cc-pVQZ.
+
+1) Побудуйте графік збіжності кожного методу до базисної межі
+2) Екстраполюйте до CBS за формулою E(X) = E_CBS + A/X³
+3) Порівняйте з експериментальним значенням -2.90372 Ha
+4) Яка частка кореляційної енергії відновлюється кожним методом?
+
+Базиси: cc-pVDZ, cc-pVTZ, cc-pVQZ
+"""
+
+# Ваш код тут
+\end{minted}
+
+\subsection*{Завдання 2: T1 діагностика для другого періоду}
+
+\begin{minted}{python}
+"""
+ЗАВДАННЯ 2: Розрахуйте T1 діагностику для всіх атомів
+другого періоду (Li-Ne) з базисом cc-pVDZ.
+
+1) Для яких атомів T1 > 0.02 (багатоконфігураційні)?
+2) Чи є кореляція між T1 та положенням у періоді?
+3) Порівняйте T1 для основного та збудженого спінового
+   стану Карбону (³P vs ¹D)
+4) Побудуйте графік залежності T1 від атомного номера
+
+Базис: cc-pVDZ
+"""
+
+# Ваш код тут
+\end{minted}
+
+\subsection*{Завдання 3: Size-extensivity тест}
+
+\begin{minted}{python}
+"""
+ЗАВДАННЯ 3: Дослідіть size-extensivity для атомів Ne.
+
+Розрахуйте методами HF, MP2, CISD, CCSD:
+1) Енергію одного атома Ne
+2) Енергію двох атомів Ne на відстані 100 Bohr
+3) Обчисліть похибку: E(2×Ne) - 2×E(Ne)
+
+Питання:
+- Який метод є size-extensive?
+- Яка похибка для CISD (у mHa)?
+- Чому MP2 є size-extensive, а CISD - ні?
+
+Базис: cc-pVTZ
+"""
+
+# Ваш код тут
+\end{minted}
+
+\subsection*{Завдання 4: CASSCF для перехідного металу}
+
+\begin{minted}{python}
+"""
+ЗАВДАННЯ 4: CASSCF аналіз атома Титану (Ti).
+
+Ti: [Ar] 3d² 4s², основний стан ³F
+
+1) Розрахуйте UHF, CCSD та CASSCF(4,5) енергії
+   (4 електрони у 5 d-орбіталях)
+2) Проаналізуйте заселеності природних орбіталей
+3) Обчисліть статичну кореляцію (CASSCF - HF)
+4) Спробуйте різні активні простори: (4,5), (4,6), (6,11)
+   Який найкращий?
+
+Базис: def2-SVP
+"""
+
+# Ваш код тут
+\end{minted}
+
+\subsection*{Завдання 5: Енергії збудження}
+
+\begin{minted}{python}
+"""
+ЗАВДАННЯ 5: Розрахуйте енергію збудження ³P → ¹D для
+атома Карбону.
+
+Використайте методи:
+1) ΔSCF (окремі розрахунки для кожного стану)
+2) State-averaged CASSCF
+3) EOM-CCSD (якщо доступно)
+
+Порівняйте з експериментальним значенням 1.26 eV.
+
+Який метод дає найточніший результат?
+
+Базис: aug-cc-pVTZ
+"""
+
+# Ваш код тут
+\end{minted}
+
+\subsection*{Завдання 6: Кореляційна енергія vs Z}
+
+\begin{minted}{python}
+"""
+ЗАВДАННЯ 6: Дослідіть залежність кореляційної енергії
+від атомного номера.
+
+Розрахуйте MP2 кореляційну енергію для:
+- Благородних газів: He, Ne, Ar, Kr
+- У абсолютних величинах (mHa)
+- У відсотках від повної енергії
+
+Побудуйте графіки:
+1) |E_corr| vs Z
+2) |E_corr|/|E_HF| vs Z
+
+Яка тенденція спостерігається?
+
+Базис: cc-pVTZ
+"""
+
+# Ваш код тут
+\end{minted}
+
+%% --------------------------------------------------------
+\section{Резюме}
+%% --------------------------------------------------------
+
+У цьому розділі ми детально вивчили Post-Hartree-Fock методи для врахування електронної кореляції:
+
+\subsection{Основні методи та їх характеристики}
+
+\begin{table}[h]
 \centering
-\caption{Коли використовувати MP2}
-\label{tab:mp2_recommendations}
+\caption{Порівняння Post-HF методів}
+\label{tab:posthf_summary}
 \small
-\begin{tabular}{ll}
+\begin{tabular}{llcccc}
 \hline
-\textbf{Добре для:} & \textbf{Погано для:} \\
+\textbf{Метод} & \textbf{Складність} & \textbf{Size-ext.} & \textbf{Варіац.} & \textbf{Точність} & \textbf{МК?} \\
 \hline
-Замкнені оболонки & Системи з малим HOMO-LUMO gap \\
-Якісні оцінки кореляції & Розрив зв'язків \\
-Великі системи & Збуджені стани \\
-Слабкі взаємодії & Перехідні стани \\
-Відносні енергії & Діелектронні системи \\
+MP2 & $O(N^5)$ & Так & Ні & Помірна & Ні \\
+MP3/MP4 & $O(N^6/N^7)$ & Так & Ні & Добра & Ні \\
+CISD & $O(N^6)$ & Ні & Так & Помірна & Ні \\
+CCSD & $O(N^6)$ & Так & Ні & Добра & Ні \\
+CCSD(T) & $O(N^7)$ & Так & Ні & Відмінна & Ні \\
+CASSCF & $O(e^{n_{act}})$ & Так & Так & Статична & Так \\
+CASPT2 & $O(e^{n_{act}})$ & Так & Ні & Відмінна & Так \\
+Full CI & $O(e^N)$ & Так & Так & Точна & Так \\
 \hline
 \end{tabular}
 \end{table}
+
+\textit{МК = Багатоконфігураційний}
+
+\subsection{Ключові висновки}
+
+\paragraph{1. Електронна кореляція}
+\begin{itemize}
+    \item Становить 1-5\% від повної енергії, але критична для точних розрахунків
+    \item Поділяється на динамічну (короткодіючу) та статичну (близькі стани)
+    \item HF і DFT не враховують кореляцію повністю
+\end{itemize}
+
+\paragraph{2. MP2 --- найпростіший post-HF метод}
+\begin{itemize}
+    \item Швидкий ($O(N^5)$), size-extensive
+    \item Добре працює для замкнених оболонок з великим HOMO-LUMO gap
+    \item Відновлює 80-95\% кореляційної енергії
+    \item Не виправляє забруднення спіном UHF
+    \item Потребує великих базисів для збіжності
+\end{itemize}
+
+\paragraph{3. CCSD(T) --- "золотий стандарт"}
+\begin{itemize}
+    \item Найточніший одноконфігураційний метод
+    \item Size-extensive, відновлює >99\% кореляції
+    \item Повільний ($O(N^7)$), але надійний
+    \item Виправляє забруднення спіном
+    \item Обмежений розміром системи (до ~20-30 атомів)
+\end{itemize}
+
+\paragraph{4. T1 діагностика}
+\begin{itemize}
+    \item T1 < 0.02: одноконфігураційна система (CCSD надійний)
+    \item 0.02 < T1 < 0.05: слабка багатоконфігураційність
+    \item T1 > 0.05: потрібен CASSCF/MRCI
+\end{itemize}
+
+\paragraph{5. CI методи}
+\begin{itemize}
+    \item Варіаційні (енергія завжди вище точної)
+    \item Full CI --- точний у межах базису, але непрактичний
+    \item CISD не є size-extensive (на відміну від CCSD)
+    \item Корисні для аналізу хвильової функції
+\end{itemize}
+
+\paragraph{6. CASSCF --- для багатоконфігураційних систем}
+\begin{itemize}
+    \item Необхідний коли T1 > 0.05 або близькі стани
+    \item Вибір активного простору критичний
+    \item Враховує статичну кореляцію
+    \item Потребує CASPT2/NEVPT2 для динамічної кореляції
+    \item Ідеальний для перехідних металів, збуджених станів
+\end{itemize}
+
+\subsection{Рекомендації по використанню}
+
+\begin{table}[h]
+\centering
+\caption{Вибір методу залежно від задачі}
+\label{tab:method_selection}
+\small
+\begin{tabular}{lll}
+\hline
+\textbf{Задача} & \textbf{Рекомендований метод} & \textbf{Альтернатива} \\
+\hline
+Швидка оцінка кореляції & MP2 & DFT \\
+Точні енергії (1 kcal/mol) & CCSD(T) & --- \\
+Замкнені оболонки & CCSD(T), MP2 & DFT \\
+Відкриті оболонки & UCCSD(T) & ROHF-CCSD \\
+Енергії збудження & EOM-CCSD, CASSCF & TD-DFT \\
+Перехідні метали & CASSCF, CASPT2 & DFT+U \\
+Багатоконфігураційні & CASSCF/CASPT2 & MRCI \\
+Еталонні розрахунки & CCSD(T)/CBS & Full CI \\
+Великі системи & MP2, DFT & DLPNO-CCSD(T) \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Типові помилки}
+
+\begin{enumerate}
+    \item \textbf{Використання MP2 для систем з малим gap} --- може давати нефізичні результати
+    \item \textbf{Забування перевірки T1 діагностики} --- CCSD може бути ненадійним
+    \item \textbf{Занадто малий активний простір у CASSCF} --- не врахує всю статичну кореляцію
+    \item \textbf{Занадто великий активний простір} --- неможливо розрахувати
+    \item \textbf{Недостатній базис} --- post-HF методи дуже чутливі до базису
+    \item \textbf{Ігнорування size-extensivity} --- CISD не підходить для енергій дисоціації
+    \item \textbf{CASSCF без CASPT2} --- відсутня динамічна кореляція
+\end{enumerate}
+
+\subsection{Практичні поради}
+
+\begin{enumerate}
+    \item Завжди починайте з HF розрахунку та перевірте конвергенцію
+    \item Для нових систем спочатку протестуйте на малому базисі
+    \item Перевіряйте T1 діагностику після CCSD
+    \item Для CASSCF: починайте з малого активного простору, збільшуйте поступово
+    \item Аналізуйте природні орбіталі для вибору активного простору
+    \item Використовуйте симетрію коли можливо
+    \item Для екстраполяції до CBS потрібні принаймні 3 базиси
+    \item Зберігайте проміжні результати (checkpoint файли)
+\end{enumerate}
+
+\subsection{Обчислювальні ресурси}
+
+\begin{table}[h]
+\centering
+\caption{Орієнтовний час розрахунку (відносно HF)}
+\label{tab:computational_cost}
+\small
+\begin{tabular}{lcccc}
+\hline
+\textbf{Метод} & \textbf{He (DZ)} & \textbf{Ne (TZ)} & \textbf{Ar (DZ)} & \textbf{Пам'ять} \\
+\hline
+HF & 1× & 1× & 1× & $N^2$ \\
+MP2 & 2× & 5× & 10× & $N^4$ \\
+CCSD & 10× & 50× & 200× & $N^4$ \\
+CCSD(T) & 20× & 200× & 1000× & $N^4$ \\
+CASSCF(4,8) & 5× & --- & --- & $e^{n_{act}}$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\textit{Примітка: реальний час залежить від якості початкового наближення та конвергенції}
+
+\subsection{Подальше вивчення}
+
+Для поглибленого розуміння post-HF методів рекомендуємо:
+
+\begin{itemize}
+    \item \textbf{Книги:}
+    \begin{itemize}
+        \item T. Helgaker et al., "Molecular Electronic-Structure Theory"
+        \item I. Shavitt, R. J. Bartlett, "Many-Body Methods in Chemistry and Physics"
+        \item R. J. Bartlett, M. Musiał, "Coupled-cluster theory in quantum chemistry"
+    \end{itemize}
+
+    \item \textbf{Огляди:}
+    \begin{itemize}
+        \item CCSD(T): Reviews in Computational Chemistry, Vol. 14
+        \item CASSCF: Chemical Reviews 2012, 112, 108
+        \item Post-HF methods: Wiley Interdisciplinary Reviews: Computational Molecular Science
+    \end{itemize}
+
+    \item \textbf{Документація PySCF:}
+    \begin{itemize}
+        \item \url{https://pyscf.org/user/mp.html} --- MP2, MP3
+        \item \url{https://pyscf.org/user/cc.html} --- Coupled Cluster
+        \item \url{https://pyscf.org/user/mcscf.html} --- CASSCF, CASPT2
+        \item \url{https://pyscf.org/user/fci.html} --- Full CI
+    \end{itemize}
+\end{itemize}
+
+\subsection{Що далі?}
+
+У наступному розділі ми розглянемо аналіз результатів квантово-хімічних розрахунків: орбітальні енергії, густини, заселеності, спектроскопічні властивості та візуалізацію даних.
+

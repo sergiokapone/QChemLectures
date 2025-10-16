@@ -1,0 +1,2260 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+% !TeX root =../PyscfBook.tex
+
+%=========================================================
+\Opensolutionfile{answer}[\currfilebase/\currfilebase-Answers]
+\chapter{Теорія функціоналу густини (DFT)}\label{\currfilebase}
+%=========================================================
+
+
+%% --------------------------------------------------------
+\section{Основи теорії функціоналу густини}
+%% --------------------------------------------------------
+
+
+%% --------------------------------------------------------
+\subsection{Теореми Хоенберга--Кона}
+%% --------------------------------------------------------
+
+Теорія функціоналу густини базується на двох фундаментальних теоремах, доведених Хоенбергом та Коном у 1964 році:
+
+\paragraph{Теорема 1 (Теорема існування).}
+Зовнішній потенціал $v_{\text{ext}}(\mathbf{r})$ (а отже, і повна енергія системи) однозначно визначається електронною густиною основного стану $\rho(\mathbf{r})$ з точністю до адитивної константи.
+
+Це означає, що електронна густина містить всю інформацію про систему:
+\begin{equation}
+E[\rho] = T[\rho] + V_{ee}[\rho] + \int v_{\text{ext}}(\mathbf{r}) \rho(\mathbf{r}) d\mathbf{r}
+\end{equation}
+
+\paragraph{Теорема 2 (Варіаційний принцип).}
+Існує універсальний функціонал енергії $F[\rho]$, який для будь-якої пробної густини $\tilde{\rho}(\mathbf{r})$ задовольняє:
+\begin{equation}
+E_0 \leq E[\tilde{\rho}] = F[\tilde{\rho}] + \int v_{\text{ext}}(\mathbf{r}) \tilde{\rho}(\mathbf{r}) d\mathbf{r}
+\end{equation}
+
+де $E_0$ --- точна енергія основного стану.
+
+\subsection{Рівняння Кона--Шема}
+
+Кон та Шем (1965) запропонували практичний підхід до DFT, замінивши взаємодіючу систему еквівалентною невзаємодіючою системою з такою ж густиною:
+
+\begin{equation}
+\left[-\frac{1}{2}\nabla^2 + v_{\text{eff}}(\mathbf{r})\right] \psi_i(\mathbf{r}) = \varepsilon_i \psi_i(\mathbf{r})
+\end{equation}
+
+Ефективний потенціал визначається як:
+\begin{equation}
+v_{\text{eff}}(\mathbf{r}) = v_{\text{ext}}(\mathbf{r}) + v_H(\mathbf{r}) + v_{xc}(\mathbf{r})
+\end{equation}
+
+де:
+\begin{itemize}
+    \item $v_{\text{ext}}(\mathbf{r})$ --- зовнішній потенціал (від ядер)
+    \item $v_H(\mathbf{r}) = \int \frac{\rho(\mathbf{r}')}{\|\mathbf{r}-\mathbf{r}'\|} d\mathbf{r}'$ --- потенціал Хартрі
+    \item $v_{xc}(\mathbf{r}) = \frac{\delta E_{xc}[\rho]}{\delta \rho(\mathbf{r})}$ --- обмінно-кореляційний потенціал
+\end{itemize}
+
+Електронна густина обчислюється через орбіталі Кона--Шема:
+\begin{equation}
+\rho(\mathbf{r}) = \sum_{i=1}^{N} |\psi_i(\mathbf{r})|^2
+\end{equation}
+
+
+%% --------------------------------------------------------
+\subsection{Обмінно-кореляційна енергія}
+%% --------------------------------------------------------
+
+Повна енергія в DFT:
+\begin{equation}
+E[\rho] = T_s[\rho] + V_{ext}[\rho] + J[\rho] + E_{xc}[\rho]
+\end{equation}
+
+де $E_{xc}[\rho]$ --- обмінно-кореляційна енергія, яка містить:
+\begin{itemize}
+    \item Різницю між точною кінетичною енергією та кінетичною енергією невзаємодіючої системи
+    \item Некласичну частину електрон-електронного відштовхування (обмін + кореляція)
+\end{itemize}
+
+Точний вигляд $E_{xc}[\rho]$ невідомий, тому використовуються наближення (функціонали).
+
+%% --------------------------------------------------------
+\subsection{Порівняння HF та DFT}
+%% --------------------------------------------------------
+
+\begin{center}
+\captionof{figure}{Порівняння методів Хартрі-Фока та DFT}
+\label{tab:hf_vs_dft}
+\begin{tabular}{lll}
+\hline
+\textbf{Аспект} & \textbf{Hartree-Fock} & \textbf{DFT} \\
+\hline
+Базова змінна & Хвильова функція & Електронна густина \\
+Обмін & Точний (нелокальний) & Наближений (локальний) \\
+Кореляція & Відсутня & Включена наближено \\
+Масштабування & $\mathcal{O}(N^4)$ & $\mathcal{O}(N^3)$ \\
+Точність для атомів & Добра якісно & Часто краща кількісно \\
+Збуджені стани & Можливі & Складно (TD-DFT) \\
+\hline
+\end{tabular}
+\end{center}
+
+
+%% --------------------------------------------------------
+\section{Функціонали обміну-кореляції}
+%% --------------------------------------------------------
+
+
+%% --------------------------------------------------------
+\subsection{Класифікація функціоналів: драбина Якова}
+%% --------------------------------------------------------
+
+Функціонали DFT класифікуються за "драбиною Якова" (Jacob's ladder), запропонованою Пердью:
+
+\begin{enumerate}
+    \item \textbf{LDA/LSDA} (Local Density Approximation) --- залежать тільки від $\rho(\mathbf{r})$
+    \item \textbf{GGA} (Generalized Gradient Approximation) --- залежать від $\rho(\mathbf{r})$ та $\nabla\rho(\mathbf{r})$
+    \item \textbf{Meta-GGA} --- додатково залежать від $\nabla^2\rho$ або кінетичної густини $\tau$
+    \item \textbf{Hybrid} --- включають частку точного обміну HF
+    \item \textbf{Double-hybrid} --- включають і HF обмін, і MP2 кореляцію
+\end{enumerate}
+
+
+%% --------------------------------------------------------
+\subsection{LDA та LSDA функціонали}
+%% --------------------------------------------------------
+
+%% --------------------------------------------------------
+\subsubsection{Локальне наближення густини}
+%% --------------------------------------------------------
+
+LDA базується на моделі однорідного електронного газу:
+\begin{equation}
+E_{xc}^{\text{LDA}}[\rho] = \int \rho(\mathbf{r}) \varepsilon_{xc}(\rho(\mathbf{r})) d\mathbf{r}
+\end{equation}
+
+де $\varepsilon_{xc}(\rho)$ --- обмінно-кореляційна енергія на електрон в однорідному газі густини $\rho$.
+
+\paragraph{Обмінна частина (Slater/Dirac):}
+\begin{equation}
+\varepsilon_x^{\text{LDA}}(\rho) = -\frac{3}{4}\left(\frac{3}{\pi}\right)^{1/3} \rho^{1/3}
+\end{equation}
+
+\paragraph{Кореляційна частина:} Використовуються параметризації (VWN, PW92).
+
+\subsubsection{LSDA для спін-поляризованих систем}
+
+Для систем з різними $\rho_\alpha$ та $\rho_\beta$:
+\begin{equation}
+E_{xc}^{\text{LSDA}}[\rho_\alpha, \rho_\beta] = \int \rho \varepsilon_{xc}(\rho_\alpha, \rho_\beta) d\mathbf{r}
+\end{equation}
+
+\begin{minted}{python}
+from pyscf import gto, dft
+
+# Приклад LDA розрахунку атома Ne
+mol = gto.M(
+    atom='Ne 0 0 0',
+    basis='cc-pvdz',
+    spin=0
+)
+
+# LDA функціонал (VWN для кореляції)
+mf = dft.RKS(mol)
+mf.xc = 'lda,vwn'  # або просто 'lda'
+mf.verbose = 4
+energy_lda = mf.kernel()
+
+print(f'\nЕнергія Ne (LDA): {energy_lda:.8f} Ha')
+
+# Порівняння з HF
+from pyscf import scf
+mf_hf = scf.RHF(mol)
+mf_hf.verbose = 0
+energy_hf = mf_hf.kernel()
+
+print(f'Енергія Ne (HF):  {energy_hf:.8f} Ha')
+print(f'Різниця (LDA-HF): {(energy_lda-energy_hf)*1000:.2f} mHa')
+\end{minted}
+
+%% --------------------------------------------------------
+\subsection{GGA функціонали}
+%% --------------------------------------------------------
+
+GGA функціонали враховують не тільки локальну густину, але й її градієнт:
+\begin{equation}
+E_{xc}^{\text{GGA}}[\rho] = \int f(\rho(\mathbf{r}), \nabla\rho(\mathbf{r})) d\mathbf{r}
+\end{equation}
+
+%% --------------------------------------------------------
+\subsubsection{Популярні GGA функціонали}
+%% --------------------------------------------------------
+
+\paragraph{PBE (Perdew-Burke-Ernzerhof, 1996)}
+Найпопулярніший неемпіричний GGA функціонал:
+
+\begin{minted}{python}
+from pyscf import gto, dft
+
+mol = gto.M(atom='C 0 0 0', basis='cc-pvtz', spin=2)
+
+mf = dft.UKS(mol)
+mf.xc = 'pbe'  # або 'pbe,pbe'
+energy_pbe = mf.kernel()
+
+print(f'Енергія C (PBE): {energy_pbe:.8f} Ha')
+\end{minted}
+
+\paragraph{BLYP (Becke88 + Lee-Yang-Parr)}
+Комбінація обміну Becke88 та кореляції LYP:
+
+\begin{minted}{python}
+mf = dft.UKS(mol)
+mf.xc = 'blyp'  # або 'b88,lyp'
+energy_blyp = mf.kernel()
+
+print(f'Енергія C (BLYP): {energy_blyp:.8f} Ha')
+\end{minted}
+
+\paragraph{BP86 (Becke88 + Perdew86)}
+
+\begin{minted}{python}
+mf = dft.UKS(mol)
+mf.xc = 'bp86'
+energy_bp86 = mf.kernel()
+
+print(f'Енергія C (BP86): {energy_bp86:.8f} Ha')
+\end{minted}
+
+\subsubsection{Порівняння GGA функціоналів}
+
+\begin{minted}{python}
+from pyscf import gto, dft
+import numpy as np
+
+# Тестування на атомі Кисню
+mol = gto.M(
+    atom='O 0 0 0',
+    basis='def2-tzvp',
+    spin=2
+)
+
+gga_functionals = ['pbe', 'blyp', 'bp86', 'pw91', 'pberev']
+
+print('Порівняння GGA функціоналів для атома O (³P)')
+print('='*60)
+print(f'{"Функціонал":12s} {"Енергія, Ha":15s} {"Відносно PBE, mHa":20s}')
+print('-'*60)
+
+energies = {}
+
+for xc in gga_functionals:
+    mf = dft.UKS(mol)
+    mf.xc = xc
+    mf.verbose = 0
+    mf.conv_tol = 1e-10
+
+    try:
+        energy = mf.kernel()
+        energies[xc] = energy
+
+        if xc == 'pbe':
+            e_ref = energy
+            rel = 0.0
+        else:
+            rel = (energy - e_ref) * 1000
+
+        print(f'{xc:12s} {energy:15.8f} {rel:20.4f}')
+    except:
+        print(f'{xc:12s} --- помилка розрахунку')
+
+print('='*60)
+\end{minted}
+
+%% --------------------------------------------------------
+\subsection{Meta-GGA функціонали}
+%% --------------------------------------------------------
+
+Meta-GGA функціонали включають додаткову інформацію про систему: кінетичну густину $\tau$ або лапласіан густини $\nabla^2\rho$:
+
+\begin{equation}
+E_{xc}^{\text{meta-GGA}}[\rho] = \int f(\rho, \nabla\rho, \tau) d\mathbf{r}
+\end{equation}
+
+де кінетична густина орбіталей Кона-Шема:
+\begin{equation}
+\tau(\mathbf{r}) = \frac{1}{2} \sum_{i=1}^{N} |\nabla\psi_i(\mathbf{r})|^2
+\end{equation}
+
+\subsubsection{TPSS (Tao-Perdew-Staroverov-Scuseria)}
+
+TPSS --- один з перших успішних meta-GGA функціоналів (2003):
+
+\begin{minted}{python}
+from pyscf import gto, dft
+
+mol = gto.M(
+    atom='Fe 0 0 0',
+    basis='def2-tzvp',
+    spin=4  # ⁵D основний стан
+)
+
+# TPSS meta-GGA
+mf = dft.UKS(mol)
+mf.xc = 'tpss'
+mf.verbose = 4
+energy_tpss = mf.kernel()
+
+print(f'\nЕнергія Fe (TPSS): {energy_tpss:.8f} Ha')
+
+# Порівняння з PBE
+mf_pbe = dft.UKS(mol)
+mf_pbe.xc = 'pbe'
+mf_pbe.verbose = 0
+energy_pbe = mf_pbe.kernel()
+
+print(f'Енергія Fe (PBE):  {energy_pbe:.8f} Ha')
+print(f'Різниця (TPSS-PBE): {(energy_tpss-energy_pbe)*1000:.2f} mHa')
+\end{minted}
+
+\subsubsection{M06-L (Minnesota 06 Local)}
+
+Високопараметризований meta-GGA функціонал для широкого спектру задач:
+
+\begin{minted}{python}
+from pyscf import gto, dft
+
+mol = gto.M(atom='Ni 0 0 0', basis='def2-svp', spin=2)
+
+mf = dft.UKS(mol)
+mf.xc = 'm06l'  # або 'm06-l'
+mf.verbose = 4
+
+try:
+    energy_m06l = mf.kernel()
+    print(f'\nЕнергія Ni (M06-L): {energy_m06l:.8f} Ha')
+except:
+    print('M06-L може бути недоступний у вашій версії PySCF')
+    print('Встановіть: pip install pyscf[geomopt]')
+\end{minted}
+
+\subsubsection{SCAN (Strongly Constrained and Appropriately Normed)}
+
+Сучасний meta-GGA, що задовольняє всі відомі точні умови:
+
+\begin{minted}{python}
+from pyscf import gto, dft
+
+mol = gto.M(atom='C 0 0 0', basis='def2-qzvp', spin=2)
+
+mf = dft.UKS(mol)
+mf.xc = 'scan'
+energy_scan = mf.kernel()
+
+print(f'Енергія C (SCAN): {energy_scan:.8f} Ha')
+\end{minted}
+
+%% --------------------------------------------------------
+\subsection{Гібридні функціонали}
+%% --------------------------------------------------------
+
+Гібридні функціонали комбінують DFT обмін з точним (HF) обміном:
+
+\begin{equation}
+E_{xc}^{\text{hybrid}} = a \cdot E_x^{\text{HF}} + (1-a) \cdot E_x^{\text{DFT}} + E_c^{\text{DFT}}
+\end{equation}
+
+де $a$ --- частка HF обміну (зазвичай 0.2--0.3).
+
+\subsubsection{B3LYP (Becke 3-parameter Lee-Yang-Parr)}
+
+Найпопулярніший гібридний функціонал у хімії:
+
+\begin{equation}
+E_{xc}^{\text{B3LYP}} = E_x^{\text{LDA}} + 0.2(E_x^{\text{HF}} - E_x^{\text{LDA}}) + 0.72 \cdot E_x^{\text{B88}} + 0.81 \cdot E_c^{\text{LYP}} + 0.19 \cdot E_c^{\text{VWN}}
+\end{equation}
+
+\begin{minted}{python}
+from pyscf import gto, dft
+
+mol = gto.M(
+    atom='N 0 0 0',
+    basis='6-311+g(d,p)',
+    spin=3
+)
+
+# B3LYP розрахунок
+mf = dft.UKS(mol)
+mf.xc = 'b3lyp'
+mf.verbose = 4
+energy_b3lyp = mf.kernel()
+
+print(f'\nЕнергія N (B3LYP): {energy_b3lyp:.8f} Ha')
+
+# Аналіз компонентів
+print(f'\nВнесок точного обміну: 20%')
+print(f'Це робить розрахунок повільнішим, але точнішим')
+\end{minted}
+
+\subsubsection{PBE0 (PBE hybrid)}
+
+Неемпіричний гібрид з 25% HF обміну:
+
+\begin{equation}
+E_{xc}^{\text{PBE0}} = 0.25 \cdot E_x^{\text{HF}} + 0.75 \cdot E_x^{\text{PBE}} + E_c^{\text{PBE}}
+\end{equation}
+
+\begin{minted}{python}
+from pyscf import gto, dft
+
+mol = gto.M(atom='O 0 0 0', basis='aug-cc-pvtz', spin=2)
+
+mf = dft.UKS(mol)
+mf.xc = 'pbe0'
+energy_pbe0 = mf.kernel()
+
+print(f'Енергія O (PBE0): {energy_pbe0:.8f} Ha')
+\end{minted}
+
+
+\subsubsection{CAM-B3LYP (Coulomb-Attenuated Method)}
+
+Функціонал з дальньодіючою корекцією (range-separated):
+
+\begin{equation}
+\frac{1}{r_{12}} = \frac{\alpha + \beta \cdot \text{erf}(\mu r_{12})}{r_{12}} + \frac{1-[\alpha+\beta \cdot \text{erf}(\mu r_{12})]}{r_{12}}
+\end{equation}
+
+\begin{minted}{python}
+from pyscf import gto, dft
+
+mol = gto.M(atom='F 0 0 0', basis='cc-pvqz', spin=1)
+
+mf = dft.UKS(mol)
+mf.xc = 'camb3lyp'  # або 'cam-b3lyp'
+energy_camb3lyp = mf.kernel()
+
+print(f'Енергія F (CAM-B3LYP): {energy_camb3lyp:.8f} Ha')
+\end{minted}
+
+%% --------------------------------------------------------
+\subsubsection{M06-2X та інші Minnesota функціонали}
+%% --------------------------------------------------------
+
+Родина M06 з різною часткою HF обміну:
+
+\begin{itemize}
+    \item M06-L: 0\% HF (meta-GGA)
+    \item M06: 27\% HF
+    \item M06-2X: 54\% HF (для кінетики, слабких взаємодій)
+    \item M06-HF: 100\% HF
+\end{itemize}
+
+\begin{minted}{python}
+from pyscf import gto, dft
+
+mol = gto.M(atom='Ar 0 0 0', basis='def2-tzvp', spin=0)
+
+# Порівняння M06 функціоналів
+m06_functionals = {
+    'm06l': 'M06-L (0% HF)',
+    'm06': 'M06 (27% HF)',
+    'm062x': 'M06-2X (54% HF)'
+}
+
+print('Порівняння M06 функціоналів для Ar')
+print('='*60)
+
+for xc, name in m06_functionals.items():
+    mf = dft.RKS(mol)
+    mf.xc = xc
+    mf.verbose = 0
+
+    try:
+        energy = mf.kernel()
+        print(f'{name:20s}: {energy:.8f} Ha')
+    except:
+        print(f'{name:20s}: недоступний')
+\end{minted}
+
+%% --------------------------------------------------------
+\subsection{Порівняння різних рівнів теорії}
+%% --------------------------------------------------------
+
+\begin{minted}{python}
+from pyscf import gto, scf, dft
+import numpy as np
+import matplotlib.pyplot as plt
+
+def compare_functionals(symbol, spin, basis='cc-pvtz'):
+    """
+    Систематичне порівняння функціоналів
+    """
+
+    mol = gto.M(
+        atom=f'{symbol} 0 0 0',
+        basis=basis,
+        spin=spin,
+        verbose=0
+    )
+
+    # Список методів для порівняння
+    methods = [
+        ('HF', 'scf'),
+        ('LDA', 'lda'),
+        ('PBE', 'pbe'),
+        ('BLYP', 'blyp'),
+        ('TPSS', 'tpss'),
+        ('B3LYP', 'b3lyp'),
+        ('PBE0', 'pbe0'),
+        ('CAM-B3LYP', 'camb3lyp'),
+    ]
+
+    energies = []
+    labels = []
+
+    print(f'\nПорівняння методів для {symbol} (базис: {basis})')
+    print('='*70)
+    print(f'{"Метод":15s} {"Енергія, Ha":15s} {"Відносно HF, mHa":20s}')
+    print('-'*70)
+
+    for name, method in methods:
+        try:
+            if method == 'scf':
+                if spin == 0:
+                    mf = scf.RHF(mol)
+                else:
+                    mf = scf.UHF(mol)
+            else:
+                if spin == 0:
+                    mf = dft.RKS(mol)
+                else:
+                    mf = dft.UKS(mol)
+                mf.xc = method
+
+            mf.verbose = 0
+            mf.conv_tol = 1e-10
+            energy = mf.kernel()
+
+            if mf.converged:
+                energies.append(energy)
+                labels.append(name)
+
+                if name == 'HF':
+                    e_ref = energy
+                    rel = 0.0
+                else:
+                    rel = (energy - e_ref) * 1000
+
+                print(f'{name:15s} {energy:15.8f} {rel:20.4f}')
+            else:
+                print(f'{name:15s} не конвергувало')
+        except Exception as e:
+            print(f'{name:15s} помилка: {str(e)[:30]}')
+
+    print('='*70)
+
+    # Графік
+    if len(energies) > 1:
+        fig, ax = plt.subplots(figsize=(10, 6))
+
+        x = np.arange(len(labels))
+        colors = ['red' if l == 'HF' else
+                 'blue' if l in ['LDA', 'PBE', 'BLYP', 'TPSS'] else
+                 'green' for l in labels]
+
+        bars = ax.bar(x, energies, color=colors, alpha=0.7)
+        ax.set_xticks(x)
+        ax.set_xticklabels(labels, rotation=45, ha='right')
+        ax.set_ylabel('Енергія (Ha)', fontsize=12)
+        ax.set_title(f'Порівняння методів для атома {symbol}',
+                    fontsize=14)
+        ax.grid(True, alpha=0.3, axis='y')
+
+        # Легенда
+        from matplotlib.patches import Patch
+        legend_elements = [
+            Patch(facecolor='red', alpha=0.7, label='HF'),
+            Patch(facecolor='blue', alpha=0.7, label='Pure DFT'),
+            Patch(facecolor='green', alpha=0.7, label='Hybrid DFT')
+        ]
+        ax.legend(handles=legend_elements, loc='best')
+
+        plt.tight_layout()
+        plt.savefig(f'{symbol}_functionals_comparison.pdf')
+        plt.show()
+
+    return energies, labels
+
+# Тестування на різних атомах
+energies_c, labels_c = compare_functionals('C', spin=2)
+energies_ne, labels_ne = compare_functionals('Ne', spin=0)
+energies_fe, labels_fe = compare_functionals('Fe', spin=4,
+                                             basis='def2-svp')
+\end{minted}
+
+\subsection{Вибір функціоналу: рекомендації}
+
+\begin{table}[h]
+\centering
+\caption{Рекомендовані функціонали для різних задач}
+\label{tab:functional_recommendations}
+\small
+\begin{tabular}{lll}
+\hline
+\textbf{Задача} & \textbf{Функціонал} & \textbf{Коментар} \\
+\hline
+Швидкі розрахунки & PBE & Добра точність/швидкість \\
+Енергії атомізації & B3LYP, PBE0 & Стандарт у хімії \\
+Перехідні метали & TPSSh, M06 & Краще для d-електронів \\
+Слабкі взаємодії & M06-2X, ωB97X-D & З дисперсією \\
+Високоспінові стани & SCAN, TPSSh & Кращий баланс \\
+Загальні розрахунки & PBE0 & Універсальний вибір \\
+Максимальна точність & CCSD(T) & Але дуже повільно \\
+\hline
+\end{tabular}
+\end{table}
+
+%% --------------------------------------------------------
+\subsection{Практичний приклад: вплив функціоналу на властивості}
+%% --------------------------------------------------------
+
+\begin{minted}{python}
+from pyscf import gto, scf, dft
+
+def analyze_functional_effect(symbol, charge, spin_n, spin_c,
+                              basis='aug-cc-pvtz'):
+    """
+    Аналіз впливу функціоналу на енергію іонізації
+    """
+
+    functionals = ['pbe', 'blyp', 'b3lyp', 'pbe0', 'cam-b3lyp']
+
+    print(f'\nЕнергії іонізації {symbol} (базис: {basis})')
+    print('='*70)
+    print(f'{"Метод":15s} {"E(A), Ha":15s} {"E(A+), Ha":15s} '
+          f'{"IE, eV":10s}')
+    print('-'*70)
+
+    # HF референс
+    mol_n = gto.M(atom=f'{symbol} 0 0 0', basis=basis,
+                  charge=charge, spin=spin_n, verbose=0)
+    mol_c = gto.M(atom=f'{symbol} 0 0 0', basis=basis,
+                  charge=charge+1, spin=spin_c, verbose=0)
+
+    if spin_n == 0:
+        mf_n = scf.RHF(mol_n)
+    else:
+        mf_n = scf.UHF(mol_n)
+
+    if spin_c == 0:
+        mf_c = scf.RHF(mol_c)
+    else:
+        mf_c = scf.UHF(mol_c)
+
+    mf_n.verbose = 0
+    mf_c.verbose = 0
+
+    e_n_hf = mf_n.kernel()
+    e_c_hf = mf_c.kernel()
+    ie_hf = (e_c_hf - e_n_hf) * 27.211386
+
+    print(f'{"HF":15s} {e_n_hf:15.8f} {e_c_hf:15.8f} {ie_hf:10.4f}')
+
+    # DFT функціонали
+    for xc in functionals:
+        if spin_n == 0:
+            mf_n = dft.RKS(mol_n)
+        else:
+            mf_n = dft.UKS(mol_n)
+
+        if spin_c == 0:
+            mf_c = dft.RKS(mol_c)
+        else:
+            mf_c = dft.UKS(mol_c)
+
+        mf_n.xc = xc
+        mf_c.xc = xc
+        mf_n.verbose = 0
+        mf_c.verbose = 0
+
+        try:
+            e_n = mf_n.kernel()
+            e_c = mf_c.kernel()
+            ie = (e_c - e_n) * 27.211386
+
+            print(f'{xc.upper():15s} {e_n:15.8f} {e_c:15.8f} '
+                  f'{ie:10.4f}')
+        except:
+            print(f'{xc.upper():15s} помилка розрахунку')
+
+    print('='*70)
+
+# Приклади
+analyze_functional_effect('C', 0, 2, 1)   # C → C+
+analyze_functional_effect('O', 0, 2, 3)   # O → O+
+analyze_functional_effect('Ne', 0, 0, 1)  # Ne → Ne+
+\end{minted}
+
+
+%% --------------------------------------------------------
+\section{DFT розрахунки атомів}
+%% --------------------------------------------------------
+
+
+%% --------------------------------------------------------
+\subsection{Базова структура DFT розрахунку}
+%% --------------------------------------------------------
+
+DFT розрахунки в PySCF використовують класи \texttt{RKS} (Restricted Kohn-Sham) та \texttt{UKS} (Unrestricted Kohn-Sham), аналогічні до RHF/UHF:
+
+\begin{minted}{python}
+from pyscf import gto, dft
+
+# Замкнена оболонка (RKS)
+mol_he = gto.M(atom='He 0 0 0', basis='cc-pvtz', spin=0)
+mf_he = dft.RKS(mol_he)
+mf_he.xc = 'pbe0'
+e_he = mf_he.kernel()
+
+print(f'He (RKS/PBE0): {e_he:.8f} Ha')
+
+# Відкрита оболонка (UKS)
+mol_li = gto.M(atom='Li 0 0 0', basis='cc-pvtz', spin=1)
+mf_li = dft.UKS(mol_li)
+mf_li.xc = 'pbe0'
+e_li = mf_li.kernel()
+
+print(f'Li (UKS/PBE0): {e_li:.8f} Ha')
+\end{minted}
+
+
+%% --------------------------------------------------------
+\subsection{Систематичний розрахунок атомів другого періоду}
+%% --------------------------------------------------------
+
+\begin{minted}{python}
+from pyscf import gto, dft
+import numpy as np
+
+def dft_second_period(functional='pbe', basis='def2-tzvp'):
+    """
+    Розрахунок всіх атомів другого періоду
+    """
+
+    atoms_data = [
+        ('Li', 1, '²S'), ('Be', 0, '¹S'), ('B',  1, '²P'),
+        ('C',  2, '³P'), ('N',  3, '⁴S'), ('O',  2, '³P'),
+        ('F',  1, '²P'), ('Ne', 0, '¹S')
+    ]
+
+    print(f'\nАтоми 2-го періоду ({functional.upper()}/{basis})')
+    print('='*80)
+    print(f'{"Атом":4s} {"Терм":6s} {"2S":3s} {"Енергія, Ha":15s} '
+          f'{"Енергія, eV":12s} {"<S²>":8s}')
+    print('-'*80)
+
+    energies = {}
+
+    for symbol, spin, term in atoms_data:
+        mol = gto.M(
+            atom=f'{symbol} 0 0 0',
+            basis=basis,
+            spin=spin,
+            symmetry=True,
+            verbose=0
+        )
+
+        if spin == 0:
+            mf = dft.RKS(mol)
+        else:
+            mf = dft.UKS(mol)
+
+        mf.xc = functional
+        mf.conv_tol = 1e-10
+        energy = mf.kernel()
+
+        energies[symbol] = energy
+        e_ev = energy * 27.211386
+
+        if spin == 0:
+            s2 = 0.0
+        else:
+            s2_result = mf.spin_square()
+            s2 = s2_result[0]
+
+        print(f'{symbol:4s} {term:6s} {spin:3d} {energy:15.8f} '
+              f'{e_ev:12.2f} {s2:8.4f}')
+
+    print('='*80)
+
+    return energies
+
+# Розрахунки з різними функціоналами
+energies_pbe = dft_second_period('pbe')
+energies_b3lyp = dft_second_period('b3lyp')
+energies_pbe0 = dft_second_period('pbe0')
+\end{minted}
+
+
+%% --------------------------------------------------------
+\subsection{Розрахунок атомів перехідних металів}
+%% --------------------------------------------------------
+
+Атоми перехідних металів --- складна задача через багато близьких за енергією станів:
+
+\begin{minted}{python}
+from pyscf import gto, dft
+
+def transition_metal_dft(symbol, spin, functional='tpss',
+                         basis='def2-tzvp'):
+    """
+    DFT розрахунок атома перехідного металу
+    """
+
+    print(f'\nРозрахунок {symbol} (2S={spin}, {functional.upper()})')
+    print('='*60)
+
+    mol = gto.M(
+        atom=f'{symbol} 0 0 0',
+        basis=basis,
+        spin=spin,
+        symmetry=False,  # Часто краще без симетрії
+        verbose=0
+    )
+
+    mf = dft.UKS(mol)
+    mf.xc = functional
+
+    # Налаштування для важких випадків
+    mf.conv_tol = 1e-8
+    mf.max_cycle = 200
+    mf.diis_space = 12
+
+    # Для перехідних металів часто потрібен level shift
+    if symbol in ['Cr', 'Mn', 'Fe', 'Co', 'Ni']:
+        mf.level_shift = 0.3
+
+    mf.verbose = 4
+    energy = mf.kernel()
+
+    if mf.converged:
+        s2 = mf.spin_square()
+        expected_s2 = spin * (spin + 2) / 4
+
+        print(f'\nРезультати:')
+        print(f'  Енергія: {energy:.8f} Ha')
+        print(f'  <S²>: {s2[0]:.4f} (очікується {expected_s2:.4f})')
+        print(f'  Забруднення спіном: {s2[0] - expected_s2:.4f}')
+
+        # Заселеності d-орбіталей
+        from pyscf import lo
+        pop = mf.mulliken_pop()
+
+        return energy, s2[0]
+    else:
+        print('\nНе конвергувало!')
+        return None, None
+
+# Приклади 3d металів
+# Sc: [Ar] 3d¹ 4s², ²D
+e_sc, s2_sc = transition_metal_dft('Sc', spin=1, functional='pbe')
+
+# Ti: [Ar] 3d² 4s², ³F
+e_ti, s2_ti = transition_metal_dft('Ti', spin=2, functional='pbe')
+
+# V: [Ar] 3d³ 4s², ⁴F
+e_v, s2_v = transition_metal_dft('V', spin=3, functional='pbe')
+
+# Cr: [Ar] 3d⁵ 4s¹, ⁷S (виняток!)
+e_cr, s2_cr = transition_metal_dft('Cr', spin=6, functional='pbe')
+
+# Mn: [Ar] 3d⁵ 4s², ⁶S
+e_mn, s2_mn = transition_metal_dft('Mn', spin=5, functional='pbe')
+
+# Fe: [Ar] 3d⁶ 4s², ⁵D
+e_fe, s2_fe = transition_metal_dft('Fe', spin=4, functional='pbe')
+\end{minted}
+
+%% --------------------------------------------------------
+\subsection{Порівняння спінових станів}
+%% --------------------------------------------------------
+
+Для деяких атомів важливо порівняти різні спінові стани:
+
+\begin{minted}{python}
+from pyscf import gto, dft
+import matplotlib.pyplot as plt
+
+def compare_spin_states(symbol, spin_list, functional='pbe0',
+                       basis='def2-tzvp'):
+    """
+    Порівняння енергій різних спінових станів
+    """
+
+    print(f'\nПорівняння спінових станів {symbol}')
+    print(f'Функціонал: {functional.upper()}, базис: {basis}')
+    print('='*70)
+    print(f'{"2S":5s} {"Mult":5s} {"Енергія, Ha":15s} '
+          f'{"Відносна, kcal/mol":20s}')
+    print('-'*70)
+
+    energies = []
+    spins = []
+
+    for spin in spin_list:
+        mol = gto.M(
+            atom=f'{symbol} 0 0 0',
+            basis=basis,
+            spin=spin,
+            verbose=0
+        )
+
+        if spin == 0:
+            mf = dft.RKS(mol)
+        else:
+            mf = dft.UKS(mol)
+
+        mf.xc = functional
+        mf.conv_tol = 1e-10
+        mf.max_cycle = 150
+
+        try:
+            energy = mf.kernel()
+
+            if mf.converged:
+                energies.append(energy)
+                spins.append(spin)
+
+                mult = spin + 1
+
+                if len(energies) == 1:
+                    e_ref = energy
+                    rel = 0.0
+                else:
+                    rel = (energy - e_ref) * 627.509  # kcal/mol
+
+                marker = ' ← найнижча' if energy == min(energies) else ''
+                print(f'{spin:5d} {mult:5d} {energy:15.8f} '
+                      f'{rel:20.4f}{marker}')
+        except:
+            print(f'{spin:5d} {spin+1:5d} не конвергувало')
+
+    print('='*70)
+
+    # Графік
+    if len(energies) > 1:
+        fig, ax = plt.subplots(figsize=(10, 6))
+
+        # Відносні енергії в kcal/mol
+        e_min = min(energies)
+        rel_energies = [(e - e_min) * 627.509 for e in energies]
+
+        ax.plot(spins, rel_energies, 'o-', markersize=10, linewidth=2)
+        ax.axhline(y=0, color='gray', linestyle='--', alpha=0.5)
+
+        ax.set_xlabel('2S', fontsize=12)
+        ax.set_ylabel('Відносна енергія (kcal/mol)', fontsize=12)
+        ax.set_title(f'Спінові стани {symbol} '
+                    f'({functional.upper()})', fontsize=14)
+        ax.grid(True, alpha=0.3)
+
+        # Підписи мультиплетностей
+        for s, e in zip(spins, rel_energies):
+            ax.text(s, e+1, f'M={s+1}', ha='center', fontsize=9)
+
+        plt.tight_layout()
+        plt.savefig(f'{symbol}_spin_states_{functional}.pdf')
+        plt.show()
+
+    return energies, spins
+
+# Приклад: Карбон (різні спінові стани)
+# Основний стан C: ³P (триплет, 2S=2)
+# Збуджені: ¹D (синглет, 2S=0), ¹S (синглет, 2S=0)
+energies_c, spins_c = compare_spin_states('C', [0, 2, 4],
+                                          functional='pbe0')
+
+# Залізо (різні спінові стани)
+# Fe може бути у низькоспіновому, середньо- та високоспіновому станах
+energies_fe, spins_fe = compare_spin_states('Fe', [0, 2, 4, 6],
+                                            functional='tpss',
+                                            basis='def2-svp')
+\end{minted}
+
+
+%% --------------------------------------------------------
+\subsection{Аналіз d-орбіталей перехідних металів}
+%% --------------------------------------------------------
+
+\begin{minted}{python}
+from pyscf import gto, dft, lo
+import numpy as np
+
+def analyze_d_orbitals(symbol, spin, functional='pbe',
+                       basis='def2-tzvp'):
+    """
+    Аналіз заселеності d-орбіталей
+    """
+
+    mol = gto.M(
+        atom=f'{symbol} 0 0 0',
+        basis=basis,
+        spin=spin,
+        verbose=0
+    )
+
+    mf = dft.UKS(mol)
+    mf.xc = functional
+    mf.verbose = 0
+    energy = mf.kernel()
+
+    if not mf.converged:
+        print(f'Не конвергувало для {symbol}')
+        return
+
+    print(f'\nАналіз d-орбіталей {symbol} ({functional.upper()})')
+    print('='*70)
+
+    # Заселеності Малікена
+    pop, chg = mf.mulliken_pop()
+
+    # Пошук d-орбіталей
+    ao_labels = mol.ao_labels(fmt=False)
+
+    d_orbitals_alpha = []
+    d_orbitals_beta = []
+
+    for i, label in enumerate(ao_labels):
+        atom_id, atom_symbol, shell_type, *rest = label
+        if shell_type.startswith('3d'):
+            # Альфа заселеність
+            dm_alpha = mf.make_rdm1()[0]
+            s = mol.intor('int1e_ovlp')
+            pop_alpha = (dm_alpha @ s)[i, i]
+
+            # Бета заселеність
+            dm_beta = mf.make_rdm1()[1]
+            pop_beta = (dm_beta @ s)[i, i]
+
+            d_orbitals_alpha.append((shell_type, pop_alpha))
+            d_orbitals_beta.append((shell_type, pop_beta))
+
+    if d_orbitals_alpha:
+        print('\nЗаселеності d-орбіталей:')
+        print(f'{"Орбіталь":12s} {"α":10s} {"β":10s} {"Сума":10s} '
+              f'{"Спін":10s}')
+        print('-'*70)
+
+        for (orb_a, pop_a), (orb_b, pop_b) in zip(d_orbitals_alpha,
+                                                   d_orbitals_beta):
+            total = pop_a + pop_b
+            spin_dens = pop_a - pop_b
+            print(f'{orb_a:12s} {pop_a:10.4f} {pop_b:10.4f} '
+                  f'{total:10.4f} {spin_dens:10.4f}')
+
+        # Загальна заселеність d-оболонки
+        total_d_alpha = sum(p for _, p in d_orbitals_alpha)
+        total_d_beta = sum(p for _, p in d_orbitals_beta)
+
+        print('-'*70)
+        print(f'{"Разом":12s} {total_d_alpha:10.4f} '
+              f'{total_d_beta:10.4f} '
+              f'{total_d_alpha+total_d_beta:10.4f} '
+              f'{total_d_alpha-total_d_beta:10.4f}')
+
+    # Орбітальні енергії
+    print(f'\nОрбітальні енергії (eV):')
+    print(f'{"MO":5s} {"α-енергія":12s} {"β-енергія":12s} '
+          f'{"Заповнення":15s}')
+    print('-'*70)
+
+    n_alpha, n_beta = mol.nelec
+
+    for i in range(min(10, len(mf.mo_energy[0]))):
+        e_alpha = mf.mo_energy[0][i] * 27.211386
+        e_beta = mf.mo_energy[1][i] * 27.211386
+
+        occ_a = 'occ' if i < n_alpha else 'virt'
+        occ_b = 'occ' if i < n_beta else 'virt'
+
+        print(f'{i+1:5d} {e_alpha:12.4f} {e_beta:12.4f} '
+              f'α:{occ_a:5s} β:{occ_b:5s}')
+
+# Приклади
+analyze_d_orbitals('Sc', spin=1)
+analyze_d_orbitals('Ti', spin=2)
+analyze_d_orbitals('V', spin=3)
+analyze_d_orbitals('Cr', spin=6)
+analyze_d_orbitals('Mn', spin=5)
+analyze_d_orbitals('Fe', spin=4)
+analyze_d_orbitals('Co', spin=3)
+analyze_d_orbitals('Ni', spin=2)
+analyze_d_orbitals('Cu', spin=1)
+analyze_d_orbitals('Zn', spin=0)
+\end{minted}
+
+
+%% --------------------------------------------------------
+\subsection{Розрахунок важких атомів}
+%% --------------------------------------------------------
+
+Для важких атомів (4d, 5d, 4f, 5f) важливі релятивістські ефекти:
+
+\begin{minted}{python}
+from pyscf import gto, dft
+
+def heavy_atom_calculation(symbol, spin, functional='pbe',
+                           basis='def2-svp', relativistic=False):
+    """
+    Розрахунок важкого атома з/без релятивістських ефектів
+    """
+
+    mol = gto.M(
+        atom=f'{symbol} 0 0 0',
+        basis=basis,
+        spin=spin,
+        verbose=0
+    )
+
+    mf = dft.UKS(mol)
+    mf.xc = functional
+
+    if relativistic:
+        # X2C (exact 2-component) релятивістський гамільтоніан
+        mf = mf.x2c()
+        print(f'\nРозрахунок {symbol} з X2C релятивістськими '
+              f'корекціями')
+    else:
+        print(f'\nРозрахунок {symbol} (нерелятивістський)')
+
+    mf.conv_tol = 1e-9
+    mf.max_cycle = 150
+    energy = mf.kernel()
+
+    print(f'Енергія: {energy:.8f} Ha')
+
+    return energy
+
+# Порівняння релятивістських ефектів
+print('Порівняння релятивістських ефектів')
+print('='*70)
+
+# 5d метал: Золото
+print('\nЗолото (Au):')
+e_au_nr = heavy_atom_calculation('Au', spin=1, relativistic=False)
+e_au_r = heavy_atom_calculation('Au', spin=1, relativistic=True)
+rel_effect = (e_au_r - e_au_nr) * 627.509  # kcal/mol
+print(f'Релятивістський ефект: {rel_effect:.2f} kcal/mol')
+
+# 4f метал: Гадоліній
+print('\nГадоліній (Gd):')
+e_gd_nr = heavy_atom_calculation('Gd', spin=8, basis='def2-svp',
+                                 relativistic=False)
+e_gd_r = heavy_atom_calculation('Gd', spin=8, basis='def2-svp',
+                                relativistic=True)
+rel_effect = (e_gd_r - e_gd_nr) * 627.509
+print(f'Релятивістський ефект: {rel_effect:.2f} kcal/mol')
+\end{minted}
+
+
+%% --------------------------------------------------------
+\subsection{Числові сітки в DFT}
+%% --------------------------------------------------------
+
+Точність DFT розрахунків залежить від якості числової сітки для інтегрування:
+
+\begin{minted}{python}
+from pyscf import gto, dft
+import numpy as np
+
+def test_grid_quality(symbol, spin, functional='pbe',
+                     basis='cc-pvtz'):
+    """
+    Тестування впливу якості сітки на результати
+    """
+
+    mol = gto.M(
+        atom=f'{symbol} 0 0 0',
+        basis=basis,
+        spin=spin,
+        verbose=0
+    )
+
+    # Різні рівні сіток
+    grids = [
+        (1, 'грубо'),
+        (2, 'середньо'),
+        (3, 'добре (за замовчуванням)'),
+        (4, 'дуже добре'),
+        (5, 'ультра добре')
+    ]
+
+    print(f'\nВплив якості сітки на енергію {symbol}')
+    print(f'Функціонал: {functional.upper()}, базис: {basis}')
+    print('='*70)
+    print(f'{"Рівень":8s} {"Опис":30s} {"Енергія, Ha":15s} '
+          f'{"ΔE, μHa":10s}')
+    print('-'*70)
+
+    energies = []
+
+    for level, description in grids:
+        if spin == 0:
+            mf = dft.RKS(mol)
+        else:
+            mf = dft.UKS(mol)
+
+        mf.xc = functional
+        mf.grids.level = level
+        mf.verbose = 0
+        mf.conv_tol = 1e-11
+
+        energy = mf.kernel()
+        energies.append(energy)
+
+        if len(energies) == 1:
+            e_ref = energy
+            delta = 0.0
+        else:
+            delta = (energy - e_ref) * 1e6  # microHartree
+
+        print(f'{level:8d} {description:30s} {energy:15.8f} '
+              f'{delta:10.2f}')
+
+    print('='*70)
+
+    # Оцінка збіжності
+    if len(energies) >= 3:
+        conv = abs(energies[-1] - energies[-2]) * 1e6
+        print(f'\nЗбіжність (рівні 4→5): {conv:.4f} μHa')
+        if conv < 1.0:
+            print('Сітка рівня 4 достатня для точних розрахунків')
+        else:
+            print('Для високої точності використовуйте рівень 5')
+
+# Тестування
+test_grid_quality('C', spin=2)
+test_grid_quality('Fe', spin=4, basis='def2-svp')
+test_grid_quality('Kr', spin=0)
+\end{minted}
+
+%% --------------------------------------------------------
+\subsection{Паралелізація DFT розрахунків}
+%% --------------------------------------------------------
+
+
+\begin{minted}{python}
+from pyscf import gto, dft
+import os
+
+# Налаштування кількості потоків
+os.environ['OMP_NUM_THREADS'] = '4'  # 4 потоки
+
+mol = gto.M(
+    atom='Br 0 0 0',
+    basis='def2-tzvp',
+    spin=1,
+    verbose=4
+)
+
+mf = dft.UKS(mol)
+mf.xc = 'pbe0'
+
+# DFT розрахунки автоматично використовують паралелізацію
+# для обчислення інтегралів та Фок-матриць
+energy = mf.kernel()
+
+print(f'\nЕнергія Br: {energy:.8f} Ha')
+print(f'Використано потоків: {os.environ.get("OMP_NUM_THREADS")}')
+\end{minted}
+
+%% --------------------------------------------------------
+\section{Порівняння HF та DFT результатів}
+%% --------------------------------------------------------
+
+
+%% --------------------------------------------------------
+\subsection{Систематичне порівняння енергій}
+%% --------------------------------------------------------
+
+\begin{minted}{python}
+from pyscf import gto, scf, dft
+import numpy as np
+import matplotlib.pyplot as plt
+
+def comprehensive_comparison(atoms_list, basis='cc-pvtz'):
+    """
+    Детальне порівняння HF та DFT для списку атомів
+    """
+
+    methods = {
+        'HF': None,
+        'LDA': 'lda',
+        'PBE': 'pbe',
+        'BLYP': 'blyp',
+        'B3LYP': 'b3lyp',
+        'PBE0': 'pbe0'
+    }
+
+    results = {method: [] for method in methods}
+    atom_symbols = []
+
+    print(f'\nПорівняння методів (базис: {basis})')
+    print('='*90)
+    print(f'{"Атом":6s} {"HF":15s} {"LDA":15s} {"PBE":15s} '
+          f'{"BLYP":15s} {"B3LYP":15s} {"PBE0":15s}')
+    print('-'*90)
+
+    for symbol, spin in atoms_list:
+        mol = gto.M(
+            atom=f'{symbol} 0 0 0',
+            basis=basis,
+            spin=spin,
+            verbose=0
+        )
+
+        energies_row = []
+
+        # HF
+        if spin == 0:
+            mf = scf.RHF(mol)
+        else:
+            mf = scf.UHF(mol)
+        mf.verbose = 0
+        mf.conv_tol = 1e-10
+        e_hf = mf.kernel()
+        results['HF'].append(e_hf)
+        energies_row.append(e_hf)
+
+        # DFT функціонали
+        for method in ['LDA', 'PBE', 'BLYP', 'B3LYP', 'PBE0']:
+            if spin == 0:
+                mf = dft.RKS(mol)
+            else:
+                mf = dft.UKS(mol)
+
+            mf.xc = methods[method]
+            mf.verbose = 0
+            mf.conv_tol = 1e-10
+
+            try:
+                energy = mf.kernel()
+                results[method].append(energy)
+                energies_row.append(energy)
+            except:
+                results[method].append(np.nan)
+                energies_row.append(np.nan)
+
+        atom_symbols.append(symbol)
+
+        # Виведення рядка
+        row_str = f'{symbol:6s}'
+        for e in energies_row:
+            if not np.isnan(e):
+                row_str += f' {e:15.8f}'
+            else:
+                row_str += f' {"N/A":15s}'
+        print(row_str)
+
+    print('='*90)
+
+    # Аналіз різниць
+    print('\nРізниці відносно HF (mHa):')
+    print('='*90)
+    print(f'{"Атом":6s} {"LDA-HF":12s} {"PBE-HF":12s} '
+          f'{"BLYP-HF":12s} {"B3LYP-HF":12s} {"PBE0-HF":12s}')
+    print('-'*90)
+
+    for i, symbol in enumerate(atom_symbols):
+        row_str = f'{symbol:6s}'
+        e_hf = results['HF'][i]
+
+        for method in ['LDA', 'PBE', 'BLYP', 'B3LYP', 'PBE0']:
+            e_dft = results[method][i]
+            if not np.isnan(e_dft):
+                diff = (e_dft - e_hf) * 1000
+                row_str += f' {diff:12.4f}'
+            else:
+                row_str += f' {"N/A":12s}'
+        print(row_str)
+
+    print('='*90)
+
+    # Графік
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
+
+    # Абсолютні енергії
+    x = np.arange(len(atom_symbols))
+    width = 0.14
+
+    for i, method in enumerate(methods.keys()):
+        offset = (i - 2.5) * width
+        energies = results[method]
+        ax1.bar(x + offset, energies, width, label=method)
+
+    ax1.set_xlabel('Атом', fontsize=12)
+    ax1.set_ylabel('Енергія (Ha)', fontsize=12)
+    ax1.set_title('Абсолютні енергії', fontsize=14)
+    ax1.set_xticks(x)
+    ax1.set_xticklabels(atom_symbols)
+    ax1.legend()
+    ax1.grid(True, alpha=0.3, axis='y')
+
+    # Різниці відносно HF
+    for i, method in enumerate(['LDA', 'PBE', 'BLYP', 'B3LYP', 'PBE0']):
+        offset = (i - 2) * width
+        diffs = [(results[method][j] - results['HF'][j]) * 1000
+                 for j in range(len(atom_symbols))]
+        ax2.bar(x + offset, diffs, width, label=method)
+
+    ax2.axhline(y=0, color='black', linestyle='-', linewidth=0.8)
+    ax2.set_xlabel('Атом', fontsize=12)
+    ax2.set_ylabel('ΔE відносно HF (mHa)', fontsize=12)
+    ax2.set_title('Різниці енергій', fontsize=14)
+    ax2.set_xticks(x)
+    ax2.set_xticklabels(atom_symbols)
+    ax2.legend()
+    ax2.grid(True, alpha=0.3)
+
+    plt.tight_layout()
+    plt.savefig('hf_vs_dft_comparison.pdf')
+    plt.show()
+
+    return results
+
+# Атоми другого періоду
+atoms_2nd = [
+    ('Li', 1), ('Be', 0), ('B', 1), ('C', 2),
+    ('N', 3), ('O', 2), ('F', 1), ('Ne', 0)
+]
+
+results = comprehensive_comparison(atoms_2nd, basis='cc-pvtz')
+\end{minted}
+
+
+%% --------------------------------------------------------
+\subsection{Порівняння енергій іонізації}
+%% --------------------------------------------------------
+
+\begin{minted}{python}
+from pyscf import gto, scf, dft
+import numpy as np
+import matplotlib.pyplot as plt
+
+def compare_ionization_energies(atoms_data, basis='aug-cc-pvtz'):
+    """
+    Порівняння розрахункових та експериментальних IE
+    """
+
+    methods = ['HF', 'LDA', 'PBE', 'B3LYP', 'PBE0']
+
+    print(f'\nЕнергії іонізації (eV), базис: {basis}')
+    print('='*90)
+    print(f'{"Атом":6s} {"Експ.":10s} {"HF":10s} {"LDA":10s} '
+          f'{"PBE":10s} {"B3LYP":10s} {"PBE0":10s}')
+    print('-'*90)
+
+    results = {method: [] for method in methods}
+    experimental = []
+    atom_symbols = []
+
+    for symbol, spin_n, spin_c, ie_exp in atoms_data:
+        atom_symbols.append(symbol)
+        experimental.append(ie_exp)
+
+        # Нейтральний атом
+        mol_n = gto.M(
+            atom=f'{symbol} 0 0 0',
+            basis=basis,
+            spin=spin_n,
+            verbose=0
+        )
+
+        # Катіон
+        mol_c = gto.M(
+            atom=f'{symbol} 0 0 0',
+            basis=basis,
+            charge=1,
+            spin=spin_c,
+            verbose=0
+        )
+
+        ie_values = [ie_exp]
+
+        for method in methods:
+            # Нейтральний
+            if method == 'HF':
+                mf_n = scf.UHF(mol_n) if spin_n > 0 else scf.RHF(mol_n)
+                mf_c = scf.UHF(mol_c) if spin_c > 0 else scf.RHF(mol_c)
+            else:
+                mf_n = dft.UKS(mol_n) if spin_n > 0 else dft.RKS(mol_n)
+                mf_c = dft.UKS(mol_c) if spin_c > 0 else dft.RKS(mol_c)
+
+                xc_dict = {'LDA': 'lda', 'PBE': 'pbe',
+                          'B3LYP': 'b3lyp', 'PBE0': 'pbe0'}
+                mf_n.xc = xc_dict[method]
+                mf_c.xc = xc_dict[method]
+
+            mf_n.verbose = 0
+            mf_c.verbose = 0
+
+            e_n = mf_n.kernel()
+            e_c = mf_c.kernel()
+
+            ie = (e_c - e_n) * 27.211386  # eV
+            results[method].append(ie)
+            ie_values.append(ie)
+
+        # Виведення
+        row_str = f'{symbol:6s}'
+        for ie in ie_values:
+            row_str += f' {ie:10.4f}'
+        print(row_str)
+
+    print('='*90)
+
+    # Статистика похибок
+    print('\nСередні абсолютні похибки (MAE, eV):')
+    print('-'*50)
+
+    for method in methods:
+        errors = [abs(results[method][i] - experimental[i])
+                 for i in range(len(experimental))]
+        mae = np.mean(errors)
+        print(f'{method:10s}: {mae:8.4f} eV')
+
+    # Графік
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
+
+    # Порівняння IE
+    x = np.arange(len(atom_symbols))
+    width = 0.14
+
+    colors = ['black', 'red', 'blue', 'green', 'orange', 'purple']
+
+    for i, (method, color) in enumerate(zip(['Експ.'] + methods,
+                                            colors)):
+        offset = (i - 2.5) * width
+        if method == 'Експ.':
+            values = experimental
+        else:
+            values = results[method]
+
+        ax1.bar(x + offset, values, width, label=method, color=color,
+               alpha=0.8)
+
+    ax1.set_xlabel('Атом', fontsize=12)
+    ax1.set_ylabel('Енергія іонізації (eV)', fontsize=12)
+    ax1.set_title('Порівняння енергій іонізації', fontsize=14)
+    ax1.set_xticks(x)
+    ax1.set_xticklabels(atom_symbols)
+    ax1.legend()
+    ax1.grid(True, alpha=0.3, axis='y')
+
+    # Похибки
+    for method, color in zip(methods, colors[1:]):
+        errors = [results[method][i] - experimental[i]
+                 for i in range(len(experimental))]
+        ax2.plot(atom_symbols, errors, 'o-', label=method,
+                color=color, linewidth=2, markersize=8)
+
+    ax2.axhline(y=0, color='black', linestyle='--', linewidth=1)
+    ax2.set_xlabel('Атом', fontsize=12)
+    ax2.set_ylabel('Похибка (eV)', fontsize=12)
+    ax2.set_title('Похибки відносно експерименту', fontsize=14)
+    ax2.legend()
+    ax2.grid(True, alpha=0.3)
+
+    plt.tight_layout()
+    plt.savefig('ionization_energies_comparison.pdf')
+    plt.show()
+
+# Дані: (символ, спін нейтрального, спін катіона, IE експ.)
+atoms_ie = [
+    ('Li', 1, 0, 5.39),
+    ('Be', 0, 1, 9.32),
+    ('B',  1, 0, 8.30),
+    ('C',  2, 1, 11.26),
+    ('N',  3, 2, 14.53),
+    ('O',  2, 3, 13.62),
+    ('F',  1, 2, 17.42),
+    ('Ne', 0, 1, 21.56)
+]
+
+compare_ionization_energies(atoms_ie)
+\end{minted}
+
+%% --------------------------------------------------------
+\subsection{Електронна спорідненість}
+%% --------------------------------------------------------
+
+\begin{minted}{python}
+from pyscf import gto, scf, dft
+
+def electron_affinity_comparison(atoms_data, basis='aug-cc-pvqz'):
+    """
+    Порівняння електронної спорідненості
+    EA = E(A) - E(A⁻)
+    """
+
+    methods = ['HF', 'LDA', 'PBE', 'B3LYP', 'PBE0']
+
+    print(f'\nЕлектронна спорідненість (eV), базис: {basis}')
+    print('='*90)
+    print(f'{"Атом":6s} {"Експ.":10s} {"HF":10s} {"LDA":10s} '
+          f'{"PBE":10s} {"B3LYP":10s} {"PBE0":10s}')
+    print('-'*90)
+
+    for symbol, spin_n, spin_a, ea_exp in atoms_data:
+        # Нейтральний атом
+        mol_n = gto.M(
+            atom=f'{symbol} 0 0 0',
+            basis=basis,
+            spin=spin_n,
+            verbose=0
+        )
+
+        # Аніон
+        mol_a = gto.M(
+            atom=f'{symbol} 0 0 0',
+            basis=basis,
+            charge=-1,
+            spin=spin_a,
+            verbose=0
+        )
+
+        ea_values = [ea_exp]
+
+        for method in methods:
+            if method == 'HF':
+                mf_n = scf.UHF(mol_n) if spin_n > 0 else scf.RHF(mol_n)
+                mf_a = scf.UHF(mol_a) if spin_a > 0 else scf.RHF(mol_a)
+            else:
+                mf_n = dft.UKS(mol_n) if spin_n > 0 else dft.RKS(mol_n)
+                mf_a = dft.UKS(mol_a) if spin_a > 0 else dft.RKS(mol_a)
+
+                xc_dict = {'LDA': 'lda', 'PBE': 'pbe',
+                          'B3LYP': 'b3lyp', 'PBE0': 'pbe0'}
+                mf_n.xc = xc_dict[method]
+                mf_a.xc = xc_dict[method]
+
+            mf_n.verbose = 0
+            mf_a.verbose = 0
+            mf_a.level_shift = 0.5  # Для аніонів часто потрібно
+
+            try:
+                e_n = mf_n.kernel()
+                e_a = mf_a.kernel()
+
+                ea = (e_n - e_a) * 27.211386  # eV
+                ea_values.append(ea)
+            except:
+                ea_values.append(np.nan)
+
+        # Виведення
+        row_str = f'{symbol:6s}'
+        for ea in ea_values:
+            if not np.isnan(ea):
+                row_str += f' {ea:10.4f}'
+            else:
+                row_str += f' {"N/A":10s}'
+        print(row_str)
+
+    print('='*90)
+    print('\nПримітка: EA > 0 означає, що аніон стабільний')
+
+# Дані: (символ, спін нейтрального, спін аніона, EA експ.)
+atoms_ea = [
+    ('B',  1, 2, 0.28),
+    ('C',  2, 3, 1.26),
+    ('O',  2, 1, 1.46),
+    ('F',  1, 0, 3.40),
+    ('Cl', 1, 0, 3.61),
+    ('Br', 1, 0, 3.36)
+]
+
+electron_affinity_comparison(atoms_ea)
+\end{minted}
+
+
+%% --------------------------------------------------------
+\subsection{Порівняння орбітальних енергій}
+%% --------------------------------------------------------
+
+\begin{minted}{python}
+from pyscf import gto, scf, dft
+import matplotlib.pyplot as plt
+
+def compare_orbital_energies(symbol, spin, basis='cc-pvtz'):
+    """
+    Порівняння орбітальних енергій HF vs DFT
+    """
+
+    mol = gto.M(
+        atom=f'{symbol} 0 0 0',
+        basis=basis,
+        spin=spin,
+        verbose=0
+    )
+
+    methods = {
+        'HF': None,
+        'LDA': 'lda',
+        'PBE': 'pbe',
+        'B3LYP': 'b3lyp',
+        'PBE0': 'pbe0'
+    }
+
+    orbital_energies = {}
+
+    for method, xc in methods.items():
+        if method == 'HF':
+            mf = scf.UHF(mol) if spin > 0 else scf.RHF(mol)
+        else:
+            mf = dft.UKS(mol) if spin > 0 else dft.RKS(mol)
+            mf.xc = xc
+
+        mf.verbose = 0
+        mf.kernel()
+
+        if spin == 0:
+            orbital_energies[method] = mf.mo_energy * 27.211386
+        else:
+            orbital_energies[method] = mf.mo_energy[0] * 27.211386
+
+    # Графік
+    fig, ax = plt.subplots(figsize=(12, 8))
+
+    n_orb = min(10, len(orbital_energies['HF']))
+    x = np.arange(n_orb)
+    width = 0.16
+
+    colors = ['red', 'blue', 'green', 'orange', 'purple']
+
+    for i, (method, color) in enumerate(zip(methods.keys(), colors)):
+        offset = (i - 2) * width
+        energies = orbital_energies[method][:n_orb]
+        ax.bar(x + offset, energies, width, label=method,
+              color=color, alpha=0.8)
+
+    # Лінія HOMO
+    if spin == 0:
+        n_occ = mol.nelectron // 2
+    else:
+        n_occ = mol.nelec[0]
+
+    ax.axvline(x=n_occ-0.5, color='black', linestyle='--',
+              linewidth=2, label='HOMO/LUMO')
+
+    ax.set_xlabel('Орбіталь', fontsize=12)
+    ax.set_ylabel('Енергія (eV)', fontsize=12)
+    ax.set_title(f'Орбітальні енергії {symbol}', fontsize=14)
+    ax.set_xticks(x)
+    ax.set_xticklabels([f'MO{i+1}' for i in x])
+    ax.legend()
+    ax.grid(True, alpha=0.3, axis='y')
+
+    plt.tight_layout()
+    plt.savefig(f'{symbol}_orbital_energies_comparison.pdf')
+    plt.show()
+
+    # Таблиця
+    print(f'\nОрбітальні енергії {symbol} (eV)')
+    print('='*80)
+    print(f'{"MO":5s} {"HF":12s} {"LDA":12s} {"PBE":12s} '
+          f'{"B3LYP":12s} {"PBE0":12s}')
+    print('-'*80)
+
+    for i in range(n_orb):
+        row_str = f'{i+1:5d}'
+        for method in methods.keys():
+            e = orbital_energies[method][i]
+            row_str += f' {e:12.4f}'
+
+        if i == n_occ - 1:
+            row_str += '  ← HOMO'
+        elif i == n_occ:
+            row_str += '  ← LUMO'
+
+        print(row_str)
+
+    print('='*80)
+
+# Приклади
+compare_orbital_energies('C', spin=2)
+compare_orbital_energies('Ne', spin=0)
+compare_orbital_energies('O', spin=2)
+\end{minted}
+
+%% --------------------------------------------------------
+\subsection{Забруднення спіном: HF vs DFT}
+%% --------------------------------------------------------
+
+\begin{minted}{python}
+from pyscf import gto, scf, dft
+
+def spin_contamination_analysis(atoms_list, basis='cc-pvtz'):
+    """
+    Порівняння забруднення спіном у HF та DFT
+    """
+
+    print(f'\nЗабруднення спіном <S²> (базис: {basis})')
+    print('='*80)
+    print(f'{"Атом":6s} {"2S":4s} {"<S²> очік.":12s} {"HF":12s} '
+          f'{"LDA":12s} {"PBE":12s} {"B3LYP":12s}')
+    print('-'*80)
+
+    for symbol, spin in atoms_list:
+        if spin == 0:
+            continue  # Тільки відкриті системи
+
+        mol = gto.M(
+            atom=f'{symbol} 0 0 0',
+            basis=basis,
+            spin=spin,
+            verbose=0
+        )
+
+        expected_s2 = spin * (spin + 2) / 4
+
+        s2_values = [expected_s2]
+
+        # HF
+        mf_hf = scf.UHF(mol)
+        mf_hf.verbose = 0
+        mf_hf.kernel()
+        s2_hf = mf_hf.spin_square()[0]
+        s2_values.append(s2_hf)
+
+        # DFT
+        for xc in ['lda', 'pbe', 'b3lyp']:
+            mf = dft.UKS(mol)
+            mf.xc = xc
+            mf.verbose = 0
+            mf.kernel()
+            s2 = mf.spin_square()[0]
+            s2_values.append(s2)
+
+        # Виведення
+        row_str = f'{symbol:6s} {spin:4d}'
+        for s2 in s2_values:
+            row_str += f' {s2:12.6f}'
+
+        # Забруднення
+        contamination = s2_hf - expected_s2
+        if abs(contamination) > 0.01:
+            row_str += '  ← помітне забруднення HF'
+
+        print(row_str)
+
+    print('='*80)
+    print('\nПримітка: Чисті DFT (LDA, PBE) не мають забруднення')
+    print('          Гібридні DFT (B3LYP) мають слабке забруднення')
+
+# Атоми з відкритими оболонками
+atoms_open = [
+    ('H', 1), ('Li', 1), ('B', 1), ('C', 2),
+    ('N', 3), ('O', 2), ('F', 1), ('Na', 1)
+]
+
+spin_contamination_analysis(atoms_open)
+\end{minted}
+
+%% --------------------------------------------------------
+\subsection{Час обчислень: HF vs DFT}
+%% --------------------------------------------------------
+
+\begin{minted}{python}
+from pyscf import gto, scf, dft
+import time
+
+def timing_comparison(symbol, spin, basis='def2-tzvp'):
+    """
+    Порівняння часу виконання HF vs DFT
+    """
+
+    mol = gto.M(
+        atom=f'{symbol} 0 0 0',
+        basis=basis,
+        spin=spin,
+        verbose=0
+    )
+
+    methods = {
+        'HF': None,
+        'LDA': 'lda',
+        'PBE': 'pbe',
+        'B3LYP': 'b3lyp',
+        'PBE0': 'pbe0'
+    }
+
+    print(f'\nЧас виконання для {symbol} (базис: {basis})')
+    print('='*60)
+    print(f'{"Метод":10s} {"Час, с":10s} {"Відносно HF":15s}')
+    print('-'*60)
+
+    times = {}
+
+    for method, xc in methods.items():
+        if method == 'HF':
+            mf = scf.UHF(mol) if spin > 0 else scf.RHF(mol)
+        else:
+            mf = dft.UKS(mol) if spin > 0 else dft.RKS(mol)
+            mf.xc = xc
+
+        mf.verbose = 0
+
+        # Вимірювання часу
+        start = time.time()
+        mf.kernel()
+        elapsed = time.time() - start
+
+        times[method] = elapsed
+
+        if method == 'HF':
+            t_ref = elapsed
+            rel = 1.0
+        else:
+            rel = elapsed / t_ref
+
+        print(f'{method:10s} {elapsed:10.4f} {rel:15.3f}x')
+
+    print('='*60)
+
+# Тестування
+timing_comparison('C', spin=2, basis='cc-pvtz')
+timing_comparison('Fe', spin=4, basis='def2-svp')
+timing_comparison('Kr', spin=0, basis='def2-tzvp')
+\end{minted}
+
+%% --------------------------------------------------------
+\subsection{Загальні висновки HF vs DFT}
+%% --------------------------------------------------------
+
+\begin{table}[h!]
+\centering
+\caption{Підсумкове порівняння HF та DFT методів}
+\label{tab:hf_dft_summary}
+\small
+\begin{tblr}{
+colspec={X[l, m]X[l, m]X[l, m]},
+row{1} = {c,m,font=\bfseries}
+}
+\hline
+{Критерій} & {Hartree-Fock} & {DFT} \\
+\hline
+Точність енергій & Добра якісно & Краща кількісно \\
+Енергії іонізації & Систематично завищені & Ближче до експерименту \\
+Електронна спорідненість & Погана для аніонів & Значно краща \\
+Орбітальні енергії & HOMO $\approx$ -IE (теорема Купманса) & Відхилення від теореми \\
+Забруднення спіном & Присутнє (UHF) & Відсутнє (чисті DFT) \\
+Швидкість & Середня & Швидше (чисті DFT) \\
+& & Повільніше (гібриди) \\
+Перехідні метали & Складно конвергує & Зазвичай краще \\
+Дисперсійні взаємодії & Відсутні & Потрібні корекції \\
+Систематичність & Добра & Залежить від функціоналу \\
+\hline
+\end{tblr}
+\end{table}
+
+\textbf{Рекомендації:}
+\begin{itemize}
+    \item \textbf{Використовуйте HF} для швидких якісних оцінок та як початок для post-HF методів
+    \item \textbf{Використовуйте чисті DFT} (PBE) для великих систем, перехідних металів
+    \item \textbf{Використовуйте гібридні DFT} (B3LYP, PBE0) для найкращого балансу точності та швидкості
+    \item \textbf{Для аніонів} обов'язково використовуйте дифузні функції (aug-базиси)
+    \item \textbf{Для важких атомів} враховуйте релятивістські ефекти
+\end{itemize}
+
+
+%% --------------------------------------------------------
+\section{Вибір функціоналу для атомних систем}
+%% --------------------------------------------------------
+
+%% --------------------------------------------------------
+\subsection{Тестовий набір даних}
+%% --------------------------------------------------------
+
+Для оцінки якості функціоналів використаємо стандартні атомні властивості:
+
+\begin{minted}{python}
+from pyscf import gto, scf, dft
+import numpy as np
+
+# Експериментальні дані (eV)
+experimental_data = {
+    'Li': {'IE1': 5.39, 'EA': 0.62},
+    'C':  {'IE1': 11.26, 'EA': 1.26},
+    'N':  {'IE1': 14.53, 'EA': -0.07},
+    'O':  {'IE1': 13.62, 'EA': 1.46},
+    'F':  {'IE1': 17.42, 'EA': 3.40},
+    'Ne': {'IE1': 21.56, 'EA': None},
+}
+
+def benchmark_functional(functional, basis='aug-cc-pvtz'):
+    """
+    Тестування функціоналу на наборі атомів
+    """
+
+    print(f'\nТестування функціоналу {functional.upper()}')
+    print('='*80)
+
+    mae_ie = []
+    mae_ea = []
+
+    for symbol, data in experimental_data.items():
+        # Визначення спінів (спрощено)
+        spins = {
+            'Li': (1, 0), 'C': (2, 1), 'N': (3, 2),
+            'O': (2, 3), 'F': (1, 2), 'Ne': (0, 1)
+        }
+        spin_n, spin_c = spins[symbol]
+
+        # Нейтральний атом
+        mol_n = gto.M(atom=f'{symbol} 0 0 0', basis=basis,
+                     spin=spin_n, verbose=0)
+
+        if functional.lower() == 'hf':
+            mf_n = scf.UHF(mol_n) if spin_n > 0 else scf.RHF(mol_n)
+        else:
+            mf_n = dft.UKS(mol_n) if spin_n > 0 else dft.RKS(mol_n)
+            mf_n.xc = functional
+
+        mf_n.verbose = 0
+        e_n = mf_n.kernel()
+
+        # Катіон (IE)
+        mol_c = gto.M(atom=f'{symbol} 0 0 0', basis=basis,
+                     charge=1, spin=spin_c, verbose=0)
+
+        if functional.lower() == 'hf':
+            mf_c = scf.UHF(mol_c) if spin_c > 0 else scf.RHF(mol_c)
+        else:
+            mf_c = dft.UKS(mol_c) if spin_c > 0 else dft.RKS(mol_c)
+            mf_c.xc = functional
+
+        mf_c.verbose = 0
+        e_c = mf_c.kernel()
+
+        ie_calc = (e_c - e_n) * 27.211386
+        ie_exp = data['IE1']
+        error_ie = abs(ie_calc - ie_exp)
+        mae_ie.append(error_ie)
+
+        print(f'{symbol:4s} IE: calc={ie_calc:7.3f} eV, '
+              f'exp={ie_exp:7.3f} eV, error={error_ie:6.3f} eV')
+
+        # Аніон (EA) - якщо є дані
+        if data['EA'] is not None and data['EA'] > 0:
+            spin_a = spin_n + 1  # Спрощене припущення
+
+            mol_a = gto.M(atom=f'{symbol} 0 0 0', basis=basis,
+                         charge=-1, spin=spin_a, verbose=0)
+
+            if functional.lower() == 'hf':
+                mf_a = scf.UHF(mol_a) if spin_a > 0 else scf.RHF(mol_a)
+            else:
+                mf_a = dft.UKS(mol_a) if spin_a > 0 else dft.RKS(mol_a)
+                mf_a.xc = functional
+
+            mf_a.verbose = 0
+            mf_a.level_shift = 0.5
+
+            try:
+                e_a = mf_a.kernel()
+                ea_calc = (e_n - e_a) * 27.211386
+                ea_exp = data['EA']
+                error_ea = abs(ea_calc - ea_exp)
+                mae_ea.append(error_ea)
+
+                print(f'     EA: calc={ea_calc:7.3f} eV, '
+                      f'exp={ea_exp:7.3f} eV, error={error_ea:6.3f} eV')
+            except:
+                print(f'     EA: не конвергувало')
+
+    print('='*80)
+    print(f'MAE (IE): {np.mean(mae_ie):.3f} eV')
+    if mae_ea:
+        print(f'MAE (EA): {np.mean(mae_ea):.3f} eV')
+
+    return np.mean(mae_ie), np.mean(mae_ea) if mae_ea else None
+
+# Тестування різних функціоналів
+functionals_to_test = ['HF', 'LDA', 'PBE', 'BLYP', 'B3LYP', 'PBE0']
+
+results = {}
+for func in functionals_to_test:
+    mae_ie, mae_ea = benchmark_functional(func)
+    results[func] = {'IE': mae_ie, 'EA': mae_ea}
+
+# Підсумкова таблиця
+print('\n\nПідсумкові MAE (eV):')
+print('='*50)
+print(f'{"Функціонал":12s} {"IE":10s} {"EA":10s}')
+print('-'*50)
+for func, res in results.items():
+    ea_str = f"{res['EA']:.3f}" if res['EA'] else "N/A"
+    print(f'{func:12s} {res["IE"]:10.3f} {ea_str:10s}')
+print('='*50)
+\end{minted}
+
+%% --------------------------------------------------------
+\subsection{Рекомендації для різних елементів}
+%% --------------------------------------------------------
+
+\begin{table}[h]
+\centering
+\caption{Рекомендовані функціонали для різних груп елементів}
+\label{tab:functional_by_element}
+\small
+\begin{tabular}{lll}
+\hline
+\textbf{Група елементів} & \textbf{Рекомендований} & \textbf{Альтернатива} \\
+\hline
+H, He & HF, PBE0 & Будь-який \\
+Li--Ne (2 період) & PBE0, B3LYP & PBE, ωB97X-D \\
+Na--Ar (3 період) & PBE0, B3LYP & TPSSh \\
+3d метали (Sc--Zn) & TPSSh, M06 & PBE, B3LYP \\
+4d метали (Y--Cd) & TPSSh, PBE & M06 \\
+5d метали (La--Hg) & PBE, TPSSh & + релятивістські \\
+Лантаноїди & PBE, SCAN & + SOC \\
+Актиноїди & PBE & + SOC + DFT+U \\
+\hline
+\end{tabular}
+\end{table}
+
+%% --------------------------------------------------------
+\section{Практичні завдання}
+%% --------------------------------------------------------
+
+
+%% --------------------------------------------------------
+\subsection{Завдання 1: Систематичне дослідження}
+%% --------------------------------------------------------
+
+\begin{minted}{python}
+"""
+ЗАВДАННЯ 1: Розрахуйте енергії всіх атомів третього періоду
+(Na--Ar) з функціоналами PBE, B3LYP та PBE0. Порівняйте
+результати з HF. Побудуйте графіки.
+
+Базис: def2-TZVP
+"""
+
+# Ваш код тут
+\end{minted}
+
+%% --------------------------------------------------------
+\subsection{Завдання 2: Функціональна залежність}
+%% --------------------------------------------------------
+
+\begin{minted}{python}
+"""
+ЗАВДАННЯ 2: Для атома Заліза (Fe) порівняйте енергії різних
+спінових станів (2S = 0, 2, 4, 6) використовуючи функціонали:
+LDA, PBE, TPSS, B3LYP, PBE0.
+
+Який спіновий стан є найнижчим для кожного функціоналу?
+Який функціонал дає правильний основний стан?
+
+Базис: def2-SVP
+"""
+
+# Ваш код тут
+\end{minted}
+
+
+%% --------------------------------------------------------
+\subsection{Завдання 3: Конвергенція до базисної межі}
+%% --------------------------------------------------------
+
+\begin{minted}{python}
+"""
+ЗАВДАННЯ 3: Для атома Неону розрахуйте енергію з функціоналом
+PBE0 та базисами cc-pVDZ, cc-pVTZ, cc-pVQZ, cc-pV5Z.
+
+Екстраполюйте енергію до базисної межі (CBS) за формулою:
+E(X) = E_CBS + A/X³
+
+де X = 2, 3, 4, 5 для DZ, TZ, QZ, 5Z.
+
+Порівняйте з експериментальною енергією Ne: -128.547 eV
+"""
+
+# Ваш код тут
+\end{minted}
+
+%% --------------------------------------------------------
+\subsection{Завдання 4: Перехідні метали}
+%% --------------------------------------------------------
+
+\begin{minted}{python}
+"""
+ЗАВДАННЯ 4: Розрахуйте всі 3d перехідні метали (Sc--Zn)
+з функціоналом TPSSh. Проаналізуйте заселеності d-орбіталей.
+
+Для яких атомів:
+1) Всі d-орбіталі рівномірно заселені?
+2) Є виражена асиметрія α/β?
+3) Найбільше забруднення спіном?
+
+Базис: def2-TZVP
+"""
+
+# Ваш код тут
+\end{minted}
+
+%% --------------------------------------------------------
+\section{Резюме}
+%% --------------------------------------------------------
+
+У цьому розділі ми детально вивчили теорію функціоналу густини та її застосування до атомних систем:
+
+\begin{itemize}
+    \item \textbf{Теоретичні основи} --- теореми Хоенберга--Кона, рівняння Кона--Шема
+    \item \textbf{Функціонали} --- від простих LDA до складних гібридних і meta-GGA
+    \item \textbf{Практичні розрахунки} --- атоми різних періодів, перехідні метали
+    \item \textbf{Порівняння з HF} --- енергії, орбіталі, спін, швидкість
+    \item \textbf{Вибір методу} --- рекомендації для різних задач
+\end{itemize}
+
+%% --------------------------------------------------------
+\subsection{Ключові висновки}
+%% --------------------------------------------------------
+
+\begin{enumerate}
+    \item DFT зазвичай дає кращі результати для атомних енергій порівняно з HF
+    \item Гібридні функціонали (B3LYP, PBE0) --- золота середина між точністю та швидкістю
+    \item Для перехідних металів краще використовувати meta-GGA (TPSS) або спеціалізовані функціонали (M06)
+    \item Вибір базису критичний: для аніонів потрібні дифузні функції
+    \item Чисті DFT не мають забруднення спіном на відміну від UHF
+    \item Якість числової сітки важлива для точних розрахунків
+    \item Для важких атомів необхідні релятивістські корекції
+\end{enumerate}
+
+%% --------------------------------------------------------
+\subsection{Типові помилки}
+%% --------------------------------------------------------
+
+\begin{enumerate}
+    \item \textbf{Неправильний спін} --- завжди перевіряйте основний стан атома
+    \item \textbf{Недостатній базис} --- для точних енергій використовуйте triple-zeta або більше
+    \item \textbf{Забування дифузних функцій} --- критично для аніонів та збуджених станів
+    \item \textbf{Ігнорування симетрії} --- може уповільнити розрахунок
+    \item \textbf{Погана конвергенція} --- використовуйте level shift, змініть початкове наближення
+    \item \textbf{Неправильна сітка} --- для точних результатів використовуйте grids.level $\geqslant3$.
+\end{enumerate}
+
+%% --------------------------------------------------------
+\subsection{Корисні посилання}
+%% --------------------------------------------------------
+
+\begin{itemize}
+    \item \textbf{Libxc} --- бібліотека DFT функціоналів: \url{https://www.tddft.org/programs/libxc/}
+    \item \textbf{NIST} --- експериментальні дані атомів: \url{https://physics.nist.gov/PhysRefData/}
+    \item \textbf{Basis Set Exchange} --- база даних базисних наборів: \url{https://www.basissetexchange.org/}
+\end{itemize}
+
+У наступному розділі ми розглянемо Post-Hartree-Fock методи (MP2, CCSD, CASSCF), які дозволяють досягти ще вищої точності для атомних систем, враховуючи електронну кореляцію явно.
