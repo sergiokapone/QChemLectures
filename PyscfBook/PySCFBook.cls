@@ -271,6 +271,23 @@
   enhanced                  % для теней/эффектов (опционально)
 }
 
+\newtcolorbox{commentbox}{
+  parbox = false,
+  breakable,
+    arc=0mm,
+    bottomtitle=0.5mm,
+    boxrule=0mm,
+    colbacktitle=black!10!white,
+    coltitle=black,
+    fonttitle=\bfseries,
+    left=2.5mm,
+    leftrule=1mm,
+    right=3.5mm,
+    title={Коментар},
+    toptitle=0.75mm,
+    fontupper=\footnotesize,
+}
+
 %===============================================================================
 %
 %										Рисування

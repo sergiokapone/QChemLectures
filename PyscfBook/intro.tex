@@ -1,0 +1,251 @@
+\chapter*{Передмова}
+\addcontentsline{toc}{chapter}{Передмова}
+
+Цей методичний посібник є практичним введенням у квантово-хімічні розрахунки атомних систем з використанням програмного пакету PySCF (Python-based Simulations of Chemistry Framework). Посібник призначений для студентів хімічних, фізичних та матеріалознавчих спеціальностей, які вивчають квантову хімію, обчислювальну хімію та суміжні дисципліни.
+
+\section*{Передумови}
+
+Для успішного опанування матеріалу посібника бажано мати:
+
+\paragraph{Обов'язкові знання:}
+\begin{itemize}
+    \item Базові знання квантової механіки (хвильова функція, оператори, власні значення)
+    \item Основи хімії (періодична система, електронні конфігурації, хімічний зв'язок)
+    \item Елементарне програмування на Python (змінні, цикли, функції)
+    \item Робота з командним рядком (термінал/консоль)
+\end{itemize}
+
+\paragraph{Бажано знати:}
+\begin{itemize}
+    \item Лінійну алгебру (матриці, власні вектори, діагоналізація)
+    \item Основи чисельних методів
+    \item Роботу з NumPy та Matplotlib
+    \item Jupyter Notebook
+\end{itemize}
+
+
+
+\paragraph{Кожен розділ містить:}
+\begin{itemize}
+    \item Теоретичне пояснення методу
+    \item Детальні приклади коду з коментарями
+    \item Практичні завдання для самостійної роботи
+    \item Контрольні запитання
+    \item Посилання на додаткову літературу
+\end{itemize}
+
+\section*{Організація навчальних матеріалів}
+
+Всі коди, що наведені в посібнику, організовані в окремих папках відповідно до структури розділів:
+
+\begin{verbatim}
+pyscf_atomic_tutorial/
+├── chapter_02/
+│   ├── 01_installation.py
+│   ├── 02_basic_structure.py
+│   └── examples/
+├── chapter_03/
+│   ├── 01_mole_object.py
+│   ├── 02_basis_sets.py
+│   └── examples/
+├── chapter_04/
+│   ├── 01_hf_hydrogen.py
+│   ├── 02_hf_helium.py
+│   ├── 03_second_period.py
+│   └── examples/
+├── chapter_05/
+│   ├── 01_dft_basics.py
+│   ├── 02_functionals.py
+│   └── examples/
+├── chapter_06/
+│   ├── 01_mp2.py
+│   ├── 02_ccsd.py
+│   ├── 03_casscf.py
+│   └── examples/
+├── chapter_07/
+│   ├── 01_ionization_energies.py
+│   └── examples/
+├── notebooks/
+│   ├── Chapter_02_Interactive.ipynb
+│   ├── Chapter_03_Interactive.ipynb
+│   └── ...
+└── README.md
+\end{verbatim}
+
+\subsection*{Робота з кодом}
+
+Код з посібника можна використовувати кількома способами:
+
+\paragraph{1. Jupyter Notebook (рекомендовано для навчання)}
+
+Jupyter Notebook --- інтерактивне середовище, ідеальне для навчання та експериментування:
+
+\begin{minted}{bash}
+# Встановлення Jupyter
+pip install jupyter
+
+# Запуск
+cd pyscf_atomic_tutorial/notebooks
+jupyter notebook
+\end{minted}
+
+\textbf{Переваги Jupyter:}
+\begin{itemize}
+    \item Виконання коду по частинах (комірками)
+    \item Миттєвий перегляд результатів
+    \item Збереження графіків безпосередньо в notebook
+    \item Можливість додавати власні нотатки
+    \item Легко ділитися з колегами
+\end{itemize}
+
+\paragraph{2. Окремі Python скрипти}
+
+Всі приклади можна виконувати як звичайні Python скрипти:
+
+\begin{minted}{bash}
+# Виконання окремого скрипта
+python chapter_04/01_hf_hydrogen.py
+
+# Або з додатковими опціями
+python -u chapter_04/02_hf_helium.py > output.log
+\end{minted}
+
+Це зручно для:
+\begin{itemize}
+    \item Автоматизації серії розрахунків
+    \item Виконання на кластерах та серверах
+    \item Інтеграції у власні pipeline
+\end{itemize}
+
+\paragraph{3. Інтерактивний Python (iPython)}
+
+Для швидких тестів та експериментів:
+
+\begin{minted}{python}
+ipython
+>>> from pyscf import gto, scf
+>>> mol = gto.M(atom='H 0 0 0', basis='sto-3g', spin=1)
+>>> mf = scf.UHF(mol)
+>>> mf.kernel()
+\end{minted}
+
+\paragraph{4. IDE (PyCharm, VS Code, Spyder)}
+
+Всі приклади сумісні з популярними IDE. Рекомендуємо налаштувати:
+\begin{itemize}
+    \item Автодоповнення для PySCF
+    \item Відлагодження (debugging)
+    \item Інтеграцію з Git для контролю версій
+\end{itemize}
+
+\section*{Вимоги до системи}
+
+\subsection*{Мінімальні вимоги:}
+\begin{itemize}
+    \item \textbf{ОС:} Linux, macOS, або Windows 10/11
+    \item \textbf{Python:} версія 3.7 або новіша
+    \item \textbf{Оперативна пам'ять:} 4 ГБ (8 ГБ рекомендовано)
+    \item \textbf{Вільне місце:} 2 ГБ
+    \item \textbf{Процесор:} будь-який сучасний (багатоядерний краще)
+\end{itemize}
+
+\subsection*{Рекомендовані вимоги:}
+\begin{itemize}
+    \item \textbf{Оперативна пам'ять:} 16+ ГБ
+    \item \textbf{Процесор:} 4+ ядра
+    \item \textbf{SSD:} для швидкого читання/запису великих файлів
+\end{itemize}
+
+\textbf{Примітка:} Складні розрахунки (CCSD, CASSCF для великих систем) можуть потребувати значних ресурсів. Для навчальних прикладів з посібника достатньо звичайного ноутбука.
+
+\section*{Встановлення програмного забезпечення}
+
+\subsection*{Швидкий старт (Linux/macOS):}
+
+\begin{minted}{bash}
+# Створення віртуального середовища (рекомендовано)
+python3 -m venv pyscf_env
+source pyscf_env/bin/activate
+
+# Встановлення PySCF та залежностей
+pip install --upgrade pip
+pip install pyscf
+pip install numpy scipy matplotlib jupyter
+
+# Перевірка встановлення
+python -c "import pyscf; print(pyscf.__version__)"
+\end{minted}
+
+\subsection*{Швидкий старт (Windows):}
+
+\begin{minted}{bash}
+# Створення віртуального середовища
+python -m venv pyscf_env
+pyscf_env\Scripts\activate
+
+# Встановлення
+pip install --upgrade pip
+pip install pyscf numpy scipy matplotlib jupyter
+
+# Перевірка
+python -c "import pyscf; print(pyscf.__version__)"
+\end{minted}
+
+Детальні інструкції з встановлення наведені в Розділі 2.
+
+\section*{Як користуватися цим посібником}
+
+\subsection*{Для самостійного навчання:}
+
+\begin{enumerate}
+    \item \textbf{Читайте послідовно} --- матеріал побудований від простого до складного
+    \item \textbf{Виконуйте всі приклади} --- просте читання коду не замінить практики
+    \item \textbf{Експериментуйте} --- змінюйте параметри, пробуйте інші атоми
+    \item \textbf{Виконуйте завдання} --- вони закріплюють матеріал
+    \item \textbf{Веніть до складних місць} --- деякі концепції потребують часу
+\end{enumerate}
+
+
+\section*{Зворотний зв'язок}
+
+Ваші коментарі та пропозиції допоможуть покращити цей посібник! Якщо ви знайшли:
+\begin{itemize}
+    \item Помилки в коді або тексті
+    \item Незрозумілі пояснення
+    \item Теми, які потребують більш детального розгляду
+    \item Інші проблеми
+\end{itemize}
+
+Будь ласка, повідомте про це через:
+\begin{itemize}
+    \item GitHub Issues (якщо матеріал на GitHub)
+    \item Email викладачу/автору
+    \item Форум курсу
+\end{itemize}
+
+\section*{Ліцензія та використання}
+
+Цей методичний посібник розповсюджується для освітніх цілей. Ви можете:
+\begin{itemize}
+    \item Використовувати матеріали для навчання
+    \item Модифікувати приклади коду для власних потреб
+    \item Ділитися посібником з колегами та студентами
+\end{itemize}
+
+При використанні матеріалів просимо посилатися на цей посібник.
+
+
+\vspace{1cm}
+
+\begin{center}
+\textit{Бажаємо успіхів у вивченні квантової хімії!}
+\end{center}
+
+\vspace{0.5cm}
+
+\begin{flushright}
+С. М. Пономаренко\\
+\today
+\end{flushright}
+
+\clearpage

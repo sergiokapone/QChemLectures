@@ -1,3 +1,8 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+% !TeX root =../PyscfBook.tex
+
 
 Після вивчення атомних систем природним кроком є перехід до молекул.
 Найпростіші диатомні молекули --- іон молекули водню \ce{H2+}
@@ -83,7 +88,15 @@ $R$ --- міжядерна відстань.
 
 \subsubsection{Аналіз кривої}
 
-На графіку PES спостерігаються характерні області:
+%---------------------------------------------------------
+\begin{figure}[h!]\centering
+\includegraphics[width=\linewidth]{\currfiledir/h2plus_pes.pdf}
+\caption{Графіку PES для \ce{H2+}.}
+\label{pic:h2plus_pes}
+\end{figure}
+%---------------------------------------------------------
+
+На графіку (рис.~\ref{pic:h2plus_pes}) PES спостерігаються характерні області:
 
 \begin{enumerate}
     \item \textbf{Область стиснення} ($R < R_e$):
@@ -352,7 +365,15 @@ UHF дозволяє різні орбіталі для $\alpha$ та $\beta$ с
 
 \inputcode{h2_dissociation_comparison.py}
 
-\textbf{Графік показує:}
+%---------------------------------------------------------
+\begin{figure}[h!]\centering
+\includegraphics[width=\linewidth]{\currfiledir/h2_complete_comparison.pdf}
+\caption{Повне порівняння методів для молекули \ce{H2}.}
+\label{pic:h2_complete_comparison}
+\end{figure}
+%---------------------------------------------------------
+
+\textbf{Графік (рис.~\ref{pic:h2_complete_comparison}) показує:}
 \begin{itemize}
     \item \textbf{Точний розв'язок} (Full CI) --- монотонна крива
     \item \textbf{RHF} --- завищена енергія при $R > 2.5$ bohr
