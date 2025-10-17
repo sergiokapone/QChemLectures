@@ -73,7 +73,7 @@
 	%    \RequirePackage[sfdefault,regular]{roboto}
 	\setmainfont{CMU Serif}%{alegreya}%{BookmanOldStyle}
 	\setsansfont{Roboto}%{Arial}
-	\setmonofont{CMU Typewriter Text}%{JetBrains Mono}%{Consolas}
+	\setmonofont{JetBrains Mono}%{CMU Typewriter Text}%%{Consolas}
 	\defaultfontfeatures{Ligatures={TeX}}
 	%	\newfontfamily\Annabelle{Annabelle}
 	\newfontfamily\Alexander{Alexander}
