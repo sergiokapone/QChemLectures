@@ -1,0 +1,206 @@
+%% --------------------------------------------------------
+\section{Функціонали обміну-кореляції}
+%% --------------------------------------------------------
+
+
+%% --------------------------------------------------------
+\subsection{Класифікація функціоналів: драбина Якова}
+%% --------------------------------------------------------
+
+Функціонали DFT класифікуються за "драбиною Якова" (Jacob's ladder), запропонованою Пердью:
+
+\begin{enumerate}
+    \item \textbf{LDA/LSDA} (Local Density Approximation) --- залежать тільки від $\rho(\mathbf{r})$
+    \item \textbf{GGA} (Generalized Gradient Approximation) --- залежать від $\rho(\mathbf{r})$ та $\nabla\rho(\mathbf{r})$
+    \item \textbf{Meta-GGA} --- додатково залежать від $\nabla^2\rho$ або кінетичної густини $\tau$
+    \item \textbf{Hybrid} --- включають частку точного обміну HF
+    \item \textbf{Double-hybrid} --- включають і HF обмін, і MP2 кореляцію
+\end{enumerate}
+
+
+%% --------------------------------------------------------
+\subsection{LDA та LSDA функціонали}
+%% --------------------------------------------------------
+
+%% --------------------------------------------------------
+\subsubsection{Локальне наближення густини}
+%% --------------------------------------------------------
+
+LDA базується на моделі однорідного електронного газу:
+\begin{equation}
+E_{xc}^{\text{LDA}}[\rho] = \int \rho(\mathbf{r}) \varepsilon_{xc}(\rho(\mathbf{r})) d\mathbf{r}
+\end{equation}
+
+де $\varepsilon_{xc}(\rho)$ --- обмінно-кореляційна енергія на електрон в однорідному газі густини $\rho$.
+
+\paragraph{Обмінна частина (Slater/Dirac):}
+\begin{equation}
+\varepsilon_x^{\text{LDA}}(\rho) = -\frac{3}{4}\left(\frac{3}{\pi}\right)^{1/3} \rho^{1/3}
+\end{equation}
+
+\paragraph{Кореляційна частина:} Використовуються параметризації (VWN, PW92).
+
+\subsubsection{LSDA для спін-поляризованих систем}
+
+Для систем з різними $\rho_\alpha$ та $\rho_\beta$:
+\begin{equation}
+E_{xc}^{\text{LSDA}}[\rho_\alpha, \rho_\beta] = \int \rho \varepsilon_{xc}(\rho_\alpha, \rho_\beta) d\mathbf{r}
+\end{equation}
+
+\inputcode{code_1.py}
+
+%% --------------------------------------------------------
+\subsection{GGA функціонали}
+%% --------------------------------------------------------
+
+GGA функціонали враховують не тільки локальну густину, але й її градієнт:
+\begin{equation}
+E_{xc}^{\text{GGA}}[\rho] = \int f(\rho(\mathbf{r}), \nabla\rho(\mathbf{r})) d\mathbf{r}
+\end{equation}
+
+%% --------------------------------------------------------
+\subsubsection{Популярні GGA функціонали}
+%% --------------------------------------------------------
+
+\paragraph{PBE (Perdew-Burke-Ernzerhof, 1996)}
+Найпопулярніший неемпіричний GGA функціонал:
+
+\inputcode{code_2.py}
+
+\paragraph{BLYP (Becke88 + Lee-Yang-Parr)}
+Комбінація обміну Becke88 та кореляції LYP:
+
+\inputcode{code_3.py}
+
+\paragraph{BP86 (Becke88 + Perdew86)}
+
+\inputcode{code_4.py}
+
+\subsubsection{Порівняння GGA функціоналів}
+
+\inputcode{code_5.py}
+
+%% --------------------------------------------------------
+\subsection{Meta-GGA функціонали}
+%% --------------------------------------------------------
+
+Meta-GGA функціонали включають додаткову інформацію про систему: кінетичну густину $\tau$ або лапласіан густини $\nabla^2\rho$:
+
+\begin{equation}
+E_{xc}^{\text{meta-GGA}}[\rho] = \int f(\rho, \nabla\rho, \tau) d\mathbf{r}
+\end{equation}
+
+де кінетична густина орбіталей Кона-Шема:
+\begin{equation}
+\tau(\mathbf{r}) = \frac{1}{2} \sum_{i=1}^{N} |\nabla\psi_i(\mathbf{r})|^2
+\end{equation}
+
+\subsubsection{TPSS (Tao-Perdew-Staroverov-Scuseria)}
+
+TPSS --- один з перших успішних meta-GGA функціоналів (2003):
+
+\inputcode{code_6.py}
+
+\subsubsection{M06-L (Minnesota 06 Local)}
+
+Високопараметризований meta-GGA функціонал для широкого спектру задач:
+
+\inputcode{code_7.py}
+
+\subsubsection{SCAN (Strongly Constrained and Appropriately Normed)}
+
+Сучасний meta-GGA, що задовольняє всі відомі точні умови:
+
+\inputcode{code_8.py}
+
+%% --------------------------------------------------------
+\subsection{Гібридні функціонали}
+%% --------------------------------------------------------
+
+Гібридні функціонали комбінують DFT обмін з точним (HF) обміном:
+
+\begin{equation}
+E_{xc}^{\text{hybrid}} = a \cdot E_x^{\text{HF}} + (1-a) \cdot E_x^{\text{DFT}} + E_c^{\text{DFT}}
+\end{equation}
+
+де $a$ --- частка HF обміну (зазвичай 0.2--0.3).
+
+\subsubsection{B3LYP (Becke 3-parameter Lee-Yang-Parr)}
+
+Найпопулярніший гібридний функціонал у хімії:
+
+\begin{equation}
+E_{xc}^{\text{B3LYP}} = E_x^{\text{LDA}} + 0.2(E_x^{\text{HF}} - E_x^{\text{LDA}}) + 0.72 \cdot E_x^{\text{B88}} + 0.81 \cdot E_c^{\text{LYP}} + 0.19 \cdot E_c^{\text{VWN}}
+\end{equation}
+
+\inputcode{code_9.py}
+
+\subsubsection{PBE0 (PBE hybrid)}
+
+Неемпіричний гібрид з 25% HF обміну:
+
+\begin{equation}
+E_{xc}^{\text{PBE0}} = 0.25 \cdot E_x^{\text{HF}} + 0.75 \cdot E_x^{\text{PBE}} + E_c^{\text{PBE}}
+\end{equation}
+
+\inputcode{code_10.py}
+
+
+\subsubsection{CAM-B3LYP (Coulomb-Attenuated Method)}
+
+Функціонал з дальньодіючою корекцією (range-separated):
+
+\begin{equation}
+\frac{1}{r_{12}} = \frac{\alpha + \beta \cdot \text{erf}(\mu r_{12})}{r_{12}} + \frac{1-[\alpha+\beta \cdot \text{erf}(\mu r_{12})]}{r_{12}}
+\end{equation}
+
+\inputcode{code_11.py}
+
+%% --------------------------------------------------------
+\subsubsection{M06-2X та інші Minnesota функціонали}
+%% --------------------------------------------------------
+
+Родина M06 з різною часткою HF обміну:
+
+\begin{itemize}
+    \item M06-L: 0\% HF (meta-GGA)
+    \item M06: 27\% HF
+    \item M06-2X: 54\% HF (для кінетики, слабких взаємодій)
+    \item M06-HF: 100\% HF
+\end{itemize}
+
+\inputcode{code_12.py}
+
+%% --------------------------------------------------------
+\subsection{Порівняння різних рівнів теорії}
+%% --------------------------------------------------------
+
+\inputcode{code_13.py}
+
+\subsection{Вибір функціоналу: рекомендації}
+
+\begin{table}[h]
+\centering
+\caption{Рекомендовані функціонали для різних задач}
+\label{tab:functional_recommendations}
+\small
+\begin{tabular}{lll}
+\hline
+\textbf{Задача} & \textbf{Функціонал} & \textbf{Коментар} \\
+\hline
+Швидкі розрахунки & PBE & Добра точність/швидкість \\
+Енергії атомізації & B3LYP, PBE0 & Стандарт у хімії \\
+Перехідні метали & TPSSh, M06 & Краще для d-електронів \\
+Слабкі взаємодії & M06-2X, ωB97X-D & З дисперсією \\
+Високоспінові стани & SCAN, TPSSh & Кращий баланс \\
+Загальні розрахунки & PBE0 & Універсальний вибір \\
+Максимальна точність & CCSD(T) & Але дуже повільно \\
+\hline
+\end{tabular}
+\end{table}
+
+%% --------------------------------------------------------
+\subsection{Практичний приклад: вплив функціоналу на властивості}
+%% --------------------------------------------------------
+
+\inputcode{code_14.py}

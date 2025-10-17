@@ -218,7 +218,7 @@
 }
 
 \NewDocumentCommand{\inputcode}{m}{%
-  \inputminted[label={\detokenize{#1}}]{python}{\currfilebase/code/#1}%
+  \inputminted[label={\detokenize{#1}}]{python}{\currfiledir/code/#1}%
 }
 
 % ---------------------------- Фалові операції ---------------------------------
