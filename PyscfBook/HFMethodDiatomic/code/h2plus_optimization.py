@@ -5,7 +5,6 @@
 import numpy as np
 from pyscf import gto, scf
 from pyscf.geomopt.geometric_solver import optimize
-from pyscf import hessian
 
 print("Оптимізація геометрії H2+ методом UHF")
 print("=" * 60)
@@ -55,31 +54,6 @@ D_e_exp = 2.79  # eV
 error = abs(D_e * 27.2114 - D_e_exp) / D_e_exp * 100
 print(f"\nЕкспериментальне D_e = {D_e_exp:.2f} eV")
 print(f"Відносна похибка = {error:.2f}%")
-
-# Обчислення частоти коливань (потребує гесіану)
-print("\n" + "-" * 60)
-print("Обчислення частоти коливань...")
-
-
-h = hessian.UHF(mf).kernel()
-
-# Перетворення гесіану в частоту
-# (спрощена процедура, для точності потрібна маса-зважена діагоналізація)
-
-
-mass_H = 1.00783  # а.о.м.
-reduced_mass = mass_H / 2  # зведена маса для H2+
-
-# Беремо другу похідну по R (діагональний елемент гесіану)
-# Повна процедура складніша, тут показуємо концепцію
-k_force = h[2, 2]  # Наближення: друга похідна по z
-omega_e = np.sqrt(k_force / reduced_mass) * 219474.63  # см^-1
-
-print(f"Силова константа k ≈ {k_force:.4f} Ha/bohr²")
-print(f"Частота коливань ω_e ≈ {omega_e:.1f} см⁻¹")
-print("Експериментальне ω_e ≈ 2300 см⁻¹ (для H2+)")
-
-print("=" * 60)
 
 # Збереження оптимізованої геометрії
 with open("h2plus_optimized.xyz", "w") as f:

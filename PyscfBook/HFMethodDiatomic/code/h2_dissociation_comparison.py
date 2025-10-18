@@ -1,8 +1,3 @@
-"""
-Повне порівняння RHF, UHF та точного розв'язку (FCI) для H2
-Демонстрація проблеми дисоціації
-"""
-
 import numpy as np
 import matplotlib.pyplot as plt
 from pyscf import gto, scf, fci
@@ -56,13 +51,12 @@ def calculate_h2_curve(distances, method="rhf", basis="cc-pvdz"):
 distances = np.linspace(0.8, 8.0, 35)
 
 print("\n" + "=" * 70)
-print("ПОРІВНЯННЯ МЕТОДІВ ДЛЯ H2: RHF vs UHF vs FCI")
+print("ПОРІВНЯННЯ МЕТОДІВ ДЛЯ H2: RHF vs FCI")
 print("=" * 70)
 print("Обчислення (це може зайняти кілька хвилин)...")
 
 # Розрахунки
 E_rhf, _ = calculate_h2_curve(distances, method="rhf")
-E_uhf, s2_uhf = calculate_h2_curve(distances, method="uhf")
 E_fci, _ = calculate_h2_curve(distances, method="fci")
 
 # Аналіз
@@ -73,7 +67,6 @@ print("=" * 70)
 
 # Знаходження мінімумів
 idx_rhf = np.argmin(E_rhf)
-idx_uhf = np.argmin(E_uhf)
 idx_fci = np.argmin(E_fci)
 
 methods_data = {
@@ -82,12 +75,6 @@ methods_data = {
         "E_min": E_rhf[idx_rhf],
         "E_dissoc": E_rhf[-1],
         "D_e": E_2H - E_rhf[idx_rhf],
-    },
-    "UHF": {
-        "R_e": distances[idx_uhf],
-        "E_min": E_uhf[idx_uhf],
-        "E_dissoc": E_uhf[-1],
-        "D_e": E_2H - E_uhf[idx_uhf],
     },
     "FCI": {
         "R_e": distances[idx_fci],
@@ -116,7 +103,7 @@ print("-" * 70)
 print(f"{'R (bohr)':<10} {'E_corr (mHa)':<15} {'% від D_e':<12}")
 print("-" * 70)
 
-selected_R = [1.4, 2.0, 3.0, 4.0, 6.0, 8.0]
+selected_R = np.linspace(1.2, 8, 10)
 for R in selected_R:
     idx = np.argmin(abs(distances - R))
     E_corr = (E_fci[idx] - E_rhf[idx]) * 1000  # mHa
@@ -125,128 +112,81 @@ for R in selected_R:
 
 print("=" * 70)
 
-# Побудова графіків
-fig = plt.figure(figsize=(16, 10))
-gs = fig.add_gridspec(3, 2, hspace=0.35, wspace=0.3)
 
-# 1. Повні PES
+fig = plt.figure(figsize=(16, 15), constrained_layout=False)
+# ТРИ ряда, ДВА стовпці — всі рядки рівні за висотою
+gs = fig.add_gridspec(3, 2, height_ratios=[1, 1, 1], hspace=0.45, wspace=0.35)
+
+# 1) Повна PES (ряд 0, обидва стовпці)
 ax1 = fig.add_subplot(gs[0, :])
-ax1.plot(distances, E_rhf, "b-", linewidth=3, label="RHF", alpha=0.8)
-ax1.plot(distances, E_uhf, "r--", linewidth=3, label="UHF", alpha=0.8)
-ax1.plot(distances, E_fci, "g-.", linewidth=3, label="FCI (точний)", alpha=0.8)
-ax1.axhline(
-    E_2H,
-    color="black",
-    linestyle=":",
-    linewidth=2,
-    label=f"2×E(H) = {E_2H:.3f} Ha",
-    alpha=0.6,
-)
-
-# Позначення мінімумів
-ax1.plot(distances[idx_rhf], E_rhf[idx_rhf], "bo", markersize=10)
-ax1.plot(distances[idx_uhf], E_uhf[idx_uhf], "ro", markersize=10)
-ax1.plot(distances[idx_fci], E_fci[idx_fci], "go", markersize=10)
-
-ax1.set_xlabel("Міжядерна відстань R (bohr)", fontsize=13, fontweight="bold")
-ax1.set_ylabel("Енергія E (Ha)", fontsize=13, fontweight="bold")
-ax1.set_title("Криві потенційної енергії H$_2$", fontsize=15, fontweight="bold")
-ax1.grid(True, alpha=0.3)
-ax1.legend(fontsize=12, loc="upper right")
+ax1.plot(distances, E_rhf, "-", color="tab:blue", lw=2.8, label="RHF", alpha=0.9)
+ax1.plot(distances, E_fci, "-.", color="tab:green", lw=2.8, label="FCI (точний)", alpha=0.9)
+ax1.axhline(E_2H, color="k", ls=":", lw=1.6, alpha=0.7)
+ax1.plot(distances[idx_rhf], E_rhf[idx_rhf], "o", color="tab:blue", ms=8)
+ax1.plot(distances[idx_fci], E_fci[idx_fci], "o", color="tab:green", ms=8)
 ax1.set_ylim([-1.25, -0.3])
+ax1.set_title("Криві потенційної енергії H$_2$", fontsize=16, fontweight="bold")
+ax1.set_xlabel("Міжядерна відстань $R$ (bohr)", fontsize=13)
+ax1.set_ylabel("Енергія $E$ (Ha)", fontsize=13)
+ax1.grid(alpha=0.25)
+ax1.legend(fontsize=11, loc="upper right")
+ax1.axvspan(0.8, 2.5, alpha=0.08, color="green")
+ax1.axvspan(3.5, 8.0, alpha=0.08, color="red")
 
-# Виділення областей
-ax1.axvspan(0.8, 2.5, alpha=0.1, color="green", label="Рівновага")
-ax1.axvspan(3.5, 8.0, alpha=0.1, color="red", label="Дисоціація")
-
-# 2. Zoom навколо мінімуму
+# 2) Zoom рівновага (ряд 1, стовпець 0)
 ax2 = fig.add_subplot(gs[1, 0])
-mask = (distances >= 0.8) & (distances <= 2.5)
-ax2.plot(distances[mask], E_rhf[mask], "b-", linewidth=2.5, label="RHF")
-ax2.plot(distances[mask], E_uhf[mask], "r--", linewidth=2.5, label="UHF")
-ax2.plot(distances[mask], E_fci[mask], "g-.", linewidth=2.5, label="FCI")
-
-ax2.set_xlabel("R (bohr)", fontsize=12)
-ax2.set_ylabel("E (Ha)", fontsize=12)
-ax2.set_title("Zoom: область рівноваги", fontsize=13, fontweight="bold")
-ax2.grid(True, alpha=0.3)
+mask_eq = (distances >= 0.8) & (distances <= 2.5)
+ax2.plot(distances[mask_eq], E_rhf[mask_eq], "-", color="tab:blue", lw=2.5, label="RHF")
+ax2.plot(distances[mask_eq], E_fci[mask_eq], "-.", color="tab:green", lw=2.5, label="FCI")
+ax2.set_title("Zoom: область рівноваги", fontsize=14, fontweight="bold")
+ax2.set_xlabel("R (bohr)")
+ax2.set_ylabel("E (Ha)")
+ax2.grid(alpha=0.25)
 ax2.legend(fontsize=10)
 
-# 3. Zoom дисоціація
+# 3) Zoom дисоціація (ряд 1, стовпець 1)
 ax3 = fig.add_subplot(gs[1, 1])
-mask = (distances >= 3.5) & (distances <= 8.0)
-ax3.plot(distances[mask], E_rhf[mask], "b-", linewidth=2.5, label="RHF")
-ax3.plot(distances[mask], E_uhf[mask], "r--", linewidth=2.5, label="UHF")
-ax3.plot(distances[mask], E_fci[mask], "g-.", linewidth=2.5, label="FCI")
-ax3.axhline(E_2H, color="black", linestyle=":", linewidth=2, alpha=0.6)
-
-ax3.set_xlabel("R (bohr)", fontsize=12)
-ax3.set_ylabel("E (Ha)", fontsize=12)
-ax3.set_title("Zoom: дисоціація", fontsize=13, fontweight="bold")
-ax3.grid(True, alpha=0.3)
+mask_dis = (distances >= 3.5) & (distances <= 8.0)
+ax3.plot(distances[mask_dis], E_rhf[mask_dis], "-", color="tab:blue", lw=2.5, label="RHF")
+ax3.plot(distances[mask_dis], E_fci[mask_dis], "-.", color="tab:green", lw=2.5, label="FCI")
+ax3.axhline(E_2H, color="k", ls=":", lw=1.4, alpha=0.7)
+ax3.set_title("Zoom: дисоціація", fontsize=14, fontweight="bold")
+ax3.set_xlabel("R (bohr)")
+ax3.set_ylabel("E (Ha)")
+ax3.grid(alpha=0.25)
 ax3.legend(fontsize=10)
 
-# Анотації
 ax3.annotate(
     "RHF → H⁺ + H⁻\n(неправильно!)",
-    xy=(7, E_rhf[-1]),
-    xytext=(6, -0.8),
-    arrowprops=dict(arrowstyle="->", color="blue", lw=2),
-    fontsize=11,
-    color="blue",
-    fontweight="bold",
-    bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.7),
+    xy=(7, E_rhf[-1]), xytext=(6, -0.8),
+    arrowprops=dict(arrowstyle="->", color="tab:blue", lw=1.8),
+    fontsize=11, color="tab:blue", fontweight="bold",
+    bbox=dict(boxstyle="round,pad=0.25", facecolor="wheat", alpha=0.8),
 )
-
 ax3.annotate(
-    "UHF, FCI → 2H\n(правильно)",
-    xy=(7, E_uhf[-1]),
-    xytext=(5.5, -1.05),
-    arrowprops=dict(arrowstyle="->", color="green", lw=2),
-    fontsize=11,
-    color="green",
-    fontweight="bold",
-    bbox=dict(boxstyle="round", facecolor="lightgreen", alpha=0.7),
+    "FCI → 2H\n(правильно)",
+    xy=(7, E_fci[-1]), xytext=(5.4, -1.05),
+    arrowprops=dict(arrowstyle="->", color="tab:green", lw=1.8),
+    fontsize=11, color="tab:green", fontweight="bold",
+    bbox=dict(boxstyle="round,pad=0.25", facecolor="lightgreen", alpha=0.8),
 )
 
-# 4. Кореляційна енергія
-ax4 = fig.add_subplot(gs[2, 0])
-E_corr_rhf = (E_fci - E_rhf) * 1000  # mHa
-E_corr_uhf = (E_fci - E_uhf) * 1000
-
-ax4.plot(distances, E_corr_rhf, "b-", linewidth=2.5, label="E$_{corr}$ (FCI - RHF)")
-ax4.plot(distances, E_corr_uhf, "r--", linewidth=2.5, label="E$_{corr}$ (FCI - UHF)")
-ax4.axhline(0, color="black", linestyle=":", linewidth=1, alpha=0.5)
-
-ax4.set_xlabel("R (bohr)", fontsize=12)
-ax4.set_ylabel("Кореляційна енергія (mHa)", fontsize=12)
-ax4.set_title("Кореляційна енергія", fontsize=13, fontweight="bold")
-ax4.grid(True, alpha=0.3)
+# 4) Кореляційна енергія (ряд 2, обидва стовпці)
+ax4 = fig.add_subplot(gs[2, :])
+E_corr_rhf = (E_fci - E_rhf) * 1000.0  # mHa
+ax4.plot(distances, E_corr_rhf, "-", color="tab:blue", lw=2.8, label="E$_{corr}$ (FCI − RHF)")
+ax4.axhline(0, color="k", ls=":", lw=1.0, alpha=0.6)
+ax4.set_title("Кореляційна енергія", fontsize=14, fontweight="bold")
+ax4.set_xlabel("R (bohr)")
+ax4.set_ylabel("Кореляційна енергія (mHa)")
+ax4.grid(alpha=0.25)
 ax4.legend(fontsize=10)
 
-# 5. Спінове забруднення
-ax5 = fig.add_subplot(gs[2, 1])
-ax5.plot(distances, s2_uhf, "purple", linewidth=2.5, marker="o", markersize=4)
-ax5.axhline(0.0, color="green", linestyle="--", linewidth=2, label="Синглет")
-ax5.axhline(2.0, color="red", linestyle="--", linewidth=2, label="Триплет")
-ax5.fill_between(distances, 0, s2_uhf, alpha=0.3, color="orange")
-
-ax5.set_xlabel("R (bohr)", fontsize=12)
-ax5.set_ylabel("⟨S²⟩ (UHF)", fontsize=12)
-ax5.set_title("Спінове забруднення", fontsize=13, fontweight="bold")
-ax5.grid(True, alpha=0.3)
-ax5.legend(fontsize=10)
-ax5.set_ylim([-0.2, 2.3])
-
-plt.suptitle(
-    "Повне порівняння методів для дисоціації H$_2$",
-    fontsize=17,
-    fontweight="bold",
-    y=0.995,
-)
-
-plt.savefig("h2_complete_comparison.png", dpi=300, bbox_inches="tight")
-print("\nГрафіки збережено: h2_complete_comparison.png")
+# Заголовок та фіналізація
+plt.suptitle("Порівняння RHF та FCI для дисоціації H$_2$", fontsize=18, fontweight="bold", y=0.995)
+# plt.tight_layout(rect=[0, 0, 1, 0.96])
+plt.savefig("h2_RHF_vs_FCI.pdf", dpi=300, bbox_inches="tight")
+print("Графік збережено як: h2_RHF_vs_FCI.pdf")
 plt.show()
 
 # Збереження даних
@@ -254,9 +194,7 @@ np.savez(
     "h2_methods_comparison.npz",
     distances=distances,
     E_rhf=E_rhf,
-    E_uhf=E_uhf,
     E_fci=E_fci,
-    s2_uhf=s2_uhf,
 )
 print("Дані збережено: h2_methods_comparison.npz")
 
@@ -278,3 +216,4 @@ print(r"Експеримент & 1.401 & --- & 4.75 & $-1.000$ \\")
 print(r"\bottomrule")
 print(r"\end{tabular}")
 print("=" * 70)
+
