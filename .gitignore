@@ -3,6 +3,7 @@ _minted*/
 .virtual_documents/
 *.aux
 *.synctex.gz
+*.synctex(busy)
 *.log
 *.run.xml
 *.bak*

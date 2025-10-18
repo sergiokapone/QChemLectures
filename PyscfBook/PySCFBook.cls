@@ -73,7 +73,7 @@
 	%    \RequirePackage[sfdefault,regular]{roboto}
 	\setmainfont{CMU Serif}%{alegreya}%{BookmanOldStyle}
 	\setsansfont{Roboto}%{Arial}
-	\setmonofont{JetBrains Mono}%{CMU Typewriter Text}%%{Consolas}
+	\setmonofont{JetBrains Mono}[Scale=0.9]%{CMU Typewriter Text}%%{Consolas}
 	\defaultfontfeatures{Ligatures={TeX}}
 	%	\newfontfamily\Annabelle{Annabelle}
 	\newfontfamily\Alexander{Alexander}
@@ -209,16 +209,53 @@
 \usepackage[outercaption, wide]{sidecap}
 \sidecaptionvpos{figure}{c}
 \RequirePackage{subcaption}
+
 \RequirePackage{minted}
+
 \setminted{
     fontsize=\scriptsize,
     bgcolor=gray!20,
     frame=lines,
-    framesep=2mm,
+    framesep=3mm,
     breaklines,
-    autogobble
+    autogobble=false,
+    obeytabs=true,
+    tabsize=4,
+    showtabs=false,
 }
 
+
+%\RequirePackage{listings}
+%
+%\lstset{
+%    basicstyle=\ttfamily\scriptsize,
+%    backgroundcolor=\color{gray!20},
+%    frame=tb,
+%    framesep=2mm,
+%    breaklines=true,
+%    columns=fixed,
+%    keepspaces=true,
+%    showstringspaces=false,
+%    tabsize=4,
+%    language=Python,
+%    keywordstyle=\color{blue}\bfseries,
+%    stringstyle=\color{orange!80!black},
+%    commentstyle=\color{green!60!black}\itshape,
+%    fontadjust=true,
+%    inputencoding=utf8,
+%    extendedchars=true,
+%}
+%
+%%\NewDocumentCommand{\inputcode}{m}{%
+%%  \lstinputlisting[
+%%    caption={\detokenize{#1}},
+%%  ]{\currfiledir/code/#1}%
+%%}
+%
+%\NewDocumentCommand{\inputcode}{m}{%
+%  \noindent{\small~Код доступний: \href{https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/\currfiledir code/#1}{\texttt{\detokenize{#1}}}}
+%  \lstinputlisting[inputencoding=utf8/latin1]{\currfiledir/code/#1}%
+%}
 
 
 % ---------------------------- Фалові операції ---------------------------------
@@ -226,33 +263,48 @@
 \RequirePackage{currfile-abspath}
 
 
+\def\rootURI{https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/}
+\NewDocumentCommand{\inputcode}{m}{%
+   \edef\@filepath{\currfiledir code/#1}
+  \inputminted[label=\small\href{\rootURI\@filepath}{\texttt{\detokenize{#1}}}]{python}{\currfiledir/code/#1}%
+}
+
+
 %\NewDocumentCommand{\inputcode}{m}{%
-%  \inputminted[label={\detokenize{#1}}]{python}{\currfiledir/code/#1}%
+%  \inputminted[
+%    label={\embedfile{\currfiledir/code/#1}{\detokenize{#1}}},
+%  ]{python}{\currfiledir/code/#1}%
 %}
 
+%\directlua{
+%  function _G.clean_path(dir)
+%    local clean = dir:gsub("_minted/?", "")
+%    clean = clean:gsub("^/+", "")  -- прибираємо слеш на початку
+%    return clean
+%  end
+%}
+%
+%\NewDocumentCommand{\inputcode}{m}{%
+%  \edef\cleandir{%
+%    \directlua{tex.print(clean_path("\currfiledir"))}%
+%  }%
+%  \inputminted[
+%    label=\href{https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/\cleandir/code/#1}{\texttt{\detokenize{#1}}}
+%  ]{python}{\currfiledir/code/#1}%
+%}
 
-
-% === 1. Оголошуємо Lua-функцію глобально ===
-\directlua{
-  local lfs = require("lfs")
-  function _G._get_abs_path(dir, file)
-    local cwd = lfs.currentdir()
-    local abs = cwd .. "/" .. dir .. "/code/" .. file
-    abs = abs:gsub("\\", "/")
-    return abs
-  end
-}
-
-% === 2. Макрос ===
-\NewDocumentCommand{\inputcode}{m}{%
-  \edef\@abspath{%
-    \directlua{tex.print(_get_abs_path("\currfiledir", "#1"))}%
-  }%
-  \inputminted[
-    label={\href{file:///\@abspath}{\detokenize{#1}}},
-  ]{python}{\currfiledir/code/#1}%
-}
-
+%\NewDocumentCommand{\inputcode}{m}{%
+%  \edef\@filepath{\currfiledir/code/#1}%
+%  \inputminted[
+%    label={%
+%      \textattachfile[
+%        color={0 0 1},
+%        mimetype=text/x-python,
+%        icon=Paperclip,
+%      ]{\@filepath}{\detokenize{#1}}%
+%    },
+%  ]{python}{\@filepath}%
+%}
 
 % ---------------------------- Пакети LaTeX3 -----------------------------------
 % --------------------------------------------------------------------------------
@@ -301,6 +353,30 @@
   fontupper=\ttfamily\footnotesize,  % моноширинный шрифт, чуть меньше
   enhanced                  % для теней/эффектов (опционально)
 }
+
+\newtcbox{\codebutton}[1]{
+  on line,
+  colback=blue!10,
+  colframe=blue!50!black,
+  boxrule=1pt,
+  arc=3pt,
+  boxsep=3pt,
+  left=5pt,
+  right=5pt,
+  top=3pt,
+  bottom=3pt,
+  tcbox raise base,
+  hyperurl={#1},
+}
+
+%\RequirePackage{fontawesome5}
+
+%\NewDocumentCommand{\inputcode}{m}{%
+%    \edef\@filepath{\currfiledir code/#1}
+%  \codebutton{%
+%    \faGithub~\href{https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/\@filepath}{\texttt{#1}}%
+%  }%
+%}
 
 \newtcolorbox{commentbox}{
   parbox = false,
