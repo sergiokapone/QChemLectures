@@ -156,7 +156,7 @@
 \RequirePackage{wrapstuff}
 % ------------------------------------ Таблиці ---------------------------------
 \RequirePackage{tabularray}
-\setlength\arrayrulewidth{1pt}
+\UseTblrLibrary{booktabs}
 % ------------------------------------ Математика ------------------------------
 \ifluatex
 	%	\RequirePackage{lualatex-math}
@@ -219,12 +219,41 @@
     autogobble
 }
 
-\NewDocumentCommand{\inputcode}{m}{%
-  \inputminted[label={\detokenize{#1}}]{python}{\currfiledir/code/#1}%
-}
+
 
 % ---------------------------- Фалові операції ---------------------------------
-\RequirePackage{currfile}
+\RequirePackage[abspath]{currfile}
+\RequirePackage{currfile-abspath}
+
+
+%\NewDocumentCommand{\inputcode}{m}{%
+%  \inputminted[label={\detokenize{#1}}]{python}{\currfiledir/code/#1}%
+%}
+
+
+
+% === 1. Оголошуємо Lua-функцію глобально ===
+\directlua{
+  local lfs = require("lfs")
+  function _G._get_abs_path(dir, file)
+    local cwd = lfs.currentdir()
+    local abs = cwd .. "/" .. dir .. "/code/" .. file
+    abs = abs:gsub("\\", "/")
+    return abs
+  end
+}
+
+% === 2. Макрос ===
+\NewDocumentCommand{\inputcode}{m}{%
+  \edef\@abspath{%
+    \directlua{tex.print(_get_abs_path("\currfiledir", "#1"))}%
+  }%
+  \inputminted[
+    label={\href{file:///\@abspath}{\detokenize{#1}}},
+  ]{python}{\currfiledir/code/#1}%
+}
+
+
 % ---------------------------- Пакети LaTeX3 -----------------------------------
 % --------------------------------------------------------------------------------
 \RequirePackage{epigraph}

@@ -67,14 +67,14 @@ pip install pyscf-properties
     \end{itemize}
 
     \item \textbf{pyscf-geomopt} --- для оптимізації геометрії:
-    \begin{lstlisting}[style=bash]
+    \begin{minted}{bash}
 pip install pyscf-geomopt
-    \end{lstlisting}
+    \end{minted}
 
     \item \textbf{geometric} --- покращена оптимізація (рекомендується):
-    \begin{lstlisting}[style=bash]
+    \begin{minted}{bash}
 pip install geometric
-    \end{lstlisting}
+    \end{minted}
 \end{enumerate}
 
 \subsubsection*{Перевірка встановлення}
@@ -108,12 +108,27 @@ pip install pyscf-properties  # properties поки немає в conda
 \subsection*{Концептуальна основа: теорія відгуку}
 %% --------------------------------------------------------
 
-Більшість молекулярних властивостей обчислюється через \textit{теорію відгуку (response theory)}. Ідея проста: прикладаємо зовнішнє збурення до системи
-та дивимося, як змінюється хвильова функція або енергія.
+Теорія відгуку (response theory) є потужним інструментом для обчислення молекулярних властивостей у квантовій механіці. Її суть полягає в аналізі реакції системи на зовнішні збурення: ми застосовуємо слабке зовнішнє поле (або збурення) і спостерігаємо, як змінюється енергія, хвильова функція чи інші observable величини. Цей підхід дозволяє систематично обчислювати похідні енергії по параметрах збурення, які безпосередньо відповідають фізичним властивостям, таким як поляризовність, магнітні моменти чи спектроскопічні переходи.
 
-\subsubsection*{Розклад енергії в зовнішньому полі}
+Загалом, енергія системи в присутності збурення $\lambda$ (де $\lambda$ може бути будь-яким параметром, наприклад, електричним або магнітним полем чи геометрією молекули тощо) розкладається в ряд Тейлора:
 
-Для електричного поля $\mathbf{E}$:
+\[
+E(\lambda) = E_0 + \left. \frac{\partial E}{\partial \lambda} \right|_{\lambda=0} \lambda + \frac{1}{2!} \left. \frac{\partial^2 E}{\partial \lambda^2} \right|_{\lambda=0} \lambda^2 + \frac{1}{3!} \left. \frac{\partial^3 E}{\partial \lambda^3} \right|_{\lambda=0} \lambda^3 + \ldots
+\]
+
+Коефіцієнти при степенях $\lambda$ є похідними енергії по збуренню в точці $\lambda=0$ і визначають лінійний, квадратичний тощо відгук системи. Ці похідні інтерпретуються як фундаментальні властивості:
+
+\begin{itemize}
+    \item Перша похідна $\left. \frac{\partial E}{\partial \lambda} \right|_{\lambda=0}$ --- лінійний відгук (наприклад, дипольний момент).
+    \item Друга похідна $\left. \frac{\partial^2 E}{\partial \lambda^2} \right|_{\lambda=0}$ --- квадратичний відгук (наприклад, поляризовність).
+    \item Вищі похідні --- нелінійні ефекти (гіперполяризовність тощо).
+\end{itemize}
+
+\textbf{Загальний принцип:} будь-яка молекулярна властисть, пов'язана з відгуком на збурення, є похідною енергії (або хвильової функції) по відповідному параметру.
+
+\subsubsection*{Приклад: розклад енергії в електричному полі}
+
+Для ілюстрації розглянемо конкретний випадок статичного однорідного електричного поля $\mathbf{E}$. Енергія системи розкладається як:
 
 \[
 E(\mathbf{E}) = E_0 - \boldsymbol{\mu} \cdot \mathbf{E}
@@ -123,13 +138,18 @@ E(\mathbf{E}) = E_0 - \boldsymbol{\mu} \cdot \mathbf{E}
 
 де:
 \begin{itemize}
-    \item $E_0$ --- енергія без поля.
-    \item $\boldsymbol{\mu}$ --- дипольний момент (перша похідна).
-    \item $\alpha_{ij}$ --- поляризовність (друга похідна).
-    \item $\beta_{ijk}$ --- перша гіперполяризовність (третя похідна).
+    \item $E_0$ --- енергія системи без поля.
+    \item $\boldsymbol{\mu}$ --- статичний дипольний момент (перша похідна $\left. -\frac{\partial E}{\partial \mathbf{E}} \right|_{\mathbf{E}=0}$).
+    \item $\alpha_{ij}$ --- тензор поляризовності (друга похідна $\left. -\frac{\partial^2 E}{\partial E_i \partial E_j} \right|_{\mathbf{E}=0}$).
+    \item $\beta_{ijk}$ --- тензор першої гіперполяризовності (третя похідна $\left. -\frac{\partial^3 E}{\partial E_i \partial E_j \partial E_k} \right|_{\mathbf{E}=0}$).
 \end{itemize}
 
-\textbf{Загальний принцип:} властивість = похідна енергії по зовнішньому полю.
+Цей розклад є частковим випадком загальної теорії відгуку, де $\lambda \equiv \mathbf{E}$. Аналогічно, теорія застосовується до магнітних полів (для магнітної сприйнятливості), геометричних змін (для сил і гессіанів) чи часозалежних збурень (для спектроскопії).
+
+\textbf{Загальний принцип:}
+\begin{equation*}
+     \text{властивість} = \text{похідна енергії по зовнішньому полю}.
+\end{equation*}
 
 \subsubsection*{Методи обчислення похідних}
 
@@ -185,21 +205,21 @@ $\mathbf{A} \to \mathbf{A} + \nabla\chi$ не змінює $\mathbf{B}$.
 У PySCF використовується метод GIAO (також називається IGLO, CSGT):
 
 \begin{itemize}
-    \item Кожна атомна орбіталь має свій локальний gauge
-    \item Результати не залежать від вибору початку координат
-    \item Швидка збіжність з розміром базису
-    \item \textbf{Стандарт} для розрахунків ЯМР властивостей
+    \item Кожна атомна орбіталь має своє локальну калібрування.
+    \item Результати не залежать від вибору початку координат.
+    \item Швидка збіжність з розміром базису.
+    \item \textbf{Стандарт} для розрахунків ЯМР властивостей.
 \end{itemize}
 
 \textbf{В PySCF це працює автоматично} --- не потрібно нічого додатково налаштовувати!
 
-\begin{lstlisting}[language=Python]
+\begin{minted}{python}
 from pyscf.prop import nmr
 
 # GIAO використовується автоматично
 nmr_calc = nmr.RHF(mf)
 shielding = nmr_calc.kernel()  # gauge-independent результат!
-\end{lstlisting}
+\end{minted}
 
 %% --------------------------------------------------------
 \subsection*{Базиси для розрахунку властивостей}
@@ -216,7 +236,7 @@ shielding = nmr_calc.kernel()  # gauge-independent результат!
     \begin{itemize}
         \item Поляризовностей (опис деформації електронної густини)
         \item Магнітних властивостей (струми далеко від ядер)
-        \item Анізотропних властивостей
+        \item Анізотропних властивостейs
     \end{itemize}
 
     Базиси: \texttt{aug-cc-pVDZ}, \texttt{aug-cc-pVTZ}, \texttt{6-311++G**}
@@ -310,14 +330,14 @@ J-константи & pcJ-2, pcJ-3 & Спеціальний базис \\
     \item \textbf{Методологічні поради:} як вибрати метод/базис
 \end{itemize}
 
-\textbf{Важливий принцип:} ми використовуємо \textbf{фізично цікаві} молекули,
-а не просто ``іграшкові'' приклади:
-\begin{itemize}
-    \item H₂O --- прототип для H-зв'язків
-    \item Бензен --- ароматичність
-    \item O₂, NO --- парамагнетики
-    \item Хіральні молекули --- оптична активність
-\end{itemize}
+%\textbf{Важливий принцип:} ми використовуємо \textbf{фізично цікаві} молекули,
+%а не просто ``іграшкові'' приклади:
+%\begin{itemize}
+%    \item \ce{H2O} --- прототип для H-зв'язків
+%    \item Бензен --- ароматичність
+%    \item \ce{O2}, \ce{NO} --- парамагнетики
+%    \item Хіральні молекули --- оптична активність
+%\end{itemize}
 
 %% --------------------------------------------------------
 \subsection*{Практичні рекомендації перед початком}
@@ -327,27 +347,27 @@ J-константи & pcJ-2, pcJ-3 & Спеціальний базис \\
 
 \begin{enumerate}
     \item \textbf{Оптимізуйте геометрію:}
-    \begin{lstlisting}[language=Python]
+    \begin{minted}{python}
 from pyscf import gto, scf
 from pyscf.geomopt.geometric_solver import optimize
 
 mol = gto.M(atom='...', basis='6-31g*')
 mf = scf.RHF(mol).run()
 mol_eq = optimize(mf)  # оптимізована геометрія
-    \end{lstlisting}
+    \end{minted}
 
     \item \textbf{Перерахуйте з кращим базисом:}
-    \begin{lstlisting}[language=Python]
+    \begin{minted}{python}
 mol_prop = gto.M(atom=mol_eq.atom, basis='aug-cc-pvdz')
 mf_prop = scf.RHF(mol_prop).run()
-    \end{lstlisting}
+    \end{minted}
 
     \item \textbf{Обчисліть властивість:}
-    \begin{lstlisting}[language=Python]
+    \begin{minted}{python}
 from pyscf.prop import nmr
 nmr_calc = nmr.RHF(mf_prop)
 shielding = nmr_calc.kernel()
-    \end{lstlisting}
+    \end{minted}
 
     \item \textbf{Проаналізуйте результат!}
 \end{enumerate}
@@ -355,11 +375,11 @@ shielding = nmr_calc.kernel()
 \subsubsection*{Типові помилки початківців}
 
 \begin{itemize}
-    \item ❌ Розрахунок властивостей без оптимізації геометрії
-    \item ❌ Використання малих базисів (6-31G) для поляризовностей
-    \item ❌ Забування про дифузні функції для анізотропних властивостей
-    \item ❌ Розрахунок ЯМР без gauge-independent методу
-    \item ❌ Порівняння абсолютних значень замість зсувів (для ЯМР)
+    \item Розрахунок властивостей без оптимізації геометрії
+    \item Використання малих базисів (6-31G) для поляризовностей
+    \item Забування про дифузні функції для анізотропних властивостей
+    \item Розрахунок ЯМР без gauge-independent методу
+    \item Порівняння абсолютних значень замість зсувів (для ЯМР)
 \end{itemize}
 
 \subsubsection*{Контрольний чек-лист}
@@ -367,12 +387,12 @@ shielding = nmr_calc.kernel()
 Перед розрахунком властивості перевірте:
 
 \begin{itemize}
-    \item[$\square$] Геометрія оптимізована? (немає уявних частот)
-    \item[$\square$] Базис підходить для цієї властивості?
-    \item[$\square$] Метод підходить? (HF завищує поляризовність, потрібен DFT/MP2)
-    \item[$\square$] Для магнітних: gauge-independent метод?
-    \item[$\square$] SCF збігся? (check \texttt{mf.converged})
-    \item[$\square$] Для радикалів: перевірили $\langle S^2 \rangle$?
+    \item Геометрія оптимізована? (немає уявних частот)
+    \item Базис підходить для цієї властивості?
+    \item Метод підходить? (HF завищує поляризовність, потрібен DFT/MP2)
+    \item Для магнітних: gauge-independent метод?
+    \item SCF збігся? (check \inlinecode{mf.converged})
+    \item Для радикалів: перевірили $\langle S^2 \rangle$?
 \end{itemize}
 
 %% --------------------------------------------------------
@@ -386,21 +406,7 @@ shielding = nmr_calc.kernel()
     \item \textbf{NIST WebBook:} експериментальні дані для порівняння
 \end{itemize}
 
-\vspace{1em}
-
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title=Готові до роботи?]
-Якщо ви:
-\begin{itemize}
-    \item Встановили \texttt{pyscf-properties}
-    \item Розумієте базову структуру розрахунків у PySCF
-    \item Знаєте різницю між HF та DFT
-    \item Розумієте, що таке базисний набір
-\end{itemize}
-
-\textbf{То ви готові обчислювати молекулярні властивості!}
-
-Починаємо з найпростішого: коливальних спектрів.
-\end{tcolorbox}
 
 \input{\currfiledir/Oscilations.tex}
-
+%\input{\currfiledir/ElectricProperties.tex}
+%\input{\currfiledir/MagneticProperties.tex}
