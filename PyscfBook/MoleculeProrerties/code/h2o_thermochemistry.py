@@ -1,68 +1,139 @@
 # ============================================================
 # h2o_thermochemistry.py
-# Термохімічні поправки (ZPE, ентальпія, ентропія)
+# Термохімічний аналіз молекули H2O (PySCF)
 # ============================================================
 
-ffrom pyscf import gto, scf
-from pyscf.hessian import thermo
-import numpy as np
+import numpy
+from pyscf import gto, hessian
+from pyscf.hessian.thermo import *
+from pyscf.data import nist
 
-mol = gto.M(
-    atom="""
-    O  0.0000  0.0000  0.1173
-    H  0.0000  0.7572 -0.4692
-    H  0.0000 -0.7572 -0.4692
-    """,
-    basis="6-31g",
-    unit="angstrom",
-)
+# -------------------------------------------------------
+# МОЛЕКУЛА ВОДИ
+# -------------------------------------------------------
+mol = gto.Mole()
+mol.atom = '''
+O  0.000000   0.000000   0.000000
+H  0.000000   0.757000   0.587000
+H  0.000000  -0.757000   0.587000
+'''
+mol.basis = '6-31g(d)'
+mol.build()
 
-print("Термохімічний аналіз H2O")
-print("=" * 60)
+mass = mol.atom_mass_list(isotope_avg=True)
 
-# SCF розрахунок
-mf = scf.RHF(mol)
-e_elec = mf.kernel()
+# -------------------------------------------------------
+# Хартрі–Фок, гессіан, термохімія
+# -------------------------------------------------------
+mf = scf.RHF(mol).run(verbose=0)
+hess = hessian.RHF(mf).kernel()
 
-# Гессіан
-hess = mf.Hessian()
-h = hess.kernel()
+# ---------------------------------------------------------------
+#  Гармонічний аналіз коливань:
+#  з гесіану обчислюються власні частоти (в см⁻¹) та нормальні моди.
+#  Видаляються поступальні й обертальні ступені свободи (6 для нелінійних систем).
+#  Результат містить частоти, мас-зважений гессіан і нормальні координати.
+# ---------------------------------------------------------------
+results = harmonic_analysis(mol, hess)
+# dump_normal_mode(mol, results)   # при потребі
 
-# Обчислення вібраційних частот (у cm⁻¹)
-freq_info = thermo.harmonic_analysis(mol, h)
-freqs_cm = freq_info['freq_wavenumber']
+# ---------------------------------------------------------------
+#  Розрахунок термохімічних параметрів при заданій температурі і тиску.
+#  Функція thermo():
+#    – використовує вібраційні частоти (results['freq_au'])
+#    – враховує поступальні, обертальні та коливальні ступені свободи
+#    – обчислює нульову коливальну енергію (ZPE),
+#      термічні поправки до енергії, ентальпію, ентропію,
+#      теплоємності (Cv, Cp) та вільну енергію Гіббса (G)
+# ---------------------------------------------------------------
+results = thermo(mf, results['freq_au'], 298.15, 101325)
 
-# Термохімічні функції при T=298.15 K, p=1 atm
-# thermo.thermo приймає freq у cm⁻¹ і автоматично конвертує
-results = thermo.thermo(mf, freqs_cm, 298.15, 101325)
+# =======================================================
+# ТЕРМОХІМІЧНІ ПАРАМЕТРИ
+# =======================================================
+T = results['temperature'][0]
+P = results['pressure'][0]
 
-print("\nЕлектронна енергія:")
-print(f"E(elec) = {e_elec:.6f} Ha")
-print(f"        = {e_elec * 627.509:.2f} ккал/моль")
+print("\n" + "="*80)
+print(f"{'ТЕРМОХІМІЧНІ ПАРАМЕТРИ':^80}")
+print("="*80)
+print(f"Температура (T):             {T:10.2f} {results['temperature'][1]}")
+print(f"Тиск (P):                    {P:10.2f} {results['pressure'][1]}")
+print(f"Ротаційні константи [{results['rot_const'][1]}]: "
+      f"{results['rot_const'][0][0]:10.5f}  {results['rot_const'][0][1]:10.5f}  {results['rot_const'][0][2]:10.5f}")
+print(f"Симетрійне число:            {results['sym_number'][0]:>10d}")
+print(f"Нульова коливальна енергія (ZPE): {results['ZPE'][0]:10.5f} Eh"
+      f" = {results['ZPE'][0] * nist.HARTREE2J * nist.AVOGADRO:12.3f} Дж/моль")
 
-print("\nПоправки при 298.15 K:")
-zpe_ha = results['ZPE'][0]
-print(f"Нульова коливальна енергія (ZPE): {zpe_ha:.6f} Ha")
-e_thermal_ha = results['E_tot'][0] - (e_elec + zpe_ha)  # Термічна поправка до енергії (без ZPE)
-print(f"Термічна поправка до енергії:     {e_thermal_ha:.6f} Ha")
-h_thermal_ha = results['H_tot'][0] - (e_elec + zpe_ha)  # Термічна поправка до ентальпії (приблизна)
-print(f"Термічна поправка до ентальпії:   {h_thermal_ha:.6f} Ha")
+# ===============================================================
+#  ТЕРМОДИНАМІЧНА ТА ЕНЕРГЕТИЧНА ІНФОРМАЦІЯ
+# ===============================================================
 
-print("\nПовна енергія Гіббса:")
-print(f"G(298K) = E(elec) + ZPE + H_thermal - T*S")
-g_ha = results['G_tot'][0]
-print(f"        = {g_ha:.6f} Ha")
+# -------------------------------------------------------
+# ТЕРМОДИНАМІЧНА ТАБЛИЦЯ
+# -------------------------------------------------------
+keys = ('tot', 'elec', 'trans', 'rot', 'vib')
+header = ["Функція", "Одиниці"] + [x.upper() for x in keys]
 
-print("\nЕнтропія:")
-s = results['S_tot'][0]
-print(f"S = {s:.3f} кал/(моль·K)")
+def convert(f, keys, unit):
+    """Переведення значень термодинамічних функцій у потрібні одиниці"""
+    conv = nist.HARTREE2J * nist.AVOGADRO if 'Eh' in unit else 1
+    return [results.get(f + '_' + key, (0,))[0] * conv for key in keys]
 
-print("\nРозклад ZPE по модах (лише >100 cm⁻¹):")
-conversion_factor = 0.0014295  # Правильний: 0.5 * h c N_A / (4.184 * 1000) в ккал/моль на cm⁻¹
-for i, freq in enumerate(freqs_cm):
-    if freq.imag == 0 and freq.real > 100:  # Ігноруємо уявні частоти та низькочастотні
-        zpe_mode_kcal = 0.5 * freq.real * conversion_factor * 2  # Помилка в оригіналі виправлена; *2? Ні, це 0.5 * factor * freq
-        # Правильно: zpe_mode = (1/2) * nu * factor, де factor = 0.002859 для повної енергії, тож 0.0014295 для ZPE
-        zpe_mode_kcal = 0.0014295 * freq.real
-        print(f"  Мода {i+1}: {freq.real:.1f} cm⁻¹ → ZPE = {zpe_mode_kcal:.2f} ккал/моль")
-        
+def write_table_row(title, f):
+    """Створює один рядок термодинамічної таблиці"""
+    tot, unit = results[f + '_tot']
+    values = convert(f, keys, unit)
+    # Заміна одиниць для більш зрозумілого відображення
+    unit = unit.replace('Eh', 'J/mol·K')
+    return [title, unit] + [f"{v:10.3f}" for v in values]
+
+# Формуємо таблицю для S, Cv, Cp
+table = [
+    write_table_row("Ентропія S", "S"),
+    write_table_row("Cv", "Cv"),
+    write_table_row("Cp", "Cp"),
+]
+
+print("\n" + "="*100)
+print(f"{f'ТЕРМОДИНАМІЧНІ ФУНКЦІЇ (T = {T:.2f} K, P = {P/101325:.2f} atm)':^100}")
+print("="*100)
+print(f"{header[0]:<15s} {header[1]:<15s} " + " ".join(f"{h:>10s}" for h in header[2:]))
+print("-"*100)
+for row in table:
+    print(f"{row[0]:<15s} {row[1]:<15s} " + " ".join(row[2:]))
+print("="*100)
+
+# -------------------------------------------------------
+# ЕНЕРГЕТИЧНА ТАБЛИЦЯ (у kJ/mol)
+# -------------------------------------------------------
+Ha2kJ = nist.HARTREE2J * nist.AVOGADRO / 1000  # 1 Eh → kJ/mol
+
+def convert_kJ(f, keys):
+    """Повертає список енергій у kJ/mol для заданої функції."""
+    return [results.get(f + '_' + key, (0,))[0] * Ha2kJ for key in keys]
+
+def write_energy_row_kJ(title, f):
+    values = convert_kJ(f, keys)
+    return [title, "kJ/mol"] + [f"{v:12.3f}" for v in values]
+
+# --- ZPE ---
+ZPE_kJ = results['ZPE'][0] * Ha2kJ
+ZPE_row = ["ZPE", "kJ/mol", f"{ZPE_kJ:12.3f}"]
+
+energy_table_kJ = [
+    ZPE_row,
+    write_energy_row_kJ("E", "E"),
+    write_energy_row_kJ("H", "H"),
+    write_energy_row_kJ("G", "G"),
+]
+
+print("\n" + "="*100)
+print(f"{f'ЕНЕРГЕТИЧНІ ВЕЛИЧИНИ (T = {T:.2f} K, P = {P/101325:.2f} atm)':^100}")
+print("="*100)
+print(f"{header[0]:<15s} {header[1]:<15s} " + " ".join(f"{h:>12s}" for h in header[2:]))
+print("-"*100)
+for row in energy_table_kJ:
+    print(f"{row[0]:<15s} {row[1]:<15s} " + " ".join(row[2:]))
+print("="*100)
+
