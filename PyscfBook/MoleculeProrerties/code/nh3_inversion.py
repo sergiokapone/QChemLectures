@@ -197,7 +197,7 @@ ax1.legend(fontsize=9)
 ax1.grid(True, alpha=0.3)
 
 plt.tight_layout()
-plt.savefig('nh3_inversion_ts_full.png', dpi=300, bbox_inches='tight')
+plt.savefig('nh3_inversion.pdf', dpi=300, bbox_inches='tight')
 print(f"\n✓ Графік збережено: nh3_inversion_ts_full.pdf")
 
 
