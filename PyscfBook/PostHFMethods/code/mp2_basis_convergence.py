@@ -114,3 +114,4 @@ def mp2_basis_convergence(symbol, spin):
 # Приклади
 mp2_basis_convergence("Ne", spin=0)
 mp2_basis_convergence("C", spin=2)
+

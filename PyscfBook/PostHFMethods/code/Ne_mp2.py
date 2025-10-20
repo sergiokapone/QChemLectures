@@ -1,3 +1,8 @@
+"""
+he_mp2.py
+Детальний MP2 розрахунок атома Ne
+"""
+
 from pyscf import gto, scf, mp
 import numpy as np
 
@@ -15,9 +20,9 @@ def mp2_neon_calculation(basis="cc-pvtz"):
     # Крок 1: HF розрахунок
     print("\nКрок 1: Hartree-Fock розрахунок")
     mf = scf.RHF(mol)
-    mf.verbose = 4
+    mf.verbose = 0
     mf.conv_tol = 1e-12
-    e_hf = mf.kernel()
+    e_hf = mf.kernel(verbose=0)
 
     print(f"\nHF енергія: {e_hf:.10f} Ha")
     print(f"HF енергія: {e_hf * 27.211386:.6f} eV")
@@ -25,7 +30,7 @@ def mp2_neon_calculation(basis="cc-pvtz"):
     # Крок 2: MP2 розрахунок
     print("\nКрок 2: MP2 кореляція")
     mymp2 = mp.MP2(mf)
-    mymp2.verbose = 4
+    mymp2.verbose = 0
     e_mp2_corr, t2 = mymp2.kernel()
 
     e_total_mp2 = e_hf + e_mp2_corr
@@ -59,3 +64,4 @@ def mp2_neon_calculation(basis="cc-pvtz"):
 
 
 e_hf, e_mp2, e_corr = mp2_neon_calculation()
+

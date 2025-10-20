@@ -261,13 +261,46 @@
 % ---------------------------- Фалові операції ---------------------------------
 \RequirePackage[abspath]{currfile}
 \RequirePackage{currfile-abspath}
+\RequirePackage{xstring} % Потрібно для \ifstrequal, якщо не завантажено раніше
+\RequirePackage{xkeyval} % Для \IfEq (якщо не завантажено)
 
 
 \def\rootURI{https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/}
-\NewDocumentCommand{\inputcode}{m}{%
-   \edef\@filepath{\currfiledir code/#1}
-  \inputminted[label=\small\href{\rootURI\@filepath}{\texttt{\detokenize{#1}}}]{python}{\currfiledir/code/#1}%
+
+\ExplSyntaxOn
+
+% Визначення ключів
+\keys_define:nn { inputcode }
+{
+  mode   .tl_set:N  = \l_inputcode_mode_tl,
+  mode   .initial:n = linkonly,
+  prefix .tl_set:N  = \l_inputcode_prefix_tl,
+  prefix .initial:n = {},
+  unknown .code:n   = {} % Ігноруємо невідомі ключі
 }
+
+% Команда
+\NewDocumentCommand{\inputcode}{ O{} m }
+{
+  \group_begin:
+  \keys_set:nn { inputcode } { #1 }
+
+  % Формуємо шляхи
+  \tl_set:Nx \l_tmpa_tl { \exp_not:N \detokenize {#2} }
+  \tl_set:Nx \l_tmpb_tl { \currfiledir code/ \l_tmpa_tl }
+
+  % Перевірка режиму
+  \str_if_eq:VnTF \l_inputcode_mode_tl { inline }
+  {
+    \inputminted[label=\small\href{\rootURI\l_tmpb_tl}{\texttt{\l_tmpa_tl}}]{python}{\currfiledir/code/#2}
+  }
+  {
+    \l_inputcode_prefix_tl \c_space_tl \href{\rootURI\l_tmpb_tl}{\texttt{\l_tmpa_tl}}
+  }
+  \group_end:
+}
+
+\ExplSyntaxOff
 
 
 %\NewDocumentCommand{\inputcode}{m}{%

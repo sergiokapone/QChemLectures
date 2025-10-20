@@ -1,10 +1,12 @@
+"""
+Be_casscf.py
+Демонстрація багатоконфігураційного характеру для атома Be
+"""
+
 from pyscf import gto, scf, mcscf
 
 
 def multiconfigurational_demo():
-    """
-    Демонстрація багатоконфігураційного характеру
-    """
 
     # Атом Be: [He] 2s²
     # Близькі за енергією 2s² та 2p²
@@ -42,3 +44,4 @@ def multiconfigurational_demo():
 
 
 multiconfigurational_demo()
+
