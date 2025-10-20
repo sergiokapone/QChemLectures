@@ -369,9 +369,9 @@ Ti: [Ar] 3d² 4s², основний стан ³F
 \caption{Порівняння Post-HF методів}
 \label{tab:posthf_summary}
 \small
-\begin{tabular}{llcccc}
+\begin{tblr}{llcccc}
 \hline
-\textbf{Метод} & \textbf{Складність} & \textbf{Size-ext.} & \textbf{Варіац.} & \textbf{Точність} & \textbf{БК?} \\
+\textbf{Метод} & \textbf{Складність} & \textbf{Size-cons.} & \textbf{Варіац.} & \textbf{Точність} & \textbf{БК?} \\
 \hline
 MP2 & $O(N^5)$ & Так & Ні & Помірна & Ні \\
 MP3/MP4 & $O(N^6/N^7)$ & Так & Ні & Добра & Ні \\
@@ -382,8 +382,9 @@ CASSCF & $O(e^{n_{act}})$ & Так & Так & Статична & Так \\
 CASPT2 & $O(e^{n_{act}})$ & Так & Ні & Відмінна & Так \\
 Full CI & $O(e^N)$ & Так & Так & Точна & Так \\
 \hline
-\end{tabular}
+\end{tblr}
 \end{table}
+де $N$ --- характерний розмір системи (базисних функцій або електронів).
 
 \textit{БК = Багатоконфігураційний}
 
@@ -445,21 +446,19 @@ Full CI & $O(e^N)$ & Так & Так & Точна & Так \\
 \caption{Вибір методу залежно від задачі}
 \label{tab:method_selection}
 \small
-\begin{tabular}{lll}
-\hline
-\textbf{Задача} & \textbf{Рекомендований метод} & \textbf{Альтернатива} \\
-\hline
-Швидка оцінка кореляції & MP2 & DFT \\
-Точні енергії (1 kcal/mol) & CCSD(T) & --- \\
-Замкнені оболонки & CCSD(T), MP2 & DFT \\
-Відкриті оболонки & UCCSD(T) & ROHF-CCSD \\
-Енергії збудження & EOM-CCSD, CASSCF & TD-DFT \\
-Перехідні метали & CASSCF, CASPT2 & DFT+U \\
-Багатоконфігураційні & CASSCF/CASPT2 & MRCI \\
-Еталонні розрахунки & CCSD(T)/CBS & Full CI \\
-Великі системи & MP2, DFT & DLPNO-CCSD(T) \\
-\hline
-\end{tabular}
+\begin{tblr}{lll}
+    \hline
+    \textbf{Задача}            & \textbf{Рекомендований метод} & \textbf{Альтернатива} \\ \hline
+    Швидка оцінка кореляції    & MP2                           & DFT                   \\
+    Точні енергії (1 kcal/mol) & CCSD(T)                       & ---                   \\
+    Замкнені оболонки          & CCSD(T), MP2                  & DFT                   \\
+    Відкриті оболонки          & UCCSD(T)                      & ROHF-CCSD             \\
+    Енергії збудження          & EOM-CCSD, CASSCF              & TD-DFT                \\
+    Перехідні метали           & CASSCF, CASPT2                & DFT+U                 \\
+    Багатоконфігураційні       & CASSCF/CASPT2                 & MRCI                  \\
+    Еталонні розрахунки        & CCSD(T)/CBS                   & Full CI               \\
+    Великі системи             & MP2, DFT                      & DLPNO-CCSD(T)         \\ \hline
+\end{tblr}
 \end{table}
 
 \subsection{Типові помилки}
@@ -487,57 +486,20 @@ Full CI & $O(e^N)$ & Так & Так & Точна & Так \\
     \item Зберігайте проміжні результати (checkpoint файли)
 \end{enumerate}
 
-\subsection{Обчислювальні ресурси}
 
-\begin{table}[h]
-\centering
-\caption{Орієнтовний час розрахунку (відносно HF)}
-\label{tab:computational_cost}
-\small
-\begin{tabular}{lcccc}
-\hline
-\textbf{Метод} & \textbf{He (DZ)} & \textbf{Ne (TZ)} & \textbf{Ar (DZ)} & \textbf{Пам'ять} \\
-\hline
-HF & 1× & 1× & 1× & $N^2$ \\
-MP2 & 2× & 5× & 10× & $N^4$ \\
-CCSD & 10× & 50× & 200× & $N^4$ \\
-CCSD(T) & 20× & 200× & 1000× & $N^4$ \\
-CASSCF(4,8) & 5× & --- & --- & $e^{n_{act}}$ \\
-\hline
-\end{tabular}
-\end{table}
 
 \textit{Примітка: реальний час залежить від якості початкового наближення та конвергенції}
 
-\subsection{Подальше вивчення}
-
-Для поглибленого розуміння post-HF методів рекомендуємо:
+%% --------------------------------------------------------
+\subsection{Корисні посилання}
+%% --------------------------------------------------------
 
 \begin{itemize}
-    \item \textbf{Книги:}
-    \begin{itemize}
-        \item T. Helgaker et al., "Molecular Electronic-Structure Theory"
-        \item I. Shavitt, R. J. Bartlett, "Many-Body Methods in Chemistry and Physics"
-        \item R. J. Bartlett, M. Musiał, "Coupled-cluster theory in quantum chemistry"
-    \end{itemize}
-
-    \item \textbf{Огляди:}
-    \begin{itemize}
-        \item CCSD(T): Reviews in Computational Chemistry, Vol. 14
-        \item CASSCF: Chemical Reviews 2012, 112, 108
-        \item Post-HF methods: Wiley Interdisciplinary Reviews: Computational Molecular Science
-    \end{itemize}
-
-    \item \textbf{Документація PySCF:}
-    \begin{itemize}
-        \item \url{https://pyscf.org/user/mp.html} --- MP2, MP3
-        \item \url{https://pyscf.org/user/cc.html} --- Coupled Cluster
-        \item \url{https://pyscf.org/user/mcscf.html} --- CASSCF, CASPT2
-        \item \url{https://pyscf.org/user/fci.html} --- Full CI
-    \end{itemize}
+    \item \url{https://pyscf.org/user/mp.html} --- MP2, MP3
+    \item \url{https://pyscf.org/user/cc.html} --- Coupled Cluster
+    \item \url{https://pyscf.org/user/mcscf.html} --- CASSCF, CASPT2
+    \item \url{https://pyscf.org/user/fci.html} --- Full CI
 \end{itemize}
 
-%\subsection{Що далі?}
-%
-%У наступному розділі ми розглянемо аналіз результатів квантово-хімічних розрахунків: орбітальні енергії, густини, заселеності, спектроскопічні властивості та візуалізацію даних.
+
 
