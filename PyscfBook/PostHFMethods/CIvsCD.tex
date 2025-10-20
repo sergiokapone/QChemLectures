@@ -1,0 +1,53 @@
+%% --------------------------------------------------------
+\section{Порівняння CI та CC методів}
+%% --------------------------------------------------------
+
+\inputcode{CIvsCD.py}
+
+%% --------------------------------------------------------
+\subsection{Size-extensivity проблема CI}
+%% --------------------------------------------------------
+
+Важлива відмінність між CI та CC:
+
+\begin{equation}
+    E_{CI}(2A) \neq 2 \times E_{CI}(A)
+\end{equation}
+
+\begin{equation}
+    E_{CC}(2A) = 2 \times E_{CC}(A)
+\end{equation}
+
+\inputcode{SizeExtensivityExample.py}
+
+
+%% --------------------------------------------------------
+\subsection{Коли використовувати CI vs CC}
+%% --------------------------------------------------------
+\nopagebreak
+\begin{center}
+    \captionof{table}{Порівняння CI та CC методів}
+    \label{tab:ci_vs_cc}
+    \small
+    \begin{tblr}{lll}
+        \hline
+        \textbf{Критерій}       & \textbf{CI}      & \textbf{CC}      \\
+        \hline
+        Варіаційність           & Так              & Ні               \\
+        Size-extensivity        & Ні (окрім FCI)   & Так              \\
+        Точність                & CISD < CCSD      & CCSD(T) ≈ FCI    \\
+        Збуджені стани          & EOM-CI, CIS      & EOM-CC           \\
+        Швидкість               & CISD швидше CCSD & Повільніше       \\
+        Стабільність            & Варіаційна межа  & Може розходитись \\
+        Багатоконфігураційність & Природно (FCI)   & Потребує MRCC    \\
+        \hline
+    \end{tblr}
+\end{center}
+
+\textbf{Рекомендації:}
+\begin{itemize}
+    \item \textbf{Використовуйте FCI} для малих систем як еталон
+    \item \textbf{Використовуйте CCSD(T)} для точних розрахунків одноконфігураційних систем
+    \item \textbf{Використовуйте CISD} для швидких оцінок кореляції
+    \item \textbf{Для багатоконфігураційних систем} використовуйте CASSCF/CASPT2
+\end{itemize}
