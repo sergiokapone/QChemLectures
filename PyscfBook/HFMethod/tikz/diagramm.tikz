@@ -1,0 +1,33 @@
+\begin{tikzpicture}[
+	every node/.style={font=\scriptsize, very thin},
+	node distance=1.1cm,
+	startstop/.style={rectangle, rounded corners, minimum width=1cm, minimum height=0.6cm, minimum width=6cm, text centered, draw=black, fill=red!30},
+	process/.style={rectangle, minimum width=6cm, minimum height=0.6cm, text centered, draw=black, fill=orange!30},
+	io/.style={trapezium, trapezium left angle=70, trapezium right angle=110, minimum height=0.6cm, text centered, draw=black, fill=blue!30, minimum width=2cm},
+	decision/.style={diamond, aspect=2, text centered, draw=black, fill=green!30},
+]
+\node (start) [io] {$\mathbf{D}^{(0)}$};
+\node (int) [io, left=1cm of start] {$T_{\mu\nu}$, $V^{\text{nuc}}_{\mu\nu}$, $\left[ (\mu\nu|\lambda\sigma) - \tfrac{1}{2} (\mu\lambda|\nu\sigma) \right]$};
+\node (buildJ) [process, below=0.6cm of start] {Розрахунок $J^{(k)}$, $K^{(k)}$};
+\node (buildF) [process, below=0.6cm of buildJ] {Обчислення матриці Фока $\mathbf{F}^{(k)}$};
+\node (solve) [process, below=0.6cm of buildF, text width=5cm] {Розв'язок рівнянь \\
+	$\mathbf{F}^{(k)}\mathbf{C}^{(k+1)}=\mathbf{S}\mathbf{C}^{(k+1)}\boldsymbol{\varepsilon}^{(k+1)}$};
+\node (buildD) [process, below=0.6cm of solve] {Побудова матриці густини $\mathbf{D}^{(k+1)}$};
+\node (check) [decision, below=0.6cm of buildD] {$\|\mathbf{D}^{(k+1)}-\mathbf{D}^{(k)}\|\le\delta$};
+\node (props) [startstop, below=0.8cm of check,  text width=5cm] {Розрахунок енергії та орбіталей};
+
+\draw[-latex] (int) -- (start);
+\draw[-latex] (start) -- (buildJ);
+\draw[-latex] (buildJ) -- (buildF);
+\draw[-latex] (buildF) -- (solve);
+\draw[-latex] (solve) -- (buildD);
+\draw[-latex] (buildD) -- (check);
+
+% якщо Ні — повертаємось: оновити D^{(k)}:=D^{(k+1)} і збираємо F заново
+\draw[-latex] (check.west) -- node[above]{Ні} +(-2,0) coordinate (loop) --
+	(loop |- buildJ.west) |- (buildJ.west);
+
+% якщо Так — вихід
+\draw[-latex] (check.east) -- node[above]{Так} +(1.5,0) coordinate (out) |- (props.east);
+
+\end{tikzpicture}

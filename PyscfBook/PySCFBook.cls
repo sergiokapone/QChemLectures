@@ -350,6 +350,7 @@
 \RequirePackage{pdftexcmds}
 \RequirePackage[most, many]{tcolorbox}
 \RequirePackage{xurl}
+\RequirePackage{nicematrix}
 
 \tcbset{
 	highlight math style={
