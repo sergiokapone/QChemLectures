@@ -225,37 +225,6 @@
 }
 
 
-%\RequirePackage{listings}
-%
-%\lstset{
-%    basicstyle=\ttfamily\scriptsize,
-%    backgroundcolor=\color{gray!20},
-%    frame=tb,
-%    framesep=2mm,
-%    breaklines=true,
-%    columns=fixed,
-%    keepspaces=true,
-%    showstringspaces=false,
-%    tabsize=4,
-%    language=Python,
-%    keywordstyle=\color{blue}\bfseries,
-%    stringstyle=\color{orange!80!black},
-%    commentstyle=\color{green!60!black}\itshape,
-%    fontadjust=true,
-%    inputencoding=utf8,
-%    extendedchars=true,
-%}
-%
-%%\NewDocumentCommand{\inputcode}{m}{%
-%%  \lstinputlisting[
-%%    caption={\detokenize{#1}},
-%%  ]{\currfiledir/code/#1}%
-%%}
-%
-%\NewDocumentCommand{\inputcode}{m}{%
-%  \noindent{\small~Код доступний: \href{https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/\currfiledir code/#1}{\texttt{\detokenize{#1}}}}
-%  \lstinputlisting[inputencoding=utf8/latin1]{\currfiledir/code/#1}%
-%}
 
 
 % ---------------------------- Фалові операції ---------------------------------
@@ -263,6 +232,37 @@
 \RequirePackage{currfile-abspath}
 \RequirePackage{xstring} % Потрібно для \ifstrequal, якщо не завантажено раніше
 \RequirePackage{xkeyval} % Для \IfEq (якщо не завантажено)
+\RequirePackage[most, many]{tcolorbox}
+% Определение inline-кнопки
+
+\newtcbox{\codebutton}[1]{
+  on line,
+  enhanced,
+  nobeforeafter,
+  tcbox raise base,
+  boxrule=0.5pt,
+  arc=2pt,
+  boxsep=1pt,
+  left=4mm, right=1mm,
+  top=0.75pt, bottom=0.75pt,
+  colframe=green!50!black,
+  coltext=green!25!black,
+  colback=green!10!white,
+  fontupper=\ttfamily\footnotesize,
+  before upper={\vphantom{dlg}},
+  overlay={
+    \begin{tcbclipinterior}
+      \fill[green!75!blue!50!white]
+        (frame.south west)
+        rectangle
+        ([xshift=4mm]frame.north west);
+      \node[text=white,font=\sffamily\bfseries\tiny]
+        at ([xshift=2mm]frame.west) {C};
+    \end{tcbclipinterior}
+  },
+    after upper={#1}
+}
+
 
 
 \def\rootURI{https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/}
@@ -295,7 +295,7 @@
     \inputminted[label=\small\href{\rootURI\l_tmpb_tl}{\texttt{\l_tmpa_tl}}]{python}{\currfiledir/code/#2}
   }
   {
-    \l_inputcode_prefix_tl \c_space_tl \href{\rootURI\l_tmpb_tl}{\texttt{\l_tmpa_tl}}
+    \l_inputcode_prefix_tl \href{\rootURI\l_tmpb_tl}{ \codebutton{\texttt{\l_tmpa_tl}} }
   }
   \group_end:
 }
@@ -348,7 +348,7 @@
 \RequirePackage{lastpage}
 \RequirePackage[disable]{todonotes}
 \RequirePackage{pdftexcmds}
-\RequirePackage[most, many]{tcolorbox}
+
 \RequirePackage{xurl}
 \RequirePackage{nicematrix}
 
@@ -388,20 +388,6 @@
   enhanced                  % для теней/эффектов (опционально)
 }
 
-\newtcbox{\codebutton}[1]{
-  on line,
-  colback=blue!10,
-  colframe=blue!50!black,
-  boxrule=1pt,
-  arc=3pt,
-  boxsep=3pt,
-  left=5pt,
-  right=5pt,
-  top=3pt,
-  bottom=3pt,
-  tcbox raise base,
-  hyperurl={#1},
-}
 
 %\RequirePackage{fontawesome5}
 
