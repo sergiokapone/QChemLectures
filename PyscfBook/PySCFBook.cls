@@ -398,21 +398,21 @@
 %  }%
 %}
 
-\newtcolorbox{commentbox}{
-  parbox = false,
-  breakable,
-    arc=0mm,
-    bottomtitle=0.5mm,
-    boxrule=0mm,
-    colbacktitle=black!10!white,
-    coltitle=black,
-    fonttitle=\bfseries,
-    left=2.5mm,
-    leftrule=1mm,
-    right=3.5mm,
-    title={Коментар},
-    toptitle=0.75mm,
-    fontupper=\footnotesize,
+\newtcolorbox{commentbox}[1][]{%
+  parbox=false,%
+  breakable,%
+  arc=0mm,%
+  bottomtitle=0.5mm,%
+  boxrule=0mm,%
+  colbacktitle=black!10!white,%
+  coltitle=black,%
+  fonttitle=\bfseries,%
+  left=2.5mm,%
+  leftrule=1mm,%
+  right=3.5mm,%
+  title={\ifx#1\empty Коментар\else#1\fi},% Conditional title: use provided title or default to "Коментар"
+  toptitle=0.75mm,%
+  fontupper=\footnotesize,%
 }
 
 %===============================================================================
