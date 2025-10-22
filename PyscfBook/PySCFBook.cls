@@ -410,7 +410,7 @@
   left=2.5mm,%
   leftrule=1mm,%
   right=3.5mm,%
-  title={\ifx#1\empty Коментар\else#1\fi},% Conditional title: use provided title or default to "Коментар"
+  title={\ifthenelse{\equal{#1}{}}{Коментар}{#1}},% Check if #1 is empty; if so, use "Коментар", else use #1
   toptitle=0.75mm,%
   fontupper=\footnotesize,%
 }

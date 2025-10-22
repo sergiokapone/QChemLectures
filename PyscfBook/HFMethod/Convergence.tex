@@ -20,7 +20,7 @@
 
 \subsection{Методи стабілізації збіжності}
 
-Коли стандартний SCF з DIIS не працює, у PySCF доступні наступні інструменти:
+Коли стандартний SCF з DIIS-процедурою (див.~\ref{sec:DIIS}) не працює, у PySCF доступні наступні інструменти:
 
 \subsubsection{Level shifting (зсув рівнів)}
 
@@ -40,7 +40,6 @@ mf.level_shift = 0.5  # типові значення 0.2-1.0 Hartree
 \paragraph{EDIIS (Energy DIIS)} мінімізує енергію замість похибки самоузгодженості. Це краще працює на початкових ітераціях, коли система далека від збіжності:
 
 \begin{minted}{python}
-from pyscf import scf
 mf.DIIS = scf.EDIIS
 \end{minted}
 
