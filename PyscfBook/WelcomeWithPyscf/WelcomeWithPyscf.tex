@@ -162,8 +162,17 @@ pip3 install pyscf
 %% --------------------------------------------------------
 
 Після встановлення перевіримо, чи PySCF працює коректно:
-
-\inputcode{code_1.py}
+\begin{minted}{python}
+import pyscf
+# Вивід версії
+print(pyscf.__version__)
+# Простий тест
+from pyscf import gto, scf
+mol = gto.M(atom='H 0 0 0; H 0 0 0.74', basis='sto-3g')
+mf = scf.RHF(mol)
+energy = mf.kernel()
+print(f'Енергія H2: {energy:.6f} Ha')
+\end{minted}
 
 Якщо програма виводить версію та обчислює енергію молекули H$_2$, встановлення виконано успішно.
 
@@ -185,7 +194,22 @@ pip3 install pyscf
 
 Розглянемо найпростіший приклад розрахунку атома Гідрогену:
 
-\inputcode{code_2.py}
+\begin{minted}{python}
+from pyscf import gto, scf
+# Етап 1: Створення молекулярного об'єкта
+mol = gto.M(
+atom='H 0 0 0',      # Координати атома
+basis='sto-3g',       # Базисний набір
+spin=1                # 2S (1 неспарений електрон)
+)
+# Етап 2: Вибір методу (UHF для відкритої оболонки)
+mf = scf.UHF(mol)
+# Етап 3: Виконання розрахунку
+energy = mf.kernel()
+# Виведення результатів
+print(f'Енергія атома H: {energy:.8f} Hartree')
+print(f'Енергія атома H: {energy * 27.211386:.6f} eV')
+\end{minted}
 
 %% --------------------------------------------------------
 \subsection{Структура для атома Гелію}
@@ -193,7 +217,20 @@ pip3 install pyscf
 
 Для атома з двома електронами у замкненій оболонці:
 
-\inputcode{code_3.py}
+\begin{minted}{python}
+from pyscf import gto, scf
+# Атом Гелію
+mol = gto.M(
+atom='He 0 0 0',
+basis='6-31g',
+spin=0,               # Всі електрони спарені
+charge=0              # Нейтральний атом
+)
+# RHF для замкненої оболонки
+mf = scf.RHF(mol)
+energy = mf.kernel()
+print(f'Енергія He: {energy:.8f} Ha')
+\end{minted}
 
 %% --------------------------------------------------------
 \subsection{Розрахунок з аналізом результатів}
@@ -201,7 +238,15 @@ pip3 install pyscf
 
 Більш детальний приклад з виведенням додаткової інформації:
 
-\inputcode{code_4.py}
+\begin{minted}{python}
+from pyscf import gto, scf
+
+mol = gto.M(atom='Li 0 0 0', basis='cc-pvdz', spin=1)
+
+mf = scf.UHF(mol)
+mf.verbose = 4            # Детальний вивід
+energy = mf.kernel()
+\end{minted}
 
 %% --------------------------------------------------------
 \section{Система одиниць та конвенції}
@@ -233,7 +278,19 @@ e &= 1 \quad \text{(елементарний заряд)} \\
 
 PySCF надає модуль для конвертації:
 
-\inputcode{code_5.py}
+\begin{minted}{python}
+from pyscf import lib
+# Конвертація енергії
+energy_ha = -2.85516
+energy_ev = energy_ha * lib.param.HARTREE2EV
+energy_kcal = energy_ha * lib.param.HARTREE2KCAL
+print(f'{energy_ha:.6f} Ha = {energy_ev:.4f} eV')
+print(f'{energy_ha:.6f} Ha = {energy_kcal:.2f} kcal/mol')
+# Конвертація відстані
+dist_bohr = 2.0
+dist_angstrom = dist_bohr * lib.param.BOHR
+print(f'{dist_bohr:.2f} Bohr = {dist_angstrom:.4f} Å')
+\end{minted}
 
 %% --------------------------------------------------------
 \subsection{Системні константи}
@@ -241,7 +298,13 @@ PySCF надає модуль для конвертації:
 
 Доступ до фізичних констант:
 
-\inputcode{code_6.py}
+\begin{minted}{python}
+from pyscf.data import nist
+
+print(f'Швидкість світла: {nist.LIGHT_SPEED} a.u.')
+print(f'Константа Планка: {nist.PLANCK} J·s')
+print(f'Число Авогадро: {nist.AVOGADRO} mol^-1')
+\end{minted}
 
 %% --------------------------------------------------------
 \subsection{Конвенції для атомів}
@@ -252,17 +315,37 @@ PySCF надає модуль для конвертації:
 \paragraph{Координати.}
 Координати задаються у формі рядка або списку. За замовчуванням використовуються ангстреми (Ångström), але можна вказати одиниці:
 
-\inputcode{code_7.py}
+\begin{minted}{python}
+# Координати в Ångströм (за замовчуванням)
+mol = gto.M(atom='C 0 0 0')
+# Явне вказання одиниць
+mol = gto.M(atom='C 0 0 0', unit='Angstrom')
+# Координати в Bohr
+mol = gto.M(atom='C 0 0 0', unit='Bohr')
+\end{minted}
 
 \paragraph{Спін.}
 Параметр \texttt{spin} визначає $2S = N_\alpha - N_\beta$, де $N_\alpha$ та $N_\beta$ --- кількість альфа та бета електронів:
 
-\inputcode{code_8.py}
+\begin{minted}{python}
+# Атом H (1 неспарений електрон): S=1/2, 2S=1
+mol = gto.M(atom='H 0 0 0', spin=1)
+# Атом He (всі спарені): S=0, 2S=0
+mol = gto.M(atom='He 0 0 0', spin=0)
+# Атом O у триплетному стані: S=1, 2S=2
+mol = gto.M(atom='O 0 0 0', spin=2)
+\end{minted}
 
 \paragraph{Симетрія.}
 За замовчуванням PySCF використовує повну точкову симетрію системи:
 
-\inputcode{code_9.py}
+\begin{minted}{python}
+# Автоматичне визначення симетрії
+mol = gto.M(atom='Ne 0 0 0', symmetry=True)
+print(f'Точкова група: {mol.groupname}')
+# Вимкнення симетрії
+mol = gto.M(atom='Ne 0 0 0', symmetry=False)
+\end{minted}
 
 %% --------------------------------------------------------
 \section{Документація та ресурси}

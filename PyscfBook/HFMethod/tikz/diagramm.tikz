@@ -1,5 +1,5 @@
 \begin{tikzpicture}[
-    scale=1.5,
+    scale=2,
 	every node/.style={font=\scriptsize, very thin},
 	node distance=1.1cm,
 	startstop/.style={rectangle, rounded corners, minimum width=1cm, minimum height=0.6cm, minimum width=6cm, text centered, draw=black, fill=red!30},
