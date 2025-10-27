@@ -276,41 +276,30 @@ e &= 1 \quad \text{(елементарний заряд)} \\
 \subsection{Конвертація одиниць}
 %% --------------------------------------------------------
 
-PySCF надає модуль для конвертації:
-
-\begin{minted}{python}
-from pyscf import lib
-# Конвертація енергії
-energy_ha = -2.85516
-energy_ev = energy_ha * lib.param.HARTREE2EV
-energy_kcal = energy_ha * lib.param.HARTREE2KCAL
-print(f'{energy_ha:.6f} Ha = {energy_ev:.4f} eV')
-print(f'{energy_ha:.6f} Ha = {energy_kcal:.2f} kcal/mol')
-# Конвертація відстані
-dist_bohr = 2.0
-dist_angstrom = dist_bohr * lib.param.BOHR
-print(f'{dist_bohr:.2f} Bohr = {dist_angstrom:.4f} Å')
-\end{minted}
-
-%% --------------------------------------------------------
-\subsection{Системні константи}
-%% --------------------------------------------------------
-
-Доступ до фізичних констант:
+PySCF надає \href{https://github.com/pyscf/pyscf/blob/master/pyscf/data/nist.py}{модуль для конвертації} одиниць вимірювання та фізичних констант:
 
 \begin{minted}{python}
 from pyscf.data import nist
 
+# Конвертація енергії
+energy_ha = -2.85516
+energy_ev = energy_ha * nist.HARTREE2EV
+energy_kcal = energy_ha * nist.HARTREE2KCAL
+
+# Конвертація відстані
+dist_bohr = 2.0
+dist_angstrom = dist_bohr * nist.BOHR
+
+# Фізичні константи
 print(f'Швидкість світла: {nist.LIGHT_SPEED} a.u.')
 print(f'Константа Планка: {nist.PLANCK} J·s')
 print(f'Число Авогадро: {nist.AVOGADRO} mol^-1')
 \end{minted}
 
+
 %% --------------------------------------------------------
 \subsection{Конвенції для атомів}
 %% --------------------------------------------------------
-
-При визначенні атомів у PySCF:
 
 \paragraph{Координати.}
 Координати задаються у формі рядка або списку. За замовчуванням використовуються ангстреми (Ångström), але можна вказати одиниці:

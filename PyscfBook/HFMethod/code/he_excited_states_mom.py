@@ -1,47 +1,45 @@
-# ==============================================================
-# File: he_excited_states_mom.py
-# Purpose: Розрахунок основного та збуджених станів атома Гелію (¹S, ³S)
-#          методом Гартрі–Фока з використанням техніки MOM (Maximum Overlap Method)
-# ==============================================================
-
 from pyscf import gto, scf
+from pyscf.scf import addons
 
+# ========== ТРИПЛЕТ (1s2s ³S) ==========
+mol_triplet = gto.M(
+    atom = 'He 0 0 0',
+    basis = 'cc-pvtz',
+    spin = 2
+)
+mf_triplet = scf.UHF(mol_triplet).run(verbose=0)
+e_triplet = mf_triplet.e_tot
 
-def he_excited_state(config="1s2s", spin=0, basis="cc-pvdz"):
-    """
-    Розрахунок збуджених станів He (¹S, ³S) з використанням MOM
-    """
-    mol = gto.M(atom="He 0 0 0", basis=basis, spin=spin)
+# ========== СИНГЛЕТ ЗБУДЖЕНИЙ (1s2s ¹S) З MOM ==========
+mol_singlet = gto.M(
+    atom = 'He 0 0 0',
+    basis = 'cc-pvtz',
+    spin = 0
+)
 
-    # RHF для синглету, UHF для триплету
-    if spin == 0:
-        mf = scf.RHF(mol)
-    else:
-        mf = scf.UHF(mol)
+# Спочатку UHF для триплету як initial guess
+mf_init = scf.UHF(mol_singlet).run(verbose=0)
 
-    mf.verbose = 0
-    mf.kernel()  # звичайний HF, щоб ініціалізуватись
+# Модифікуємо occupation для alpha і beta
+mo_occ = mf_init.mo_occ.copy()
+mo_occ[0][0] = 1  # alpha: 1s
+mo_occ[0][1] = 1  # alpha: 2s
+mo_occ[1][0] = 0  # beta: порожньо
+mo_occ[1][1] = 0  # beta: порожньо
 
-    # MOM для стабілізації збудженого стану
-    mom_solver = scf.addons.mom_occ(mf, mf.make_rdm1(), mf.mo_occ)
-    mom_solver.verbose = 0
-    mom_solver.max_cycle = 100
-    e_exc = mom_solver.kernel()
+# Новий розрахунок з MOM
+mf_singlet = scf.UHF(mol_singlet)
+mf_singlet = addons.mom_occ(mf_singlet, mf_init.mo_coeff, mo_occ).run(verbose=0)
+e_singlet = mf_singlet.e_tot
 
-    return e_exc
+# ========== ПОРІВНЯННЯ ==========
+exp_triplet = -2.145974
+exp_singlet = -2.123843
 
+print(f'\n{"="*65}')
+print(f'{"Стан":<15} {"HF (Ha)":>12} {"Експ. (Ha)":>12} {"Δ (Ha)":>10}')
+print(f'{"-"*65}')
+print(f'{"Триплет ³S":<15} {e_triplet:>12.6f} {exp_triplet:>12.6f} {abs(e_triplet - exp_triplet):>10.6f}')
+print(f'{"Синглет ¹S":<15} {e_singlet:>12.6f} {exp_singlet:>12.6f} {abs(e_singlet - exp_singlet):>10.6f}')
+print(f'{"="*65}')
 
-# Основний стан
-mol_gs = gto.M(atom="He 0 0 0", basis="cc-pvdz", spin=0)
-mf_gs = scf.RHF(mol_gs)
-mf_gs.verbose = 0
-e_gs = mf_gs.kernel()
-
-print("Стани атома Гелію (cc-pVDZ):")
-print("-" * 55)
-print(f"1s² (¹S, основний): {e_gs:.6f} Ha  = {e_gs * 27.2114:.2f} eV")
-
-# Збуджені стани
-for spin, label in [(0, "1s2s (¹S)"), (2, "1s2s (³S)")]:
-    e_exc = he_excited_state(spin=spin)
-    print(f"{label:15s}: {e_exc: .6f} Ha  ({(e_exc - e_gs)*27.2114: .3f} eV вище основного)")
