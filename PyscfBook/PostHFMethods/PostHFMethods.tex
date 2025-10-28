@@ -19,11 +19,12 @@
 
 Електронна кореляція --- це різниця між точною енергією системи та енергією, отриманою методом Хартрі-Фока:
 
-Метод Хартрі-Фока не враховує миттєву кореляцію рухів електронів, оскільки кожен електрон рухається в усередненому полі всіх інших електронів. Насправді ж електрони <<уникають>> один одного через кулонівське відштовхування.
 
 \begin{equation}
-    E_{\text{corr}} = E_{\text{exact}} - E_\text{HF}
+    E_{\text{corr}} = E_{\text{exact}} - E_\text{HF}.
 \end{equation}
+
+Метод Хартрі-Фока не враховує миттєву кореляцію рухів електронів, оскільки кожен електрон рухається в усередненому полі всіх інших електронів. Насправді ж електрони <<уникають>> один одного через кулонівське відштовхування.
 
 \begin{figure}[h!]
 \centering
@@ -512,8 +513,9 @@ E_\text{el} \Psi(\mathbf{r}_1, \dots, \mathbf{r}_{N_e}),
 Через експоненційне зростання розмірності простору станів із числом електронів
 цей розв’язок можна отримати лише для найпростіших систем.
 
-На практиці рівень точності та витрати обчислень демонструють діаграмою
-Поппла (\textit{Pople diagram}). Вона відображає двовимірну ієрархію:
+На практиці рівень точності та витрати обчислень демонструє
+\emph{діаграма Попла} (Pople diagram), наведена на рис.~\ref{fig:pople_diagram}.
+Вона відображає двовимірну ієрархію:
 \begin{itemize}
   \item по горизонталі --- \textbf{розширення базисного набору}
         (STO-3G $\to$ 6-31G $\to$ cc-pVTZ $\to$ CBS);
@@ -521,65 +523,59 @@ E_\text{el} \Psi(\mathbf{r}_1, \dots, \mathbf{r}_{N_e}),
         (HF $\to$ MP2 $\to$ CCSD(T) $\to$ FCI).
 \end{itemize}
 
-	\begin{center}
-		%            \includegraphics[width=\linewidth]{Pople_diagram_reverse_final.pdf}
-		\begin{tikzpicture}
+\begin{figure}[h!]
+	\centering
+	\begin{tikzpicture}[scale=1.25,
+        every node/.style={font=\footnotesize}]
         \def\connect#1#2#3{%
-            % #1: starting node
-            % #2: ending node
-            % #3: attributes for the shape connecting nodes
             \path let
               \p1 = ($(#2)-(#1)$),
               \n1 = {veclen(\p1)},
-              \n2 = {atan2(\y1,\x1)} % <- Update
+              \n2 = {atan2(\y1,\x1)}
             in
               (#1) -- (#2) node[#3,
               midway,
               rotate = \n2,
               shading angle = \n2+90,
-              minimum
-              height=\n1,
-              minimum
-              width=5pt,
+              minimum height=\n1,
+              minimum width=5pt,
               inner sep=1pt] {};
                     }
-			\pgfmathsetmacro{\x}{7}
-			\pgfmathsetmacro{\y}{6}
-			\draw[-{Latex[scale=2]}, thick, gray] (0,0) -- node[sloped, anchor=north, font=\scriptsize] {кількість базисних функцій}++(0,\y);
-			\draw[-{Latex[scale=2]}, thick, gray] (0,0) -- node[above, font=\scriptsize] {врахування кореляції} ++(\x,0);
-			\node[draw, dashed, text width=3cm, font=\scriptsize, align=center, blue] (S) at  (\x, \y) {Точний розв'язок\\ рівняння Шредінгера};
-			%    \draw [thick, -{Latex[scale=2]}] (0,0) --
-			%            node[sloped, above, font=\scriptsize, red] {зростання часу обчислення}
-			%            node[sloped, below, font=\scriptsize,] {зростання точності}
-			%            (S.south west);
-			\connect{0,0}{S.south west}{single arrow, top color=red, bottom color=blue};
-			\path (0,0) --
+		\pgfmathsetmacro{\x}{7}
+		\pgfmathsetmacro{\y}{6}
+		\draw[-{Latex[scale=2]}, thick, gray] (0,0) -- node[sloped, anchor=north, font=\scriptsize] {кількість базисних функцій} ++(0,\y);
+		\draw[-{Latex[scale=2]}, thick, gray] (0,0) -- node[above, font=\scriptsize] {врахування кореляції} ++(\x,0);
+		\node[draw, dashed, text width=3cm, font=\scriptsize, align=center, blue] (S) at  (\x, \y) {Точний розв'язок\\ рівняння Шредінґера};
+		\connect{0,0}{S.south west}{single arrow, top color=red, bottom color=blue};
+		\path (0,0) --
 			node[sloped, above, font=\scriptsize, red] {зростання часу обчислення}
 			node[sloped, below, font=\scriptsize, blue] {зростання точності}
 			(S.south west);
 
-			\node[left, font=\scriptsize] at (0,0.5) {minimal basis set};
-			\node[left, font=\scriptsize] at (0,1) {6-31G(d)};
-			\node[left, font=\scriptsize] at (0,1.5) {6-31+G(d,p)};
-			\node[left, font=\scriptsize] at (0,2) {6-311++G(2df,pd)};
-			\node[left, font=\scriptsize] at (0,2.5) {$\vdots$};
-			\node[left, font=\scriptsize] at (0,3) {(aug)-cc-pVDZ};
-			\node[left, font=\scriptsize] at (0,3.5) {(aug)-cc-pVTZ};
-			\node[left, font=\scriptsize] at (0,4) {(aug)-cc-pVQZ};
-			\node[left, font=\scriptsize] at (0,4.5) {$\vdots$};
-			\node[left, font=\scriptsize, text width=50pt] at (0,{\y}) {Хартрі-фоківський\\ ліміт};
-			\node[left, font=\scriptsize, rotate=90] at (0.5, 0) {HF};
-			\node[left, font=\scriptsize, rotate=90] at (1, 0) {MP2};
-			\node[left, font=\scriptsize, rotate=90] at (1.5, 0) {MP4};
-			\node[left, font=\scriptsize, rotate=90] at (2, 0) {CISD};
-			\node[left, font=\scriptsize, rotate=90] at (2.5, 0) {CCSD};
-			\node[below, font=\scriptsize] at (3, 0) {$\cdots$};
-			\node[left, font=\scriptsize, rotate=90] at (\x, 0) {Full CI};
-		\end{tikzpicture}
-	\end{center}
+		\node[left] at (0,0.5) {minimal basis set};
+		\node[left] at (0,1) {6-31G(d)};
+		\node[left] at (0,1.5) {6-31+G(d,p)};
+		\node[left] at (0,2) {6-311++G(2df,pd)};
+		\node[left] at (0,2.5) {$\vdots$};
+		\node[left] at (0,3) {(aug)-cc-pVDZ};
+		\node[left] at (0,3.5) {(aug)-cc-pVTZ};
+		\node[left] at (0,4) {(aug)-cc-pVQZ};
+		\node[left] at (0,4.5) {$\vdots$};
+		\node[left=0.5cm , text width=50pt] at (0,{\y}) {Хартрі-Фоківський\\ ліміт};
+		\node[left, rotate=90] at (0.5, 0) {HF};
+		\node[left, rotate=90] at (1, 0) {MP2};
+		\node[left, rotate=90] at (1.5, 0) {MP4};
+		\node[left, rotate=90] at (2, 0) {CISD};
+		\node[left, rotate=90] at (2.5, 0) {CCSD};
+		\node[below] at (3, 0) {$\cdots$};
+		\node[left, rotate=90] at (\x, 0) {Full CI};
+	\end{tikzpicture}
+	\caption{Діаграма Попла: ієрархія квантово-хімічних методів за рівнем врахування електронної кореляції (вертикальна вісь) та розміром базисного набору (горизонтальна вісь). Червона стрілка вказує на зростання обчислювальних витрат, синя --- на зростання точності. У верхньому правому куті --- недосяжний для великих систем повний розв’язок рівняння Шредінґера.}
+	\label{fig:pople_diagram}
+\end{figure}
 
-Чим вище й правіше ми рухаємось по діаграмі, тим ближче до повного розв’язку
-рівняння Шредінґера, але тим вища обчислювальна вартість.
+Чим вище й правіше ми рухаємось по діаграмі (див. рис.~\ref{fig:pople_diagram}),
+тим ближче до повного розв’язку рівняння Шредінґера, але тим вища обчислювальна вартість.
 \textbf{Завдання практичної квантової хімії} --- знайти баланс між точністю, ресурсами
 та необхідною фізичною інформацією про систему.
 
