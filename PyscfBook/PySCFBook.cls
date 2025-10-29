@@ -711,6 +711,8 @@ postaction={ decorate,
   {0.5em}
   {#1}                                             % заголовок в цвете
 
+\titlespacing*{\paragraph}
+{0pt}{1pt}{0.5em}  % слева | перед | после
 
 \newpagestyle{main}{\headrule%
 	\sethead{\ifodd\thepage\relax\else\itshape\small\thechapter.\ \chaptertitle\fi}{}{\ifodd\thepage\itshape\small\thechapter.\
