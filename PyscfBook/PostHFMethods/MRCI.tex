@@ -1,0 +1,90 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+% !TeX root =../PyscfBook.tex
+
+%% --------------------------------------------------------
+\section{Багатореферентна конфігураційна взаємодія (MRCI)}
+%% --------------------------------------------------------
+
+\textbf{MRCI} (\textit{Multi-Reference Configuration Interaction}) --- це високоточний \textbf{пост-CASSCF} метод, призначений для врахування \textbf{динамічної електронної кореляції} в системах із \textbf{вираженим статичним (нединамічним) кореляційним ефектом}.
+
+
+На відміну від \textbf{однореферентних} методів (HF, MP2, CISD, CCSD), які базуються на \emph{одному} референсному детермінанті, \texttt{MRCI} використовує \textbf{багатодетермінантний референсний простір}, сформований зазвичай за допомогою розрахунку \texttt{CASSCF}.
+
+\subsection{Математична форма хвильової функції}
+
+Хвильова функція \texttt{MRCI} має вигляд:
+\begin{equation}
+|\Psi_{\text{MRCI}}\rangle = \sum_{I \in \text{ref}} c_I |\Phi_I\rangle
++ \sum_{I \in \text{ref}} \sum_{r<a} c_{I,r}^{a} |\Phi_{I,r}^{a}\rangle
++ \sum_{I \in \text{ref}} \sum_{r<s<a<b} c_{I,rs}^{ab} |\Phi_{I,rs}^{ab}\rangle + \cdots
+\end{equation}
+
+де:
+\begin{itemize}
+    \item $\{|\Phi_I\rangle\}$ --- \textbf{референсні детермінанти} з \texttt{CASSCF}-простору (включають усі важливі ближньовироджені конфігурації),
+    \item $|\Phi_{I,r}^{a}\rangle$, $|\Phi_{I,rs}^{ab}\rangle$ --- \textbf{одинарні (S)} та \textbf{подвійні (D)} збудження з референсного простору в зовнішній (віртуальний) простір,
+    \item $c_I, c_{I,r}^{a}, \ldots$ --- коефіцієнти, що визначаються \textbf{варіаційно}.
+\end{itemize}
+
+\subsection{Фізичний зміст: статична та динамічна кореляція}
+
+\begin{itemize}
+    \item \textbf{Статична (нединамічна) кореляція} --- враховується \textbf{всередині референсного простору} (через змішування конфігурацій у \texttt{CASSCF}).
+    \item \textbf{Динамічна кореляція} --- додається \textbf{через збудження з референсного простору} в зовнішні орбіталі.
+\end{itemize}
+
+Такий двоетапний підхід дозволяє MRCI точно описувати:
+\begin{itemize}
+    \item потенціальні енергетичні поверхні (PES),
+    \item спектроскопічні константи збуджених станів,
+    \item реакційні профілі з розривом зв’язків,
+    \item системи з сильним багатореферентним характером (\ce{O3}, \ce{Cr2}, \ce{FeO} тощо).
+\end{itemize}
+
+\subsection{Основні варіанти MRCI}
+
+\begin{itemize}
+    \item \texttt{MRCISD} --- одинарні та подвійні збудження (найпоширеніший),
+    \item \texttt{MRCISD+Q} --- додає \textbf{квадрупольну корекцію} (за Девідсоном або подібними формулами),
+    \item \texttt{MRCISD(T)} --- включає потрійні збудження (надвисока точність, але $\mathcal{O}(N^{10})$).
+\end{itemize}
+
+\subsection{Реалізація в \texttt{PySCF}}
+
+У пакеті \texttt{PySCF} \texttt{MRCI} доступний через модуль \texttt{mrci}, який працює \textbf{після} \texttt{CASSCF}-оптимізації. Приклад для \ce{H2} (розрив зв’язку):
+
+\begin{minted}{python}
+from pyscf import gto, scf, mcscf, mrci
+
+# Молекула
+mol = gto.M(atom='H 0 0 0; H 0 0 1.4', basis='cc-pvdz', spin=0)
+
+# HF
+mf = scf.RHF(mol).run()
+
+# CASSCF: 2 електрони в 2 орбіталях (σ, σ*)
+cas = mcscf.CASSCF(mf, ncas=2, nelecas=2)
+cas.run()
+
+# MRCISD
+mrci_calc = mrci.MRCI(cas)
+mrci_calc.run()
+
+print(f"E(MRCISD) = {mrci_calc.e_tot:.10f} Eh")
+\end{minted}
+
+Можливості \texttt{PySCF} MRCI:
+\begin{itemize}
+    \item підтримка \inlinecode{nroots} --- розрахунок кількох станів одночасно,
+    \item симетрія (\inlinecode{mol.symmetry = True}),
+    \item спінова адаптація,
+    \item експорт CI-векторів і густин.
+\end{itemize}
+
+
+\begin{commentbox}
+\textbf{MRCI --- «золотий стандарт» точності}, але лише для \textbf{малих систем} ($\leq 12$--$15$ атомів).
+Для більших молекул краще використовувати \texttt{CASPT2}.
+\end{commentbox}

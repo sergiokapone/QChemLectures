@@ -3,7 +3,7 @@ from pyscf import gto, scf, mcscf, mrpt
 
 def caspt2_calculation(symbol="Be", spin=0, nelecas=4, ncas=8, basis="cc-pvdz"):
     """
-    CASSCF + CASPT2 розрахунок
+    CASSCF + NEVPT2 розрахунок
     """
 
     mol = gto.M(atom=f"{symbol} 0 0 0", basis=basis, spin=spin, verbose=0)
