@@ -1,3 +1,9 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+% !TeX root =../PyscfBook.tex
+
+
 %% --------------------------------------------------------
 \section{Складні випадки та збіжність}\label{sec:convergence}
 %% --------------------------------------------------------
@@ -35,49 +41,89 @@
 mf.level_shift = 0.5  # типові значення 0.2-1.0 Hartree
 \end{minted}
 
-\subsubsection{Альтернативні методи екстраполяції}
+\subsubsection{Налаштування та альтернативи DIIS у \texttt{PySCF}}
 
-\paragraph{EDIIS (Energy DIIS)} мінімізує енергію замість похибки самоузгодженості. Це краще працює на початкових ітераціях, коли система далека від збіжності:
+Для прискорення збіжності \texttt{SCF}-процедури у \texttt{PySCF} реалізовано кілька варіантів \texttt{DIIS}-алгоритмів.
+Типовим є класичний \texttt{CDIIS}, однак у складних випадках корисно застосовувати розширені схеми.
 
+\paragraph{EDIIS (Energy DIIS)}
+Мінімізує енергію замість похибки самоузгодженості. Це часто стабілізує збіжність на ранніх ітераціях, коли система ще далека від стаціонарного стану:
 \begin{minted}{python}
 mf.DIIS = scf.EDIIS
 \end{minted}
 
-\paragraph{ADIIS (Augmented DIIS)} автоматично комбінує DIIS та EDIIS залежно від стану збіжності --- використовує EDIIS на початку та переключається на DIIS ближче до мінімуму:
-
+\paragraph{ADIIS (Augmented DIIS)}
+Комбінує енергетичний (\texttt{EDIIS}) та звичайний (\texttt{DIIS}) підходи.
+На початкових ітераціях використовується \texttt{EDIIS}, а ближче до мінімуму автоматично переходить у стандартний \texttt{DIIS}:
 \begin{minted}{python}
 mf.DIIS = scf.ADIIS
 \end{minted}
 
-\subsubsection{Налаштування DIIS}
-
-Іноді корисно змінити параметри самого DIIS:
-
+\paragraph{Параметри DIIS}
+Можна тонко контролювати простір інтерполяції, початок застосування DIIS, а також файл для збереження стану:
 \begin{minted}{python}
-mf.diis_space = 4          # менший підпростір (4 замість 6-8)
-mf.diis_start_cycle = 5    # пізніший старт DIIS
-mf.diis = None             # повністю вимкнути DIIS
+mf.diis_space = 8           # розмір підпростору DIIS
+mf.diis_start_cycle = 4     # номер ітерації, з якої почати DIIS
+mf.diis_file = 'o2_diis.h5' # файл для збереження стану
 \end{minted}
 
-Зменшення розміру DIIS-простору обмежує «пам'ять» алгоритму, що може допомогти у випадках, коли історія попередніх ітерацій вводить в оману.
-
-\subsubsection{Краще початкове наближення}
-
-Якість початкового наближення критично важлива для збіжності. PySCF пропонує кілька варіантів:
-
+\paragraph{Приклад з офіційного репозиторію \texttt{PySCF}}
+Повне налаштування параметрів \texttt{DIIS} наведено у демонстраційному файлі
+\inputcode[base=https://github.com/pyscf/pyscf/blob/master/examples/scf/]{24-tune_diis.py}.
+У цьому прикладі показано, як переключатися між \texttt{CDIIS}, \texttt{EDIIS} та \texttt{ADIIS},
+а також як зберігати та відновлювати стан ітерацій:
 \begin{minted}{python}
-# Стандартні методи
-mf = scf.UHF(mol)
-mf.init_guess = 'minao'  # мінімальний АО (за замовчуванням)
-mf.init_guess = 'atom'   # атомні густини (краще для металів)
-mf.init_guess = '1e'     # лише одноелектронний гамільтоніан
-
-# Використання попереднього розрахунку
-dm_init = mf_previous.make_rdm1()
-mf.kernel(dm0=dm_init)
+my_diis_obj = scf.ADIIS()
+my_diis_obj.space = 12
+my_diis_obj.filename = 'o2_diis.h5'
+mf.diis = my_diis_obj
+mf.run()
 \end{minted}
 
-Варіант \inlinecode{'atom'} часто найкращий для перехідних металів та систем з відкритими оболонками.
+
+%\subsubsection{Альтернативні методи екстраполяції}
+%
+%\paragraph{EDIIS (Energy DIIS)} мінімізує енергію замість похибки самоузгодженості. Це краще працює на початкових ітераціях, коли система далека від збіжності:
+%
+%\begin{minted}{python}
+%mf.DIIS = scf.EDIIS
+%\end{minted}
+%
+%\paragraph{ADIIS (Augmented DIIS)} автоматично комбінує DIIS та EDIIS залежно від стану збіжності --- використовує EDIIS на початку та переключається на DIIS ближче до мінімуму:
+%
+%\begin{minted}{python}
+%mf.DIIS = scf.ADIIS
+%\end{minted}
+%
+%\subsubsection{Налаштування DIIS}
+%
+%Іноді корисно змінити параметри самого DIIS:
+%
+%\begin{minted}{python}
+%mf.diis_space = 4          # менший підпростір (4 замість 6-8)
+%mf.diis_start_cycle = 5    # пізніший старт DIIS
+%mf.diis = None             # повністю вимкнути DIIS
+%\end{minted}
+%
+%Зменшення розміру DIIS-простору обмежує «пам'ять» алгоритму, що може допомогти у випадках, коли історія попередніх ітерацій вводить в оману.
+%
+%\subsubsection{Краще початкове наближення}
+%
+%Якість початкового наближення критично важлива для збіжності. PySCF пропонує кілька варіантів:
+%
+%\begin{minted}{python}
+%# Стандартні методи
+%mf = scf.UHF(mol)
+%mf.init_guess = 'minao'  # мінімальний АО (за замовчуванням)
+%mf.init_guess = 'atom'   # атомні густини (краще для металів)
+%mf.init_guess = '1e'     # лише одноелектронний гамільтоніан
+%
+%# Використання попереднього розрахунку
+%dm_init = mf_previous.make_rdm1()
+%mf.kernel(dm0=dm_init)
+%\end{minted}
+%
+%Варіант \inlinecode{'atom'} часто найкращий для перехідних металів та систем з відкритими оболонками.
 
 \subsubsection{Метод Ньютона--Рафсона}
 

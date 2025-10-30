@@ -268,7 +268,6 @@
 \def\rootURI{https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/}
 
 \ExplSyntaxOn
-
 % Визначення ключів
 \keys_define:nn { inputcode }
 {
@@ -276,30 +275,40 @@
   mode   .initial:n = linkonly,
   prefix .tl_set:N  = \l_inputcode_prefix_tl,
   prefix .initial:n = {},
+  base   .tl_set:N  = \l_inputcode_base_tl,
+  base   .initial:n = {},
   unknown .code:n   = {} % Ігноруємо невідомі ключі
 }
-
 % Команда
 \NewDocumentCommand{\inputcode}{ O{} m }
 {
   \group_begin:
   \keys_set:nn { inputcode } { #1 }
-
   % Формуємо шляхи
   \tl_set:Nx \l_tmpa_tl { \exp_not:N \detokenize {#2} }
-  \tl_set:Nx \l_tmpb_tl { \currfiledir code/ \l_tmpa_tl }
+
+  % Визначаємо фінальний URL
+  \tl_if_empty:NTF \l_inputcode_base_tl
+  {
+    % Якщо base не задано, використовуємо rootURI як раніше
+    \tl_set:Nx \l_tmpb_tl { \currfiledir code/ \l_tmpa_tl }
+    \tl_set:Nx \l_final_url_tl { \rootURI\l_tmpb_tl }
+  }
+  {
+    % Якщо base задано, використовуємо його
+    \tl_set:Nx \l_final_url_tl { \l_inputcode_base_tl \l_tmpa_tl }
+  }
 
   % Перевірка режиму
   \str_if_eq:VnTF \l_inputcode_mode_tl { inline }
   {
-    \inputminted[label=\small\href{\rootURI\l_tmpb_tl}{\texttt{\l_tmpa_tl}}]{python}{\currfiledir/code/#2}
+    \inputminted[label=\small\href{\l_final_url_tl}{\texttt{\l_tmpa_tl}}]{python}{\currfiledir/code/#2}
   }
   {
-    \l_inputcode_prefix_tl \href{\rootURI\l_tmpb_tl}{ \codebutton{\texttt{\l_tmpa_tl}} }
+    \l_inputcode_prefix_tl \href{\l_final_url_tl}{ \codebutton{\texttt{\l_tmpa_tl}} }
   }
   \group_end:
 }
-
 \ExplSyntaxOff
 
 
