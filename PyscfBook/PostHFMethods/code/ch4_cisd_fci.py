@@ -48,6 +48,7 @@ mol = gto.M(
 print(f"Електронів: {mol.nelectron}")
 print(f"Орбіталей: {mol.nao_nr()}")
 print(f"Точкова група: {mol.groupname}\n")
+print(f"Базис: {mol.basis}\n")
 
 # HF
 print("="*60)
