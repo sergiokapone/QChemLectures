@@ -1,5 +1,5 @@
 %=========================================================
-\chapter{Збуджені стани}
+\chapter{Збуджені стани та UV/VIS спектроскопія}
 %=========================================================
 
 Збуджені стани --- це інші власні функції того ж гамільтоніана:
@@ -36,7 +36,108 @@
 
 
 %% --------------------------------------------------------
-\section{Збуджені стани в межах Хартрі–Фока}
+\section{Спектроскопічні властивості: перехідні дипольні моменти і сили осцилятора}
+%% --------------------------------------------------------
+
+Оптичні переходи в молекулах описуються операторами дипольного моменту,
+які пов'язують основний стан $\ket{0}$ зі збудженими станами $\ket{n}$.
+Величина цієї взаємодії визначає інтенсивність спектральної лінії.
+
+\subsection{Теоретичні основи}
+
+Імовірність переходу з основного стану $0$ у збуджений $n$ визначається
+матрицею дипольного моменту:
+\[
+\boldsymbol{\mu}_{0n} = \langle 0 | \hat{\boldsymbol{\mu}} | n \rangle,
+\quad
+\hat{\boldsymbol{\mu}} = -\sum_i e \mathbf{r}_i.
+\]
+
+\textbf{Сила осцилятора} $f_{0n}$ (безрозмірна величина, пропорційна інтенсивності лінії)
+визначається формулою:
+\[
+f_{0n} = \frac{2}{3}\,\omega_{0n}\,|\boldsymbol{\mu}_{0n}|^2,
+\]
+де $\omega_{0n}$~--- енергія переходу (в атомних одиницях).
+
+В експериментальній спектроскопії ця величина прямо пов’язана з інтегральною
+інтенсивністю смуги в УФ/видимому діапазоні.
+
+\begin{commentbox}
+У більш загальному випадку \emph{сила осцилятора} визначається
+для переходу між будь-якими станами $|i\rangle$ і $|j\rangle$ з $E_j > E_i$:
+\[
+f_{ij} = \frac{2}{3} \omega_{ij} |\boldsymbol{\mu}_{ij}|^2,
+\qquad
+\boldsymbol{\mu}_{ij} = \langle i | \hat{\boldsymbol{\mu}} | j \rangle,
+\qquad
+\omega_{ij} = E_j - E_i > 0.
+\]
+
+Якщо $i=0$, то $f_{0n}$ відповідає \textbf{поглинанню} (\emph{absorption}) ---
+інтенсивність лінії в УФ/видимому спектрі.
+
+Для \textbf{випромінювання} (\emph{emission}), наприклад, флуоресценції $n \to 0$,
+сила осцилятора визначається як $f_{n0} = f_{0n}$ (за принципом детального балансу),
+а енергія фотона --- $\hbar\omega = E_n - E_0$.
+
+У більшості молекулярних розрахунків (особливо в лінійній абсорбційній спектроскопії)
+розглядаються лише переходи з \textbf{основного стану}, тобто $f_{0n}$.
+Тому на практиці саме ці величини виводяться в програмах.
+\end{commentbox}
+
+
+Кожна лінія у вібраційній прогресії має інтенсивність:
+\[
+I_{0v=0 \to n v'} \propto f_{0n} \cdot FC_{0 v'},
+\]
+де \emph{Франк-Кондонівський фактор}:
+\[
+\boxed{FC_{0 v'} = \bigl| \langle \chi_0^{(0)}(Q) | \chi_{v'}^{(n)}(Q) \rangle \bigr|^2}
+\]
+--- ймовірність коливального переходу при \emph{вертикальному} електронному збудженні, індекс $v'$ позначає коливальний рівень \textbf{збудженого електронного стану} $|n\rangle$, тоді як $v=0$ — коливальний рівень \textbf{основного стану} $|0\rangle$. Перехід $v=0 \to v'=0$ відповідає нульовій вібраційній смузі, а $v=0 \to v'>0$ --- лініям вібраційної прогресії, що виникають через зсув рівноважної геометрії між станами.
+
+\begin{itemize}
+    \item $FC_{00} \approx 1$ --- геометрія не змінюється.
+    \item $FC_{0v'} > 0$ для $v' > 0$ --- зсув рівноважної конфігурації, обчислюється через гессіани $S_0$ і $S_1$ + нормальні координати.
+\end{itemize}
+
+
+\begin{commentbox}
+У більшості випадків електронне збудження переводить молекулу у
+\emph{зв’язаний збуджений стан} $|n\rangle$, потенціальна поверхня якого
+$E_n(Q)$ має мінімум. Тоді молекула залишається стабільною,
+і виникають дискретні переходи $0 \to n$, які проявляються
+як вузькі смуги в УФ/видимому спектрі.
+
+Однак можливі ситуації, коли $E_n(Q)$ є \textbf{дисоціативною} поверхнею ---
+тобто не має мінімуму і веде до розриву хімічного зв’язку:
+\[
+\mathrm{AB} + h\nu \;\longrightarrow\; \mathrm{A} + \mathrm{B}.
+\]
+Такі переходи називаються \emph{фотодисоціаційними}.
+Вони не мають чіткої енергетичної лінії, а утворюють неперервний спектр поглинання.
+
+Формально формула сили осцилятора залишається справедливою:
+\[
+f_{0n} = \frac{2}{3}\,\omega_{0n}\,|\boldsymbol{\mu}_{0n}|^2,
+\]
+але при переходах у континуум $|n\rangle \to |E\rangle$ дискретну суму
+заміщують інтегралом:
+\[
+\sum_n f_{0n} \;\;\longrightarrow\;\; \int f_{0E}\, dE,
+\]
+де $f_{0E}$~--- диференціальна сила осцилятора на одиницю енергетичного інтервалу.
+
+У спектроскопічному експерименті це відповідає широким або безструктурним
+смугам поглинання, характерним для \textbf{предисоціативних}
+і \textbf{дисоціативних} станів.
+\end{commentbox}
+
+
+
+%% --------------------------------------------------------
+\section{Збуджені стани в рамках Хартрі–Фока}
 %% --------------------------------------------------------
 
 Метод Хартрі–Фока у своїй стандартній формі призначений для опису
@@ -136,6 +237,8 @@ i\frac{\partial}{\partial t}\phi_i(\mathbf r,t)
 Це --- \textbf{часозалежне рівняння Хартрі–Фока},
 але з ефективним оператором Фока, який сам залежить від поточної густини.
 
+TDHF є формою \emph{лінійного відгуку} Хартрі–Фока, еквівалентною \textbf{RPA} у замкнутій оболонці.
+
 Означимо одночастинкову матрицю густини у базисі орбіталей:
 \[
 	D_{\mu\nu}(t) = \sum_{i}^{N} C_{\mu i}(t) C_{\nu i}^*(t)
@@ -143,37 +246,13 @@ i\frac{\partial}{\partial t}\phi_i(\mathbf r,t)
 а \(C_{\mu i}(t)\) --- коефіцієнти розкладу орбіталей
 $\phi_i = \sum_{\mu=1}^{M} C_{\mu i} (t)\,\chi_\mu(\vect{r})$,
 
-\paragraph{3. Диференціювання за часом.}
-Візьмемо похідну від \(D(t)\):
-\[
-i\,\frac{\partial D}{\partial t}
-= i\sum_i\Bigl(
-\dot C_{\mu i}C_{\nu i}^* + C_{\mu i}\dot C_{\nu i}^*
-\Bigr).
-\]
-Підставимо з TDHF рівняння для коефіцієнтів:
-\[
-i\dot C = F[D]\,C,
-\qquad
--i\dot C^\dagger = C^\dagger F[D],
-\]
-та отримаємо
-\[
-i\frac{\partial\rho}{\partial t}
-= F[D]\,\rho - \rho\,F[D]
-= [F[D],\,D].
-\]
 
-\paragraph{4. Результат.}
+Диференціюючи за часом і підставляючи TDHF-рівняння, отримуємо:
 \[
-\boxed{
-i\frac{\partial}{\partial t}D(t)
-= [F[D(t)],\,D(t)].
-}
+\boxed{i\frac{\partial D}{\partial t} = [F[D], D]}.
 \]
 Це --- рівняння руху для матриці густини в методі TDHF.
 
-\paragraph{Фізичний зміст.}
 Комутатор \([F,D]\) гарантує, що еволюція зберігає ортонормованість орбіталей
 та число частинок (оскільки \(\mathrm{Tr}[D]\) не змінюється в часі).
 
@@ -236,6 +315,7 @@ TDHF є формою \emph{лінійного відгуку} методу Ха�
 import numpy as np
 from pyscf import gto, scf
 from pyscf.data import nist
+from pyscf.tdscf import TDHF
 
 # 1. Задаємо молекулу
 mol = gto.Mole()
@@ -253,7 +333,7 @@ mf = scf.RHF(mol).run()
 print(f"Енергія HF = {mf.e_tot:.6f} Hartree\n")
 
 # 3. TDHF
-td = mf.TDHF()
+td = TDHF(mf)
 td.nstates = 5
 td.kernel()
 
@@ -305,6 +385,130 @@ for i, e in enumerate(td.e):
 
 
 %% --------------------------------------------------------
+\section{Часозалежна теорія функціонала густини (TD-DFT)}
+%% --------------------------------------------------------
+
+\textbf{TD-DFT} --- найпоширеніший метод розрахунку електронних збуджених станів,
+особливо для органічних та наномолекул. Він базується на розширенні
+звичайної \texttt{DFT} до часозалежних процесів відповідно до теореми Рунге–Ґросса.
+
+%% --------------------------------------------------------
+\subsection{Основні рівняння}
+%% --------------------------------------------------------
+
+Задача збуджених станів у TD-DFT формулюється як задача на власні значення:
+\[
+\begin{pmatrix}
+\mathbf{A} & \mathbf{B} \\
+-\mathbf{B} & -\mathbf{A}
+\end{pmatrix}
+\begin{pmatrix}
+\mathbf{X} \\
+\mathbf{Y}
+\end{pmatrix}
+=
+\omega
+\begin{pmatrix}
+\mathbf{X} \\
+\mathbf{Y}
+\end{pmatrix},
+\]
+де матриці \(\mathbf{A}, \mathbf{B}\) мають елементи
+\[
+A_{ia,jb} = (\epsilon_a - \epsilon_i)\delta_{ij}\delta_{ab} +
+\langle ib || aj \rangle + f^{\text{xc}}_{ia,jb},
+\quad
+B_{ia,jb} = \langle ij || ab \rangle + f^{\text{xc}}_{ia,bj}.
+\]
+Тут:
+\begin{itemize}
+  \item \(i,j\) — індекси зайнятих орбіталей, \(a,b\) — віртуальних;
+  \item \(\epsilon_p\) — енергії орбіталей Кона–Шема;
+  \item \(f^{\text{xc}}\) — обмінно-кореляційне ядро;
+  \item \(\omega\) — частоти (енергії) переходів.
+\end{itemize}
+
+Величини \(\mathbf{X}\) та \(\mathbf{Y}\) є амплітудами збудження та релаксації:
+\[
+X_{ia} \sim \langle \Phi_i^a | \Psi_n \rangle,
+\quad
+Y_{ia} \sim \langle \Phi_a^i | \Psi_n \rangle.
+\]
+
+Якщо знехтувати матрицею \(\mathbf{B}\), отримуємо наближення
+\textbf{Tamm–Dancoff (TDA)}:
+\[
+\mathbf{A}\mathbf{X} = \omega \mathbf{X}.
+\]
+Це наближення стабілізує обчислення і часто використовується у практиці.
+
+%% --------------------------------------------------------
+\subsubsection{Сила осцилятора}
+%% --------------------------------------------------------
+
+Імовірність переходу з основного стану у збуджений \(n\)-й стан
+визначається \emph{матрицею дипольного моменту}:
+\[
+\boldsymbol{\mu}_{0n} = \langle 0 | \hat{\boldsymbol{\mu}} | n \rangle,
+\quad
+\hat{\boldsymbol{\mu}} = -e\sum_i \mathbf{r}_i.
+\]
+
+Величина \textbf{сили осцилятора} \(f_{0n}\) (безрозмірна, пропорційна інтенсивності смуги):
+\[
+f_{0n} = \frac{2}{3}\,\omega_{0n}\,|\boldsymbol{\mu}_{0n}|^2.
+\]
+У TD-DFT її можна обчислити безпосередньо через перехідні моменти диполя:
+\[
+\boldsymbol{\mu}_{0n} = \sum_{ia} (X_{ia} + Y_{ia})
+\langle \phi_i | \mathbf{r} | \phi_a \rangle.
+\]
+Тому сила осцилятора відображає як електронну структуру, так і характер збудження
+(локальне, перенесення заряду тощо).
+
+%% --------------------------------------------------------
+\subsection{Реалізація в \texttt{PySCF}}
+%% --------------------------------------------------------
+
+\begin{minted}{python}
+from pyscf import gto, scf, tddft, data
+import numpy as np
+
+# === 1. Геометрія молекули ===
+mol = gto.M(
+    atom='H 0 0 0; F 0 0 1.1',
+    basis='6-31G',
+)
+
+# === 2. Розрахунок основного стану DFT ===
+mf = scf.RKS(mol)
+mf.xc = 'B3LYP'
+mf.kernel()
+
+# === 3. TD-DFT (збуджені стани) ===
+td = tddft.TDDFT(mf)
+td.nstates = 6
+td.kernel()
+
+# === 4. Перехідні дипольні моменти ===
+tdm = td.transition_dipole()
+
+# === 5. Сили осцилятора ===
+osc = []
+for i, e in enumerate(td.e):
+    mu2 = np.dot(tdm[i], tdm[i])
+    f_i = (2.0 / 3.0) * e * mu2
+    osc.append(f_i)
+
+# === 6. Виведення результатів ===
+print("Стан | Енергія (eV) | Сила осцилятора")
+print("-------------------------------------")
+for i, e in enumerate(td.e):
+    print(f"{i+1:4d} | {e * data.nist.HARTREE2EV:10.4f} | {osc[i]:10.5f}")
+
+\end{minted}
+
+%% --------------------------------------------------------
 \section{Збуджені стани у методах конфігураційної взаємодії}
 %% --------------------------------------------------------
 
@@ -336,20 +540,29 @@ E_0 < E_1 < E_2 < \dots,
 
 
 \begin{minted}{python}
-from pyscf import gto, scf, ci
 import numpy as np
+from pyscf import gto, scf, ci
+from pyscf.data import nist
 
-mol = gto.M(atom='H 0 0 0; F 0 0 1.1', basis='6-31G')
+mol = gto.M(atom='''O  0.000000  0.000000  0.000000
+                  H  0.000000  0.757160  0.586260
+                  H  0.000000 -0.757160  0.586260''', basis='6-31G')
 mf = scf.RHF(mol).run()
 
 myci = ci.CISD(mf)
 myci.nroots = 5
 
-e, c = myci.kernel()  # e - список енергій
 print('\nЕнергії CISD станів:')
-for i, Ei in enumerate(np.atleast_1d(e)):
-    print(f"Стан {i}: E = {Ei + mf.e_tot:.8f} Hartree, ΔE = {(Ei - e[0])*27.2114:.3f} eV")
+e_corr, c = myci.kernel()  # e_corr — кореляційні енергії станів
+e_tot = mf.e_tot + e_corr
+for i, Etot in enumerate(e_tot):
+    delta = (Etot - e_tot[0]) * nist.HARTREE2EV
+    print(f"Стан {i}: E = {Etot:.8f} Ha, ΔE = {delta:.3f} eV")
 \end{minted}
+
+\begin{commentbox}[Зауваження]
+Метод \texttt{CISD} обчислює кілька найнижчих станів, які впорядковані за енергією, але не враховує симетрію молекули автоматично. Це може призводити до змішування станів із різними типами збуджень (наприклад, синглетів і триплетів або різних незвідних представлень точкової групи симетрії). Для систематичного аналізу оптичних переходів, особливо для обчислення сил осцилятора \(f_{0n}\) та коректного врахування симетрії, рекомендуються методи \texttt{TD-DFT}, \texttt{EOM-CCSD} або \texttt{CASSCF/NEVPT2}, які забезпечують вищу точність і фізичну ясність.
+\end{commentbox}
 
 
 %=========================================================
@@ -492,11 +705,15 @@ A_{\mu\nu} = \langle \Phi_\mu | [\bar{H}, \hat{\tau}_\nu] | \Phi_0\rangle.
 %% --------------------------------------------------------
 
 \begin{minted}{python}
-from pyscf import gto, scf, cc
 import numpy as np
+from pyscf import gto, scf, cc
+from pyscf.data import nist
 
 # Побудова молекули
-mol = gto.M(atom='H 0 0 0; F 0 0 1.1', basis='6-31G')
+mol = gto.M(atom='''O  0.000000  0.000000  0.000000
+                  H  0.000000  0.757160  0.586260
+                  H  0.000000 -0.757160  0.586260''', basis='6-31G',
+                  )
 
 # SCF
 mf = scf.RHF(mol).run()
@@ -508,11 +725,11 @@ print(f"converged SCF energy = {mf.e_tot}")
 print(f"E(CCSD) = {ccsd.e_tot}  E_corr = {ccsd.e_corr}")
 
 # Збуджені стани EOM-CCSD (синглети)
-e, v = ccsd.eomee_ccsd_singlet(nroots=3)
+e, v = ccsd.eomee_ccsd_singlet(nroots=4)
 
 print("EOM-CCSD енергії збудження (eV):")
 for i, ei in enumerate(e):
-    print(f"  Стан {i+1}: {ei * 27.2114:.4f} eV")
+    print(f"Стан {i+1}: E = {ccsd.e_tot+ei:.8f} Ha, ΔE = {ei * nist.HARTREE2EV:.4f} eV")
 \end{minted}
 
 Результати показують, що \texttt{EOM-CCSD} правильно відтворює порядок і величину енергій
@@ -552,39 +769,47 @@ E_i^{\text{NEVPT2}} = E_i^{\text{CASSCF}} + \Delta E_i^{\text{corr}}.
 
 \begin{minted}{python}
 from pyscf import gto, scf, mcscf, mrpt
+from pyscf.data import nist
 
-# Побудова молекули
-mol = gto.M(atom='H 0 0 0; F 0 0 1.1', basis='6-31G')
-mf = scf.RHF(mol).run()
+# Молекула: ВОДА
+mol = gto.M(atom='''O  0.000000  0.000000  0.000000
+                  H  0.000000  0.757160  0.586260
+                  H  0.000000 -0.757160  0.586260''', basis='6-31G', verbose=0)
+mf = scf.RHF(mol)
+mf.verbose = 0
+mf.run()
 
-# CASSCF з усередненням по 3 станах
-mc = mcscf.CASSCF(mf, ncas=6, nelecas=8)
-weights = [1/3, 1/3, 1/3]
-mc = mc.state_average(weights)
+# State-averaged CASSCF для 5 станів
+nstates = 5
+mc = mcscf.CASSCF(mf, 6, 8).state_average([1/nstates]*nstates)
+mc.verbose = 0
 mc.kernel()
 
-print("Енергії станів CASSCF (Ha):")
+print("\nCASCF енергії:")
 for i, e in enumerate(mc.e_states):
-    print(f"  Стан {i+1}: {e:.8f}")
+    delta_e = (e - mc.e_states[0]) * nist.HARTREE2EV
+    print(f"  Стан {i}: E = {e:.8f} Ha, ΔE = {delta_e:.3f} eV")
 
-# --- NEVPT2 для кожного стану окремо ---
-nevpt_e = []
-for root, ci_vec in enumerate(mc.ci):
-    # створюємо копію CASSCF для конкретного стану
-    mc_root = mcscf.CASCI(mf, mc.ncas, mc.nelecas)
-    mc_root.mo_coeff = mc.mo_coeff
-    mc_root.ci = ci_vec
-    mc_root.fcisolver.nroots = 1  # лише один стан
-    mc_root.fix_spin_(shift=0.0, ss=None)
+# NEVPT2 для кожного стану
+print("\nNEVPT2 енергії:")
+nevpt_energies = []
+for root in range(nstates):
+    # CASCI для конкретного стану
+    casci = mcscf.CASCI(mf, 6, 8)
+    casci.verbose = 0
+    casci.mo_coeff = mc.mo_coeff
+    casci.ci = mc.ci[root]
+    casci.fcisolver.nroots = 1
 
     # NEVPT2
-    nevpt = mrpt.NEVPT(mc_root)
+    nevpt = mrpt.NEVPT(casci)
+    nevpt.verbose = 0
     e_corr = nevpt.kernel()
-    nevpt_e.append(mc.e_states[root] + e_corr)
+    e_tot = mc.e_states[root] + e_corr
+    nevpt_energies.append(e_tot)
 
-print("\nЕнергії станів NEVPT2 (Ha):")
-for i, e in enumerate(nevpt_e):
-    print(f"  Стан {i+1}: {e:.8f}")
+    delta_e = (e_tot - nevpt_energies[0]) * nist.HARTREE2EV
+    print(f"  Стан {root}: E = {e_tot:.8f} Ha, ΔE = {delta_e:.3f} eV")
 \end{minted}
 
 
@@ -658,6 +883,7 @@ for i, e in enumerate(nevpt_e):
         \item \texttt{TDDFT} --- оптимальний компроміс для великих систем із численними збудженнями.
     \end{itemize}
 \end{itemize}
+
 
 
 %=========================================================

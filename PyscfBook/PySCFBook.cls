@@ -172,6 +172,7 @@
 \allowdisplaybreaks
 
 % ------------------------- Визначення математичних команд ---------------------
+\def\ket#1{\left\langle #1 \right|}
 \def\EMF{\mathcal{E}}
 \newcommand{\vect}[1]{\symbf{#1}}
 \def\Efield{\vect{E}}          % --- Визначення вектора електричного поля            ---
