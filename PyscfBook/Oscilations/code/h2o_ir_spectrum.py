@@ -55,34 +55,34 @@ normal_modes = freq_info['norm_mode']  # власні вектори
 print("\n[4/4] Обчислення інтенсивностей ІЧ...")
 
 # Крок для числового диференціювання дипольного моменту
-step = 0.001  # Bohr
+h = 0.001  # Bohr
 
 natm = mol.natm
 intensities = []
 
-for mode_idx in range(len(frequencies)):
+for k in range(len(frequencies)):
     # Нормальна мода (3*natm вектор)
-    mode = normal_modes[:, mode_idx].reshape(natm, 3)
+    L_k = normal_modes[:, k].reshape(natm, 3)
 
     # Зміщення вздовж нормальної моди
-    coords_orig = mol.atom_coords()  # в Bohr
+    R_0 = mol.atom_coords()  # в Bohr
 
     # Позитивне зміщення
-    coords_pos = coords_orig + step * mode
+    R_pos = R_0 + h * L_k
     mol_pos = gto.M(
-        atom=[[mol.atom_symbol(i), coords_pos[i]] for i in range(natm)],
+        atom=[[mol.atom_symbol(i), R_pos[i]] for i in range(natm)],
         basis=mol.basis,
         unit='Bohr'
     )
     mf_pos = scf.RHF(mol_pos)
     mf_pos.verbose = 0
     mf_pos.kernel()
-    dip_pos = mf_pos.dip_moment(unit='AU')  # атомні одиниці
+    dip_pos = mf_pos.dip_moment(unit='Bohr')  # атомні одиниці
 
     # Негативне зміщення
-    coords_neg = coords_orig - step * mode
+    R_neg = R_0 - h * L_k
     mol_neg = gto.M(
-        atom=[[mol.atom_symbol(i), coords_neg[i]] for i in range(natm)],
+        atom=[[mol.atom_symbol(i), R_neg[i]] for i in range(natm)],
         basis=mol.basis,
         unit='Bohr'
     )
@@ -92,7 +92,7 @@ for mode_idx in range(len(frequencies)):
     dip_neg = mf_neg.dip_moment(unit='AU')
 
     # Похідна дипольного моменту: dμ/dQ
-    dip_derivative = (dip_pos - dip_neg) / (2 * step)
+    dip_derivative = (dip_pos - dip_neg) / (2 * h)
 
     # Інтенсивність: I ∝ |dμ/dQ|^2
     # В одиницях: (Debye/Angstrom)^2 -> km/mol
@@ -163,26 +163,4 @@ plt.show()
 # ============================================================
 print("\n" + "=" * 70)
 print("ІНТЕРПРЕТАЦІЯ КОЛИВАЛЬНИХ МОД")
-print("=" * 70)
-print("""
-Для H2O очікуються 3 коливальні моди:
-
-1. Симетричне валентне (ν₁): ~3600 см⁻¹
-   - Обидва H-O зв'язки розтягуються синхронно
-   - Середня інтенсивність
-
-2. Деформаційне (ν₂): ~1600 см⁻¹
-   - Зміна кута H-O-H
-   - Найсильніша інтенсивність
-
-3. Асиметричне валентне (ν₃): ~3800 см⁻¹
-   - Один H-O зв'язок розтягується, інший стискається
-   - Сильна інтенсивність
-
-Примітка: Абсолютні значення можуть відрізнятися від експерименту
-через наближення (базис 6-31G, RHF метод).
-""")
-
-print("=" * 70)
-print("Розрахунок завершено!")
 print("=" * 70)
