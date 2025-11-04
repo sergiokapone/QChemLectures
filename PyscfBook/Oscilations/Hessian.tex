@@ -2,43 +2,80 @@
 \section{Гессіан та нормальні моди}
 %% --------------------------------------------------------
 
-Коливання молекули відбуваються поблизу рівноважної геометрії $\mathbf{R}_0$.
-Для малих відхилень потенціальну енергію апроксимують квадратичною формою:
-\[
-    E(\mathbf{R}) \approx E(\mathbf{R}_0) +
-    \frac{1}{2} \Delta\mathbf{R}^T \, \mathbf{H} \, \Delta\mathbf{R},
-\]
-де $\mathbf{H}$ --- \textbf{гесіан} (матриця других похідних):
-\[
-    H_{ij} = \left. \frac{\partial^2 E}{\partial R_i \partial R_j} \right|_{\mathbf{R}_0}.
-\]
-Для $N$ атомів гесіан має розмір $3N \times 3N$ і повністю описує гармонічні коливання.
+Коливання молекули відбуваються поблизу рівноважної геометрії
+$\mathbf{R}_0 = (R_{1x}^0, R_{1y}^0, R_{1z}^0, \ldots, R_{Nz}^0)$.
+Для малих зміщень атомів
+\begin{equation*}
+    \Delta R_{i\alpha} = R_{i\alpha} - R_{i\alpha}^0,
+\end{equation*}
+потенційну енергію можна розкласти у ряд Тейлора навколо $\mathbf{R}_0$:
+\begin{equation*}
+    E(\mathbf{R}) =
+    E(\mathbf{R}_0)
+    + \sum_{i\alpha}
+        \left(
+            \frac{\partial E}{\partial R_{p\alpha}}
+        \right)_{\mathbf{R}_0}
+        \Delta R_{p\alpha}
+    + \frac{1}{2}
+      \sum_{i\alpha}\sum_{j\beta}
+        \left(
+            \frac{\partial^2 E}
+                 {\partial R_{i\alpha}\, \partial R_{j\beta}}
+        \right)_{\mathbf{R}_0}
+        \Delta R_{i\alpha} \Delta R_{j\beta}
+    + \ldots
+\end{equation*}
+Оскільки у рівноважному положенні сили на атоми зникають,
+\begin{equation*}
+    \left( \frac{\partial E}{\partial R_{i\alpha}} \right)_{\mathbf{R}_0} = 0,
+\end{equation*}
+перший порядок у розкладі зникає, і отримуємо гармонічне наближення:
+\begin{equation*}
+    E(\mathbf{R}) \approx
+    E(\mathbf{R}_0)
+    + \frac{1}{2}
+      \sum_{i\alpha}\sum_{j\beta}
+        H_{i\alpha, j\beta}
+        \Delta R_{i\alpha}\, \Delta R_{j\beta},
+\end{equation*}
+де
+\begin{equation*}\label{eq:H-index}
+    H_{i\alpha, j\beta} =
+    \left.
+    \frac{\partial^2 E}
+         {\partial R_{i\alpha}\, \partial R_{j\beta}}
+    \right|_{\mathbf{R}_0}
+\end{equation*}
+--- елемент матриці Гесіану, $i$, $j$ --- номери атомів, а $\alpha, \beta \in \{x, y, z\}$ --- номери декартових координат атома.
 
-%% --------------------------------------------------------
-\subsection{Матриця силових констант та діагоналізація}
-%% --------------------------------------------------------
+Для системи з $N$ атомів Гесіан має розмірність $3N\times3N$ і повністю описує гармонічні коливання.
 
-Елементи $H_{ij}$ --- це \textbf{силові константи}:
-діагональні --- жорсткість окремого руху,
-недіагональні --- зв’язок між різними рухами
-(наприклад, розтяг \ce{C-H} та згин \ce{H-C-O}).
-
-У декартових чи внутрішніх координатах коливання \emph{пов’язані}.
-\textbf{Діагоналізація гесіану} дає:
-\begin{itemize}
-    \item \textit{власні значення} $\omega_k^2$ --- квадрати частот;
-    \item \textit{власні вектори} $\mathbf{L}_k$ --- \emph{нормальні моди} (незалежні коливання).
-\end{itemize}
-
-Це роблять \textbf{після оптимізації геометрії}, щоб:
-\begin{itemize}
-    \item підтвердити мінімум ($\omega_k^2 > 0$);
-    \item обчислити \textbf{ZPE}: $E_{\text{ZPE}} = \frac{1}{2} h \sum \omega_k$;
-    \item знайти внесок у термохімію ($H$, $S$, $G$);
-    \item змоделювати ІЧ/Раман-спектри (піки при $\omega_k$).
-\end{itemize}
-
-Отже, з гесіану через нормальні моди отримують повну картину коливальних властивостей молекули.
+%%% --------------------------------------------------------
+%\subsection{Матриця силових констант та діагоналізація}
+%%% --------------------------------------------------------
+%
+%Елементи $H_{ij}$ --- це \textbf{силові константи}:
+%діагональні --- жорсткість окремого руху,
+%недіагональні --- зв’язок між різними рухами
+%(наприклад, розтяг \ce{C-H} та згин \ce{H-C-O}).
+%
+%У декартових чи внутрішніх координатах коливання \emph{пов’язані}.
+%\textbf{Діагоналізація гесіану} дає:
+%\begin{itemize}
+%    \item \textit{власні значення} $\omega_k^2$ --- квадрати частот;
+%    \item \textit{власні вектори} $\mathbf{L}_k$ --- \emph{нормальні моди} (незалежні коливання).
+%\end{itemize}
+%
+%Це роблять \textbf{після оптимізації геометрії}, щоб:
+%\begin{itemize}
+%    \item підтвердити мінімум ($\omega_k^2 > 0$);
+%    \item обчислити \textbf{ZPE}: $E_{\text{ZPE}} = \frac{1}{2} h \sum \omega_k$;
+%    \item знайти внесок у термохімію ($H$, $S$, $G$);
+%    \item змоделювати ІЧ/Раман-спектри (піки при $\omega_k$).
+%\end{itemize}
+%
+%Отже, з гесіану через нормальні моди отримують повну картину коливальних властивостей молекули.
 
 %% --------------------------------------------------------
 \subsection{Нормальні коливання}
@@ -46,167 +83,488 @@
 
 Для переходу від гесіану $\mathbf{H}$ у декартових координатах до фізично осмислених частот враховують маси атомів.
 Вводять \textbf{мас-зважений гесіан}:
-\[
-    \mathbf{F} = \mathbf{M}^{-1/2} \mathbf{H} \mathbf{M}^{-1/2},
-\]
-де $\mathbf{M}$ --- діагональна матриця атомних мас.
+\begin{equation}\label{eq:mass-weighted-H}
+    \mathbf{\tilde{H}} = \mathbf{M}^{-1/2} \mathbf{H} \mathbf{M}^{-1/2},
+\end{equation}
+де $\mathbf{M}$ --- діагональна матриця атомних мас:
+\begin{equation*}
+    \mathbf{M} =
+    \mathrm{diag}(m_1, m_1, m_1, m_2, m_2, m_2, \ldots, m_N, m_N, m_N).
+\end{equation*}
 
-Далі розв'язують задачу на власні значення:
-\[
-    \mathbf{F} \mathbf{Q} = \omega^2 \mathbf{Q},
-\]
-де $\omega$ --- коливальні частоти, а $\mathbf{Q}$ --- вектори нормальних координат.
+В індексному вигляді цей вираз має форму:
+\begin{equation}\label{eq:mass-weighted-H-index}
+    \tilde{H}_{i\alpha, j\beta}
+    =
+    \frac{H_{i\alpha, j\beta}}{\sqrt{m_i m_j}}
+    =
+    H_{i\alpha, j\beta}
+    \, m_i^{-1/2}
+    \, m_j^{-1/2},
+\end{equation}
+де \(i, j\) --- індекси атомів, а \(\alpha, \beta \in \{x, y, z\}\) --- координатні індекси.
+Таким чином, мас-зважений гесіан також має розмір \((N_\text{атом}, N_\text{атом}, 3, 3)\)
+і вже враховує інерційні властивості атомів у коливальному русі.
 
-Отримані власні значення $\omega_i^2$ відповідають:
+
+
+%% --------------------------------------------------------
+\subsubsection{Перехід до мас-зважених координат}
+%% --------------------------------------------------------
+
+Визначимо мас-зважені зміщення:
+\begin{equation}\label{eq:mass-weighted-q}
+    \tilde{q}_{i\alpha} = \sqrt{m_i}\, \Delta R_{i\alpha},
+    \qquad
+    \mathbf{\tilde{q}} = \mathbf{M}^{1/2}\, \mathbf{\Delta R}.
+\end{equation}
+Тоді потенціальна енергія набуває вигляду
+\begin{equation*}
+    E = E_0 + \frac{1}{2}\,
+    \mathbf{\tilde{q}}^\mathrm{T}\,
+    \mathbf{\tilde{H}}\,
+    \mathbf{\tilde{q}},
+\end{equation*}
+де
+\begin{equation*}
+    \mathbf{\tilde{H}} =
+    \mathbf{M}^{-1/2}\, \mathbf{H}\, \mathbf{M}^{-1/2},
+    \qquad
+    \tilde{H}_{i\alpha, j\beta} =
+    \frac{H_{i\alpha, j\beta}}{\sqrt{m_i m_j}}.
+\end{equation*}
+
+%% --------------------------------------------------------
+\subsubsection{Рівняння руху і власні значення}
+%% --------------------------------------------------------
+
+Класичне рівняння гармонічного руху для атома $i$ поблизу рівноваги:
+\begin{equation*}
+    m_i\, \ddot{\Delta R}_{i\alpha}
+    = -\sum_{j\beta} H_{i\alpha, j\beta}\, \Delta R_{j\beta}.
+\end{equation*}
+У мас-зважених координатах:
+\begin{equation*}
+    \ddot{\tilde{q}}_{i\alpha}
+    = -\sum_{j\beta}
+        \tilde{H}_{i\alpha, j\beta}\,
+        \tilde{q}_{j\beta}.
+\end{equation*}
+
+Шукаємо розв’язок у вигляді гармонічного коливання:
+\begin{equation*}
+    \tilde{q}_{i\alpha}(t)
+    = \sum_k L_{i\alpha}^{(k)}\, Q_k\, e^{i\omega_k t}.
+\end{equation*}
+Підставивши у рівняння руху, маємо:
+\begin{equation}\label{eq:eigen-tilde-H-index}
+    \sum_{j\beta}
+        \tilde{H}_{i\alpha, j\beta}\,
+        L_{j\beta}^{(k)}
+    = \omega_k^2\, L_{i\alpha}^{(k)}.
+\end{equation}
+
+У матричному записі:
+\begin{equation}\label{eq:eigen-tilde-H-matrix}
+    \mathbf{\tilde{H}}\, \mathbf{L}_k
+    = \omega_k^2\, \mathbf{L}_k.
+\end{equation}
+Це власне рівняння для мас-зваженого гесіану, де
+власні значення $\omega_k^2$ визначають квадрати кутових частот коливань,
+а $\mathbf{L}_k$ --- власні вектори (нормальні моди).
+
+%% --------------------------------------------------------
+\subsubsection{Ортонормованість і нормальні координати}
+%% --------------------------------------------------------
+
+Оскільки $\mathbf{\tilde{H}}$ --- симетрична,
+власні вектори утворюють ортонормований базис:
+\begin{equation*}
+    \mathbf{L}^\mathrm{T}\mathbf{L} = \mathbf{I},
+    \qquad
+    \sum_{i\alpha} L_{i\alpha}^{(k)} L_{i\alpha}^{(k')} = \delta_{kk'}.
+\end{equation*}
+
+Мас-зважені декартові координати можна розкласти за нормальними модами:
+\begin{equation}\label{eq:mass-wighted_q}
+    \tilde{q}_{i\alpha} = \sum_k L_{i\alpha}^{(k)}\, Q_k = \sum_k \frac{\partial \tilde q_{i\alpha}}{\partial Q_k} \, Q_k,
+    \qquad
+    \mathbf{\tilde{q}} = \mathbf{L}\, \mathbf{Q}.
+\end{equation}
+Тоді нормальні координати визначаються як
+\begin{equation*}
+    Q_k = \sum_{i\alpha}
+        L_{i\alpha}^{(k)}\, \tilde{q}_{i\alpha}
+        = \sum_{i\alpha}
+        L_{i\alpha}^{(k)}\, \sqrt{m_i}\, \Delta R_{i\alpha},
+    \qquad
+    \mathbf{Q} = \mathbf{L}^\mathrm{T}\mathbf{\tilde{q}}.
+\end{equation*}
+
+
+%% --------------------------------------------------------
+\subsubsection{Потенціальна енергія у нормальних координатах}
+%% --------------------------------------------------------
+
+У нових координатах потенціал набуває діагонального вигляду:
+\begin{equation*}
+    E = E_0 + \frac{1}{2}
+    \sum_k \omega_k^2\, Q_k^2,
+\end{equation*}
+тобто рух системи розпадається на
+незалежні гармонічні осцилятори
+з власними частотами $\omega_k$.
+
+Фізично вектор $L_{i\alpha}^{(k)}$ визначає
+напрямок і відносну амплітуду зміщення атома $i$
+у нормальній моді $k$,
+а другі похідні енергії $H_{i\alpha, j\beta}$
+через мас-зважений гесіан визначають частоти цих коливань.
+
+
+% Примітка про нульові моди
+\paragraph{Нульові моди.}
+У вільної молекули існують $3$ (невироджені) моди трансляції та $3$ моди обертання (для лінійної — $2$ обертальних),
+які дають \(\omega_k^2\approx 0\). Ці моди відокремлюють від внутрішніх вібрацій і не враховуються при побудові внутрішнього спектру.
+
+
+
+
+%% --------------------------------------------------------
+\subsection{Аналітичне обчислення гесіану на прикладі молекули \ce{H2O}}
+%% --------------------------------------------------------
+
+PySCF може обчислювати гесіан аналітично або чисельно. Спочатку детально розглянемо приклад обчислення гесіану  на прикладі молекули \ce{H2O} використовуючи метод \texttt{RHF}.
+
+Спочатку виконаємо \texttt{RHF} розрахунок молекули води:
+
+\begin{minted}{python}
+from pyscf import gto, scf
+import numpy as np
+
+# -------------------------------------------------------
+# МОЛЕКУЛА ВОДИ
+# -------------------------------------------------------
+mol = gto.Mole()
+mol.atom = '''
+O  0.000000   0.000000   0.000000
+H  0.000000   0.757000   0.587000
+H  0.000000  -0.757000   0.587000
+'''
+mol.basis = '6-31g(d)'
+mol.build()
+
+mf = scf.RHF(mol).run(verbose=0)
+
+\end{minted}
+
+
+
+Отримаємо аналітичний тензор Гесіану:
+
+\begin{minted}{python}
+from pyscf.hessian.rhf import Hessian
+hobj = mf.Hessian()
+hess_tensor = hobj.kernel()   # форма (natm, natm, 3, 3)
+\end{minted}
+
+\[
+    H_{ij}^{\alpha\beta} =
+    \frac{\partial^2 E}{\partial R_{i\alpha}\, \partial R_{j\beta}},
+\]
+де $i,j$ --- атоми, а $\alpha,\beta \in \{x,y,z\}$. У \texttt{PySCF} результат \inlinecode{hobj.kernel()} повертає чотиривимірний тензор:
+\[
+    H[i, j, \alpha, \beta],
+\]
+з формою
+\[
+    (N_{\text{атом}},\, N_{\text{атом}},\, 3,\, 3),
+\]
+
+Приготуємо основні фізичні параметри молекули, необхідні
+для побудови масово-зваженого Гесіану:
+
+\begin{minted}{python}
+mass = mol.atom_mass_list(isotope_avg=True)
+atom_coords = mol.atom_coords()
+natm = atom_coords.shape[0]
+\end{minted}
+
 \begin{itemize}
-    \item $3N - 6$ коливальним модам для нелінійної молекули;
-    \item $3N - 5$ --- для лінійної;
-    \item 3 трансляційним і 3 (або 2) обертальним модам з $\omega = 0$.
+\item \inlinecode{mol.atom\_mass\_list(isotope\_avg=True)}
+   Повертає маси всіх атомів у молекулі в атомних одиницях маси (\(u\)).
+   Аргумент \inlinecode{isotope\_avg=True} означає, що береться середня маса елементу
+   (з урахуванням природної ізотопної суміші), а не конкретного ізотопу.
+   Отже,
+   \[
+       \texttt{mass} = [m_1, m_2, \ldots, m_N],
+   \]
+   де \(N = N_\text{атом}\).
+
+\item  \inlinecode{mol.atom\_coords()}
+   Повертає масив координат усіх атомів у поточній геометрії:
+   \[
+       \texttt{atom\_coords} =
+       \begin{bmatrix}
+       x_1 & y_1 & z_1 \\
+       x_2 & y_2 & z_2 \\
+       \vdots & \vdots & \vdots \\
+       x_N & y_N & z_N
+       \end{bmatrix}.
+   \]
+   Це потрібно для визначення центру мас і правильного формування тензора Гесіану.
+
+\item  \inlinecode{natm = atom\_coords.shape[0]}
+   Задає кількість атомів у системі \(N_\text{атом}\).
+   Кожен атом має три координати, тому повний розмір матриці Гесіану буде
+   \(3N_\text{атом} \times 3N_\text{атом}\).
 \end{itemize}
 
-\paragraph{Зв'язок координат $Q_k$ та $\mathbf{R}$}
-
-Нормальні координати $Q_k$ є лінійними комбінаціями атомних зміщень $\Delta \mathbf{R}$:
+Тепер ми повинні перейти до масово-зваженого Гесіану. Для цього застосовують нормування на корені атомних мас:
 \[
-    Q_k = \sum_{i=1}^{3N} \sqrt{m_i}\, l_{ik}\, \Delta R_i
+    \tilde{H}_{ij}^{\alpha\beta}
+    = \frac{H_{ij}^{\alpha\beta}}{\sqrt{m_i\,m_j}} = H_{ij}^{\alpha\beta} m_i^{-\frac12} m_j^{-\frac12},
 \]
-або у матричній формі:
-\[
-    \mathbf{Q} = \mathbf{L}^T \mathbf{M}^{1/2} \Delta \mathbf{R},
-\]
-де:
-\begin{itemize}
-    \item $\mathbf{M}$ — діагональна матриця мас атомів,
-    \item $\mathbf{L}$ — матриця власних векторів (нормальних мод),
-    \item $\Delta \mathbf{R} = \mathbf{R} - \mathbf{R}_0$ — відхилення координат від рівноваги.
-\end{itemize}
+де $m_i$ і $m_j$ --- маси атомів $i$ і $j$ у атомних одиницях.
 
-Звідси обернене перетворення:
-\[
-    \Delta \mathbf{R} = \mathbf{M}^{-1/2} \mathbf{L} \, Q_k.
-\]
+\begin{minted}{python}
+mass_hess = np.einsum('ijxy,i,j->ijxy', hess_tensor, mass**-0.5, mass**-0.5)
+\end{minted}
 
-Саме цю формулу використовують у чисельному диференціюванні:
-\[
-    \mathbf{R}^{(\pm)} = \mathbf{R}_0 \pm h\, \mathbf{M}^{-1/2} \mathbf{L}_k,
-\]
-що зв’язує крок $h$ у просторі нормальних координат $Q_k$ із фізичними зміщеннями атомів $\mathbf{R}$.
+Отриманий тензор \(\tilde{H}\) має розмір \((N_\text{атом}, N_\text{атом}, 3, 3)\). Його треба перетворити до вигляду
+$\tilde{H}_{i\alpha, j\beta}$, який має форму \(3N \times 3N\), щоб отримати власні значення та власні ветори (див. \eqref{eq:mass-weighted-H-index}).
 
-
-%% --------------------------------------------------------
-\subsubsection{Масштабування частот}
-%% --------------------------------------------------------
-
-Розраховані гармонічні частоти $\nu_{\text{гарм}}$ систематично завищені відносно експериментальних $\nu_{\text{експ}}$ через спрощення моделі потенціальної поверхні та обмеження методів:
+У коді це реалізується як:
+\begin{minted}{python}
+h = mass_hess.transpose(0,2,1,3).reshape(natm*3, natm*3)
+\end{minted}
 
 \begin{itemize}
-    \item \textbf{Гармонічне наближення:} реальний потенціал ангармонічний, тому енергія коливань і частоти менші.
-    \item \textbf{Нестача електронної кореляції:} метод Хартрі–Фока завищує жорсткість зв’язків.
-    \item \textbf{Обмежений базис:} малий базис перебільшує градієнти енергії.
+\item \inlinecode{transpose(0,2,1,3)} переставляє осі тензора так, щоб порядок індексів був   \((i,\alpha,j,\beta)\);
+\item \inlinecode{reshape(natm*3, natm*3)} об’єднує подвійні індекси
+\((i,\alpha)\) і \((j,\beta)\) в один суцільний, формуючи матрицю розміром \(3N \times 3N\).
 \end{itemize}
 
-{Масштабування $\lambda$ емпірично компенсує ангармонічність і методичні похибки. Емпіричне виправлення:
+Після цього ми можемо знайти власні значення й вектори цієї симетричної матриці з рівняння \eqref{eq:eigen-tilde-H-matrix}:
+
+\begin{minted}{python}
+w, L = np.linalg.eigh(h)
+\end{minted}
+
+Кожне власне значення \(\lambda_i\) пов’язане з кутовою частотою коливання:
 \[
-    \nu_{\text{корект}} = \lambda \cdot \nu_{\text{гарм}}
+    \omega_i = \sqrt{|\lambda_i|},
+\]
+а частота в см\(^{-1}\) визначається як
+\[
+    \nu_i = \operatorname{sign}(\lambda_i)\, \sqrt{|\lambda_i|}\, C,
+\]
+де \(C = 5140.48\) --- коефіцієнт перетворення з атомних одиниць
+(\(\text{Ha}/(a_0^2 \text{amu})\)) у см\(^{-1}\).
+
+\begin{minted}{python}
+conv = 5140.48
+freqs = np.sign(w) * np.sqrt(np.abs(w)) * conv
+\end{minted}
+
+Перші \(5\) або \(6\) власних значень (для лінійних або нелінійних молекул)
+відповідають трансляційним і обертальним рухам, які мають
+дуже низькі частоти (практично нульові).
+Щоб залишити лише \textbf{вібраційні частоти}, відкинемо значення,
+менші за певний поріг:
+\[
+    |\nu_i| > \nu_\text{поріг}.
 \]
 
-\textbf{Типові масштабувальні фактори:}
+\begin{minted}{python}
+freqs[6:]
+\end{minted}
 
-\begin{center}
-    \begin{tblr}{
-        colspec = {X[l,2] X[r] X[l,2]},
-        row{1} = {font=\bfseries},
-        hline{1,2,Z} = {solid},
-            }
-        Метод/базис         & $\lambda$ & Коментар               \\
-        HF/6-31G*           & 0.8929    & Сильно завищує         \\
-        B3LYP/6-31G*        & 0.9613    & Універсальний          \\
-        B3LYP/6-311+G(2d,p) & 0.9679    & Кращий базис           \\
-        MP2/6-31G*          & 0.9434    & Для точних розрахунків \\
-    \end{tblr}
-\end{center}
+Таким чином, \(\texttt{vib\_freqs}\) містить набір істинних вібраційних частот
+молекули води, виражених у см\(^{-1}\).
 
-\textit{Джерело: NIST Computational Chemistry Comparison and Benchmark Database}
+Повний код програми:
+\begin{minted}{python}
+import numpy as np
+from pyscf import gto, scf
 
+mol = gto.Mole()
+mol.atom = '''
+O  0.000000   0.000000   0.000000
+H  0.000000   0.757000   0.587000
+H  0.000000  -0.757000   0.587000
+'''
+mol.basis = '6-31g(d)'
+mol.build()
+
+mf = scf.RHF(mol).run(verbose=0)
+
+from pyscf.hessian.rhf import Hessian  # або mf.Hessian
+hobj = mf.Hessian()      # створити об’єкт гесіану для даного SCF-методу
+hess_tensor = hobj.kernel()  # гесіан повертається як numpy array shape (natm,natm,3,3)
+
+mass = mol.atom_mass_list(isotope_avg=True)
+atom_coords = mol.atom_coords()
+natm = atom_coords.shape[0]
+
+mass_hess = np.einsum('ijxy,i,j->ijxy', hess_tensor, mass**-.5, mass**-.5)
+h = mass_hess.transpose(0,2,1,3).reshape(natm*3,natm*3)
+
+w, L = np.linalg.eigh(h)
+
+conv = 5140.48
+freqs = np.sign(w) * np.sqrt(np.abs(w)) * conv
+freqs[6:]
+\end{minted}
 
 
 %% --------------------------------------------------------
-\subsection{Обчислення гесіану}
+\subsection{Чисельне обчислення гесіану на прикладі молекули \ce{H2O}}
 %% --------------------------------------------------------
 
-PySCF може обчислювати гесіан аналітично або чисельно. Програма в файлі \inputcode{h2o_hessian.py} обчислює матрицю Гесіану для молекули води (\ce{H2O}) двома методами: чисельним та аналітичним.
+PySCF дозволяє не лише обчислювати гесіан аналітично, але й чисельно --- через \textbf{центральні різниці}.
+Цей метод заснований на обчисленні градієнтів енергії у зміщених положеннях атомів і визначенні другої похідної як різниці цих градієнтів. Використовується \textbf{метод центральних різниць}, який має вигляд:
+\begin{equation}\label{eq:H-numerical}
+    H_{ij} =
+    \frac{\frac{\partial E}{\partial x_j}\big|_{x_i+h} -
+          \frac{\partial E}{\partial x_j}\big|_{x_i-h}}{2h}.
+\end{equation}
 
-\begin{commentbox}
-У програмному пакеті \texttt{PySCF} гесіан зберігається не як звичайна
-двовимірна матриця розмірності $3N \times 3N$, а у вигляді чотиривимірного
-тензора
-\[
-H_{AB,ij} = \frac{\partial^2 E}{\partial R_{A,i} \partial R_{B,j}},
-\]
-де $A,B$~— індекси атомів ($1,\dots,N$), а $i,j \in \{x,y,z\}$~—
-напрямки декартових координат.
-Відповідно, внутрішня структура масиву має вигляд
-\[
-H \in \mathbb{R}^{N \times N \times 3 \times 3}.
-\]
-
-Щоб отримати стандартну матричну форму $3N \times 3N$,
-необхідно спершу переставити осі, розмістивши напрямки координат поруч із
-відповідними атомами:
-\[
-H'_{Ai,Bj} = H_{AB,ij}.
-\]
-Це виконується операцією
-\[
-\texttt{H'} = \inlinecode{H.transpose(0,2,1,3).reshape(3N,3N)}.
-\]
-Така трансформація формує коректну блочну структуру з блоками $3\times3$,
-яка відповідає фізичному гесіану молекули у декартових координатах.
-\end{commentbox}
-
-\subsubsection{Чисельний Гесіан}
-
-Чисельний Гесіан обчислюється через скінченні різниці методом центральних різниць:
+У цьому підході для кожної координати $x_i$ кожного атома виконується пара розрахунків енергії та градієнтів у точках $x_i + h$ і $x_i - h$.
 
 \begin{enumerate}
-    \item \textbf{Зміщення координат:} Кожна координата $x_i$ кожного атома зміщується на величину $\pm h$ (крок диференціювання):
-    \begin{equation}
-        x_i^{(\pm)} = x_i \pm h
-    \end{equation}
-    де $h = 0.001$ Bohr (атомні одиниці).
+    \item \textbf{Зміщення координат:}
+    Кожна координата атома $x_i$ зміщується на $\pm h$, де $h = 0.001$~Bohr:
+    \[
+        x_i^{(\pm)} = x_i \pm h.
+    \]
+    Для кожного зміщення створюється нова геометрія молекули.
 
-    \item \textbf{Обчислення градієнтів:} Для кожного зміщення обчислюється градієнт енергії:
-    \begin{equation}
-        \nabla E(x_i^{(+)}) = \left( \frac{\partial E}{\partial x_1}, \frac{\partial E}{\partial x_2}, \ldots, \frac{\partial E}{\partial x_N} \right)_{x_i = x_i + h}
-    \end{equation}
-    \begin{equation}
-        \nabla E(x_i^{(-)}) = \left( \frac{\partial E}{\partial x_1}, \frac{\partial E}{\partial x_2}, \ldots, \frac{\partial E}{\partial x_N} \right)_{x_i = x_i - h}
-    \end{equation}
+    \item \textbf{Обчислення градієнтів:}
+    Для кожної нової геометрії виконується \texttt{RHF} розрахунок, після чого обчислюється градієнт енергії
+    \(\nabla E(x_i^{(\pm)}) = \left( \frac{\partial E}{\partial x_1}, \frac{\partial E}{\partial x_2}, \ldots \right)\).
 
-    \item \textbf{Обчислення Гесіану:} Елементи матриці Гесіану обчислюються як:
-    \begin{equation}
-        H_{ij} = \frac{\partial^2 E}{\partial x_i \partial x_j} = \frac{\nabla E_j(x_i^{(+)}) - \nabla E_j(x_i^{(-)})}{2h}
-    \end{equation}
+    \item \textbf{Обчислення елементів Гесіану:}
+    Для кожної координати $x_i$ і $x_j$ елемент Гесіану визначається як
+    \[
+        H_{ij} = \frac{\nabla_j E(x_i^{(+)}) - \nabla_j E(x_i^{(-)})}{2h}.
+    \]
 \end{enumerate}
 
-\textbf{Формула центральних різниць:}
-\begin{equation}
-    \boxed{H_{ij} = \frac{g_j(x_i + h) - g_j(x_i - h)}{2h}}
-\end{equation}
-де $g_j = \frac{\partial E}{\partial x_j}$ --- компонента градієнта.
+Розглянемо реалізацію цього методу для молекули \ce{H2O}.
 
-\subsubsection{Аналітичний Гесіан}
+\begin{enumerate}
+\item Ініціалізація параметрів для чисельного диференціювання
+\begin{minted}{python}
+h = 0.001  # крок зміщення в атомних одиницях (Bohr)
+natm = mol.natm
+hess_tensor_numerical = np.zeros((natm, natm, 3, 3))
+\end{minted}
 
-Аналітичний Гесіан обчислюється через точні другі похідні енергії, використовуючи модуль PySCF:
-
-\begin{equation}
-    H_{ij} = \frac{\partial^2 E}{\partial x_i \partial x_j}
-\end{equation}
-
-Метод використовує \inlinecode{pyscf.hessian.rhf.Hessian(mf).kernel()} для прямого обчислення всіх елементів матриці Гесіану без числового диференціювання.
+Для кожного атома і кожного напрямку ($x, y, z$) ми будемо зміщати його положення на $\pm h$.
+Масив \inlinecode{hess\_tensor\_numerical} призначено для збереження всіх компонент тензора гесіану.
 
 
-\paragraph{Обчислювальна складність}
+\item Обчислення градієнтів при зміщенні координат
+Для кожного атома $i$ і координати $\alpha$ виконується два розрахунки: при зміщенні на $+h$ і $-h$:
+\begin{minted}{python}
+for atom_i in range(natm):
+    for coord_i in range(3):
+        R_pos = mol.atom_coords().copy()
+        R_pos[atom_i, coord_i] += h
+\end{minted}
+\inlinecode{R\_pos} --- це копія масиву координат, у якій вибрану координату атома $i$ збільшено на $h$.
+Далі будується новий об’єкт молекули з оновленими координатами:
+
+\begin{minted}{python}
+mol_pos = gto.M(
+    atom=[[mol.atom_symbol(i), R_pos[i]] for i in range(natm)],
+    basis=mol.basis,
+    unit="Bohr",
+)
+mf_pos = scf.RHF(mol_pos)
+mf_pos.verbose = 0
+mf_pos.kernel()
+grad_pos = mf_pos.Gradients().kernel()
+\end{minted}
+Тут:
+\begin{itemize}
+\item \inlinecode{mol\_pos} --- нова молекула зі зміщеними координатами;
+\item \inlinecode{mf\_pos.Gradients().kernel()} --- повертає аналітичний градієнт енергії у новій геометрії.
+\end{itemize}
+
+Аналогічно розглядається зміщення у від’ємному напрямку:
+
+\begin{minted}{python}
+R_neg = mol.atom_coords().copy()
+R_neg[atom_i, coord_i] -= h
+
+mol_neg = gto.M(
+    atom=[[mol.atom_symbol(i), R_neg[i]] for i in range(natm)],
+    basis=mol.basis,
+    unit="Bohr",
+)
+mf_neg = scf.RHF(mol_neg)
+mf_neg.verbose = 0
+mf_neg.kernel()
+grad_neg = mf_neg.Gradients().kernel()
+\end{minted}
+
+\item Формування елементів чисельного гесіану.
+
+Різниця градієнтів для зміщень $+h$ та $-h$ ділиться на $2h$, що відповідає центральній різниці
+\[
+H_{ij}^{\alpha\beta} = \frac{\partial^2 E}{\partial R_{i\alpha}\, \partial R_{j\beta}}:
+\]
+
+\begin{minted}{python}
+hess_tensor_numerical[:, atom_i, :, coord_i] = (grad_pos - grad_neg) / (2 * h)
+\end{minted}
+
+Отриманий тензор має форму \((N_\text{атом}, N_\text{атом}, 3, 3)\).
+
+\item Масово-зважений гесіан і частоти.
+
+Як і в аналітичному випадку, проводимо масове зважування:
+
+\begin{minted}{python}
+mass = mol.atom_mass_list(isotope_avg=True)
+mass_hess = np.einsum('ijxy,i,j->ijxy', hess_tensor_numerical, mass**-.5, mass**-.5)
+H_mass_weighted_numerical = mass_hess.transpose(0,2,1,3).reshape(natm*3, natm*3)
+\end{minted}
+
+Далі діагоналізуємо отриману матрицю:
+
+\begin{minted}{python}
+w, L = np.linalg.eigh(H_mass_weighted_numerical)
+\end{minted}
+
+Власні значення \(\lambda_i\) пов’язані з кутовими частотами:
+\[
+    \omega_i = \sqrt{|\lambda_i|}, \quad
+    \nu_i = \operatorname{sign}(\lambda_i)\sqrt{|\lambda_i|}\, C,
+\]
+де \(C = 5140.48\) — коефіцієнт для переходу в см\(^{-1}\).
+
+\begin{minted}{python}
+conv = 5140.48
+freqs = np.sign(w) * np.sqrt(np.abs(w)) * conv
+freqs[6:]
+\end{minted}
+
+Таким чином, \inlinecode{freqs[6:]} містить істинні \textbf{вібраційні частоти} молекули води,
+обчислені чисельним методом через центральні різниці.
+
+
+\end{enumerate}
+
+
+%% --------------------------------------------------------
+\subsection{Обчислювальна складність}
+%% --------------------------------------------------------
+
+
+Програма в файлі \inputcode{h2o_hessian.py} обчислює матрицю Гесіану для молекули води (\ce{H2O}) двома методами: чисельним та аналітичним.
 
 \begin{itemize}
     \item \textbf{Чисельний метод:} Потребує $2 \times 3N$ SCF розрахунків, де $N$ --- кількість атомів.
@@ -257,4 +615,55 @@ H'_{Ai,Bj} = H_{AB,ij}.
     \item Асиметричне валентне коливання: $\approx 3800$ см$^{-1}$
 \end{itemize}
 
-Для практичних розрахунків \textbf{аналітичний метод є кращим вибором}, оскільки він значно швидший та точніший. Чисельний метод корисний для перевірки результатів або коли аналітичні похідні недоступні.
+
+%% --------------------------------------------------------
+\subsection{Резюме}
+%% --------------------------------------------------------
+
+Для практичних розрахунків \textbf{аналітичний метод є кращим вибором}, оскільки він значно швидший і точніший, ніж чисельне диференціювання енергії.
+У програмному пакеті \texttt{PySCF} аналітичні градієнти реалізовані для таких типів розрахунків:
+
+\begin{itemize}
+    \item \texttt{RHF}, \texttt{ROHF}, \texttt{UHF} --- стандартні градієнти енергії Гартрі–Фока;
+    \item \texttt{DFT} (зокрема, LDA, GGA, мета-GGA, гібридні функціонали) --- аналітичні похідні з урахуванням обмінно-кореляційного потенціалу;
+    \item \texttt{MP2} --- реалізовано аналітичні перші похідні енергії (градієнти);
+    \item \texttt{CASSCF} --- аналітичні градієнти для оптимізації активного простору;
+    \item \texttt{TDHF}/\texttt{TDDFT} --- аналітичні похідні збуджених станів.
+\end{itemize}
+
+Чисельні градієнти використовуються лише у випадках, коли аналітичні формули недоступні (наприклад, для складних пост-HF методів типу \texttt{CCSD(T)}).
+
+%% --------------------------------------------------------
+\subsection{Масштабування гармонічних частот}
+%% --------------------------------------------------------
+
+Розраховані гармонічні частоти $\nu_{\text{гарм}}$ зазвичай \textbf{завищені} порівняно з експериментальними $\nu_{\text{експ}}$ через наближення моделі потенціальної поверхні та обмеження електронної структури:
+
+\begin{itemize}
+    \item \textbf{Гармонічне наближення:} реальний потенціал є ангармонічним, тому справжні частоти нижчі.
+    \item \textbf{Нестача електронної кореляції:} метод Гартрі–Фока переоцінює жорсткість зв’язків.
+    \item \textbf{Обмежений базис:} малий базис завищує градієнти енергії.
+\end{itemize}
+
+Для корекції цих ефектів застосовують \textbf{масштабувальний коефіцієнт}~$\lambda$, що емпірично компенсує ангармонічність і методичні похибки:
+\begin{equation*}
+    \nu_{\text{корект}} = \lambda \cdot \nu_{\text{гарм}}
+\end{equation*}
+
+\textbf{Типові масштабувальні фактори:}
+
+\begin{center}
+    \begin{tblr}{
+        colspec = {X[l,2] X[r] X[l,2]},
+        row{1} = {font=\bfseries},
+        hline{1,2,Z} = {solid},
+            }
+        Метод/базис         & $\lambda$ & Коментар               \\
+        HF/6-31G*           & 0.8929    & Сильно завищує         \\
+        B3LYP/6-31G*        & 0.9613    & Універсальний          \\
+        B3LYP/6-311+G(2d,p) & 0.9679    & Кращий базис           \\
+        MP2/6-31G*          & 0.9434    & Для точних розрахунків \\
+    \end{tblr}
+\end{center}
+
+\textit{Джерело: NIST Computational Chemistry Comparison and Benchmark Database.}

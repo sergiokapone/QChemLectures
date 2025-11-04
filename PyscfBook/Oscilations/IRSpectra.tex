@@ -231,83 +231,71 @@ I_i \sim \left| \frac{d\boldsymbol{\mu}}{dQ_i} \right|^2.
 %---------------------------------------------------------
 \subsection{Аналітичний підхід у \texttt{PySCF}}
 %---------------------------------------------------------
-
 Модуль \inlinecode{pyscf.prop.freq} реалізує аналітичний обрахунок похідних
-дипольного моменту по атомних координатах~$\partial\boldsymbol{\mu}/\partial r_{a\alpha}$.
-Перехід до нормальних координат відбувається за допомогою матриці нормальних мод:
+дипольного моменту по атомних координатах $\partial\boldsymbol{\mu}/\partial \mathbf{R}$.
+
+\paragraph{Перехід до нормальних координат.}
+Похідна дипольного моменту за нормальною координатою $Q_i$ виражається через
+матрицю нормальних мод $\mathbf{L}$:
 \[
-\frac{\partial \vect{\mu}}{\partial Q_i} =
-\sum_{a=1}^{N_{\rm atm}} \sum_{\alpha=x,y,z}  \frac{\partial \vect{\mu}}{\partial x_{a\alpha}}
-\frac{\partial x_{a\alpha}}{\partial Q_i} = \frac{\partial \vect{\mu}}{\partial x_{a\alpha}} L_{a\alpha}^i,
+\frac{\partial \vect{\mu}}{\partial Q_i}
+= \sum_{A=1}^{N_{\text{атм}}}
+    \frac{\partial \vect{\mu}}{\partial \vect{R}_{A}} \cdot \frac{\partial \vect{R}_A}{\partial Q_i}
+= \sum_{A=1}^{N_{\text{атм}}}
+    \frac{\partial \vect{\mu}}{\partial \vect{R}_{A}} \cdot \vect{L}_A^i,
 \]
-де $a = 1,2,\dots,N_\mathrm{atm}$ --- номер атома, а $\alpha, \beta \in \{x,y,z\}$ --- координатна компонента атома та дипольного моменту, відповідно.
+де $\vect L_A^i = (L_{Ax}^i, L_{Ay}^i, L_{Az}^i)$ --- вектор нормальної моди для атома $A$.
 
-Це дозволяє обійтися без чисельного диференціювання:
+\paragraph{Структура тензора похідних.}
+У \texttt{PySCF} тензор похідних \inlinecode{vib.de} має розмірність $(N_{\text{атм}}, N_{\text{атм}}, 3, 3)$
+і зберігає похідні компонент дипольного моменту за координатами атомів:
+\[
+(\texttt{vib.de})_{ABaj} = \frac{\partial \mu_j^{(A)}}{\partial R_{Ba}},
+\]
 
-\begin{enumerate}
-
-\item \textbf{Обчислення нормальних мод та частот:}
-Модуль \inlinecode{pyscf.prop.freq} дозволяє отримати нормальні моди $L_{a\alpha}^{(i)}$ та частоти $\nu_i$ аналітично:
-
- $ L_{a\alpha}^{(i)} = \inlinecode{modes[i, a, alpha]}$
+Діагональні елементи ($A=B$) відповідають похідній внеску атома в дипольний момент по його власних координатах:
+\[
+D_{Aaj} = (\texttt{vib.de})_{AAaj}
+= \frac{\partial \mu_j}{\partial R_{Aa}}.
+\]
 
 \begin{minted}{python}
-vib = freq.rhf.Frequency(mf)
-freqs, modes = vib.kernel()  # modes.shape == (nmode, natm, 3)
+# Діагональний тензор: (N_atm, 3, 3)
+de_diag = np.einsum('AAaj->Aaj', vib.de)
 \end{minted}
 
-\item \textbf{Похідні дипольного моменту по атомних координатах:}
-Аналітичні похідні дипольного моменту по атомних координатах мають вигляд:
+Для кожного атома $A$ отримуємо матрицю Якобі дипольного моменту:
 \[
-    \frac{\partial \boldsymbol{\mu}}{\partial x_{a\alpha}} =
-    \left(
-        \frac{\partial \mu_x}{\partial x_{a\alpha}},
-        \frac{\partial \mu_y}{\partial x_{a\alpha}},
-        \frac{\partial \mu_z}{\partial x_{a\alpha}}
-    \right),
+\mathbf{D}_A =
+\begin{pmatrix}
+\partial \mu_x/\partial x_A & \partial \mu_y/\partial x_A & \partial \mu_z/\partial x_A \\
+\partial \mu_x/\partial y_A & \partial \mu_y/\partial y_A & \partial \mu_z/\partial y_A \\
+\partial \mu_x/\partial z_A & \partial \mu_y/\partial z_A & \partial \mu_z/\partial z_A
+\end{pmatrix}.
 \]
-де $a$ — номер атома, а $\alpha \in \{x, y, z\}$ — напрямок зміщення цього атома.
 
-У коді \texttt{PySCF} ці похідні зберігаються в тензорі \inlinecode{vib.de[a, a, :, alpha]}:
+\paragraph{Похідні за нормальними координатами.}
+Матриця похідних дипольного моменту за всіма нормальними модами:
+\[
+\frac{\partial \mu_j}{\partial Q_i}
+= \sum_{A=1}^{N_{\text{атм}}} \sum_{a=x,y,z} L_{Aa}^i \, D_{Aaj}.
+\]
+
 \begin{minted}{python}
-# Аналітичні похідні дипольного моменту за координатами атомів
-# vib.de має розмірність (natm, natm, 3, 3)
-# перший індекс a — атом, другий — похідна по координатах цього ж атома
-# третій — компонента дипольного моменту (x, y, z)
-# четвертий — напрямок зміщення α (x, y, z)
-vib.de[a, a, :, alpha]
+# Тензорна згортка: (N_modes, 3)
+dipole_derivs = np.einsum('iAa,Aaj->ij', modes, de_diag)
 \end{minted}
 
-
-\item \textbf{Перехід до нормальних координат:}
-За допомогою нормальних мод отримуємо похідну диполя за нормальною координатою $Q_i$:
+\paragraph{Інтенсивності ІЧ-переходів.}
+Інтенсивність $i$-го коливального переходу:
 \[
-\frac{\partial \mu_{\beta}}{\partial Q_i} =
-\sum_{a=1}^{N_{\rm atm}} \sum_{\alpha=x,y,z}  \frac{\partial \mu_{\beta}}{\partial x_{a\alpha}}
-\frac{\partial x_{a\alpha}}{\partial Q_i} = \frac{\partial \mu_{\beta}}{\partial x_{a\alpha}} L_{a\alpha}^i,
+I_i = 974.8638 \sum_{j=x,y,z} \left( \frac{\partial \mu_j}{\partial Q_i} \right)^2
+= 974.8638 \, \left\| \frac{\partial \boldsymbol{\mu}}{\partial Q_i} \right\|^2
 \]
 
 \begin{minted}{python}
-natm = mol.natm
-
-for i in range(freqs.size):
-    dip_deriv = np.zeros(3)  # вектор dμ/dQ
-    for a in range(natm):
-        for alpha in range(3):
-            dip_deriv += vib.de[a, a, :, alpha] * modes[i, a, alpha]
-\end{minted}
-
-\item \textbf{Обчислення інтегральної інтенсивності ІЧ-переходу:}
-Інтенсивність пропорційна квадрату норми похідної диполя:
-\[
-I_i = 974.8638 \times
-\left|\frac{\partial \boldsymbol{\mu}}{\partial Q_i}\right|^2_{\rm a.u.}
-\quad [\text{км/моль}]
-\]
-
-\begin{minted}{python}
-    intensity = 974.8638 * dip_deriv @ dip_deriv
-    ir_intensities_an.append(intensity)
+# Інтенсивності для всіх мод
+ir_intensities = 974.8638 * np.sum(dipole_derivs**2, axis=1)
 \end{minted}
 
 І весь код разом:
@@ -317,37 +305,30 @@ import numpy as np
 from pyscf import gto, scf
 from pyscf.prop import freq
 
-# Геометрія молекули
 mol = gto.M(atom='O 0 0 0; H 0 -0.757 0.587; H 0 0.757 0.587', basis='6-31g')
 mf = scf.RHF(mol).run()
 
-# Розрахунок частот
 vib = freq.rhf.Frequency(mf)
 freqs, modes = vib.kernel()
-
 natm = mol.natm
-ir_intensities = []
 
-# Розрахунок ІЧ інтенсивностей
-for i in range(len(freqs)):
-    mode = modes[i]
-    dipole_deriv = np.zeros(3)
-    for a in range(natm):
-        for alpha in range(3):
-            dipole_deriv += vib.de[a, a, :, alpha] * mode[a, alpha]
-    intensity = 974.8638 * np.dot(dipole_deriv, dipole_deriv)
-    ir_intensities.append(intensity)
+# Діагональні елементи
+de_diag = np.einsum('AAaj->Aaj', vib.de)  # (natm, 3, 3)
 
-# Вивід таблиці результатів
+# Всі дипольні похідні одразу
+dipole_derivs = np.einsum('iAa,Aaj->ij', modes, de_diag)
+
+# Всі інтенсивності одразу
+ir_intensities = 974.8638 * np.sum(dipole_derivs**2, axis=1)
+
+# Вивід
 print("\n" + "="*70)
-print("  ІЧ СПЕКТР H₂O (PySCF, частоти, жорсткості та інтенсивності)")
+print("  ІЧ СПЕКТР H₂O (PySCF, оптимізовано)")
 print("="*70)
 print(f"{'Мода':<8}{'Частота (см⁻¹)':>18}{'Інтенсивність (km/mol)':>28}")
 print("-"*70)
-
-for i in range(6, len(freqs)):  # пропускаємо 6 нульових (3 транс + 3 рот)
+for i in range(6, len(freqs)):
     print(f"{i-5:<8d}{freqs[i]:>18.2f}{ir_intensities[i]:>28.2f}")
-
 print("="*70)
 \end{minted}
 
@@ -404,172 +385,53 @@ hline{1, Z} = {solid},
 валентним коливанням, що зумовлюють інтенсивну ІЧ-смугу пари води
 в атмосфері (важливий внесок у парниковий ефект).
 
+\subsection*{Резюме}
 
-\paragraph{Обчислювальна складність}
+У цьому розділі розглянуто теоретичні основи та практичні методи розрахунку
+інфрачервоних спектрів молекул.
 
-Для молекули з $M$ коливальними модами (без трансляцій/обертань):
-
-\begin{equation}
-    N_{\text{SCF}} = 1 + 2M
-\end{equation}
-
+\paragraph{Ключові положення:}
 \begin{itemize}
-    \item 1 --- початковий SCF для рівноважної геометрії
-    \item $2M$ --- по два SCF ($\pm h$) для кожної моди
+    \item ІЧ-інтенсивність коливальної моди визначається квадратом похідної
+    дипольного моменту за нормальною координатою:
+    $I_i = 974.8638 \left|\frac{\partial\boldsymbol{\mu}}{\partial Q_i}\right|^2$ [км/моль].
+
+    \item Інтенсивність відображає \emph{силу взаємодії} молекули з ІЧ-випромінюванням:
+    чим більша зміна дипольного моменту при коливанні, тим інтенсивніша смуга поглинання.
+    Класифікація: сильні смуги ($I > 100$~км/моль), середні ($10 < I \leq 100$),
+    слабкі ($I \leq 10$~км/моль).
+
+    \item Два методи обчислення похідних:
+    \begin{itemize}
+        \item \textit{Чисельний} --- простий, але вимагає додаткових SCF-розрахунків
+        для зміщених геометрій та чутливий до вибору кроку $h$;
+        \item \textit{Аналітичний} --- ефективніший і точніший, базується на аналітичних
+        градієнтах густини заряду. Реалізований у \texttt{PySCF} як для HF,
+        так і для DFT-методів.
+    \end{itemize}
+
+    \item Для молекули H$_2$O розраховані частоти ($\sim 1829$, $3906$, $4001$~см$^{-1}$)
+    якісно узгоджуються з експериментом ($1648$, $3832$, $3943$~см$^{-1}$),
+    а систематичне завищення пояснюється гармонічним наближенням і вибором базису.
+
+    \item Інтенсивності ($I_1 = 1.4$, $I_2 = 102.3$, $I_3 = 138.6$~км/моль)
+    демонструють, що найінтенсивніші смуги відповідають валентним коливанням \ce{O-H} зв'язків,
+    тоді як деформаційна мода має слабку інтенсивність. Експериментальні значення
+    ($62.5$, $2.93$, $41.7$~км/моль) показують іншу картину через ангармонічні ефекти
+    та обмеження гармонічного наближення.
+
+    \item Висока інтенсивність валентних коливань робить пару води потужним поглиначем
+    ІЧ-випромінювання в атмосфері, що має значення для клімату та парникового ефекту.
 \end{itemize}
 
-Для H$_2$O: $N_{\text{SCF}} = 1 + 2 \times 3 = 7$ розрахунків.
-
-Типовий час для \ce{H2O}/6-31G:
+\paragraph{Практичне значення:}
+Розрахунки ІЧ-спектрів є важливим інструментом для:
 \begin{itemize}
-    \item Гесіан: $\sim$1--2 с
-    \item ІЧ інтенсивності: $\sim$5--10 с
-    \item \textbf{Загальний час:} $\sim$6--12 с
+    \item ідентифікації функціональних груп та структури молекул;
+    \item інтерпретації експериментальних спектрів та передбачення відносних інтенсивностей;
+    \item передбачення спектральних характеристик нових сполук;
+    \item дослідження міжмолекулярних взаємодій та динаміки;
+    \item кількісного аналізу концентрацій речовин за допомогою закону Бугера-Ламберта-Бера.
 \end{itemize}
 
 
-\paragraph{Чисельні похибки}
-
-\begin{enumerate}
-    \item \textbf{Вибір кроку $h$:}
-    \begin{itemize}
-        \item Занадто великий $h$ --- похибка дискретизації $O(h^2)$
-        \item Занадто малий $h$ --- похибка округлення $\sim \epsilon/h$
-        \item Оптимальний $h \sim 10^{-3}$ Bohr
-    \end{itemize}
-
-    \item \textbf{Збіжність SCF:}
-    \begin{itemize}
-        \item Кожен SCF має свою похибку збіжності
-        \item Критерій збіжності: $10^{-8}$ Ha
-    \end{itemize}
-\end{enumerate}
-
-\paragraph{Методологічні обмеження}
-
-\begin{enumerate}
-    \item \textbf{Гармонічне наближення:}
-    \begin{itemize}
-        \item Використовується квадратична апроксимація енергії
-        \item Ангармонізм не враховується
-        \item Для високочастотних мод похибка може бути $>$100 см$^{-1}$
-    \end{itemize}
-
-    \item \textbf{Якість базису:}
-    \begin{itemize}
-        \item 6-31G --- мінімальний базис для якісних результатів
-        \item Для точних інтенсивностей потрібні 6-311++G** або aug-cc-pVTZ
-    \end{itemize}
-
-    \item \textbf{Рівень теорії:}
-    \begin{itemize}
-        \item RHF не враховує електронну кореляцію
-        \item DFT (B3LYP) дає кращі результати
-        \item MP2/CCSD --- найточніші, але дорогі
-    \end{itemize}
-\end{enumerate}
-
-\paragraph{Покращення точності}
-
-\begin{enumerate}
-    \item \textbf{Використовувати кращі базиси:}
-    \begin{minted}{python}
-basis = "6-311++G**"  # або "aug-cc-pVTZ"
-    \end{minted}
-
-    \item \textbf{Використовувати DFT:}
-    \begin{minted}{python}
-mf = dft.RKS(mol)
-mf.xc = "B3LYP"
-    \end{minted}
-
-    \item \textbf{Масштабувати частоти:}
-
-    Емпіричне масштабування для RHF/6-31G:
-    \begin{equation}
-        \nu_{\text{corr}} = 0.8929 \times \nu_{\text{calc}}
-    \end{equation}
-
-    \item \textbf{Враховувати ангармонізм:}
-
-    Використовувати VPT2 (Vibrational Perturbation Theory)
-\end{enumerate}
-
-%\paragraph{Висновок}
-%
-%Програма \texttt{h2o\_ir\_spectrum.py} надає повний розрахунок ІЧ-спектру, використовуючи:
-%
-%\begin{itemize}
-%    \item \textbf{Аналітичний Гесіан} для частот (швидко та точно)
-%    \item \textbf{Чисельне диференціювання} дипольного моменту для інтенсивностей
-%    \item \textbf{Метод центральних різниць} ($O(h^2)$ точність)
-%\end{itemize}
-%
-%Результати є якісно правильними для розуміння коливальної структури молекули. Для кількісних порівнянь з експериментом потрібні:
-%\begin{itemize}
-%    \item Кращі базисні набори
-%    \item Врахування електронної кореляції (DFT або пост-HF)
-%    \item Ангармонічні корекції
-%    \item Врахування ефектів середовища (розчинник)
-%\end{itemize}
-
-%%% --------------------------------------------------------
-%\subsubsection{ІЧ спектр \ce{CO2}}
-%%% --------------------------------------------------------
-%
-%\inputcode{co2_ir_spectrum.py}
-%
-%\textbf{Коливальні моди \ce{CO2} (лінійна, D$_{\infty h}$):}
-%
-%\begin{center}
-%    \begin{tblr}{
-%        colspec = {X[c] X[r] X[r] X[c] X[l,2]},
-%        row{1} = {font=\bfseries},
-%        hline{1,2,Z} = {solid},
-%            }
-%        Мода                   & Частота     & Інтенс.   & ІЧ        & Опис                     \\
-%                               & (см$^{-1}$) & (км/моль) &                                      \\
-%        $\nu_1$ ($\Sigma_g^+$) & 1333        & 0         & Неактивна & Симетричне валентне      \\
-%        $\nu_2$ ($\Pi_u$)      & 667         & 85        & Активна   & Деформаційне (вироджене) \\
-%        $\nu_3$ ($\Sigma_u^+$) & 2349        & 1580      & Активна   & Антисиметричне валентне  \\
-%    \end{tblr}
-%\end{center}
-%
-%\textit{Розрахунок: B3LYP/aug-cc-pVTZ}
-
-%---------------------------------------------------------
-%\begin{figure}[h!]\centering
-%%    \includegraphics[width=0.85\linewidth]{\currfiledir/co2_ir_spectrum.pdf}
-%    \caption{ІЧ спектр \ce{CO2}. Симетрична мода $\nu_1$ не активна в ІЧ через відсутність зміни дипольного моменту.}
-%    \label{pic:co2_ir}
-%\end{figure}
-%---------------------------------------------------------
-
-%\textbf{Фізична інтерпретація:}
-%\begin{itemize}
-%    \item $\nu_1$: симетричне розтягування, $\mu$ не змінюється (ІЧ-неактивна)
-%    \item $\nu_2$: згинання молекули, $\mu$ виникає (ІЧ-активна)
-%    \item $\nu_3$: асиметричне розтягування, велика зміна $\mu$ (дуже інтенсивна)
-%\end{itemize}
-%
-%\subsubsection{Характеристичні частоти функціональних груп}
-%
-%\begin{center}
-%    \begin{tblr}{
-%        colspec = {X[l,2] X[r] X[l,2]},
-%        row{1} = {font=\bfseries},
-%        hline{1,2,Z} = {solid},
-%            }
-%        Група                & Частота (см$^{-1}$) & Коментар              \\
-%        \ce{O-H} (спирти)    & 3600--3650          & Гострий пік (вільний) \\
-%        \ce{O-H} (H-зв'язок) & 3200--3550          & Широкий (асоціація)   \\
-%        \ce{N-H}             & 3300--3500          & Середня інтенсивність \\
-%        \ce{C-H} (алкани)    & 2850--2960          & Валентні коливання    \\
-%        \ce{C-H} (алкени)    & 3010--3095          & Вища частота          \\
-%        \ce{C=O} (кетони)    & 1705--1725          & Дуже інтенсивна       \\
-%        \ce{C=O} (аміди)     & 1630--1690          & Зміщення резонансом   \\
-%        \ce{C=C}             & 1620--1680          & Слабка в симетричних  \\
-%        \ce{C\bond{3}N}      & 2210--2260          & Гострий пік           \\
-%        \ce{C-O}             & 1050--1150          & Сильна, асиметричне   \\
-%    \end{tblr}
-%\end{center}

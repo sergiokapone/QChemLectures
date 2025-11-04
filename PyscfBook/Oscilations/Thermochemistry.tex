@@ -157,28 +157,146 @@ E_{\text{ZPE}} = \sum_{i=1}^{3N-6} \frac{1}{2}\hbar\omega_i.
 і додаються до електронної енергії $E_{\text{elec}}$,
 отриманої з розв’язку рівнянь Хартрі–Фока або DFT.
 
-Далі програма:
-\begin{enumerate}
-    \item Визначає нормальні частоти $\nu_i$ після масового масштабування гессіана.
-    \item Обчислює нульову енергію коливань $E_{\text{ZPE}} = \tfrac{1}{2}\sum h\nu_i$.
-    \item Розраховує термічні внески $E_{\text{vib}}(T), E_{\text{rot}}(T), E_{\text{trans}}(T)$
-          за статистично-механічними формулами (як наведено вище).
-    \item Обчислює ентальпію $H(T)$, ентропію $S(T)$ та вільну енергію $G(T)$.
-\end{enumerate}
-
-Всі ці розрахунки виконуються у межах
-\emph{наближення гармонічного осцилятора та жорсткого ротатора},
-що забезпечує добру точність для малих і середніх молекул.
+%Далі програма:
+%\begin{enumerate}
+%    \item Визначає нормальні частоти $\nu_i$ після масового масштабування гессіана.
+%    \item Обчислює нульову енергію коливань $E_{\text{ZPE}} = \tfrac{1}{2}\sum h\nu_i$.
+%    \item Розраховує термічні внески $E_{\text{vib}}(T), E_{\text{rot}}(T), E_{\text{trans}}(T)$
+%          за статистично-механічними формулами (як наведено вище).
+%    \item Обчислює ентальпію $H(T)$, ентропію $S(T)$ та вільну енергію $G(T)$.
+%\end{enumerate}
+%
+%Всі ці розрахунки виконуються у межах
+%\emph{наближення гармонічного осцилятора та жорсткого ротатора},
+%що забезпечує добру точність для малих і середніх молекул.
 
 
 %% --------------------------------------------------------
 \subsection{Термохімічний приклад: \ce{H2O}}
 %% --------------------------------------------------------
 
-\inputcode[mod=inline]{h2o_thermochemistry.py}
 
 
-У цій програмі основна робота термохімічного аналізу була зведена до двох ключових функцій з модуля \href{https://pyscf.org/_modules/pyscf/hessian/thermo.html}{\texttt{pysch.hessian.thermo}}:
+
+У програмі \inputcode[mod=inline]{h2o_thermochemistry.py} основна робота термохімічного аналізу була зведена до двох ключових функцій з модуля \href{https://pyscf.org/_modules/pyscf/hessian/thermo.html}{\texttt{pysch.hessian.thermo}}:
+
+%% --------------------------------------------------------
+\subsubsection{Алгоритм термохімічного аналізу в PySCF}
+%% --------------------------------------------------------
+
+\begin{enumerate}
+
+    \item \textbf{Обчислення Гессіану.}
+
+    Матриця Гессіану (друга похідна енергії за атомними координатами) визначається як:
+    \[
+        H_{ij} = \frac{\partial^2 E}{\partial x_i \partial x_j}.
+    \]
+
+    Вона містить інформацію про кривизну поверхні потенціальної енергії та використовується для визначення нормальних коливань і частот:
+    \begin{minted}{python}
+    from pyscf import hessian
+    hess = hessian.RHF(mf).kernel()
+    \end{minted}
+
+    \item \textbf{Гармонічний аналіз коливань.}
+
+    Діагоналізація масово-зваженого Гессіану дає власні частоти $\nu_k$ (в см⁻¹) та нормальні моди $\mathbf{L}_k$.
+    Поступальні та обертальні ступені свободи автоматично відкидаються (для нелінійних молекул — 6, для лінійних — 5).
+
+    \begin{minted}{python}
+    from pyscf.hessian.thermo import harmonic_analysis
+    results = harmonic_analysis(mol, hess)
+    \end{minted}
+
+    У результаті отримуємо структуру \texttt{results}, що містить:
+    \begin{itemize}
+        \item \texttt{results['freq\_cm']}: коливальні частоти в см⁻¹;
+        \item \texttt{results['freq\_au']}: ті ж частоти в атомних одиницях;
+        \item \texttt{results['norm\_mode']}: нормальні моди $\mathbf{L}_k$.
+    \end{itemize}
+
+    Ці дані необхідні для розрахунку вібраційного внеску в термодинамічні функції.
+
+    \item \textbf{Розрахунок термохімічних величин.}
+
+    Функція \texttt{thermo()} комбінує результати електронного розрахунку, коливальні частоти та статистичні формули для різних видів руху:
+    \begin{equation}
+        Q = Q_\text{trans} \cdot Q_\text{rot} \cdot Q_\text{vib} \cdot Q_\text{el}.
+    \end{equation}
+    З цього загального статистичного інтеграла виводяться термодинамічні параметри:
+    \begin{align}
+        E_\text{tot} &= E_\text{el} + E_\text{trans} + E_\text{rot} + E_\text{vib},\\
+        H &= E_\text{tot} + RT, \\
+        S &= S_\text{trans} + S_\text{rot} + S_\text{vib} + S_\text{el},\\
+        G &= H - TS.
+    \end{align}
+
+    \begin{minted}{python}
+    from pyscf.hessian.thermo import thermo
+    results = thermo(mf, results['freq_au'], 298.15, 101325)
+    \end{minted}
+
+    Функція автоматично враховує:
+    \begin{itemize}
+        \item нульову коливальну енергію (ZPE);
+        \item термічні поправки до енергії, ентальпії, ентропії;
+        \item теплоємності $C_v$, $C_p$;
+        \item вільну енергію Гіббса $G$.
+    \end{itemize}
+
+    \item \textbf{Вивід термохімічних параметрів.}
+
+    Для зручності результати форматуються в таблиці, де кожна функція ($E$, $H$, $G$, $S$, $C_v$, $C_p$) розкладається на внески:
+    електронний, поступальний, обертальний, вібраційний та повний (tot).
+
+    Наприклад:
+    \begin{minted}{python}
+    keys = ('tot', 'elec', 'trans', 'rot', 'vib')
+    write_table_row("Ентропія S", "S")
+    write_table_row("Cv", "Cv")
+    write_table_row("Cp", "Cp")
+    \end{minted}
+
+    Для енергій додатково здійснюється перетворення одиниць \texttt{1 Eh → kJ/mol}:
+    \begin{minted}{python}
+    Ha2kJ = nist.HARTREE2J * nist.AVOGADRO / 1000
+    \end{minted}
+
+    Таким чином, формується таблиця енергій:
+    \[
+    \begin{array}{llcccc}
+    \text{Функція} & \text{Одиниці} & \text{TOT} & \text{ELEC} & \text{ROT} & \text{VIB} \\
+    \hline
+    E & \text{kJ/mol} & \dots & \dots & \dots & \dots \\
+    H & \text{kJ/mol} & \dots & \dots & \dots & \dots \\
+    G & \text{kJ/mol} & \dots & \dots & \dots & \dots \\
+    \end{array}
+    \]
+
+    \item \textbf{Нульова коливальна енергія (ZPE).}
+
+    ZPE є сумою $\tfrac{1}{2} h\nu_k$ для всіх нормальних мод:
+    \begin{equation}
+        E_\text{ZPE} = \frac{1}{2} \sum_k h \nu_k.
+    \end{equation}
+
+    У коді:
+    \begin{minted}{python}
+    ZPE_kJ = results['ZPE'][0] * Ha2kJ
+    \end{minted}
+
+    Це відповідає квантовій поправці до енергії основного стану молекули, яка відсутня в чисто електронному розрахунку Гартрі–Фока.
+
+    \item \textbf{Фінальний звіт.}
+
+    У результаті формується повний набір термодинамічних параметрів при заданій температурі $T$ і тиску $P$:
+    \begin{align*}
+        E_\text{tot}, \quad H, \quad G, \quad S, \quad C_v, \quad C_p, \quad E_\text{ZPE}.
+    \end{align*}
+    Вони можуть бути використані для порівняння з експериментальними даними або для подальших кінетичних і термодинамічних розрахунків.
+\end{enumerate}
+
 
 \begin{enumerate}
   \item \inlinecode{harmonic\_analysis(mol, hess)} --- виконує гармонічний аналіз молекули на основі гесіану.
