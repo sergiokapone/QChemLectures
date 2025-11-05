@@ -763,7 +763,13 @@ postaction={ decorate,
 \RequirePackage[inline]{enumitem}
 \setlist{nosep}
 %\setlist{nolistsep}
-
+% --- Нове оточення `tasks` ---
+\newlist{tasks}{enumerate}{1}
+\setlist[tasks]{%
+  label=\textbf{Задача \arabic*:},
+  leftmargin=*,
+  resume
+}
 
 % ------------------------------- Відступи в формулах --------------------------
 
