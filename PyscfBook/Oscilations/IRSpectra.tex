@@ -5,15 +5,15 @@
 \textbf{ІЧ-спектроскопія} досліджує взаємодію молекул з інфрачервоним випромінюванням.
 Поглинання відбувається тоді, коли частота випромінювання збігається з частотою
 внутрішнього коливання молекули, тобто виконується умова резонансу:
-\[
+\begin{equation*}
     h\nu = \Delta E_{\text{колив.}}
-\]
+\end{equation*}
 
 Ці переходи відповідають змінам \emph{коливальних} рівнів енергії.
 Типові частоти для молекулярних коливань лежать у межах
-\[
+\begin{equation*}
     400 - 4000~\text{см}^{-1},
-\]
+\end{equation*}
 що відповідає довжинам хвиль у мікрометровому діапазоні ($2.5 - 25~\mu$m).
 
 ІЧ-спектр відображає лише ті \textit{коливальні моди молекули}, які супроводжуються \emph{зміною її дипольного моменту}.
@@ -28,82 +28,82 @@
 при переході $v=0 \to 1$.
 
 Із теорії взаємодії електромагнітного поля з речовиною відомо, що інтенсивність $A_i$ для $i$-го коливального переходу визначається як:
-\[
+\begin{equation*}
     A_i = \frac{N_A \pi}{3 c^2}
         \left| \frac{\partial \boldsymbol{\mu}}{\partial Q_i} \right|^2,
-\]
+\end{equation*}
 де $\tfrac{\partial \boldsymbol{\mu}}{\partial Q_i}$ --- похідна дипольного моменту за нормальною координатою
 $Q_i$ у рівноважному положенні, $N_A$ --- число Авогадро, а $c$ --- швидкість світла.
 
 \paragraph{Фізичний зміст.}
 Величина $A_i$ має розмірність площі на моль:
-\[
+\begin{equation*}
     [A_i] = \text{см}^2 \text{/моль},
-\]
+\end{equation*}
 тобто її можна трактувати як \textbf{ефективну площу поглинання на один моль молекул} речовини.
 Чим більша ця площа --- тим інтенсивніше смуга в спектрі.
 
 \paragraph{Зв’язок з експериментом.}
 В експериментальній ІЧ-спектроскопії вимірюють \emph{оптичну густину} $A$ (безрозмірну величину),
 яка пов’язана із концентрацією $c$ та довжиною кювети $l$ законом Бугера–Ламберта–Бера:
-\[
+\begin{equation*}
     A = \varepsilon\, c\, l,
-\]
+\end{equation*}
 де $\varepsilon$ --- молярний коефіцієнт поглинання.
 Інтеграл від $\varepsilon(\tilde{\nu})$ за частотою $\tilde{\nu}$ визначає \textbf{молярну інтегральну інтенсивність смуги}:
-\[
+\begin{equation*}
     I = \int \varepsilon(\tilde{\nu})\, d\tilde{\nu},
-\]
+\end{equation*}
 яка має ті ж самі одиниці, що й $A_i$, тобто см$^2$/моль.
 
 \paragraph{Одиниці км/моль.}
 Щоб уникнути дуже малих чисел, цю площу традиційно виражають у \textbf{кілометрах на моль}:
-\[
+\begin{equation*}
     1~\text{км/моль} = 10^5~\text{см}^2/\text{моль}.
-\]
+\end{equation*}
 Тоді типові значення інтенсивностей для фундаментальних коливань молекул
 лежать у межах 10–1000~км/моль, що зручно для порівняння та таблиць.
 
 \paragraph{Числова форма.}
 Після підстановки числових значень констант:
-\[
+\begin{equation*}
     N_A = 6.022 \times 10^{23}~\text{моль}^{-1}, \quad
     c = 2.998 \times 10^{10}~\text{см/с},
-\]
+\end{equation*}
 отримуємо:
-\[
+\begin{equation*}
     \boxed{I = 974.8638 \times
     \left| \frac{\partial \boldsymbol{\mu}}{\partial Q} \right|^2_{\text{a.u.}} \text{ км/моль}.}
-\]
+\end{equation*}
 
 \paragraph{Зв’язок між $A_i$, $I$ і коефіцієнтом $K$.}
 Формально експериментальна інтегральна інтенсивність $I_i$
 і теоретичне вираження $A_i$ описують одну й ту саму фізичну величину,
 записану в різних одиницях:
-\[
+\begin{equation*}
     I_i = K\,A_i.
-\]
+\end{equation*}
 Коефіцієнт $K$ враховує перехід від атомних одиниць, у яких обчислюється
 похідна $\tfrac{\partial \boldsymbol{\mu}}{\partial Q_i}$, до лабораторних одиниць (км/моль).
 Підставивши фізичні сталі,
-\[
+\begin{equation*}
     K = \frac{N_A \pi}{3 c^2} (e a_0)^2 \times 10^5,
-\]
+\end{equation*}
 отримуємо числове значення
-\[
+\begin{equation*}
     \boxed{K = 974.8638,}
-\]
+\end{equation*}
 тому остаточний вираз для інтегральної інтенсивності має вигляд:
-\[
+\begin{equation*}
     \boxed{I_i = 974.8638
     \left| \frac{\partial \boldsymbol{\mu}}{\partial Q_i} \right|^2_{\text{a.u.}}~
     [\text{км/моль}].}
-\]
+\end{equation*}
 
 
 
 %% --------------------------------------------------------
-\subsection{Класифікація за інтенсивністю}
+\subsubsection{Класифікація за інтенсивністю}
 %% --------------------------------------------------------
 
 \begin{center}
@@ -120,28 +120,28 @@ $I \leq 10$ & Слабка смуга \\
 
 
 %=========================================================
-\section{Розрахунок ІЧ-інтенсивностей}
+\subsection{Розрахунок ІЧ-інтенсивностей}
 %=========================================================
 
 ІЧ-інтенсивність нормальної моди пропорційна квадрату похідної дипольного моменту
 за координатою цієї моди:
-\[
+\begin{equation*}
 I_i \sim \left| \frac{d\boldsymbol{\mu}}{dQ_i} \right|^2.
-\]
+\end{equation*}
 На практиці цю похідну можна отримати двома різними шляхами, однак у
 
 %---------------------------------------------------------
-\subsection{Чисельне диференціювання}
+\subsubsection{Чисельне диференціювання}
 %---------------------------------------------------------
 
 У цьому підході координати атомів зсуваються вздовж $i$-ї нормальної моди
 на малу величину~$\delta$, після чого обчислюються дипольні моменти
 у двох геометріях --- \emph{«плюс»} і \emph{«мінус»}.
 Похідна апроксимується центральною різницею:
-\[
+\begin{equation*}
 \left( \frac{d\boldsymbol{\mu}}{dQ_i} \right)_0 \approx
 \frac{\boldsymbol{\mu}(Q_i+\delta) - \boldsymbol{\mu}(Q_i-\delta)}{2\delta}.
-\]
+\end{equation*}
 
 В файлі \inputcode{h2o_ir_spectrum.py} наведено програму, яка  використовує \textbf{метод центральних різниць} для чисельного обчислення $\frac{d\boldsymbol{\mu}}{dQ_i}$:
 
@@ -229,7 +229,7 @@ I_i \sim \left| \frac{d\boldsymbol{\mu}}{dQ_i} \right|^2.
 і може бути чутливим до вибору~$\delta$.
 
 %---------------------------------------------------------
-\subsection{Аналітичний підхід у \texttt{PySCF}}
+\subsubsection{Аналітичний підхід у \texttt{PySCF}}
 %---------------------------------------------------------
 Модуль \inlinecode{pyscf.prop.freq} реалізує аналітичний обрахунок похідних
 дипольного моменту по атомних координатах $\partial\boldsymbol{\mu}/\partial \mathbf{R}$.
@@ -237,27 +237,28 @@ I_i \sim \left| \frac{d\boldsymbol{\mu}}{dQ_i} \right|^2.
 \paragraph{Перехід до нормальних координат.}
 Похідна дипольного моменту за нормальною координатою $Q_i$ виражається через
 матрицю нормальних мод $\mathbf{L}$:
-\[
+\begin{equation*}
 \frac{\partial \vect{\mu}}{\partial Q_i}
 = \sum_{A=1}^{N_{\text{атм}}}
-    \frac{\partial \vect{\mu}}{\partial \vect{R}_{A}} \cdot \frac{\partial \vect{R}_A}{\partial Q_i}
+    \frac{\partial \vect{\mu}}{\partial \vect{R}_{A}} \cdot
+    \frac{\partial \vect{R}_A}{\partial Q_i}
 = \sum_{A=1}^{N_{\text{атм}}}
-    \frac{\partial \vect{\mu}}{\partial \vect{R}_{A}} \cdot \vect{L}_A^i,
-\]
-де $\vect L_A^i = (L_{Ax}^i, L_{Ay}^i, L_{Az}^i)$ --- вектор нормальної моди для атома $A$.
+    \frac{\partial \vect{\mu}}{\partial \vect{R}_{A}} \cdot \frac{\vect{L}_A^i}{\sqrt{m_A}},
+\end{equation*}
+де $\vect L_A^i = (L_{Ax}^i, L_{Ay}^i, L_{Az}^i)$ --- вектор нормальної моди для атома $A$, а множник $1/\sqrt{m_A}$ враховує мас-зважування.
 
 \paragraph{Структура тензора похідних.}
 У \texttt{PySCF} тензор похідних \inlinecode{vib.de} має розмірність $(N_{\text{атм}}, N_{\text{атм}}, 3, 3)$
 і зберігає похідні компонент дипольного моменту за координатами атомів:
-\[
+\begin{equation*}
 (\texttt{vib.de})_{ABaj} = \frac{\partial \mu_j^{(A)}}{\partial R_{Ba}},
-\]
+\end{equation*}
 
 Діагональні елементи ($A=B$) відповідають похідній внеску атома в дипольний момент по його власних координатах:
-\[
+\begin{equation*}
 D_{Aaj} = (\texttt{vib.de})_{AAaj}
 = \frac{\partial \mu_j}{\partial R_{Aa}}.
-\]
+\end{equation*}
 
 \begin{minted}{python}
 # Діагональний тензор: (N_atm, 3, 3)
@@ -265,33 +266,36 @@ de_diag = np.einsum('AAaj->Aaj', vib.de)
 \end{minted}
 
 Для кожного атома $A$ отримуємо матрицю Якобі дипольного моменту:
-\[
+\begin{equation*}
 \mathbf{D}_A =
 \begin{pmatrix}
 \partial \mu_x/\partial x_A & \partial \mu_y/\partial x_A & \partial \mu_z/\partial x_A \\
 \partial \mu_x/\partial y_A & \partial \mu_y/\partial y_A & \partial \mu_z/\partial y_A \\
 \partial \mu_x/\partial z_A & \partial \mu_y/\partial z_A & \partial \mu_z/\partial z_A
 \end{pmatrix}.
-\]
+\end{equation*}
 
 \paragraph{Похідні за нормальними координатами.}
 Матриця похідних дипольного моменту за всіма нормальними модами:
-\[
+\begin{equation*}
 \frac{\partial \mu_j}{\partial Q_i}
-= \sum_{A=1}^{N_{\text{атм}}} \sum_{a=x,y,z} L_{Aa}^i \, D_{Aaj}.
-\]
+= \sum_{A=1}^{N_{\text{атм}}} \sum_{a=x,y,z} \frac{L_{Aa}^i}{\sqrt{m_A}} \, D_{Aaj}.
+\end{equation*}
 
 \begin{minted}{python}
+# Роззважування векторів нормальних мод
+modes_unweighted = np.einsum('iAa,A->iAa', modes, 1/np.sqrt(masses))
+
 # Тензорна згортка: (N_modes, 3)
-dipole_derivs = np.einsum('iAa,Aaj->ij', modes, de_diag)
+dipole_derivs = np.einsum('iAa,Aaj->ij', modes_unweighted, de_diag)
 \end{minted}
 
 \paragraph{Інтенсивності ІЧ-переходів.}
 Інтенсивність $i$-го коливального переходу:
-\[
+\begin{equation*}
 I_i = 974.8638 \sum_{j=x,y,z} \left( \frac{\partial \mu_j}{\partial Q_i} \right)^2
 = 974.8638 \, \left\| \frac{\partial \boldsymbol{\mu}}{\partial Q_i} \right\|^2
-\]
+\end{equation*}
 
 \begin{minted}{python}
 # Інтенсивності для всіх мод
@@ -307,16 +311,23 @@ from pyscf.prop import freq
 
 mol = gto.M(atom='O 0 0 0; H 0 -0.757 0.587; H 0 0.757 0.587', basis='6-31g')
 mf = scf.RHF(mol).run()
+mf.verbose=0
 
 vib = freq.rhf.Frequency(mf)
+vib.verbose=0
 freqs, modes = vib.kernel()
 natm = mol.natm
 
+masses = np.array(mol.atom_mass_list())
+sqrt_m = np.sqrt(masses)
+modes_unweighted = np.einsum('iAa,A->iAa', modes, 1/np.sqrt(masses))
+
 # Діагональні елементи
-de_diag = np.einsum('AAaj->Aaj', vib.de)  # (natm, 3, 3)
+de_diag = np.einsum('AAaj->Aaj', vib.de )   # (natm, 3, 3)
+
 
 # Всі дипольні похідні одразу
-dipole_derivs = np.einsum('iAa,Aaj->ij', modes, de_diag)
+dipole_derivs = np.einsum('iAa,Aaj->ij', modes_unweighted, de_diag)
 
 # Всі інтенсивності одразу
 ir_intensities = 974.8638 * np.sum(dipole_derivs**2, axis=1)

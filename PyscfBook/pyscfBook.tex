@@ -60,17 +60,38 @@ biblatex,
 %
 %========================================================================================================
 
-\pagestyle{main}
-%\input{Additions/MaxwellEquation}
-\multiinclude{
+\newcommand{\ChaptersI}{
 	WelcomeWithPyscf,
 	BasePyscf,
+}
+\newcommand{\ChaptersII}{
 	HFMethod,
 	HFMethodDiatomic,
 	PostHFMethods,
 	DFTMethod,
-	MoleculeProrerties,
-}[]
+}
+\newcommand{\ChaptersIII}{
+    Oscilations,
+    ExcitedStates,
+}
+
+\pagestyle{main}
+
+%------------------- Частина І -------------------
+\part{Вступ до PySCF: основи та перші кроки}
+\epigraph{«Теорія без практики --- порожня, практика без теорії — сліпа.»}{--- Іммануїл Кант, адаптовано}
+\multiinclude{\ChaptersI}[]
+
+%------------------- Частина ІІ -------------------
+\part{Ab Initio методи: від Хартрї-Фока до пост-HF і DFT}
+\epigraph{«Рівняння --- це мова, якою природа говорить із нами.»}{--- Поль Дірак}
+\multiinclude{\ChaptersII}[]
+
+%------------------- Частина ІIІ -------------------
+\part{Властивості молекул}
+\epigraph{«Спостерігати --- означає порушувати, але й відкривати.»}{--- Нільс Бор}
+\multiinclude{\ChaptersIII}[]
+
 
 %========================================================================================================
 %

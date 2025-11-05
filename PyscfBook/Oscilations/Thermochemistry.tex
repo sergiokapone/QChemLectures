@@ -209,18 +209,18 @@ E_{\text{ZPE}} = \sum_{i=1}^{3N-6} \frac{1}{2}\hbar\omega_i.
     results = harmonic_analysis(mol, hess)
     \end{minted}
 
-    У результаті отримуємо структуру \texttt{results}, що містить:
+    У результаті отримуємо структуру \inlinecode{results}, що містить:
     \begin{itemize}
-        \item \texttt{results['freq\_cm']}: коливальні частоти в см⁻¹;
-        \item \texttt{results['freq\_au']}: ті ж частоти в атомних одиницях;
-        \item \texttt{results['norm\_mode']}: нормальні моди $\mathbf{L}_k$.
+        \item \inlinecode{results['freq\_cm']}: коливальні частоти в см$^{-1}$;
+        \item \inlinecode{results['freq\_au']}: ті ж частоти в атомних одиницях;
+        \item \inlinecode{results['norm\_mode']}: нормальні моди $\mathbf{L}_k$.
     \end{itemize}
 
     Ці дані необхідні для розрахунку вібраційного внеску в термодинамічні функції.
 
     \item \textbf{Розрахунок термохімічних величин.}
 
-    Функція \texttt{thermo()} комбінує результати електронного розрахунку, коливальні частоти та статистичні формули для різних видів руху:
+    Функція \inlinecode{thermo()} комбінує результати електронного розрахунку, коливальні частоти та статистичні формули для різних видів руху:
     \begin{equation}
         Q = Q_\text{trans} \cdot Q_\text{rot} \cdot Q_\text{vib} \cdot Q_\text{el}.
     \end{equation}
