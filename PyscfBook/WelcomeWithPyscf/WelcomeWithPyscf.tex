@@ -232,6 +232,50 @@ print(f'Енергія H2: {energy:.6f} Ha')
 
 Якщо програма виводить версію та обчислює енергію молекули H$_2$, встановлення виконано успішно.
 
+%% --------------------------------------------------------
+\subsection{Запуск PySCF у Docker}
+%% --------------------------------------------------------
+
+PySCF також можна запускати у готовому контейнері \texttt{Docker}, що особливо зручно для відтворюваних розрахунків та роботи на серверних системах без прямого доступу до Python-середовища.
+
+\paragraph{Встановлення Docker.}
+Для початку встановіть Docker відповідно до вашої операційної системи:
+\begin{itemize}
+  \item Linux: \url{https://docs.docker.com/engine/install/ubuntu/}
+  \item Windows/macOS: \url{https://www.docker.com/products/docker-desktop}
+\end{itemize}
+
+\paragraph{Завантаження контейнера PySCF.}
+Офіційний образ доступний на GitHub у репозиторії \href{https://github.com/pyscf/pyscf/tree/master/docker}{\texttt{pyscf/docker}}:
+
+\begin{minted}{bash}
+# Завантаження останнього образу PySCF
+docker pull pyscf/pyscf
+
+# Запуск інтерактивного контейнера
+docker run -it pyscf/pyscf /bin/bash
+\end{minted}
+
+Після запуску ви опинитесь усередині контейнера, де PySCF уже встановлений і готовий до використання:
+
+\begin{minted}{bash}
+python -c "import pyscf; print(pyscf.__version__)"
+\end{minted}
+
+\paragraph{Запуск власних скриптів.}
+Щоб запустити локальний Python-файл із вашої системи, можна підключити робочий каталог через параметр \texttt{-v}:
+
+\begin{minted}{bash}
+docker run -it -v $(pwd):/workspace pyscf/pyscf python /workspace/mycalc.py
+\end{minted}
+
+\paragraph{Переваги контейнерного підходу.}
+\begin{itemize}
+  \item Повна ізоляція середовища --- не впливає на локальні пакети Python.
+  \item Ідентична конфігурація на будь-якій системі (Linux, Windows, macOS).
+  \item Простота використання на кластерах і у хмарних обчисленнях.
+\end{itemize}
+
 
 %% --------------------------------------------------------
 \subsection{Розширення та додаткові модулі PySCF}
