@@ -200,6 +200,7 @@
 
 \RequirePackage{mhchem, chemfig}
 \RequirePackage{tikzorbital}
+\RequirePackage{siunitx}
 
 % ------------------------- Таблиці --------------------------------------------
 \newcommand{\localinput}[1]{\input{\currfilebase/tikz/#1}}
@@ -722,6 +723,11 @@ postaction={ decorate,
   {0.5em}
   {#1}                                             % заголовок в цвете
 
+\newcommand{\nosection}[1]{%
+  \section*{#1}%
+  \addcontentsline{toc}{section}{#1}%
+}
+
 \titlespacing*{\paragraph}
 {0pt}{1pt}{0.5em}  % слева | перед | после
 
@@ -767,8 +773,7 @@ postaction={ decorate,
 \newlist{tasks}{enumerate}{1}
 \setlist[tasks]{%
   label=\textbf{Задача \arabic*:},
-  leftmargin=*,
-  resume
+  leftmargin=*
 }
 
 % ------------------------------- Відступи в формулах --------------------------
