@@ -154,6 +154,7 @@
 %\RequirePackage{subfig}
 %\renewcommand\thesubfigure{\alph{subfigure}}
 \RequirePackage{wrapstuff}
+\RequirePackage{wrapfig2}
 % ------------------------------------ Таблиці ---------------------------------
 \RequirePackage{tabularray}
 \UseTblrLibrary{booktabs}

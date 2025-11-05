@@ -1,0 +1,78 @@
+\begin{tikzpicture}[
+    node distance=1cm,
+    box/.style={
+        rectangle, rounded corners=5pt, draw=black, thick,
+        minimum width=4cm, minimum height=0.5cm,
+        align=center, font=\scriptsize, fill=gray!10
+    },
+    level/.style={font=\bfseries\large},
+    arrow/.style={->, thick},
+]
+
+% Levels (from bottom to top)
+\node[box, fill=red!50] (hell) {\textbf{<<Ад>> Хартрі}};
+
+\node[box, fill=red!20, above of=hell] (lsda) {%
+    \textbf{1. LSDA}
+%    \\
+%    (Local Spin Density Approximation)\\
+%    \textit{залежить лише від $\rho(\mathbf{r})$}
+};
+
+
+\node[box, fill=orange!20, above of=lsda] (gga) {%
+    \textbf{2. GGA}
+%    \\
+%    (Generalized Gradient Approximation)\\
+%    \textit{залежить від $\rho(\mathbf{r})$ і $\nabla\rho(\mathbf{r})$}
+};
+
+\node[box, fill=green!15, above of=gga] (metagga) {%
+    \textbf{3. meta-GGA}
+%    \\
+%    \textit{додатково враховує $\nabla^2\rho$}\\ \textit{або кінетичну густину $\tau$}
+};
+
+\node[box, fill=green!30, above of=metagga] (hybrid) {%
+    \textbf{4. Hybrid}
+%    \\
+%    \textit{включає частку точного обміну \texttt{HF}}
+};
+
+\node[box, fill=cyan!30, above of=hybrid] (dh) {%
+    \textbf{5. Double-Hybrid}
+%    \\
+%    \textit{включає \texttt{HF} обмін і \texttt{MP2} кореляцію}
+};
+
+\node[box, above=of dh, fill=cyan!50] (heaven) {\textbf{<<Небо>> точності}};
+
+% Arrows
+\draw[arrow] (hell) -- (lsda);
+\draw[arrow] (lsda) -- (gga);
+\draw[arrow] (gga) -- (metagga);
+\draw[arrow] (metagga) -- (hybrid);
+\draw[arrow] (hybrid) -- (dh);
+\draw[arrow, dashed] (dh) -- (heaven);
+
+\path let
+  \p1 = ($(hell.east) - (heaven.east)$),
+  \n1 = {veclen(\p1)}
+in
+  ($(hell.east)+(1,0)$) -- ($(heaven.east)+(1,0)$)
+  node[single arrow, top color=cyan!50!black, bottom color=red!80,
+  midway,
+  rotate = 90,
+  shading angle = 0,
+  minimum height=\n1,
+  minimum width=5pt,
+  inner sep=1pt]
+{}
+;
+
+\path ($(hell.east)+(1,0)$) --
+node[sloped, above, font=\scriptsize, red] {зростання часу обчислення}
+node[sloped, below, font=\scriptsize, cyan!50!black] {зростання точності}
+($(heaven.east)+(1,0)$);
+
+\end{tikzpicture}
