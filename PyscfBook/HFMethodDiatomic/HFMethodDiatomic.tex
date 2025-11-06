@@ -187,13 +187,17 @@
 
 Для молекули \ce{NO} (дублет) обчисліть енергію методами UHF, ROHF та GHF. Порівняйте енергії, спінові значення та орбітальні енергії. Оцініть вплив спінового забруднення на точність.
 
-\textbf{Базис:} \texttt{cc-pvdz}. \textbf{Підказка:} Встановіть \inlinecode{spin=1} та перевірте $\langle \hat{S}^2 \rangle = S(S+1)$.
+\textbf{Базис:} \texttt{cc-pvdz}.
+
+\textbf{Підказка:} Встановіть \inlinecode{spin=1} та перевірте $\langle \hat{S}^2 \rangle = S(S+1)$.
 
 \item \textbf{Оптимізація геометрії та вібраційний аналіз}
 
 Оптимізуйте геометрію молекули \ce{NH3} методом HF з різними базисами. Обчисліть вібраційні частоти та перевірте, чи є структура мінімумом. Порівняйте геометрію з експериментом.
 
-\textbf{Базиси:} \texttt{6-31g*}, \texttt{cc-pvtz}. \textbf{Підказка:} Використовуйте \inlinecode{geomopt.optimize(mf)} та \inlinecode{hessian.Hessian(mf).kernel()} для частот.
+\textbf{Базиси:} \texttt{6-31g*}, \texttt{cc-pvtz}.
+
+\textbf{Підказка:} Використовуйте \inlinecode{geomopt.optimize(mf)} та\\ \inlinecode{hessian.Hessian(mf).kernel()} для частот.
 
 \item \textbf{Аналіз електронної структури}
 

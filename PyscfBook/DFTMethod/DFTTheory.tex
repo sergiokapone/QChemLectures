@@ -1,3 +1,8 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+% !TeX root =../PyscfBook.tex
+
 %% --------------------------------------------------------
 \section{Основи теорії функціоналу густини}
 %% --------------------------------------------------------
@@ -95,7 +100,7 @@ DFT намагається знайти густину $\rho_0(\mathbf{r})$, щ�
 де:
 \begin{itemize}
 	\item $v_{\text{ext}}(\mathbf{r})$ --- зовнішній потенціал (від ядер);
-	\item $v_H(\mathbf{r}) = \displaystyle\int \frac{\rho(\mathbf{r}')}{\|\mathbf{r}-\mathbf{r}'\|}\, d\mathbf{r}'$ --- потенціал Хартрі (класичне кулонівське відштовхування);
+	\item $v_H(\mathbf{r}) = \displaystyle\int \frac{\rho(\mathbf{r}')}{|\mathbf{r}-\mathbf{r}'|}\, d\mathbf{r}'$ --- потенціал Хартрі (класичне кулонівське відштовхування);
 	\item $v_{xc}(\mathbf{r}) = \delta E_{xc}[\rho]/\delta \rho(\mathbf{r})$ --- обмінно-кореляційний потенціал.
 \end{itemize}
 
