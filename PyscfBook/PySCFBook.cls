@@ -196,6 +196,16 @@
 	\newcommand{\Laplasian}{\Delta}
 }
 
+\ExplSyntaxOn
+\NewDocumentCommand{\bracket}{r<>}
+  {
+    \tl_set:Nn \l_tmpa_tl { #1 }
+    \tl_replace_all:Nnn \l_tmpa_tl { | } { \middle | }
+    \left\langle \l_tmpa_tl \right\rangle
+  }
+
+\ExplSyntaxOff
+
 \NewDocumentCommand{\emphx}{m}{\emph{\textcolor{malina}{#1}}}
 
 \RequirePackage{mhchem, chemfig}

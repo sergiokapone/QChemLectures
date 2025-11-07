@@ -103,14 +103,14 @@
 
 Ключовим поняттям є \textbf{матриця густини}:
 
-\begin{equation}
+\begin{equation}\label{eq:D}
 	D_{\mu\nu} = \sum_{i}^{N} C_{\mu i} C_{\nu i},
 \end{equation}
 %
 де  $N$ --- число електронів. Матриця $\vect{D}$ зберігає всю інформацію про електронну густину:
-\begin{equation*}
-	\rho(\vect{r}) = \sum\limits_{\mu\nu} D_{\mu\nu} \chi_\mu \chi_\nu.
-\end{equation*}
+\begin{equation}\label{eq:rhoDchi}
+	\rho(\vect{r}) = \sum\limits_{\mu\nu} \chi_\mu\, D_{\mu\nu}\,  \chi_\nu.
+\end{equation}
 і дозволяє обчислювати середні значення спостережуваної $O$:
 
 \begin{equation}\label{eq:O}
@@ -291,7 +291,7 @@ print('F (вручну):\n', np.round(F_manual, 6))
 print('F (з PySCF):\n', np.round(F_pyscf, 6))
 \end{minted}
 
-Компоненти енергії системи, як спостережувані величини, виражається через матрицю густини (див.~\eqref{eq:O}):
+Компоненти енергії системи, як спостережувані величини, в орбітальному представлені виражається через матрицю густини (див.~\eqref{eq:O}):
 
 \begin{equation*}
 	T = \sum_{\mu\nu} D_{\mu\nu} T_{\mu\nu}, \quad
@@ -299,7 +299,7 @@ print('F (з PySCF):\n', np.round(F_pyscf, 6))
 	V_{\text{ee}} = \tfrac{1}{2} \sum_{\mu\nu} D_{\mu\nu} \left( J_{\mu\nu} - K_{\mu\nu} \right),
 \end{equation*}
 де $T$ --- кінетична енергія електронів,  $V_\text{eN}$ --- потенціальна енергія взаємодії електронів із ядрами,  а $V_{\text{ee}}$ --- енергія електрон-електронної взаємодії,  яка є ефективним середнім описом кулонівського відштовхування між електронами  з урахуванням обмінного (квантового) внеску, що виникає внаслідок антисиметрії хвильової функції. Сама енергія дорівнює:
-\begin{equation}
+\begin{equation}\label{eq:EHForbilal_repr}
 	E_{\text{HF}}
 	= \sum_{\mu\nu} D_{\mu\nu} h_{\mu\nu}
 	+ \tfrac{1}{2} \sum_{\mu\nu} D_{\mu\nu} \left( J_{\mu\nu} - K_{\mu\nu} \right)
