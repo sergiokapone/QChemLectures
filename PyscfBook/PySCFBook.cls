@@ -571,6 +571,12 @@ postaction={ decorate,
 		}
 }
 
+\tikzset{
+  upspinarrow/.pic = {\draw[-latex, blue, thick] (0,-0.5) -- (0, 0.5);},
+  downspinarrow/.pic = {\draw[latex-, red, thick] (0,-0.5) -- (0, 0.5);},
+  electron/.pic = {\node[circle, ball color = red, inner sep=2pt] {};},
+}
+
 %===============================================================================
 %
 %							Інтервали
