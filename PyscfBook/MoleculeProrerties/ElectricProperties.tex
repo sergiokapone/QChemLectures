@@ -20,35 +20,107 @@
 \[
 \alpha_{\alpha\beta} = -\frac{\partial^2 E}{\partial E_\alpha \partial E_\beta}.
 \]
-Поляризованість характеризує, наскільки сильно електронна хмара молекули деформується під дією поля,
-а її анізотропія визначає оптичні властивості, зокрема інтенсивність Раманівських переходів.
 
-%% --------------------------------------------------------
-\subsection{Розрахунок у PySCF}
-%% --------------------------------------------------------
+Поляризованість показує, наскільки сильно електронна хмара молекули деформується під дією поля.
+У тензорному вигляді вона зв’язує індукований дипольний момент з напруженістю поля:
+\[
+\mu_\alpha^{\text{ind}} = \sum_\beta \alpha_{\alpha\beta} E_\beta.
+\]
+Ізотропна частина $\bar{\alpha} = \tfrac{1}{3}(\alpha_{xx}+\alpha_{yy}+\alpha_{zz})$
+визначає середню «стисливість» електронної хмари,
+а анізотропія $\Delta\alpha$ відповідає за зміну поляризації світла при розсіянні
+(інтенсивності у \texttt{Raman}-спектрах).
 
-У \texttt{PySCF} електричні властивості можуть бути обчислені як чисельно (через кінцеві різниці енергій при малих збуреннях поля),
-так і аналітично --- через розв’язання рівнянь відгуку (\texttt{CPHF/CPKS}).
+\vspace{1em}
+Наступна, третя похідна енергії за полем дає \textbf{гіперполяризованість}:
+\[
+\beta_{\alpha\beta\gamma} = -\frac{\partial^3 E}
+{\partial E_\alpha\,\partial E_\beta\,\partial E_\gamma}.
+\]
+Ця величина характеризує \emph{нелінійну електричну відповідь} системи:
+індукований диполь уже не пропорційний полю, а містить додаткові члени розкладу:
+\[
+\mu_\alpha = \mu_\alpha^{(0)}
++ \sum_\beta \alpha_{\alpha\beta} E_\beta
++ \frac{1}{2}\sum_{\beta\gamma}\beta_{\alpha\beta\gamma}E_\beta E_\gamma + \cdots.
+\]
+Гіперполяризованість визначає оптичні нелінійні ефекти ---
+подвоєння частоти (SHG), ефект Поккельса, електрооптичні явища.
+Вона є ненульовою лише для молекул без центра інверсії (наприклад, \ce{H2O}, \ce{NH3}, \ce{NO}).
 
-Приклад розрахунку дипольного моменту:
+\vspace{1em}
+Для практичного аналізу зручно розглядати такі усереднені характеристики:
+\[
+\bar{\alpha} = \tfrac{1}{3}\mathrm{Tr}\,\boldsymbol{\alpha},
+\qquad
+\beta_\text{eff} = \sqrt{\tfrac{1}{5}\sum_\alpha
+\left(\sum_{\beta,\gamma}\beta_{\alpha\beta\gamma}\right)^2 }.
+\]
+Першу вимірюють у~\AA$^3$, другу --- в~\texttt{esu}.
+Одиниці перерахунку:
+\begin{align*}
+1~\text{a.u. поляризованості} = 0.1482~\text{\AA}^3, \\
+1~\text{a.u. гіперполяризованості} = 8.6393\times10^{-33}~\text{esu}.
+\end{align*}
+
+
+У PySCF ці величини обчислюються за допомогою модуля
 \begin{minted}{python}
+pyscf.prop.polarizability
+\end{minted}
+наприклад:
+\begin{minted}{python}
+import numpy as np
 from pyscf import gto, scf
+from pyscf.prop.polarizability.rhf import Polarizability
 
-mol = gto.Mole(atom='O 0 0 0; H 0 0 1; H 0 1 0', basis='sto-3g')
-mol.build()
+# --- Геометрія та базис
+mol = gto.M(atom='''
+O  0.000000  0.000000  0.000000
+H  0.000000 -0.757000  0.587000
+H  0.000000  0.757000  0.587000
+''',
+    basis='6-31g'
+)
+mf = scf.RHF(mol).run(conv_tol=1e-14)
 
-mf = scf.RHF(mol).run()
-print('Dipole moment (Debye):', mf.dip_moment(unit='Debye'))
+# --- Поляризованість (2-й порядок по полю)
+pol = Polarizability(mf)
+alpha = pol.polarizability()
+print("Тензор поляризованості (a.u.):")
+print(alpha)
+
+# --- Гіперполяризованість (3-й порядок по полю)
+beta = pol.hyper_polarizability()
+print("\nТензор гіперполяризованості (a.u.):")
+print(beta)
+\end{minted}
+\noindent
+Використання \inlinecode{with\_cphf=True} забезпечує самозгоджений відгук орбіталей (релаксовані властивості). Ця опція увімкнена за замовчуванням.
+
+\begin{minted}{python}
+# Ізотропна поляризованість
+iso_alpha = np.trace(alpha) / 3
+
+# Анізотропія
+aniso_alpha = np.sqrt(0.5 * ((alpha[0,0]-alpha[1,1])**2 +
+                             (alpha[1,1]-alpha[2,2])**2 +
+                             (alpha[2,2]-alpha[0,0])**2))
+
+print("\nІзотропна поляризованість: %.6f a.u." % iso_alpha)
+print("Анізотропія поляризованості: %.6f a.u." % aniso_alpha)
+
+# Ефективна гіперполяризованість
+beta_eff = np.sqrt(np.sum(np.sum(beta, axis=1)**2) / 5)
+print("\nЕфективна гіперполяризованість: %.6e a.u." % beta_eff)
+
+# --- Переведення одиниць (для зручності)
+# 1 a.u. поляризованості = 0.1482 Å^3
+# 1 a.u. гіперполяризованості = 8.6393e-33 esu
+print("\nВ одиницях Å^3:")
+print("α_iso = %.4f Å^3" % (iso_alpha * 0.1482))
+print("Δα = %.4f Å^3" % (aniso_alpha * 0.1482))
+print("β_eff = %.3e esu" % (beta_eff * 8.6393e-33))
 \end{minted}
 
-Поляризованість розраховується подібним чином,
-але з використанням модуля \texttt{properties.polarizability} або прямим вмиканням відгуку:
-\begin{lstlisting}[language=Python, caption={Поляризованість через CPHF}]
-from pyscf import prop
 
-pol = prop.polarizability.Polarizability(mf)
-print(pol.kernel())
-\end{lstlisting}
-
-У параметрі \inlinecode{cphf=True} вмикається самозгоджене врахування варіацій орбіталей у полі,
-що забезпечує повну (релаксовану) поляризованість.
