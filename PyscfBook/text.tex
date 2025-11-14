@@ -12,6 +12,295 @@
 %\multiinclude{
 %}[]
 
+%%% ============================================================
+%\section{Молекулярні властивості як похідні енергії}
+%%% ============================================================
+%
+%\subsection{Основна ідея}
+%Молекулярні властивості у квантовій хімії визначаються як аналітичні похідні
+%енергії $E$ по зовнішніх параметрах $x$, які характеризують дію поля або
+%зміщення системи. Загальна розкладка має вигляд:
+%\[
+%E(x)
+%= E^{(0)} + E^{(1)} x + \tfrac{1}{2} E^{(2)} x^2 + \tfrac{1}{6} E^{(3)} x^3 + \dots
+%\]
+%Тоді коефіцієнти розкладу — це властивості відповідного порядку:
+%\[
+%E^{(n)} = \left.\frac{d^nE}{dx^n}\right|_{x=0}.
+%\]
+%
+%\begin{itemize}
+%  \item $E^{(1)}$ --- лінійна відповідь системи (дипольний момент, сили);
+%  \item $E^{(2)}$ --- квадратична відповідь (поляризованість, гессіан);
+%  \item $E^{(3)}$ --- нелінійна відповідь (гіперполяризованість, анеомалії тощо).
+%\end{itemize}
+%
+%\subsection{Загальне співвідношення для будь-якого варіаційного методу}
+%Якщо хвильова функція $\Psi$ залежить від зовнішнього параметра $x$
+%(наприклад, електричного поля, магнітного поля або координат ядер),
+%то енергія
+%\[
+%E(x) = \langle \Psi(x) | \hat H(x) | \Psi(x) \rangle.
+%\]
+%
+%Її похідні мають вигляд:
+%\[
+%\frac{dE}{dx}
+%= \left\langle \Psi \middle| \frac{\partial \hat H}{\partial x} \middle| \Psi \right\rangle
+%+ 2\,\Re \left\langle \frac{\partial \Psi}{\partial x} \middle| \hat H \middle| \Psi \right\rangle.
+%\]
+%Якщо метод варіаційний (HF, KS-DFT, CASSCF), то
+%\(\hat H\Psi=E\Psi\) і $\langle \Psi | \Psi \rangle = 1$, тому
+%\[
+%\boxed{
+%\frac{dE}{dx}
+%= \left\langle \Psi \middle| \frac{\partial \hat H}{\partial x} \middle| \Psi \right\rangle.
+%}
+%\]
+%Тобто \textbf{перша похідна енергії дорівнює середньому значенню похідної гамільтоніана}.
+%
+%\subsection{Приклад 1: Дипольний момент}
+%Якщо зовнішній параметр --- однорідне електричне поле $\mathbf F$, то
+%гамільтоніан має вигляд
+%\[
+%\hat H(\mathbf F) = \hat H_0 - \mathbf F \cdot \hat{\boldsymbol{\mu}},
+%\]
+%де $\hat{\boldsymbol{\mu}} = -\sum_i e\,\mathbf r_i$ --- оператор дипольного моменту.
+%
+%Похідна енергії за компонентами поля дає середнє значення оператора:
+%\[
+%\boxed{
+%\boldsymbol{\mu}
+%= -\frac{\partial E}{\partial \mathbf F}
+%= \left\langle \Psi \middle| \hat{\boldsymbol{\mu}} \middle| \Psi \right\rangle.
+%}
+%\]
+%Це --- перший порядок відгуку системи (лінійний ефект).
+%
+%\subsection{Приклад 2: Ядерні сили і гессіан}
+%Якщо зовнішній параметр --- координати ядер $\mathbf R = \{R_A\}$,
+%то похідна енергії по $R_A$ визначає силу:
+%\[
+%\mathbf F_A = -\frac{dE}{d\mathbf R_A}
+%= -\left\langle \Psi \middle| \frac{\partial \hat H}{\partial \mathbf R_A} \middle| \Psi \right\rangle
+%- \frac{\partial V_{\text{NN}}}{\partial \mathbf R_A}.
+%\]
+%Це --- \textbf{похідна першого порядку} (градієнт).
+%
+%Друга похідна по координатах ядер --- \textbf{ядерний гессіан}:
+%\[
+%\boxed{
+%H_{AB} = \frac{d^2E}{dR_A\,dR_B}.
+%}
+%\]
+%Він описує зміну сили на ядрі $A$ при малому зміщенні ядра $B$.
+%Саме цей тензор визначає нормальні коливання і частоти:
+%\[
+%\boldsymbol{\omega}^2 = \frac{\mathbf H}{\mathbf M}.
+%\]
+%
+%\subsection{Фізичний зміст}
+%\begin{itemize}
+%  \item Перша похідна $dE/dR_A$ --- лінійний відгук енергії на зміщення ядра (сила).
+%  \item Друга похідна $d^2E/dR_A dR_B$ --- лінійний відгук \emph{сил} на зміщення іншого ядра (жорсткість системи).
+%\end{itemize}
+%
+%\subsection{Порівняння різних типів похідних}
+%\begin{center}
+%\begin{tabular}{lcl}
+%\toprule
+%\textbf{Параметр $x$} & \textbf{Похідна $dE/dx$} & \textbf{Властивість} \\
+%\midrule
+%Електричне поле $\mathbf F$ & $-\boldsymbol{\mu}$ & Дипольний момент \\
+% & $-\frac{d^2E}{d\mathbf F^2}$ & Поляризованість \\
+%\hline
+%Магнітне поле $\mathbf B$ & $-\boldsymbol{m}$ & Магнітний момент \\
+% & $-\frac{d^2E}{d\mathbf B^2}$ & Магнітна сприйнятливість \\
+%\hline
+%Координати ядер $\mathbf R$ & $-\frac{dE}{d\mathbf R}$ & Сили на ядрах \\
+% & $\frac{d^2E}{d\mathbf R^2}$ & Ядерний гессіан \\
+%\bottomrule
+%\end{tabular}
+%\end{center}
+%
+%\subsection{Ключовий висновок}
+%\[
+%\boxed{
+%\text{Будь-яка молекулярна властивість = похідна енергії по зовнішньому параметру.}
+%}
+%\]
+%Аналітичні методи похідних (CPHF/CPKS) дають змогу обчислювати ці похідні без чисельного диференціювання, через рівняння відгуку хвильової функції.
+%
+%%% ============================================================
+%\section{Аналітичні похідні енергії в теорії Hartree–Fock}
+%%% ============================================================
+%
+%\subsection{Варіаційний принцип і орбітальні параметри}
+%У методі Хартрі–Фока хвильова функція системи описується детермінантом Слейтера,
+%побудованим із молекулярних орбіталей
+%\[
+%\phi_i = \sum_{\mu} C_{\mu i}\, \chi_\mu,
+%\]
+%де $\chi_\mu$ --- атомні базисні функції, а $C_{\mu i}$ --- коефіцієнти розкладу.
+%
+%Енергія однодетермінантної хвильової функції:
+%\[
+%E_{\text{HF}}[\mathbf C]
+%= \mathrm{Tr}[\mathbf D\,\mathbf h]
+%+ \tfrac{1}{2}\mathrm{Tr}[\mathbf D\,\mathbf G(\mathbf D)].
+%\]
+%
+%Тут
+%\[
+%D_{\mu\nu} = 2 \sum_i C_{\mu i} C_{\nu i},
+%\quad
+%\mathbf h = \mathbf T + \mathbf V_{\text{ne}},
+%\quad
+%\mathbf G(\mathbf D) = \mathbf J(\mathbf D) - \tfrac{1}{2}\mathbf K(\mathbf D).
+%\]
+%
+%Варіаційна мінімізація $E_{\text{HF}}[\mathbf C]$ за обмеженням ортонормальності орбіталей
+%$\mathbf C^\mathrm{T}\mathbf S\,\mathbf C = \mathbf I$
+%призводить до рівнянь Хартрі–Фока:
+%\[
+%\mathbf F\,\mathbf C = \mathbf S\,\mathbf C\,\boldsymbol{\varepsilon},
+%\qquad
+%\mathbf F = \mathbf h + \mathbf G(\mathbf D).
+%\]
+%\[
+%\Rightarrow
+%\frac{\partial E}{\partial \mathbf C} = 0.
+%\]
+%
+%---
+%
+%\subsection{Залежність енергії від зовнішнього параметра}
+%Нехай система залежить від зовнішнього параметра $x$
+%(наприклад, координати ядра $R_A$, електричного поля $F_\alpha$ тощо):
+%\[
+%E_{\text{HF}} = E_{\text{HF}}(x, \mathbf C(x)).
+%\]
+%
+%Повна похідна енергії:
+%\[
+%\frac{dE}{dx}
+%=
+%\frac{\partial E}{\partial x}
+%+ \sum_{p}
+%\frac{\partial E}{\partial C_p}\frac{dC_p}{dx}.
+%\]
+%
+%Оскільки $\frac{\partial E}{\partial C_p}=0$ у стаціонарній точці (варіаційний принцип),
+%перша похідна спрощується:
+%\[
+%\boxed{
+%\frac{dE}{dx} = \frac{\partial E(x,\mathbf C_0)}{\partial x}.
+%}
+%\]
+%Це й дає відомий результат --- градієнт HF обчислюється лише через похідні інтегралів:
+%\[
+%\frac{dE}{dR_A}
+%= \mathrm{Tr}[\mathbf D\,\mathbf h^{(A)}]
+%+ \tfrac{1}{2}\mathrm{Tr}[\mathbf D\,\mathbf G^{(A)}]
+%- \mathrm{Tr}[\mathbf F\,\mathbf D\,\mathbf S^{(A)}]
+%+ \frac{\partial V_{\text{NN}}}{\partial R_A}.
+%\]
+%
+%---
+%
+%\subsection{Друга похідна: поява відгуку орбіталей}
+%Для другої похідної (напр., по $R_A$ і $R_B$):
+%\[
+%\frac{d^2E}{dR_A\,dR_B}
+%=
+%\frac{d}{dR_B}
+%\left(\frac{\partial E}{\partial R_A}\right)
+%=
+%\frac{\partial^2E}{\partial R_A\,\partial R_B}
+%+ \sum_p
+%\frac{\partial^2E}{\partial R_A\,\partial C_p}
+%\frac{dC_p}{dR_B}.
+%\]
+%
+%Появляється похідна $\frac{d\mathbf C}{dR_B}$ — це зміна орбіталей при зміщенні ядра.
+%Вона визначається з умови мінімуму енергії:
+%\[
+%\frac{\partial^2E}{\partial \mathbf C\,\partial \mathbf C}\frac{d\mathbf C}{dR_B}
+%= -\,\frac{\partial^2E}{\partial R_B\,\partial \mathbf C}.
+%\]
+%
+%Це рівняння — форма \textbf{CPHF (Coupled Perturbed HF)}.
+%Позначаючи
+%\[
+%\mathbf H = \frac{\partial^2E}{\partial \mathbf C\,\partial \mathbf C},
+%\quad
+%\mathbf g_B = \frac{\partial^2E}{\partial R_B\,\partial \mathbf C},
+%\]
+%отримуємо:
+%\[
+%\mathbf H\,\frac{d\mathbf C}{dR_B} = -\,\mathbf g_B,
+%\qquad
+%\frac{d\mathbf C}{dR_B} = -\,\mathbf H^{-1}\mathbf g_B.
+%\]
+%
+%---
+%
+%\subsection{Остаточна формула для другої похідної енергії}
+%Підставляючи цей результат у вираз для $\frac{d^2E}{dR_A dR_B}$, маємо:
+%\[
+%\boxed{
+%\frac{d^2E}{dR_A\,dR_B}
+%=
+%\frac{\partial^2E}{\partial R_A\,\partial R_B}
+%- \mathbf g_A^\mathrm{T}\,\mathbf H^{-1}\,\mathbf g_B
+%+ \frac{\partial^2V_{\text{NN}}}{\partial R_A\,\partial R_B}.
+%}
+%\]
+%
+%\begin{itemize}
+%  \item Перший доданок --- \emph{заморожені орбіталі}, тобто друга похідна інтегралів по координатам.
+%  \item Другий доданок --- \emph{електронний відгук}, знайдений із CPHF.
+%  \item Третій --- \emph{ядерно–ядерна взаємодія}.
+%\end{itemize}
+%
+%---
+%
+%\subsection{Матрична форма рівнянь CPHF}
+%У MO-представленні з параметрами ротацій $\kappa_{ai}$ (віртуальні $a$, зайняті $i$)
+%CPHF має вигляд:
+%\[
+%\sum_{bj}
+%\left[(\varepsilon_a-\varepsilon_i)\delta_{ab}\delta_{ij}
+%+ 2\langle aj||ib\rangle\right]\,U_{bj}^{(R)}
+%= -\,2\,F_{ai}^{(R)}.
+%\]
+%
+%Символічно:
+%\[
+%(\mathbf A+\mathbf B)\,\mathbf U^{(R)} = -\,\mathbf g_R,
+%\]
+%де \(\mathbf H = 2(\mathbf A+\mathbf B)\) --- електронний гессіан у просторі орбітальних параметрів.
+%
+%Розв'язок дає \(\mathbf U^{(R)} = -\mathbf H^{-1}\mathbf g_R\),
+%що підставляється у формулу другої похідної енергії.
+%
+%---
+%
+%\subsection{Підсумок}
+%\[
+%\boxed{
+%\frac{d^2E_{\text{HF}}}{dR_A\,dR_B}
+%=
+%\mathrm{Tr}[\mathbf D\,\mathbf h^{(AB)}]
+%+ \tfrac{1}{2}\mathrm{Tr}[\mathbf D\,\mathbf G^{(AB)}]
+%+ \frac{\partial^2V_{\text{NN}}}{\partial R_A\partial R_B}
+%- \mathbf g_A^\mathrm{T}\mathbf H^{-1}\mathbf g_B.
+%}
+%\]
+%
+%Ця формула поєднує прямі похідні інтегралів і лінійний відгук електронної системи.
+%Вона є базовою для всіх аналітичних гессіанів у квантовій хімії.
+
 
 
 \input{MoleculeProrerties/ResponseTheory.tex}
