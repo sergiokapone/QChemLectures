@@ -230,7 +230,7 @@
   colspec={Q[c,m ] Q[c,m] Q[c,m] Q[c,m] Q[l,m]},
   cell{1}{1} = {c=4}{c},
   cell{1}{5} = {}{c,m},
-  cell{2-Z}{1-4}={}{fg=blue, cmd=\bfseries},
+  cell{2-Z}{1-4}={}{cmd=\bfseries},
   stretch = -1,
   hline{2} = {2pt},
   hline{3} = {1pt},
@@ -689,7 +689,7 @@ g_{ai}^{(x)} = \langle \phi_a | \hat F^{(x)} | \phi_i \rangle,
 тобто як зайняті орбіталі <<змішуються>> з віртуальними у відповідь на збурення.
 
 \begin{commentbox}
-Розв'язок рівнянь CPHF (Coupled Perturbed Hartree-Fock) є чисельним. У практичних обчисленнях квантової хімії ці рівняння представляють собою велику систему лінійних рівнянь виду $\mathbf{H} \mathbf{U}^{(x)} = -\mathbf{g}^{(x)}$, де матриця $\mathbf{H}$ (електронний гессіан) може мати високу розмірність (наприклад, тисячі або мільйони елементів для реальних молекул).
+Розв'язок рівнянь CPHF (Coupled Perturbed Hartree-Fock) зазвичай є чисельним. У практичних обчисленнях квантової хімії ці рівняння представляють собою велику систему лінійних рівнянь виду $\mathbf{H} \mathbf{U}^{(x)} = -\mathbf{g}^{(x)}$, де матриця $\mathbf{H}$ (електронний гессіан) може мати високу розмірність (наприклад, тисячі або мільйони елементів для реальних молекул).
 
 \begin{itemize}
 \item Прямі методи (наприклад, інвертування матриці) використовуються рідко, тільки для малих систем, оскільки вони обчислювально дорогі ($O(N^3)$ складність, де $N$ --- розмірність).
@@ -1118,9 +1118,230 @@ U^{(\mu)}_{ai}\,\mu^{(\nu)}_{ai}.
 U^{(\mu)}_{ai}\,\mu^{(\nu)}_{ai}.
 \end{equation}
 
-Поляризовність у HF — це подвійний проєкційний добуток між лінійною
+Поляризовність у HF --- це подвійний проєкційний добуток між лінійною
 орбітальною реакцією системи на поле \(\mathcal E_\mu\)
 та матрицею дипольного моменту в напрямку \(\nu\).
+
+% ---------------------------
+% Повний LaTeX-фрагмент з роз'ясненнями і кодовими блоками (minted)
+% Вставляти у документ, який підтримує пакет minted.
+% ---------------------------
+
+\subsection*{Детальний розбір коду CPHF-процедури (PySCF)}
+
+Нижче подано послідовність кроків коду із стислим математичним описом під кожним блоком та відповідним шматком Python-коду.
+
+\paragraph{1. Параметри і SCF-розрахунок.}
+Запускаємо RHF для молекули, отримуємо енергію, коефіцієнти МО, енергії МО та заповнення.
+
+\[
+\text{SCF:}\quad \mathbf F \mathbf C = \mathbf S \mathbf C \mathbf \varepsilon,\qquad
+\mathbf C = \{\;C_{p i}\;\},
+\]
+де \(p\) — індекс АО, \(i\) — індекс МО.
+
+\begin{minted}{python}
+import numpy as np
+from pyscf import gto, scf
+
+# Молекула H2O
+mol = gto.M(
+    atom = '''
+    O  0.000000  0.000000  0.000000
+    H  0.000000 -0.757000  0.587000
+    H  0.000000  0.757000  0.587000
+    ''',
+    basis = '6-31g',
+    verbose = 0
+)
+
+# SCF розрахунок
+mf = scf.RHF(mol).run(conv_tol=1e-12, verbose=0)
+print(f"Енергія: {mf.e_tot:.10f} Hartree\n")
+
+# Отримуємо дані з SCF
+mo_coeff = mf.mo_coeff      # C_{p i}
+mo_energy = mf.mo_energy    # ε_i
+mo_occ = mf.mo_occ          # заповнення
+nocc = np.sum(mo_occ > 0).astype(int)
+nvir = len(mo_energy) - nocc
+\end{minted}
+
+\paragraph{2. Підготовка: розмір задачі і дипольні інтеграли в АО.}
+Дипольні інтеграли в АО задаються \(\mu^{(\nu)}_{pq}\) (компонента \(\nu\in\{x,y,z\}\)). У коді їх отримують викликом інтегратора.
+
+\begin{minted}{python}
+# Дипольні інтеграли в АО базисі
+with mol.with_common_orig((0,0,0)):
+    dip_ints_ao = mol.intor_symmetric('int1e_r', comp=3)  # (3, nao, nao)
+\end{minted}
+
+\paragraph{3. Перетворення дипольних інтегралів в МО-базис.}
+Математично:
+\[
+\bigl(\mu^{(\nu)}\bigr)^{\mathrm{MO}}_{ij}
+= \sum_{p,q} C_{p i}\; \bigl(\mu^{(\nu)}\bigr)^{\mathrm{AO}}_{p q}\; C_{q j}
+= \bigl(C^{T}\,\mu^{(\nu),\mathrm{AO}}\,C\bigr)_{ij}.
+\]
+
+\begin{minted}{python}
+# Перетворюємо в МО базис: μ^MO = C^T · μ^AO · C
+dip_ints_mo = np.einsum('pi,xpq,qj->xij', mo_coeff, dip_ints_ao, mo_coeff)
+# dip_ints_mo.shape == (3, nmo, nmo)
+\end{minted}
+
+\paragraph{4. Двоелектронні інтеграли в AO і проекція на потрібні блоки в МО.}
+Повна AO-ERI позначається \((pq|rs)\). Для CPHF потрібні блоки \((ia|jb)\), \((ij|ab)\), \((ib|ja)\), де \(i,j\) — зайняті (occupied), \(a,b\) — віртуальні (virtual).
+Загальна формула проекції:
+\[
+(ia|jb)=\sum_{p q r s} C_{p i}\,C_{q a}\,C_{r j}\,C_{s b}\,(p q|r s).
+\]
+
+\begin{minted}{python}
+# Двоелектронні інтеграли (AO)
+print("Обчислення двоелектронних інтегралів...")
+eri_ao = mol.intor('int2e')  # форма (nao, nao, nao, nao)
+
+# Розділяємо матрицю MO на зайняті і віртуальні блоки
+C_occ = mo_coeff[:, :nocc]   # форма (nao, nocc)
+C_vir = mo_coeff[:, nocc:]   # форма (nao, nvir)
+\end{minted}
+
+\paragraph{4a. Побудова блоку \((ia|jb)\).}
+Один із способів поступово проектувати AO-ERI у MO-ERI — послідовні contraction-и через \inlinecode{np.einsum}. Код:
+
+\begin{minted}{python}
+eri_iajb = np.einsum('pi,pqrs->iqrs', C_occ, eri_ao)   # p -> i
+eri_iajb = np.einsum('qa,iqrs->iars', C_vir, eri_iajb)  # q -> a
+eri_iajb = np.einsum('rj,iars->iajs', C_occ, eri_iajb)  # r -> j
+eri_iajb = np.einsum('sb,iajs->iajb', C_vir , eri_iajb) # s -> b
+# Форма: (nocc, nvir, nocc, nvir) = (i, a, j, b)
+\end{minted}
+
+\paragraph{4b. Побудова блоку \((ij|ab)\).}
+
+\[
+(ij|ab)=\sum_{p q r s} C_{p i}\,C_{q j}\,C_{r a}\,C_{s b}\,(p q|r s)
+\]
+
+\begin{minted}{python}
+eri_ijab = np.einsum('pi,pqrs->iqrs', C_occ, eri_ao)
+eri_ijab = np.einsum('qj,iqrs->ijrs', C_occ, eri_ijab)
+eri_ijab = np.einsum('ra,ijrs->ijas', C_vir, eri_ijab)
+eri_ijab = np.einsum('sb,ijas->ijab', C_vir, eri_ijab)
+# Форма: (nocc, nocc, nvir, nvir) = (i, j, a, b)
+\end{minted}
+
+\paragraph{4c. Побудова блоку \((ib|ja)\).}
+
+\[
+(ib|ja)=\sum_{p q r s} C_{p i}\,C_{q b}\,C_{r j}\,C_{s a}\,(p q|r s)
+\]
+
+\begin{minted}{python}
+eri_ibja = np.einsum('pi,pqrs->iqrs', C_occ, eri_ao)
+eri_ibja = np.einsum('qb,iqrs->ibrs', C_vir, eri_ibja)
+eri_ibja = np.einsum('rj,ibrs->ibjs', C_occ, eri_ibja)
+eri_ibja = np.einsum('sa,ibjs->ibja', C_vir, eri_ibja)
+# Форма: (nocc, nvir, nocc, nvir) = (i, b, j, a)
+\end{minted}
+
+\paragraph{Примітка.} Послідовні \texttt{einsum} скорочують пам’ять у порівнянні з одноразовою оцінкою повного \((pq|rs)\) у МО-базисі, але все одно масштаб \(O(n^4)\) по числу МО зберігається.
+
+\paragraph{5. Побудова матриці \(H\) (електронного гессіана в просторі параметрів \(U_{ai}\)).}
+У моделі HF елемент матриці має вигляд
+\[
+H_{ai,bj}
+=
+\delta_{ij}\,\delta_{ab}\,(\varepsilon_a-\varepsilon_i)
++4\,(ia|jb)
+-(ij|ab)
+-(ib|ja).
+\]
+
+Реалізація (розгортання двох індексів у один): індекс \(k\equiv i\cdot n_\text{vir}+a\).
+
+\begin{minted}{python}
+H = np.zeros((nocc * nvir, nocc * nvir))
+
+for i in range(nocc):
+    for a in range(nvir):
+        ia = i * nvir + a
+        for j in range(nocc):
+            for b in range(nvir):
+                jb = j * nvir + b
+
+                # Діагональний член: (ε_a - ε_i) δ_ij δ_ab
+                if i == j and a == b:
+                    H[ia, jb] = mo_energy[nocc + a] - mo_energy[i]
+
+                # Двоелектронні члени
+                H[ia, jb] += 4.0 * eri_iajb[i, a, j, b]  # 4(ia|jb)
+                H[ia, jb] -= eri_ijab[i, j, a, b]        # -(ij|ab)
+                H[ia, jb] -= eri_ibja[i, b, j, a]        # -(ib|ja)
+\end{minted}
+
+\paragraph{6. Розв'язування CPHF для кожної компоненти зовнішнього поля.}
+CPHF у цій реалізації зводиться до прямого розв'язку лінійної системи
+\[
+H\,U^{(x)} = -g^{(x)},\qquad g^{(x)}_{ia} = -\mu^{(x)}_{ia},
+\]
+де \(g\) — праві частини, обчислені як елементи дипольної матриці у блоці occupied–virtual.
+
+\begin{minted}{python}
+# Розв'язуємо CPHF рівняння для кожної компоненти поля
+U = np.zeros((3, nocc, nvir))  # U[x, i, a]
+
+print("\nРозв'язування CPHF рівнянь...")
+for x in range(3):
+    # Права частина: g^x[ia] = μ^x[ia] (occupied-virtual блок)
+    g = -dip_ints_mo[x, :nocc, nocc:].flatten()
+
+    # Розв'язуємо H · U = g
+    U_flat = np.linalg.solve(H, g)
+    U[x] = U_flat.reshape(nocc, nvir)
+
+    print(f"  Компонента {'xyz'[x]}: ||U|| = {np.linalg.norm(U[x]):.6f}")
+\end{minted}
+
+\paragraph{Коментар щодо методу розв'язання.}
+Тут використано пряму лінійну алгебру (\inlinecode{np.linalg.solve}) — тобто жодної ітераційної процедури в коді немає: матриця \(H\) розв'язується одразу (алгоритмічно --- LU-розклад або гасіння, як реалізовано в NumPy).
+
+\paragraph{7. Обчислення поляризованості.}
+Для замкнуто-оболочкової (\texttt{RHF}) системи поляризованість дорівнює
+
+\[
+\alpha_{\mu\nu}
+=
+-2 \sum_{i a} \bigl(\mu^{(\mu)}_{i a} U^{(\nu)}_{i a} + \mu^{(\nu)}_{i a} U^{(\mu)}_{i a}\bigr),
+\]
+де множник 2 відповідає подвійному заповненню орбіталей.
+
+\begin{minted}{python}
+# Обчислення тензора поляризованості
+alpha = np.zeros((3, 3))
+
+for x in range(3):
+    for y in range(3):
+        term1 = np.sum(dip_ints_mo[x, :nocc, nocc:] * U[y])
+        term2 = np.sum(dip_ints_mo[y, :nocc, nocc:] * U[x])
+        alpha[x, y] = -2.0 * (term1 + term2)
+
+# Симетризація
+alpha = 0.5 * (alpha + alpha.T)
+\end{minted}
+
+\begin{commentbox}[Короткі додаткові зауваження і оптимізації]
+\begin{itemize}
+  \item Матриця \(H\) має розмір \((n_\text{occ} n_\text{vir})^2\). Для великих молекул це швидко стає непрактичним; у реальних імплементаціях використовують розріджені або ітеративні методи, а також симетрії.
+  \item Перетворення ERI в МО-базис є дорогим по пам'яті; часто будують лише блоки, як це зроблено вище, або використовують часткові трансформації (поступово).
+\end{itemize}
+\end{commentbox}
+
+% ---------------------------
+% Кінець фрагмента
+% ---------------------------
+
 
 %% ------------------------------------------------------------
 %\subsection{Структурована схема обчислення}
