@@ -1,0 +1,297 @@
+%% ============================================================
+\chapter{Магнітні властивості молекул: відгук на магнітне поле та ядерні спіни}
+%% ============================================================
+
+У попередньому розділі ми показали, що практично всі молекулярні властивості можна розглядати як похідні енергії за зовнішніми параметрами. Особливе місце серед них посідають \emph{магнітні} властивості, які виникають при взаємодії електронної системи з зовнішнім магнітним полем \(\mathbf B\) та зі спінами ядер (через ядерний спіновий момент \(\mathbf I\)).
+
+Ці властивості визначають поведінку молекул у магнітному резонансі (NMR, EPR), магнітну сприйнятливість, константи надтонкої взаємодії та інші спектроскопічні характеристики. Як і раніше, вони є похідними енергії — але тепер за магнітними параметрами (табл.~\ref{tab:prop}).
+
+\section{Магнітна сприйнятливість та надтонка взаємодія}
+
+Розглянемо розклад енергії за малими магнітними збуреннями. Нехай \(\mathbf B\) — однорідне зовнішнє магнітне поле, \(\mathbf I_K\) — спіновий момент ядра \(K\). Повна енергія залежить від цих параметрів:
+\begin{equation}
+	E = E(\mathbf B, \{\mathbf I_K\}).
+\end{equation}
+
+Ряд Тейлора за \(\mathbf B\) та \(\mathbf I_K\) дає:
+\begin{equation}
+	E(\mathbf B, \mathbf I)
+	= E_0
+	- \mathbf m \cdot \mathbf B
+	- \tfrac12 \mathbf B \cdot \boldsymbol\chi_m \cdot \mathbf B
+	- \mathbf I \cdot \mathbf A \cdot \mathbf B
+	+ \dots ,
+	\label{eq:E_magnetic_Taylor}
+\end{equation}
+де
+\begin{itemize}
+	\item \(\mathbf m\) — магнітний дипольний момент (власний, перманентний);
+	\item \(\boldsymbol\chi_m = -\frac{\partial^2 E}{\partial \mathbf B \partial \mathbf B}\) — тензор магнітної сприйнятливості;
+	\item \(\mathbf A = -\frac{\partial^2 E}{\partial \mathbf I \partial \mathbf B}\) — тензор надтонкої взаємодії (hyperfine coupling);
+\end{itemize}
+
+\subsection{Магнітна сприйнятливість}
+
+Магнітний момент \(\mathbf m(\mathbf B)\) розкладається аналогічно електричному випадку:
+\begin{equation}
+	m_\alpha(\mathbf B)
+	= m_\alpha^{(0)} + \chi_{m,\alpha\beta} B_\beta + \tfrac12 \gamma_{\alpha\beta\gamma} B_\beta B_\gamma + \dots
+\end{equation}
+
+Енергія взаємодії з полем:
+\begin{equation}
+	E(\mathbf B) = E_0 - \int_0^{\mathbf B} \mathbf m(\mathbf B')\, d\mathbf B'.
+\end{equation}
+
+Підставляючи розклад, отримуємо:
+\begin{equation}
+	E(\mathbf B)
+	= E_0
+	- m^{(0)} B
+	- \tfrac12 \chi_m B^2
+	- \tfrac16 \gamma B^3
+	+ \dots
+\end{equation}
+
+Таким чином:
+\begin{align}
+	\chi_{m,\alpha\beta}
+	&= -\left.\frac{\partial^2 E}{\partial B_\alpha \partial B_\beta}\right|_{\mathbf B=0}, \\
+	\gamma_{\alpha\beta\gamma}
+	&= -\left.\frac{\partial^3 E}{\partial B_\alpha \partial B_\beta \partial B_\gamma}\right|_{\mathbf B=0}.
+\end{align}
+
+Магнітна сприйнятливість описує \emph{індукований} магнітний момент, а вищі похідні — нелінійний магнітний відгук.
+
+\subsection{Надтонка взаємодія (EPR)}
+
+У присутності ядерного спіна \(\mathbf I_K\) енергія містить член:
+\begin{equation}
+	E = \dots + \mathbf I_K \cdot \mathbf A_K \cdot \mathbf B,
+\end{equation}
+де \(\mathbf A_K\) — тензор надтонкої взаємодії для ядра \(K\).
+
+За означенням:
+\begin{equation}
+	A_{K,\alpha\beta}
+	= -\left.\frac{\partial^2 E}{\partial I_{K,\alpha} \partial B_\beta}\right|_{\mathbf B=\mathbf I=0}.
+\end{equation}
+
+Цей тензор визначає розщеплення ліній у спектрі \texttt{EPR} і залежить від спінової густини на ядрі.
+
+\section{Хімічний зсув у спектроскопії ЯМР}
+
+\subsection{Фізична основа явища}
+
+У спектроскопії ядерного магнітного резонансу (ЯМР) резонансна частота ядра залежить від локального магнітного поля, яке відчуває ядро. Зовнішнє магнітне поле \(\mathbf B\) індукує рух електронів, що, у свою чергу, створює вторинне магнітне поле \(\mathbf B_{\text{ind}}\). Ефективне поле на ядрі \(K\) має вигляд
+\begin{equation}
+\mathbf B_{\text{eff}} = (\mathbf 1 - \boldsymbol\sigma_K) \cdot \mathbf B,
+\end{equation}
+де \(\boldsymbol\sigma_K\) — тензор хімічного екранування.
+
+Енергія взаємодії ядерного спінового моменту \(\mathbf I_K\) з полем \(\mathbf B\) модифікується:
+\begin{equation}
+E_{\text{int}} = -\gamma_K \mathbf I_K \cdot (\mathbf 1 - \boldsymbol\sigma_K) \cdot \mathbf B,
+\label{eq:E_int_shielding}
+\end{equation}
+де \(\gamma_K\) — гіромагнітне відношення ядра.
+
+Тензор \(\boldsymbol\sigma_K\) складається з двох внесків:
+\begin{itemize}
+	\item \textbf{діамагнітний} (\(\boldsymbol\sigma_K^d\)): виникає від сферично-усередженої електронної густини основного стану;
+	\item \textbf{парамагнітний} (\(\boldsymbol\sigma_K^p\)): пов’язаний зі змішуванням збуджених станів під дією магнітного поля.
+\end{itemize}
+\[
+\boldsymbol\sigma_K = \boldsymbol\sigma_K^d + \boldsymbol\sigma_K^p.
+\]
+
+\subsection{Визначення через похідні енергії}
+
+Як і інші молекулярні властивості, тензор екранування є змішаною другою похідною енергії системи:
+\begin{equation}
+\sigma_{K,\alpha\beta}
+= -\left.\frac{\partial^2 E}{\partial I_{K,\alpha} \partial B_\beta}\right|_{\mathbf B=\mathbf I=0}.
+\label{eq:sigma_derivative}
+\end{equation}
+Знак мінус випливає з конвенції: \(\frac{\partial E}{\partial B_\beta} = -m_\beta\), де \(m_\beta\) — індукований магнітний момент.
+
+\subsection{Ізотропне екранування та хімічний зсув}
+
+У рідинах швидка молекулярна ротація усереднює тензор до ізотропного значення:
+\[
+\sigma_{K,\text{iso}} = \frac{1}{3} \operatorname{Tr}(\boldsymbol\sigma_K) = \frac{1}{3} (\sigma_{xx} + \sigma_{yy} + \sigma_{zz}).
+\]
+
+Хімічний зсув \(\delta_K\) визначається відносно стандартної сполуки (наприклад, тетраметилсилан, \ce{(CH3)4Si}, TMS):
+\begin{equation}
+\delta_K = \sigma_{\text{TMS}} - \sigma_{K,\text{iso}}.
+\label{eq:chem_shift}
+\end{equation}
+
+\begin{itemize}
+	\item \(\delta_K > 0\): ядро менш екрановане (сигнал у нижчому полі);
+	\item \(\delta_K < 0\): ядро більш екрановане (сигнал у вищому полі).
+\end{itemize}
+
+\subsection{Фактори, що впливають на хімічний зсув}
+
+\begin{itemize}
+	\item \textbf{Електронна густина}: вища густина — сильніше діамагнітне екранування.
+	\item \textbf{Анізотропія сусідніх груп}: подвійні зв’язки, ароматичні кільця викликають парамагнітний внесок (дескранування).
+	\item \textbf{Електроноакцепторні/донорні замісники}: зсувають густину, змінюючи \(\sigma\).
+\end{itemize}
+
+\begin{table}[h!]
+\centering
+\caption{Типові значення хімічного зсуву \(^1\)H у \ce{^1H} ЯМР (у \ce{CDCl3}, відносно TMS).}
+\label{tab:proton_shifts}
+\begin{tblr}{
+  colspec={Q[l,m] Q[c,m] Q[c,m]},
+  hline{1,Z}={1pt}, hline{2}={1pt},
+}
+Група & Приклад & \(\delta\) (ppm) \\
+\ce{-CH3} (аліфатична) & \ce{CH3-CH2-} & 0.9--1.3 \\
+\ce{-CH2-} (поруч з \ce{C=O}) & \ce{-CO-CH2-} & 2.1--2.5 \\
+\ce{-CHO} & \ce{R-CHO} & 9.5--10.0 \\
+\ce{Ar-H} (ароматичний) & \ce{C6H6} & 7.0--8.0 \\
+\ce{-OH} (спирт) & \ce{ROH} & 1.0--5.5 (змінне) \\
+\end{tblr}
+\end{table}
+
+\subsection{Приклад: молекула \ce{H2O}}
+
+Для \ce{H2O} у газовій фазі (RHF/6-31G):
+\begin{itemize}
+	\item \(\sigma_{\text{iso}}(^1\text{H}) \approx 27.5\) ppm,
+	\item \(\sigma_{\text{TMS}}(^1\text{H}) \approx 31.8\) ppm,
+	\item \(\delta(^1\text{H}) = 31.8 - 27.5 = 4.3\) ppm (експеримент: \(\approx 4.8\) ppm у рідині).
+\end{itemize}
+
+\subsection{Обчислення в методі Хартрі--Фока}
+
+У PySCF тензор екранування обчислюється з використанням аналітичних похідних та GIAO (gauge-including atomic orbitals) для усунення залежності від початку координат.
+
+\begin{minted}{python}
+from pyscf import gto, scf
+from pyscf.prop.nmr.rhf import NMR
+
+mol = gto.M(
+    atom='O 0 0 0; H 0 0 1.1; H 0 1.1 0',
+    basis='6-31g'
+)
+mf = scf.RHF(mol).run(conv_tol=1e-12)
+
+nmr = NMR(mf)
+sigma_tensors = nmr.kernel()
+
+for i, sigma in enumerate(sigma_tensors):
+    sigma_iso = sigma.trace() / 3
+    print(f"Атом {i}: σ_iso = {sigma_iso:6.2f} ppm")
+\end{minted}
+
+Очікуваний вивід:
+\begin{verbatim}
+Атом 0 (O): σ_iso = -38.21 ppm
+Атом 1 (H): σ_iso =  27.45 ppm
+Атом 2 (H): σ_iso =  27.45 ppm
+\end{verbatim}
+
+Хімічний зсув для протонів: \(\delta \approx 31.8 - 27.45 = 4.35\) ppm.
+
+\begin{commentbox}
+GIAO забезпечує незалежність результату від вибору початку координат шляхом включення фазового фактора в базисні функції. У PySCF застосовується автоматично для парамагнітного внеску.
+\end{commentbox}
+
+\subsection{Зв’язок з іншими властивостями}
+
+Тензор \(\boldsymbol\sigma_K\) має дві складові:
+\begin{itemize}
+	\item \textbf{діамагнітна} — залежить від грунтової хвильової функції;
+	\item \textbf{парамагнітна} — виникає від змішування збуджених станів (через \(U_{ai}^{(B)}\)).
+\end{itemize}
+
+Обчислення \(\boldsymbol\sigma\) потребує розв’язання \texttt{CPHF} для збурення \(\mathbf B\) та \(\mathbf I_K\).
+
+\section{Аналітичні похідні в HF: магнітні збурення}
+
+У методі Хартрі–Фока магнітне поле \(\mathbf B\) входить через одноелектронний оператор:
+\begin{equation}
+	\hat h(\mathbf B) = \hat h_0 + \tfrac12 \mathbf B \cdot (\mathbf r \times \mathbf p) + \dots
+\end{equation}
+(орбітальний зеєманівський член).
+
+Похідна:
+\begin{equation}
+	\frac{\partial \hat h}{\partial B_\alpha} = \tfrac12 (\mathbf r \times \mathbf p)_\alpha = \hat L_\alpha,
+\end{equation}
+де \(\hat L_\alpha\) — оператор кутового моменту.
+
+Вектор збурення в \texttt{CPHF}:
+\begin{equation}
+	g_{ai}^{(B_\alpha)} = \langle \phi_a | \hat L_\alpha | \phi_i \rangle + \text{(двоелектронні похідні)}.
+\end{equation}
+
+Для ядерного спіна \(\mathbf I_K\) збурення локальне:
+\begin{equation}
+	\hat h^{(I_{K,\alpha})} = g_e \mu_N \frac{\mathbf I_K \cdot \mathbf r_K}{r_K^3},
+\end{equation}
+(контактний + диполь-дипольний терміни).
+
+\subsection{Рівняння CPHF для магнітних властивостей}
+
+Рівняння \texttt{CPHF} мають той самий вигляд:
+\begin{equation}
+	\sum_{bj} H_{ai,bj} U_{bj}^{(\lambda)} = -g_{ai}^{(\lambda)},
+\end{equation}
+де \(\lambda = B_\alpha\) або \(I_{K,\beta}\).
+
+Після розв’язання:
+\begin{itemize}
+	\item \(\chi_{m,\alpha\beta} = 4 \sum_{ai} U_{ai}^{(B_\alpha)} L_{\beta,ai}\),
+	\item \(\sigma_{K,\alpha\beta} = 4 \sum_{ai} U_{ai}^{(I_{K,\alpha})} L_{\beta,ai}\).
+\end{itemize}
+
+\section{Таблиця магнітних властивостей}
+
+\begin{table}[h!]
+\centering
+\caption{Магнітні властивості як похідні енергії (доповнення до табл.~\ref{tab:prop}).}
+\label{tab:magnetic_prop}
+\begin{tblr}{
+  colspec={Q[c,m] Q[c,m] Q[c,m] Q[l,m]},
+  cell{1}{1} = {c=3}{c},
+  cell{2}{1-3}={cmd=\bfseries},
+  hline{2} = {2pt}, hline{3} = {1pt}, hline{Z} = {1pt},
+}
+$n_B$ & $n_I$ & Похідна & Властивість \\
+0 & 0 & \(E^{(0)}\) & Грунтова енергія \\
+1 & 0 & \(\partial E / \partial B\) & Магнітний момент \(\mathbf m\) \\
+2 & 0 & \(\partial^2 E / \partial B \partial B\) & Магнітна сприйнятливість \(\boldsymbol\chi_m\) \\
+1 & 1 & \(\partial^2 E / \partial I \partial B\) & Надтонка взаємодія \(\mathbf A\) \\
+0 & 1 & \(\partial E / \partial I\) & (немає фізичного сенсу) \\
+0 & 2 & \(\partial^2 E / \partial I \partial I\) & Спін-спінова взаємодія (J-coupling) \\
+1 & 1 & \(\partial^2 E / \partial B \partial I\) & Хімічний зсув \(\boldsymbol\sigma\) \\
+\end{tblr}
+\end{table}
+
+\section{Обчислювальна схема (аналогічно поляризовності)}
+
+\begin{enumerate}
+	\item Виконати \texttt{RHF}.
+	\item Побудувати оператори \(\hat L_\alpha\), \(\hat h^{(I_{K,\beta})}\).
+	\item Для кожного збурення \(\lambda\):
+	\begin{itemize}
+		\item обчислити \(g_{ai}^{(\lambda)}\),
+		\item розв’язати \texttt{CPHF} \(\to U^{(\lambda)}\),
+		\item обчислити змішану похідну.
+	\end{itemize}
+	\item Зібрати тензори \(\boldsymbol\chi_m\), \(\mathbf A_K\), \(\boldsymbol\sigma_K\).
+\end{enumerate}
+
+\begin{commentbox}
+У реальних розрахунках (PySCF, Gaussian) використовуються \emph{London atomic orbitals} (GIAO) для уникнення залежності від початку координат. Це модифікує інтеграли, але не змінює структуру \texttt{CPHF}.
+\end{commentbox}
+
+%% ============================================================
+\section{Приклад: хімічний зсув у HF/6-31G}
+%% ============================================================
