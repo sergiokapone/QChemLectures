@@ -117,10 +117,12 @@ i\frac{\partial}{\partial t}\Psi(t) = \hat{H}(t)\Psi(t).
 
 \begin{center}
 \begin{tblr}{
-colspec={Q[l,m] X[l,m] X[l,m] X[l,m]},
-row{1} = {c,m, font=\bfseries},
-hlines, vlines
-}
+    colspec={Q[l,m] X[l,m] X[l,m] X[l,m]},
+    row{1} = {c,m, font=\bfseries},
+    hlines,
+    vlines,
+    row{odd} = {bg=gray!5},
+    }
 Тип підходу & Приклад методів & Що обчислюється & Фізична аналогія \\
 Власні стани & \texttt{FCI}, \texttt{CISD}, \texttt{CASSCF} & Енергії $E_I$ як власні значення $\hat{H}_0$ & Визначення власних частот струни \\
 Відгук на поле & \texttt{TDHF}, \texttt{TDDFT}, \texttt{EOM-CCSD} & Резонансні частоти $\omega_{0n}$ відгуку системи & Збудження струни зовнішньою силою \\

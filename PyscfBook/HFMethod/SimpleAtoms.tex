@@ -42,7 +42,77 @@ E_1 = -\frac{1}{2}\ \text{Ha}.
 
 %---------------------------------------------------------
 \begin{figure}[h!]\centering
-\includegraphics[width=\linewidth]{\currfiledir pictures/h_atom_basis_convergence.pdf}
+%\includegraphics[width=\linewidth]{\currfiledir pictures/h_atom_basis_convergence.pdf}
+\begin{tikzpicture}
+\begin{axis}[
+    height=0.50\linewidth,
+    width=0.90\linewidth,
+    ylabel={E (Ha)},
+    xtick=data,
+    xticklabels={
+        sto-3g,
+        3-21g,
+        6-31g,
+        6-31g*,
+        6-31g**,
+        6-311g,
+        6-311g*,
+        6-311g**,
+        cc-pVDZ,
+        cc-pVTZ,
+        cc-pVQZ,
+        aug-cc-pVDZ,
+        aug-cc-pVTZ,
+        def2-SVP,
+        def2-TZVP,
+        ano,
+        anorcc
+    },
+    x tick label style={rotate=90, anchor=east},
+    ymin=-0.505,
+    ymax=-0.455,
+%    axis y discontinuity=parallel,
+    grid=both,
+    major grid style={draw=gray!20},
+    minor grid style={draw=gray!20},
+]
+
+\addplot[
+    mark=*,
+    mark size=2.5pt,
+    mark options={fill=blue, draw=blue},
+] coordinates {
+    (1,-0.466582)
+    (2,-0.496199)
+    (3,-0.498233)
+    (4,-0.498233)
+    (5,-0.498233)
+    (6,-0.499810)
+    (7,-0.499810)
+    (8,-0.499810)
+    (9,-0.499278)
+    (10,-0.499810)
+    (11,-0.499946)
+    (12,-0.499334)
+    (13,-0.499821)
+    (14,-0.499278)
+    (15,-0.499810)
+    (16,-0.499984)
+    (17,-0.499984)
+};
+\addlegendentry{Розраховані значення}
+
+\addplot[
+    red,
+    dashed,
+    ultra thick
+] coordinates {
+    (0.5, -0.5) (17.5, -0.5)
+};
+\addlegendentry{Точне значення}
+
+\end{axis}
+\end{tikzpicture}
 \caption{Залежність енергії атома \ce{H} від вибору базису.}
 \label{pic:h_atom_basis_convergence}
 \end{figure}

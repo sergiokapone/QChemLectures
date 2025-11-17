@@ -219,9 +219,13 @@ DFT намагається знайти густину $\rho_0(\mathbf{r})$, щ�
 \begin{center}
 	\captionof{figure}{Порівняння методів Хартрі-Фока та DFT}
 	\label{tab:hf_vs_dft}
-	\begin{tabular}{lll}
+	\begin{tblr}{
+        colspec = {lll},
+        row{1} = {c, m, font=\bfseries},
+        row{odd} = {bg=gray!5},
+        }
 		\hline
-		\textbf{Аспект}     & \textbf{Hartree-Fock} & \textbf{DFT}           \\
+		{Аспект}     & {Hartree-Fock} & {DFT}           \\
 		\hline
 		Базова змінна       & Хвильова функція      & Електронна густина     \\
 		Обмін               & Точний (нелокальний)  & Наближений (локальний) \\
@@ -230,6 +234,6 @@ DFT намагається знайти густину $\rho_0(\mathbf{r})$, щ�
 		Точність для атомів & Добра якісно          & Часто краща кількісно  \\
 		Збуджені стани      & Можливі               & Складно (TD-DFT)       \\
 		\hline
-	\end{tabular}
+	\end{tblr}
 \end{center}
 

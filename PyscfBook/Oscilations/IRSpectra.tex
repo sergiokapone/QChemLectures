@@ -107,7 +107,11 @@ $Q_i$ у рівноважному положенні, $N_A$ --- число Ав�
 %% --------------------------------------------------------
 
 \begin{center}
-\begin{tblr}{ll}
+\begin{tblr}{
+    colspec={ll},
+    row{1} = {c, m, font=\bfseries},
+    row{odd} = {bg=gray!5},
+}
 \toprule
 \textbf{Інтенсивність (км/моль)} & \textbf{Класифікація} \\
 \midrule
@@ -363,9 +367,10 @@ print("="*70)
 \caption{Експериментальні дані коливань молекули H$_2$O (джерела: \url{https://cccbdb.nist.gov/expvibs2x.asp}).}
 \label{tab:exp_vib_H2O}
 \begin{tblr}{
-colspec = {Q[c,m] Q[l,m,] Q[c,m] Q[c,m] Q[c,m] X[l,m]},
-row{1} = {font=\bfseries, c},
-hline{1,2,Z} = {-}{0.08em},
+    colspec = {Q[c,m] Q[l,m,] Q[c,m] Q[c,m] Q[c,m] X[l,m]},
+    row{1} = {font=\bfseries, c},
+    hline{1,2,Z} = {-}{0.08em},
+    row{odd} = {bg=gray!5},
 }
 Мода & Симетрія & {Частота\\ гармонічна (см$^{-1}$)} & {Інтенсивність\\ (км моль$^{-1}$)} \\
 1 & \ce{H-O-H} вигин &  1648.5 & 62.5  \\
@@ -379,9 +384,10 @@ hline{1,2,Z} = {-}{0.08em},
 
 \begin{center}
 \begin{tblr}{
-colspec = {Q[c,m] Q[c,m] Q[c,m] Q[c,m]},
-row{1} = {font=\bfseries, c, m},
-hline{1, Z} = {solid},
+    colspec = {Q[c,m] Q[c,m] Q[c,m] Q[c,m]},
+    row{1} = {font=\bfseries, c, m},
+    hline{1, Z} = {solid},
+    row{odd} = {bg=gray!5},
 }
 Мода & $\nu$ (см$^{-1}$) & $I$ (км/моль) & Тип \\
 1 & 1828.9 & 1.4 & Слабка (деформаційна) \\

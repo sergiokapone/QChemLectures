@@ -602,10 +602,14 @@ E_{xc}^{\text{PBE0}} = 0.25E_x^{\text{HF}} + 0.75E_x^{\text{PBE}} + E_c^{\text{P
 \caption{Рекомендовані функціонали для різних задач}
 \label{tab:functional_recommendations}
 \small
-\begin{tabular}{lll}
-\hline
-\textbf{Задача} & \textbf{Функціонал} & \textbf{Коментар} \\
-\hline
+\begin{tblr}{
+    colspec = {lll},
+    row{1} = {c, m, font=\bfseries},
+    row{odd} = {bg=gray!5},
+}
+\toprule
+{Задача} & {Функціонал} & {Коментар} \\
+\midrule
 Швидкі розрахунки & PBE & Добра точність/швидкість \\
 Енергії атомізації & B3LYP, PBE0 & Стандарт у хімії \\
 Перехідні метали & TPSSh, M06 & Краще для d-електронів \\
@@ -613,8 +617,8 @@ E_{xc}^{\text{PBE0}} = 0.25E_x^{\text{HF}} + 0.75E_x^{\text{PBE}} + E_c^{\text{P
 Високоспінові стани & SCAN, TPSSh & Кращий баланс \\
 Загальні розрахунки & PBE0 & Універсальний вибір \\
 Максимальна точність & CCSD(T) & Але дуже повільно \\
-\hline
-\end{tabular}
+\bottomrule
+\end{tblr}
 \end{table}
 
 З практичної точки зору:

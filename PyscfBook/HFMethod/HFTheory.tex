@@ -23,7 +23,7 @@
 	\frac{\langle \Phi_\text{trial} | \hat{H}_e | \Phi_\text{trial} \rangle}
 	{\langle \Phi_\text{trial} | \Phi_\text{trial} \rangle}.
 \]
-З цього принципу випливає, що будь-яке наближення \(\Psi_\text{trial}\) дає енергію, яка є \emph{верхньою межею} до істинної енергії основного стану \(E_{\text{exact}}\).
+З цього принципу випливає, що будь-яке наближення \(\Phi_\text{trial}\) дає енергію, яка є \emph{верхньою межею} до істинної енергії основного стану \(E_{\text{exact}}\).
 
 
 %% --------------------------------------------------------
@@ -49,11 +49,45 @@
 \end{equation}
 де \(\varepsilon_i\) --- орбітальні енергії, а оператор Фока має вигляд
 \[
-\hat{F} = \hat{h} + \sum_{j=1}^{N} (\hat{J}_j - \hat{K}_j),
+\hat{F} = \hat{h} + \sum_{j=1}^{N} (\hat{J}_j - \hat{K}_j).
 \]
-причому \(\hat{h}\) --- одноелектронний гамільтоніан (кінетична енергія + притягання до ядра), \(\hat{J}_j\) --- кулонівський оператор, \(\hat{K}_j\) --- обмінний оператор, а сума береться по всіх зайнятих орбіталях.
-Таким чином, багатоелектронна задача зводиться до набору одноелектронних рівнянь, у яких кожен електрон рухається в ефективному середньому полі від інших.
 
+\paragraph{Вигляд одно- та двоелектронних операторів.}
+Одноелектронний гамільтоніан:
+\[
+	\hat h = -\frac{1}{2}\nabla^2 - \sum_A \frac{Z_A}{|\vect r - \vect R_A|}.
+\]
+
+
+Кулонівський оператор \(\hat J_j\) задає середнє електростатичне поле електрона
+в орбіталі \(\psi_j\):
+\[
+	\hat J_j \psi_i(\vect r)
+	= \left[
+		\int \frac{|\psi_j(\vect r')|^2}
+		     {|\vect r - \vect r'|}\, d\vect r'
+	  \right]\psi_i(\vect r).
+\]
+
+Обмінний оператор \(\hat K_j\) відповідає чисто квантовому (ферміонному)
+ефекту обміну:
+\[
+	\hat K_j \psi_i(\vect r)
+	= \left[
+		\int \frac{\psi_j^*(\vect r')\,\psi_i(\vect r')}
+		     {|\vect r - \vect r'|}\, d\vect r'
+	  \right]\psi_j(\vect r).
+\]
+
+
+Таким чином, багатоелектронна задача зводиться до системи
+одноелектронних рівнянь \eqref{eq:HF}, у яких кожна орбіталь \(\psi_i\)
+рухається у самоконсистентному середньому полі від інших електронів.
+
+%причому \(\hat{h}\) --- одноелектронний гамільтоніан (кінетична енергія + притягання до ядра), \(\hat{J}_j\) --- кулонівський оператор, \(\hat{K}_j\) --- обмінний оператор, а сума береться по всіх зайнятих орбіталях.
+%Таким чином, багатоелектронна задача зводиться до набору одноелектронних рівнянь, у яких кожен електрон рухається в ефективному середньому полі від інших.
+
+\paragraph{Структура енергії в методі Хартрі–Фок.}
 У межах наближення Хартрі–Фока енергія системи виражається через середнє значення гамільтоніана:
 \begin{equation*}
     E_{\mathrm{HF}} = \langle \Phi_0 | \hat{H}_e | \Phi_0 \rangle,
@@ -65,6 +99,53 @@
     = \sum_{i=1}^{N} \epsilon_i - \tfrac{1}{2}\sum_{i,j=1}^{N} (J_{ij} - K_{ij}) + V_{NN},
 \end{equation*}
 де \(h_{ii}\) --- одноелектронні інтеграли, \(J_{ij}\) і \(K_{ij}\) --- кулонівський та обмінний інтеграли, а множник \(1/2\) враховує подвійний підрахунок взаємодій у сумі. Доданок \(V_{NN}\) --- це енергія між'ядерного відштовхування (для атомів \(V_{NN}=0\)).
+
+\begin{commentbox}[Хімічна нотація та двоелектронні інтеграли]
+У хімічній літературі інтеграли кулонівської взаємодії записують через
+символи типу \((pq|rs)\):
+\[
+	(pq|rs) =
+	\iint
+	\phi_p(\vect r_1)\,
+	\phi_q(\vect r_1)\,
+	\frac{1}{|\vect r_1 - \vect r_2|}\,
+	\phi_r(\vect r_2)\,
+	\phi_s(\vect r_2)\,
+	d\vect r_1\, d\vect r_2.
+\]
+Тут комбінація \((pq|rs)\) описує взаємодію пари \((p,q)\) із парою \((r,s)\).
+
+У квантовій хімії, окрім стандартного двоелектронного інтеграла
+\((pq|rs)\),
+використовують також позначення з \textbf{подвійною рискою}:
+\[
+	(pq||rs) = (pq|rs) - (ps|rq).
+\]
+
+Це --- так званий \textbf{антисиметризований двоелектронний інтеграл}
+(або інтеграл Кулон–мінус–обмін), який природно виникає у формалізмі
+Хартрі-Фока.
+
+У розгорнутому вигляді:
+\begin{multline*}
+	(pq||rs)
+	=
+	\iint
+	\phi_p(\vect r_1)\phi_q(\vect r_1)\,
+	\frac{1}{|\vect r_1 - \vect r_2|}\,
+	\phi_r(\vect r_2)\phi_s(\vect r_2)\,
+	d\vect r_1 d\vect r_2
+	- \\ -
+	\iint
+	\phi_p(\vect r_1)\phi_s(\vect r_1)\,
+	\frac{1}{|\vect r_1 - \vect r_2|}\,
+	\phi_r(\vect r_2)\phi_q(\vect r_2)\,
+	d\vect r_1 d\vect r_2.
+\end{multline*}
+
+Перша частина --- це кулонівський інтеграл \((pq|rs)\),
+друга --- обмінний інтеграл \((ps|rq)\).
+\end{commentbox}
 
 %Вводячи загальний оператор Фока
 %\begin{equation*}
@@ -201,7 +282,7 @@ $\mathbf C$ виконує зміну базису до МО-представл�
 
 \begin{equation}\label{eq:F_basis_form}
 	F_{\mu\nu} = h_{\mu\nu} + \sum_{\lambda\sigma} D_{\lambda\sigma}
-	\left[ (\mu\nu|\lambda\sigma) - (\mu\lambda|\nu\sigma) \right].
+	\left[ (\mu\nu|\lambda\sigma) - (\mu\lambda|\nu\sigma) \right] =  h_{\mu\nu} + \sum_{\lambda\sigma} D_{\lambda\sigma} (\mu\nu\Vert\lambda\sigma).
 \end{equation}
 У компактному матричному вигляді фокіан записується як
 \begin{equation}\label{eq:F_matrix}
@@ -566,7 +647,7 @@ mf = scf.RHF(mol).run(init_guess='minao')
 
 \paragraph{Гаусові базисні функції (GTO).}
 З цієї причини в більшості сучасних квантово-хімічних програм
-використовуються \textbf{Gaussian-type orbitals (GTO)}:
+використовуються так звані \textbf{Gaussian-type or\-bi\-tals (GTO)}:
 \[
 	\chi_{\mathrm{GTO}}(r,\theta,\phi) = N\,r^{2n-2}e^{-\alpha r^2}Y_\ell^m(\theta,\phi).
 \]
@@ -619,7 +700,7 @@ mf = scf.RHF(mol).run(init_guess='minao')
 %----------------------------------------------------------------------------
 \begin{figure}[h!]
 	\centering
-	\begin{tikzpicture}[remember picture]
+	\begin{tikzpicture}[scale=1.25]
 		\begin{axis}[
 				axis lines=left,
 				xlabel=$r$,
@@ -699,14 +780,6 @@ mf = scf.RHF(mol).run(init_guess='minao')
 \PySCF{} підтримує сотні стандартних базисів,
 доступних через інтеграцію з
 \href{https://www.basissetexchange.org}{Basis Set Exchange (BSE)}~\cite{BSE}.
-Серед найуживаніших:
-
-\begin{itemize}
-	\item \texttt{sto3g}, \texttt{3-21g}, \texttt{6-31g}, \texttt{6-31g*}, \texttt{6-311g**};
-	\item кореляційно-узгоджені: \texttt{cc-pvdz}, \texttt{cc-pvtz}, \texttt{cc-pvqz};
-	\item з дифузними функціями: \texttt{aug-cc-pvdz}, \texttt{aug-cc-pvtz};
-	\item універсальні базиси Карлача і Вайгеля: \texttt{def2-svp}, \texttt{def2-tzvp}, \texttt{def2-tzvpp}.
-\end{itemize}
 
 Повний перелік доступних базисів можна отримати так:
 \begin{minted}{python}
@@ -729,12 +802,6 @@ print(sorted(basis.ALIAS.keys()))  # відсортований список б�
 \subsubsection{Обмежений метод Хартрі-Фока}
 %% --------------------------------------------------------
 
-Обмежений метод Хартрі-Фока (Restricted Hartree–Fock, або RHF) застосовується до систем із \emph{замкненими оболонками}, де всі орбіталі заповнені парами електронів з протилежними спінами (\ref{tikz:rhf}):
-\[
-	\varphi_i^{\alpha}(\mathbf{r}) = \varphi_i^{\beta}(\mathbf{r}) = \varphi_i(\mathbf{r}).
-\]
-%
-
 \begin{wrapfigure}[12]{O}{0.2\linewidth}
     \centering
 	\begin{tikzpicture}[scale=0.6]
@@ -743,6 +810,13 @@ print(sorted(basis.ALIAS.keys()))  # відсортований список б�
 \caption{}
 \label{tikz:rhf}
 \end{wrapfigure}
+Обмежений метод Хартрі-Фока (Restricted Hartree–Fock, або RHF) застосовується до систем із \emph{замкненими оболонками}, де всі орбіталі заповнені парами електронів з протилежними спінами (\ref{tikz:rhf}):
+\[
+	\varphi_i^{\alpha}(\mathbf{r}) = \varphi_i^{\beta}(\mathbf{r}) = \varphi_i(\mathbf{r}).
+\]
+
+
+
 Кожна просторова орбіталь $\phi_i$ містить два електрони (один зі спіном~$\alpha$, інший~$\beta$).
 Тому матриця густини має вигляд
 \[
@@ -882,14 +956,15 @@ mf = scf.GHF(mol).run()
 	\label{tab:hf_types}
 	\begin{tblr}{
 			colspec={lccX[l,m]},
-			row{1} = {c, b, font=\bfseries},
+			row{1} = {c, m, font=\bfseries},
+            row{odd} = {bg=gray!5},
 		}
 		\toprule
 		{Метод} & {Спінова                                                                                     \\ структура} & {Відкриті\\ оболонки} & \textbf{Коментар} \\
 		\midrule
 		UHF     & $\phi_i^\alpha \neq \phi_i^\beta$ & Так & Радикали, порушення $\langle \hat{S}^2 \rangle$    \\
 		RHF     & $\phi_i^\alpha = \phi_i^\beta$    & Ні  & Закриті оболонки (синглети)                        \\
-		ROHF    & частково спільні орбіталі         & Так & Виправлення до UHF для правильного спіну           \\
+		ROHF    & {частково\\ спільні орбіталі}         & Так & Виправлення до UHF для правильного спіну           \\
 		GHF     & $\psi_i$ --- спінор               & Так & Повністю узагальнена форма, рідко використовується \\
 		\bottomrule
 	\end{tblr}

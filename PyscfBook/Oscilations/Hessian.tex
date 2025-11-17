@@ -655,9 +655,10 @@ freqs[6:]
 \begin{center}
     \begin{tblr}{
         colspec = {X[l,2] X[r] X[l,2]},
-        row{1} = {font=\bfseries},
         hline{1,2,Z} = {solid},
-            }
+        row{1} = {c, m, font=\bfseries},
+        row{odd} = {bg=gray!5},
+        }
         Метод/базис         & $\lambda$ & Коментар               \\
         HF/6-31G*           & 0.8929    & Сильно завищує         \\
         B3LYP/6-31G*        & 0.9613    & Універсальний          \\
