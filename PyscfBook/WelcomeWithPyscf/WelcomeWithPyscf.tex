@@ -11,8 +11,8 @@
 \section{PySCF: концепція та філософія}
 %% --------------------------------------------------------
 
-PySCF (\emph{Python-based Simulations of Chemistry Framework}) --- це сучасний відкритий програмний пакет для квантово-хімічних розрахунків, написаний переважно на мові Python з критичними для продуктивності компонентами на \texttt{C}.
-Розроблений під керівництвом професора \emph{Garnet Chan} у Каліфорнійському технологічному інституті, PySCF став новим стандартом відкритої наукової платформи, яка поєднує:
+\PySCF{} (\emph{Python-based Simulations of Chemistry Framework}) --- це сучасний відкритий програмний пакет для квантово-хімічних розрахунків, написаний переважно на мові Python з критичними для продуктивності компонентами на \texttt{C}.
+Розроблений під керівництвом професора \emph{Garnet Chan} у Каліфорнійському технологічному інституті, \PySCF{} став новим стандартом відкритої наукової платформи, яка поєднує:
 \begin{itemize}
     \item простоту навчання;
     \item гнучкість експериментування;
@@ -20,7 +20,7 @@ PySCF (\emph{Python-based Simulations of Chemistry Framework}) --- це суча
 \end{itemize}
 
 Його головна ідея --- зробити квантову хімію \emph{прозорою та інтерактивною}.
-Замість монолітних пакетів із власними скриптовими мовами (\texttt{Gaussian}, \texttt{ORCA}), PySCF використовує чистий Python, дозволяючи виконувати розрахунки без компіляції, прямо в \texttt{Jupyter Notebook} або \texttt{Google Colab}.
+Замість монолітних пакетів із власними скриптовими мовами (\texttt{Gaussian}, \texttt{ORCA}), \PySCF{} використовує чистий Python, дозволяючи виконувати розрахунки без компіляції, прямо в \texttt{Jupyter Notebook} або \texttt{Google Colab}.
 
 Проєкт започаткований \emph{Qiming Sun} у співпраці з \emph{Garnet K.-L. Chan} та міжнародною командою розробників, серед яких \emph{Sandeep Sharma}, \emph{Thomas Berkelbach}, \emph{Zhendong Li} та інші, що зробили внесок у розвиток модулів \texttt{HF}, \texttt{DFT}, \texttt{CC}, \texttt{DMRG} та \texttt{PBC}.
 
@@ -33,19 +33,19 @@ PySCF (\emph{Python-based Simulations of Chemistry Framework}) --- це суча
 \section{Основні можливості PySCF}
 %% --------------------------------------------------------
 
-PySCF підтримує широкий спектр квантово-хімічних методів:
+\PySCF{} підтримує широкий спектр квантово-хімічних методів:
 
 \begin{itemize}
-    \item \textbf{Метод Хартрі---Фока (\texttt{HF}):} \texttt{RHF}, \texttt{UHF}, \texttt{ROHF}.
+    \item \textbf{Метод Хартрі-Фока (\texttt{HF}):} \texttt{RHF}, \texttt{UHF}, \texttt{ROHF}.
     \item \textbf{Теорія функціонала густини (\texttt{DFT}):} інтеграція з бібліотекою \texttt{libxc}.
     \item \textbf{Post-Hartree–Fock методи:} \texttt{MP2}, \texttt{CCSD}, \texttt{CCSD(T)}, \texttt{CASSCF}, \texttt{CASPT2}, \texttt{NEVPT2}.
     \item \textbf{Configuration Interaction (\texttt{CI}):} \texttt{CISD}, \texttt{Full CI}.
     \item \textbf{Релятивістські методи:} \texttt{ECP}, \texttt{X2C}, чотирикомпонентні \texttt{HF}/\texttt{MP2}.
     \item \textbf{Періодичні системи:} модуль \texttt{PBC} --- \texttt{HF}, \texttt{DFT}, \texttt{MP2}, \texttt{CCSD}.
-    \item \textbf{Явна кореляція:} \texttt{F12}-методи.
-    \item \textbf{Багаторівневі підходи:} \texttt{ONIOM}, embedding.
-    \item \textbf{Інтегральні трансформації:} перетворення AO/MO інтегралів.
-    \item \textbf{Density fitting:} прискорення обчислень великих систем.
+%    \item \textbf{Явна кореляція:} \texttt{F12}-методи.
+%    \item \textbf{Багаторівневі підходи:} \texttt{ONIOM}, embedding.
+%    \item \textbf{Інтегральні трансформації:} перетворення AO/MO інтегралів.
+%    \item \textbf{Density fitting:} прискорення обчислень великих систем.
 \end{itemize}
 
 %% --------------------------------------------------------
@@ -82,7 +82,7 @@ e_mp2 = mp.MP2(mf).kernel()
 Результати розрахунків --- це звичайні Python-об’єкти (\texttt{NumPy}-масиви, списки, словники), які можна одразу візуалізувати або обробити.
 
 \paragraph{Паралельні обчислення.}
-PySCF підтримує:
+\PySCF{} підтримує:
 \begin{itemize}
     \item внутрішній багатопоточний паралелізм (OpenMP);
     \item MPI-кластеризацію із сервер-клієнт архітектурою;
@@ -90,7 +90,7 @@ PySCF підтримує:
 \end{itemize}
 
 \paragraph{Прозорість коду.}
-PySCF --- це не «чорна скринька», а лабораторія для експериментів.
+\PySCF{} --- це не «чорна скринька», а лабораторія для експериментів.
 Будь-який SCF-цикл, побудова матриці Фока або перетворення інтегралів --- доступні для перегляду і модифікації.
 
 
@@ -119,14 +119,14 @@ row{1} = {font=\bfseries, c},
 hline{1,6} = {-}{0.08em},
 }
 Програма & Ліцензія & Мова & Архітектура & Гнучкість \\
-PySCF & Відкрита & \texttt{Python/C} & Функціональна & Висока \\
-Gaussian & Комерційна & \texttt{Fortran} & Імперативна & Низька \\
-ORCA & Академічна & \texttt{Fortran/C} & Модульна & Середня \\
-Psi4 & Відкрита & \texttt{C++/Python} & Об’єктно-орієнтована & Висока \\
+\href{https://pyscf.org/}{PySCF} & Відкрита & \texttt{Python/C} & Функціональна & Висока \\
+\href{https://gaussian.com/}{Gaussian} & Комерційна & \texttt{Fortran} & Імперативна & Низька \\
+\href{https://www.faccts.de/orca}{ORCA} & Академічна & \texttt{Fortran/C} & Модульна & Середня \\
+\href{https://psicode.org/}{Psi4} & Відкрита & \texttt{C++/Python} & Об’єктно-орієнтована & Висока \\
 \end{tblr}
 \end{table}
 
-На відміну від закритих систем, PySCF дозволяє безпосередньо працювати з алгоритмами, змінювати їх і комбінувати з бібліотеками машинного навчання або оптимізації.
+На відміну від закритих систем, \PySCF{} дозволяє безпосередньо працювати з алгоритмами, змінювати їх і комбінувати з бібліотеками машинного навчання або оптимізації.
 
 
 %% --------------------------------------------------------
@@ -137,7 +137,7 @@ Psi4 & Відкрита & \texttt{C++/Python} & Об’єктно-орієнто
 \subsection{Системні вимоги}
 %% --------------------------------------------------------
 
-Для роботи з PySCF необхідно:
+Для роботи з \PySCF{} необхідно:
 \begin{itemize}
     \item Python 3.7 або новіший
     \item NumPy версії 1.13.0 або новішої
@@ -151,7 +151,7 @@ Psi4 & Відкрита & \texttt{C++/Python} & Об’єктно-орієнто
 \subsection{Встановлення в Linux}
 %% --------------------------------------------------------
 
-Найпростіший спосіб встановлення PySCF у Linux --- використання pip:
+Найпростіший спосіб встановлення \PySCF{} у Linux --- використання pip:
 
 \begin{minted}{bash}
 # Оновлення pip
@@ -217,7 +217,7 @@ pip3 install pyscf
 \subsection{Перевірка встановлення}
 %% --------------------------------------------------------
 
-Після встановлення перевіримо, чи PySCF працює коректно:
+Після встановлення перевіримо, чи \PySCF{} працює коректно:
 \begin{minted}{python}
 import pyscf
 # Вивід версії
@@ -233,10 +233,10 @@ print(f'Енергія H2: {energy:.6f} Ha')
 Якщо програма виводить версію та обчислює енергію молекули H$_2$, встановлення виконано успішно.
 
 %% --------------------------------------------------------
-\subsection{Запуск PySCF у Docker}
+\subsection{Запуск \PySCF{} у Docker}
 %% --------------------------------------------------------
 
-PySCF також можна запускати у готовому контейнері \texttt{Docker}, що особливо зручно для відтворюваних розрахунків та роботи на серверних системах без прямого доступу до Python-середовища.
+\PySCF{} також можна запускати у готовому контейнері \texttt{Docker}, що особливо зручно для відтворюваних розрахунків та роботи на серверних системах без прямого доступу до Python-середовища.
 
 \paragraph{Встановлення Docker.}
 Для початку встановіть Docker відповідно до вашої операційної системи:
@@ -256,7 +256,7 @@ docker pull pyscf/pyscf
 docker run -it pyscf/pyscf /bin/bash
 \end{minted}
 
-Після запуску ви опинитесь усередині контейнера, де PySCF уже встановлений і готовий до використання:
+Після запуску ви опинитесь усередині контейнера, де \PySCF{} уже встановлений і готовий до використання:
 
 \begin{minted}{bash}
 python -c "import pyscf; print(pyscf.__version__)"
@@ -285,13 +285,13 @@ docker run -it -v $(pwd):/workspace pyscf/pyscf python /workspace/mycalc.py
 Деякі з них підтримуються офіційною командою розробників, інші — незалежними групами дослідників,
 але сумісні через відкрите API.
 
-\paragraph{Офіційні модулі PySCF (GitHub \href{https://github.com/pyscf}{pyscf/}):}
+\paragraph{Офіційні модулі \PySCF{} (GitHub \href{https://github.com/pyscf}{pyscf/}):}
 \begin{itemize}
-  \item \href{https://github.com/pyscf/dftd3}{\texttt{pyscf-dftd3}} — емпіричні дисперсійні корекції D3/D4 (Grimme) для \texttt{DFT};
-  \item \href{https://github.com/pyscf/geomopt}{\texttt{pyscf-geomopt}} — оптимізація геометрії (на основі \texttt{PyBerny});
+%  \item \href{https://github.com/pyscf/dftd3}{\texttt{pyscf-dftd3}} — емпіричні дисперсійні корекції D3/D4 (Grimme) для \texttt{DFT};
+  \item \href{https://pyscf.org/interface/geomopt.html}{\texttt{geomopt}} — оптимізація геометрії (на основі \texttt{PyBerny});
   \item \href{https://github.com/pyscf/dmrgscf}{\texttt{pyscf-dmrgscf}} — інтерфейс до \texttt{DMRG} солверів (\texttt{Block2}, \texttt{CheMPS2});
-  \item \href{https://github.com/pyscf/nao}{\texttt{pyscf-nao}} — метод природних атомних орбіталей (NAO);
-  \item \href{https://github.com/pyscf/qmmm}{\texttt{pyscf-qmmm}} — комбіновані \texttt{QM/MM} розрахунки;
+%  \item \href{https://github.com/pyscf/nao}{\texttt{pyscf-nao}} — метод природних атомних орбіталей (NAO);
+%  \item \href{https://github.com/pyscf/qmmm}{\texttt{pyscf-qmmm}} — комбіновані \texttt{QM/MM} розрахунки;
   \item \href{https://github.com/pyscf/cubegen}{\texttt{pyscf-cubegen}} — побудова кубічних сіток густини та орбіталей;
   \item \href{https://github.com/pyscf/properties}{\texttt{pyscf-properties}} — розрахунок молекулярних властивостей (дипольні моменти, поляризовності, ЯМР, спектри);
   \item \href{https://github.com/pyscf/gpu4pyscf}{\texttt{gpu4pyscf}} — прискорення обчислень на GPU.
@@ -304,8 +304,8 @@ docker run -it -v $(pwd):/workspace pyscf/pyscf python /workspace/mycalc.py
   \item \href{https://github.com/ZhaoYilin/pyscf-itchem}{\texttt{pyscf-itchem}} — аналіз електронної структури засобами інформаційно-теоретичної хімії;
   \item \href{https://github.com/jparkhill/RealtimePySCF}{\texttt{RealtimePySCF}} — розрахунки в реальному часі (\texttt{TDDFT});
   \item \href{https://github.com/qiskit-community/qiskit-nature-pyscf}{\texttt{qiskit-nature-pyscf}} — інтерфейс між \texttt{PySCF} і квантовими симуляціями у \texttt{Qiskit};
-  \item \href{https://github.com/pyscf-ai}{\texttt{pyscf-ai}} — інтеграція з бібліотеками машинного навчання (\texttt{PyTorch}, \texttt{JAX});
-  \item \href{https://github.com/pyscf-mpi}{\texttt{pyscf-mpi}} — паралельна реалізація через \texttt{mpi4py}.
+%  \item \href{https://github.com/pyscf-ai}{\texttt{pyscf-ai}} — інтеграція з бібліотеками машинного навчання (\texttt{PyTorch}, \texttt{JAX});
+%  \item \href{https://github.com/pyscf-mpi}{\texttt{pyscf-mpi}} — паралельна реалізація через \texttt{mpi4py}.
 \end{itemize}
 
 \paragraph{Встановлення.}
@@ -333,7 +333,7 @@ pip install -e pyscf-dmrgscf
 
 \subsection{Загальна схема розрахунку}
 
-Типовий розрахунок у PySCF складається з трьох основних етапів:
+Типовий розрахунок у \PySCF{} складається з трьох основних етапів:
 
 \begin{enumerate}
     \item \textbf{Створення молекулярного об'єкта} --- визначення геометрії системи, базисного набору, заряду та спіну.
@@ -342,7 +342,7 @@ pip install -e pyscf-dmrgscf
 \end{enumerate}
 
 \paragraph{Примітка.}
-Майже всі модулі PySCF дотримуються однакової структури виклику:
+Майже всі модулі \PySCF{} дотримуються однакової структури виклику:
 \begin{minted}{python}
 object = method(mol)
 energy = object.kernel()
@@ -417,7 +417,7 @@ energy = mf.kernel()
 \subsection{Атомні одиниці}
 %% --------------------------------------------------------
 
-PySCF використовує атомну систему одиниць (atomic units, a.u.), де:
+\PySCF{} використовує атомну систему одиниць (atomic units, a.u.), де:
 
 \begin{align*}
 \hbar &= 1  \quad \text{(стала Планка)} \\
@@ -435,7 +435,7 @@ e &= 1 \quad \text{(елементарний заряд)} \\
 \subsection{Конвертація одиниць}
 %% --------------------------------------------------------
 
-PySCF надає \href{https://github.com/pyscf/pyscf/blob/master/pyscf/data/nist.py}{модуль для конвертації} одиниць вимірювання та фізичних констант:
+\PySCF{} надає \href{https://github.com/pyscf/pyscf/blob/master/pyscf/data/nist.py}{модуль для конвертації} одиниць вимірювання та фізичних констант:
 
 \begin{minted}{python}
 from pyscf.data import nist
@@ -506,7 +506,7 @@ mol = gto.M(atom='O 0 0 0', spin=2)
 \end{minted}
 
 \paragraph{Симетрія.}
-За замовчуванням PySCF використовує повну точкову симетрію системи:
+За замовчуванням \PySCF{} використовує повну точкову симетрію системи:
 
 \begin{minted}{python}
 # Автоматичне визначення симетрії
@@ -580,17 +580,17 @@ sun2018pyscf, sun2020pyscf, sun2017pyscf,
 \nosection{Резюме}
 %% --------------------------------------------------------
 
-У цьому розділі ми познайомились з PySCF --- потужним інструментом для квантово-хімічних розрахунків. Основні моменти:
+У цьому розділі ми познайомились з \PySCF{} --- потужним інструментом для квантово-хімічних розрахунків. Основні моменти:
 
 \begin{itemize}
-    \item PySCF є сучасним, відкритим та гнучким програмним пакетом.
+    \item \PySCF{} є сучасним, відкритим та гнучким програмним пакетом.
     \item Встановлення здійснюється просто через \texttt{pip} або \texttt{conda}.
     \item Базова структура програми включає три етапи: створення системи, вибір методу, виконання розрахунку
-    \item PySCF використовує атомну систему одиниць.
+    \item \PySCF{} використовує атомну систему одиниць.
     \item Доступна велика кількість документації та навчальних матеріалів.
 \end{itemize}
 
-У наступному розділі ми детально розглянемо базові об'єкти PySCF та навчимось налаштовувати параметри розрахунків для атомних систем.
+У наступному розділі ми детально розглянемо базові об'єкти \PySCF{} та навчимось налаштовувати параметри розрахунків для атомних систем.
 
 %% --------------------------------------------------------
 \nosection{Контрольні запитання та завдання}
@@ -612,7 +612,7 @@ sun2018pyscf, sun2020pyscf, sun2017pyscf,
     \item Як організовано роботу з \texttt{PySCF} на рівні сценарію Python?
     \item Яке місце \texttt{PySCF} посідає серед інших квантово-хімічних пакетів (наприклад, \texttt{Gaussian}, \texttt{ORCA}, \texttt{NWChem})?
     \item Які переваги дає функціональний стиль програмування в PySCF?
-    \item Як реалізовано паралельні обчислення в PySCF і чому це зручно?
+    \item Як реалізовано паралельні обчислення в \PySCF{} і чому це зручно?
 \end{enumerate}
 
 %% --------------------------------------------------------

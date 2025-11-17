@@ -194,6 +194,7 @@
 	\DeclareMathOperator{\Grad}{grad}
 	\DeclareMathOperator{\inv}{inv}
 	\newcommand{\Laplasian}{\Delta}
+    \newcommand{\PySCF}{\texttt{PySCF}}
 }
 
 \ExplSyntaxOn

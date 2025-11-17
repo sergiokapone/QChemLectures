@@ -45,11 +45,11 @@
 
 Варіаційне мінімізування енергії за формою детермінанта \eqref{eq:det} приводить до \textbf{рівнянь Хартрі–Фока}:
 \begin{equation}\label{eq:HF}
-	\hat{f} \psi_i = \varepsilon_i \psi_i,
+	\hat{F} \psi_i = \varepsilon_i \psi_i,
 \end{equation}
 де \(\varepsilon_i\) --- орбітальні енергії, а оператор Фока має вигляд
 \[
-\hat{f} = \hat{h} + \sum_{j=1}^{N} (\hat{J}_j - \hat{K}_j),
+\hat{F} = \hat{h} + \sum_{j=1}^{N} (\hat{J}_j - \hat{K}_j),
 \]
 причому \(\hat{h}\) --- одноелектронний гамільтоніан (кінетична енергія + притягання до ядра), \(\hat{J}_j\) --- кулонівський оператор, \(\hat{K}_j\) --- обмінний оператор, а сума береться по всіх зайнятих орбіталях.
 Таким чином, багатоелектронна задача зводиться до набору одноелектронних рівнянь, у яких кожен електрон рухається в ефективному середньому полі від інших.
@@ -99,6 +99,54 @@
 	\varphi_i(\mathbf{r}) = \sum_{\mu=1}^{M} C_{\mu i}\,\chi_\mu(\mathbf{r}).
 \end{equation*}
 
+У зручному для чисельної реалізації матрично-векторному записі
+розкладання орбіталей у базисі атомних функцій набуває вигляду.
+Введемо вектор базисних функцій розмірності $M\times 1$:
+\[
+\boldsymbol{\chi}(\mathbf r)=
+\begin{pmatrix}
+\chi_1(\mathbf r)\\
+\chi_2(\mathbf r)\\
+\vdots\\
+\chi_M(\mathbf r)
+\end{pmatrix},
+\]
+та матрицю коефіцієнтів $\,\mathbf C\in\mathbb R^{M\times N}\,$,
+стовпці якої є коефіцієнтами окремих молекулярних орбіталей:
+\[
+\mathbf C=
+\begin{pmatrix}
+C_{11} & C_{12} & \cdots & C_{1N}\\
+C_{21} & C_{22} & \cdots & C_{2N}\\
+\vdots & \vdots & \ddots & \vdots\\
+C_{M1} & C_{M2} & \cdots & C_{MN}
+\end{pmatrix}.
+\]
+
+Тоді просторові орбіталі можна зібрати у вектор
+$\boldsymbol{\varphi}(\mathbf r)\in\mathbb R^{N\times 1}$:
+\[
+\boldsymbol{\varphi}(\mathbf r)=
+\begin{pmatrix}
+\varphi_1(\mathbf r)\\
+\varphi_2(\mathbf r)\\
+\vdots\\
+\varphi_N(\mathbf r)
+\end{pmatrix},
+\]
+і повний AO\,$\to$\,MO перехід записується компактно:
+\[
+\boldsymbol{\varphi}(\mathbf r)=
+\mathbf C^{\mathrm T}\boldsymbol{\chi}(\mathbf r),
+\qquad
+\mathbf C^{\mathrm T}\in \mathbb R^{N\times M}.
+\]
+
+Цей запис лише переписує ту саму лінійну комбінацію в матричній формі, де
+базис $\{\chi_\mu\}$ породжує координатне (АО-) представлення, а матриця
+$\mathbf C$ виконує зміну базису до МО-представлення.
+
+
 Поняття \emph{базису} дозволяє звести задачу до обчислення коефіцієнтів~$C_{\mu i}$, що робить метод Хартрі–Фока чисельним.
 
 Ключовим поняттям є \textbf{матриця густини}:
@@ -107,23 +155,34 @@
 	D_{\mu\nu} = \sum_{i}^{N} C_{\mu i} C_{\nu i},
 \end{equation}
 %
-де  $N$ --- число електронів. Матриця $\vect{D}$ зберігає всю інформацію про електронну густину:
+де  $N$ --- число електронів.
+
+У матричній формі це записують як
+\begin{equation*}
+    \mathbf D = \mathbf C_{\text{occ}}\,\mathbf C_{\text{occ}}^{\mathrm T},\quad \mathbf D \in \mathbb{R}^{M \times M},
+\end{equation*}
+де \(\mathbf C_{\text{occ}}\) --- матриця коефіцієнтів лише зайнятих
+молекулярних орбіталей.
+
+Матриця $\vect{D}$ зберігає всю інформацію про електронну густину:
 \begin{equation}\label{eq:rhoDchi}
-	\rho(\vect{r}) = \sum\limits_{\mu\nu} \chi_\mu\, D_{\mu\nu}\,  \chi_\nu.
+	\rho(\vect{r}) = \sum\limits_{\mu\nu} \chi_\mu\, D_{\mu\nu}\,  \chi_\nu = \boldsymbol{\chi}^{\mathrm T}(\mathbf r)\,
+\mathbf D\,
+\boldsymbol{\chi}(\mathbf r).
 \end{equation}
 і дозволяє обчислювати середні значення спостережуваної $O$:
 
 \begin{equation}\label{eq:O}
-	\langle \hat{O} \rangle = \mathrm{Tr}(\vect{D}  \vect{O}) = \sum_{\mu\nu} D_{\mu\nu} O_{\mu\nu}.
+	\langle \hat{O} \rangle = \sum_{\mu\nu} D_{\mu\nu} O_{\mu\nu} = \mathbf{Tr} [\mathbf{D} \mathbf{O}].
 \end{equation}
 
-Використовуючи базис, можна розрахувати матрицю одноелектронного гамільтоніану: $h_{\mu\nu} = T_{\mu\nu} + V_{\mu\nu}^{\text{eN}}$, з інтегралами
+Використовуючи базис, можна розрахувати матричні елементи одноелектронного гамільтоніану: $h_{\mu\nu} = T_{\mu\nu} + V_{\mu\nu}^{\text{eN}}$, з інтегралами
 
-\[
+\begin{equation*}
 	T_{\mu\nu} = \int \chi_\mu \left(-\frac{1}{2}\nabla^2\right) \chi_\nu \, d\vect{r}, \quad V_{\mu\nu}^{\text{nuc}} = -\sum_A Z_A \int \frac{\chi_\mu \chi_\nu}{|\vect{r} - \vect{R}_A|} \, d\vect{r}.
-\]
+\end{equation*}
 
-Матриці двоелектронних інтегралів (або інтегралів відштовхування (\emph{eri --- electron repilsion integrals)} ) є ключовими для врахування взаємодії між електронами в методі HF. Вони записуються в базисі атомних орбіталей $\{\chi_\mu\}$ у фізичній нотації (Chemist's notation) як:
+Матричні елементи двоелектронних інтегралів (або інтегралів відштовхування (\emph{eri --- electron repilsion integrals)} ) є ключовими для врахування взаємодії між електронами в методі HF. Вони записуються в базисі атомних орбіталей $\{\chi_\mu\}$ у фізичній нотації (Chemist's notation) як:
 
 \begin{equation}
 	(\mu \nu | \lambda \sigma) = \iint \frac{\chi_\mu^*(\vect{r}_1) \chi_\nu(\vect{r}_1) \chi_\lambda^*(\vect{r}_2) \chi_\sigma(\vect{r}_2)}{|\vect{r}_1 - \vect{r}_2|} \, d\vect{r}_1 d\vect{r}_2,
@@ -133,21 +192,25 @@
 
 Ці інтеграли симетричні: $(\mu \nu | \lambda \sigma) = (\nu \mu | \lambda \sigma) = (\lambda \sigma | \mu \nu) = (\mu \nu | \sigma \lambda)$. Кількість таких інтегралів для базису розміром $K$ --- $O(K^4)$, що робить їх обчислення обчислювально витратним (використовуються апроксимації, як RI або Cholesky-розклад).
 
-Кулонівський і обмінний оператори у просторі атомних орбіталей описуються відповідними матрицями~$\vect{J}$ та~$\vect{K}$, елементи яких визначаються як:
+Кулонівський і обмінний оператори у базисному представленні описуються відповідними матрицями~$\mathbf{J}$ та $\mathbf{K}$, елементи яких визначаються як:
 
-\begin{equation*}
+\begin{equation}\label{eq:JK_basis_form}
 	J_{\mu\nu} = \sum_{\lambda\sigma} D_{\lambda\sigma} (\mu \nu | \lambda \sigma), \quad K_{\mu\nu} = \sum_{\lambda\sigma} D_{\lambda\sigma} (\mu \lambda | \nu \sigma),
-\end{equation*}
-а сама матриця виглядає Фока виглядає як:
+\end{equation}
+а матричні елементи фокіана виглядають як:
 
-\begin{equation}
+\begin{equation}\label{eq:F_basis_form}
 	F_{\mu\nu} = h_{\mu\nu} + \sum_{\lambda\sigma} D_{\lambda\sigma}
-	\left[ (\mu\nu|\lambda\sigma) - \tfrac{1}{2} (\mu\lambda|\nu\sigma) \right].
+	\left[ (\mu\nu|\lambda\sigma) - (\mu\lambda|\nu\sigma) \right].
+\end{equation}
+У компактному матричному вигляді фокіан записується як
+\begin{equation}\label{eq:F_matrix}
+    \mathbf F = \mathbf h + \mathbf J[\mathbf D] - \mathbf K[\mathbf D],
 \end{equation}
 
-У матричній формі канонічні рівняння Хартрі-Фока для молекулярних орбіталей записуються як узагальнена задача на власні значення:
+У базисному представленні канонічні рівняння Хартрі-Фока для молекулярних орбіталей записуються як:
 
-\begin{equation}
+\begin{equation}\label{eq:HFR_basis_form}
 	\sum_{\nu=1}^M F_{\mu\nu} C_{\nu i} = \varepsilon_i \sum_{\nu=1}^M S_{\mu\nu} C_{\nu i}, \quad \mu = 1, \dots, M; \quad i = 1, \dots, N,
 \end{equation}
 %
@@ -157,12 +220,11 @@
 \end{equation*}
 %
 $C_{\nu i}$ --- коефіцієнти розкладу, $\varepsilon_i$ --- орбітальні енергії.
-
+%
 Ця система $N$ рівнянь для кожної орбіталі $i$ еквівалентна узагальненій матричній формі (де стовпці матриці $\vect{C}$ --- вектори коефіцієнтів орбіталей):
 
-\begin{equation}
+\begin{equation}\label{eq:roothf_matrix}
 	\vect{F} \vect{C} = \vect{S} \vect{C} \boldsymbol{\varepsilon}.
-	\label{eq:roothf_matrix}
 \end{equation}
 
 \begin{commentbox}[Розмірності матриць в рівняннях Хартрі-Фока]
@@ -231,7 +293,7 @@ $C_{\nu i}$ --- коефіцієнти розкладу, $\varepsilon_i$ --- о�
 	\]
 \end{commentbox}
 
-Матриці $T_{\mu\nu}$, $V^{\text{nuc}}_{\mu\nu}$, $\left[ (\mu\nu|\lambda\sigma) - \tfrac{1}{2} (\mu\lambda|\nu\sigma) \right]$ та ${S}_{\mu\nu}$, обчислюється один раз на початку і використовується в усіх SCF-ітераціях.
+Матричні елементи $T_{\mu\nu}$, $V^{\text{nuc}}_{\mu\nu}$, $\left[ (\mu\nu|\lambda\sigma) - \tfrac{1}{2} (\mu\lambda|\nu\sigma) \right]$ та ${S}_{\mu\nu}$, обчислюється один раз на початку і використовується в усіх SCF-ітераціях.
 PySCF вищевказані інтеграли обчислює автоматично:
 
 \begin{minted}{python}
@@ -260,7 +322,7 @@ mol = gto.M(atom='H 0 0 0; H 0 0 1.0', basis='sto-3g')
 # Запуск SCF процедури
 mf = scf.RHF(mol).run()
 
-# Обчислення матриці густини
+# Обчислення матриці густини в АО-представлені
 D = mf.make_rdm1()
 
 # Одноелектронний гамільтоніан h
@@ -304,6 +366,37 @@ print('F (з PySCF):\n', np.round(F_pyscf, 6))
 	= \sum_{\mu\nu} D_{\mu\nu} h_{\mu\nu}
 	+ \tfrac{1}{2} \sum_{\mu\nu} D_{\mu\nu} \left( J_{\mu\nu} - K_{\mu\nu} \right)
 	+ V_{NN},
+\end{equation}
+
+Де кулонівський та обмінний внески визначаються через двоелектронні інтеграли \eqref{eq:JK_basis_form}.
+
+Компоненти енергії системи в \emph{представленні атомних орбіталей} (АО-представлення) природно записуються в матричному вигляді. Кінетична енергія, енергія взаємодії електрон–ядро та електрон–електронна взаємодія набувають форми
+\begin{equation*}
+T = \mathrm{Tr} \big[\mathbf{D}\,\mathbf{T}\big],
+\qquad
+V_{\mathrm{eN}} = \mathrm{Tr} \big[\mathbf{D}\,\mathbf{V}^{\mathrm{nuc}}\big],
+\qquad
+V_{\mathrm{ee}}=\tfrac{1}{2}\,\mathrm{Tr} \big[\mathbf{D}\,(\mathbf{J}-\mathbf{K})\big].
+\end{equation*}
+
+Повна енергія Хартрі-Фока тоді записується компактно:
+\begin{equation}\label{eq:E_HF_matrix_form_hJK}
+E_{\mathrm{HF}}
+=
+\mathrm{Tr} \big[\mathbf{D}\,\mathbf{h}\big]
++
+\tfrac{1}{2}\,\mathrm{Tr} \big[\mathbf{D}\,(\mathbf{J}-\mathbf{K})\big]
++
+V_{NN}.
+\end{equation}
+
+Або використовуючи матрицю Фока \eqref{eq:F_matrix}, можна переписати енергію у симетризованому вигляді
+\begin{equation}\label{eq:E_HF_matrix_form_hF}
+E_{\text{HF}}
+=
+\tfrac{1}{2}\,\mathrm{Tr} \big[\mathbf{D}\,(\mathbf{h}+\mathbf{F})\big]
++
+V_{NN}.
 \end{equation}
 
 Розрахунок енергії та компонент в PySCF:
@@ -357,10 +450,10 @@ print(f'E_HF = T + V_eN + V_ee + V_NN = {T:.6f} {V_eN:.6f} + {V_ee:.6f} + {V_NN:
 У \textsc{PySCF} усі складові енергії системи --- кінетична, електрон--ядерна, електрон--електронна, між’ядерна та повна енергія Хартрі--Фока --- можуть бути отримані безпосередньо через набір спеціалізованих~API-методів класу~\inlinecode{scf.hf.SCF}. Для кожного з них передбачено окремі функції, наприклад,~\inlinecode{energy\_elec()}~для електронної частини,~\inlinecode{energy\_nuc()}~для ядерної взаємодії,~\inlinecode{energy\_tot()}~для повної енергії, а також допоміжні процедури~\inlinecode{get\_hcore()},~\inlinecode{get\_jk()},~\inlinecode{get\_veff()}~та~\inlinecode{get\_fock()}~для побудови окремих операторів і потенціалів, що входять до виразу енергії. Завдяки цьому енергію можна отримати кількома способами: безпосередньо з атрибутів об’єкта~SCF~після виконання~\inlinecode{mf.run()}, або вручну, обчислюючи внески через інтеграли та матриці густини. Повний список методів наведено у вихідному коді~\textsc{PySCF}~у модулі \href{https://pyscf.org/_modules/pyscf/scf/hf.html}{\texttt{pyscf/scf/hf.py}}, де всі~API-команди задокументовано з прикладами використання.
 
 %% --------------------------------------------------------
-\subsection{SFC-процедура}
+\section{SFC-процедура}
 %% --------------------------------------------------------
 
-SCF-процедура --- ітераційна: з початкового наближення $\vect{D}^{(0)}$ послідовно будується $\vect{F}^{(k)}$, розв'язується (\ref{eq:roothf_matrix}) для $\vect{C}^{(k+1)}$, оновлюється $\vect{D}^{(k+1)} = 2 \sum_i^{\text{occ}} \vect{C}_i (\vect{C}_i)^T$, і цикл триває до збіжності $\| \vect{D}^{(k+1)} - \vect{D}^{(k)} \| < 10^{-8}$. Тоді обчислюється остаточна $E_{\text{HF}}$ та перевіряється віріальне співвідношення. В програмі \inputcode{HF_procedure.py} показуються всі етапи RHF розрахунку, а на (рис.~\ref{tikz:diagramm}) показана блок-схема процесу.
+SCF-процедура --- ітераційна: з початкового наближення $\vect{D}^{(0)}$ послідовно будується $\vect{F}^{(k)}$, розв'язується (\ref{eq:roothf_matrix}) для $\vect{C}^{(k+1)}$, оновлюється $\mathbf D^{(k+1)} =  \mathbf C_{\mathrm{occ}}^{(k+1)} \big(\mathbf C_{\mathrm{occ}}^{(k+1)}\big)^{\!T}$, і цикл триває до збіжності $\| \vect{D}^{(k+1)} - \vect{D}^{(k)} \| < 10^{-8}$. Тоді обчислюється остаточна $E_{\text{HF}}$ та перевіряється віріальне співвідношення. В програмі \inputcode{HF_procedure.py} показуються всі етапи RHF розрахунку, а на (рис.~\ref{tikz:diagramm}) показана блок-схема процесу.
 
 %---------------------------------------------------------
 \begin{figure}[h!]\centering
@@ -370,51 +463,18 @@ SCF-процедура --- ітераційна: з початкового на�
 \end{figure}
 %---------------------------------------------------------
 
-%% --------------------------------------------------------
-\subsubsection{Метод DIIS --- прискорення збіжності SCF}\label{sec:DIIS}
-%% --------------------------------------------------------
-
-У стандартному SCF-алгоритмі ми на кожній ітерації будуємо нову матрицю Фока $\vect{F}^{(n)}$ з поточної матриці густини $\vect{D}^{(n-1)}$, розв'язуємо задачу на власні значення та отримуємо нову матрицю густини $\vect{D}^{(n)}$. Цей процес повторюється до збіжності.
-
-Проблема у тому, що такий простий ітераційний процес може збігатися дуже повільно, особливо для складних систем. Іноді енергія навіть осцилює між кількома значеннями і не досягає стабільного результату.
-
-Метод \textbf{DIIS} (Direct Inversion in the Iterative Subspace --- пряма інверсія в ітераційному підпросторі), запропонований Пітером Пулаєм у 1980 році, вирішує цю проблему наступним чином: замість того, щоб використовувати лише матрицю Фока з поточної ітерації, DIIS \emph{запам'ятовує} кілька попередніх матриць Фока
-\begin{equation*}
-	\vect{F}^{(n-k)}, \vect{F}^{(n-k+1)}, \ldots, \vect{F}^{(n-1)}, \vect{F}^{(n)}
-\end{equation*}
-та будує оптимальну лінійну комбінацію:
-
-\begin{equation}
-	\vect{F}_{\text{DIIS}}^{(n)} = \sum_{i=1}^{m} c_i \vect{F}^{(n-m+i)}
-\end{equation}
-%
-де коефіцієнти $c_i$ підбираються так, щоб мінімізувати похибку самоузгодженості.
-
-\begin{commentbox}[Що таке похибка самоузгодженості?]
-	Якщо рішення ідеально самоузгоджене, то виконується комутаційне співвідношення:
-	\begin{equation}
-		[\vect{F}, \vect{D}\vect{S}] = \vect{F}\vect{D}\vect{S} - \vect{S}\vect{D}\vect{F} = \vect{0}
-	\end{equation}
-
-	Похибка (residual) на $i$-тій ітерації --- це відхилення від цієї умови:
-	\begin{equation}
-		\vect{e}^{(i)} = \vect{F}^{(i)} \vect{D}^{(i)} \vect{S} - \vect{S} \vect{D}^{(i)} \vect{F}^{(i)}
-	\end{equation}
-
-	DIIS шукає такі коефіцієнти $c_i$, щоб похибка комбінованої матриці Фока була мінімальною.
+\begin{commentbox}[Метод DIIS у SCF-процедурі]
+Для стабілізації та прискорення збіжності SCF-ітерацій зазвичай
+застосовують алгоритм \textit{DIIS} (Direct Inversion in the Iterative
+Subspace). Його суть полягає у побудові екстрапольованої матриці Фока
+як лінійної комбінації кількох попередніх ітерацій, причому коефіцієнти
+обираються так, щоб мінімізувати комутаційний залишок
+\[
+\mathbf R = \mathbf F\mathbf D\mathbf S - \mathbf S\mathbf D\mathbf F.
+\]
+Отримана таким чином матриця Фока має значно кращі збіжні властивості.
+Детальний опис методу DIIS наведено в додатку~\ref{sec:DIIS}.
 \end{commentbox}
-
-SCF-процес умовно можна уявити як <<рух по енергетичному ландшафту>> до мінімуму. Без DIIS процедура робить кроки, які можуть <<перестрибувати>> через мінімум туди-сюди. DIIS аналізує кілька попередніх кроків і робить <<розумну>> екстраполяцію, яка швидше веде до мінімуму.
-
-Типова схема роботи:
-\begin{enumerate}
-	\item \textbf{Ітерації 1--2:} звичайний SCF без DIIS (потрібно накопичити історію)
-	\item \textbf{Ітерація 3 і далі:} DIIS активується автоматично, зберігає 6--8 останніх матриць Фока та похибок
-	\item На кожній ітерації будується оптимальна комбінація, яка прискорює збіжність
-	\item Процес продовжується до досягнення заданої точності (наприклад, $\Delta E < 10^{-6}$ Hartree)
-\end{enumerate}
-
-Детальний розбір DIIS та що робити, коли він не працює, наведено в розділі \ref{sec:convergence}.
 
 
 Для перевірки коректності розв'язку (стаціонарність) також використовується \textbf{віріальне співвідношення}:
@@ -485,7 +545,7 @@ mf = scf.RHF(mol).run(init_guess='minao')
 \end{minted}
 
 %% --------------------------------------------------------
-\subsection{Які бувають базиси}
+\section{Які бувають базиси}
 %% --------------------------------------------------------
 
 Для практичного розв'язання рівнянь Хартрі--Фока необхідно задати
@@ -629,7 +689,7 @@ mf = scf.RHF(mol).run(init_guess='minao')
 	\end{tblr}
 \end{table}
 
-Таким чином, вибір базисного набору — це компроміс між
+Таким чином, вибір базисного набору --- це компроміс між
 обчислювальними витратами та точністю відтворення хвильової функції.
 
 \paragraph{Базисні набори в PySCF.}
@@ -656,7 +716,7 @@ print(sorted(basis.ALIAS.keys()))  # відсортований список б�
 для попереднього скринінгу --- \texttt{6-31G*} або \texttt{def2-SVP}.
 
 %% --------------------------------------------------------
-\subsection{Варіанти методу Хартрі–Фока}
+\section{Варіанти методу Хартрі–Фока}
 %% --------------------------------------------------------
 
 У попередній секції було розглянуто загальну форму рівнянь Хартрі–Фока.
@@ -673,7 +733,7 @@ print(sorted(basis.ALIAS.keys()))  # відсортований список б�
 \]
 %
 
-\begin{wrapfigure}{O}{0.2\linewidth}
+\begin{wrapfigure}[12]{O}{0.2\linewidth}
     \centering
 	\begin{tikzpicture}[scale=0.6]
 		\foreach \i[count=\xi, count=\yi from 4] in {0,2,...,4}{ \draw[ultra thick]  (0,\i) -- pic[pos=0.3] {upspinarrow}  pic[pos=0.7] {downspinarrow} (1,\i) node[right] {$\phi_{\xi}$};}
@@ -684,13 +744,17 @@ print(sorted(basis.ALIAS.keys()))  # відсортований список б�
 Кожна просторова орбіталь $\phi_i$ містить два електрони (один зі спіном~$\alpha$, інший~$\beta$).
 Тому матриця густини має вигляд
 \[
-	D_{\mu\nu} = 2 \sum_{i=1}^{N_\text{occ}} C_{\mu i} C_{\nu i},
+	\mathbf D = 2 \mathbf C_{\text{occ}}\,\mathbf C_{\text{occ}}^{\mathrm T},\quad \mathbf D \in \mathbb{R}^{M \times M},
 \]
 а матриця Фока спрощується:
-\[
+\begin{equation*}
 	F_{\mu\nu} = h_{\mu\nu} + \sum_{\lambda\sigma} D_{\lambda\sigma}
-	\left[ (\mu\nu|\lambda\sigma) - \tfrac{1}{2} (\mu\lambda|\nu\sigma) \right].
-\]
+	\left[ (\mu\nu|\lambda\sigma) - \tfrac{1}{2} (\mu\lambda|\nu\sigma) \right],
+\end{equation*}
+або в компактному вигляді:
+\begin{equation*}
+    \mathbf{F} = \mathbf{h} + \left(\mathbf{J}[\mathbf D] - \frac12\mathbf{K}[\mathbf D]\right).
+\end{equation*}
 %
 RHF підходить для синглетних систем (He, Ne, H$_2$ у синглетному стані).
 У PySCF --- це стандартна реалізація класу \inlinecode{scf.RHF}.
@@ -712,7 +776,7 @@ print('E(RHF) =', mf.e_tot)
 \]
 %
 
-\begin{wrapfigure}{O}{0.2\linewidth}
+\begin{wrapfigure}[8]{O}{0.2\linewidth}
     \centering
     \begin{tikzpicture}[scale=0.6]
     	\foreach \i[count=\xi] in {0,2,...,4}{ \draw[ultra thick]  (0,\i) -- pic[pos=0.5] {upspinarrow}   ++(1,0) node[right] {$\phi_{\xi}\alpha$};}
@@ -737,7 +801,18 @@ print('E(RHF) =', mf.e_tot)
 			- D^{\beta}_{\lambda\sigma} (\mu\lambda|\nu\sigma) \right].
 	\end{aligned}
 \]
-%
+
+У компактному матричному вигляді це можна записати як
+\[
+    \mathbf F^{\alpha}
+    = \mathbf h + \mathbf J[\mathbf D^{\alpha}+\mathbf D^{\beta}]
+      - \mathbf K[\mathbf D^{\alpha}],
+    \qquad
+    \mathbf F^{\beta}
+    = \mathbf h + \mathbf J[\mathbf D^{\alpha}+\mathbf D^{\beta}]
+      - \mathbf K[\mathbf D^{\beta}].
+\]
+
 UHF добре описує системи з непарною кількістю електронів (H, O, NO, радикали).
 Недолік: \textbf{порушення чистоти спіну} (див. секцію \ref{sec:spin-contamination}), тобто
 \[
