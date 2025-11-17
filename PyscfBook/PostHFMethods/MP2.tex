@@ -225,7 +225,9 @@ mp2_calc = mp.MP2(mf).set(frozen=2)
 	\caption{Порівняння точності та обчислювальної складності \texttt{HF} та \texttt{MP2}}
 	\label{tab:HFvsMP2}
 	\begin{tblr}{
-			colspec={X[l] X[c] X[c]}
+		colspec={X[l] X[c] X[c]},
+        row{1} = {font=\bfseries},
+        row{odd} = {bg=gray!5},
 		}
 		\toprule
 		Метод & Точність              & Обчислювальна складність \\
@@ -303,7 +305,8 @@ mp2_calc = mp.MP2(mf).set(frozen=2)
 	\small
 	\begin{tblr}{
 			colspec= {Q[l] X[l]},
-			row{1} = {c,m, font=\bfseries}
+			row{1} = {c,m, font=\bfseries},
+            row{odd} = {bg=gray!5},
 		}
 		\hline
 		Добре для               & Погано для                    \\

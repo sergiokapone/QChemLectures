@@ -113,16 +113,17 @@ e_mp2 = mp.MP2(mf).kernel()
 \centering
 \caption{Порівняння популярних квантово-хімічних пакетів}\label{tab:soft}
 \begin{tblr}{
-colspec={lcccc},
+row{odd} = {bg=gray!5},
+colspec={Q[l,m, font=\ttfamily]cQ[c,m, font=\ttfamily]cc},
 rows={m},
 row{1} = {font=\bfseries, c},
-hline{1,6} = {-}{0.08em},
+hline{1,2,6} = {-}{0.08em},
 }
-Програма & Ліцензія & Мова & Архітектура & Гнучкість \\
-\href{https://pyscf.org/}{PySCF} & Відкрита & \texttt{Python/C} & Функціональна & Висока \\
-\href{https://gaussian.com/}{Gaussian} & Комерційна & \texttt{Fortran} & Імперативна & Низька \\
-\href{https://www.faccts.de/orca}{ORCA} & Академічна & \texttt{Fortran/C} & Модульна & Середня \\
-\href{https://psicode.org/}{Psi4} & Відкрита & \texttt{C++/Python} & Об’єктно-орієнтована & Висока \\
+    Програма                                &  Ліцензія  & Мова       &     Архітектура      & Гнучкість \\
+    \href{https://pyscf.org/}{PySCF}        &  Відкрита  & Python/C   &    Функціональна     &  Висока   \\
+    \href{https://gaussian.com/}{Gaussian}  & Комерційна & Fortran    &     Імперативна      &  Низька   \\
+    \href{https://www.faccts.de/orca}{ORCA} & Академічна & Fortran/C  &       Модульна       &  Середня  \\
+    \href{https://psicode.org/}{Psi4}       &  Відкрита  & C++/Python & Об’єктно-орієнтована &  Висока
 \end{tblr}
 \end{table}
 
@@ -139,19 +140,19 @@ hline{1,6} = {-}{0.08em},
 
 Для роботи з \PySCF{} необхідно:
 \begin{itemize}
-    \item Python 3.7 або новіший
-    \item NumPy версії 1.13.0 або новішої
-    \item SciPy версії 1.0.0 або новішої
-    \item H5py (для збереження великих масивів даних)
-    \item 4--8 ГБ оперативної пам'яті (мінімум)
-    \item Сучасний процесор (бажано багатоядерний)
+    \item \texttt{Python 3.7} або новіший.
+    \item \texttt{NumPy} версії 1.13.0 або новішої.
+    \item \texttt{SciPy} версії 1.0.0 або новішої.
+    \item \texttt{H5py} (для збереження великих масивів даних).
+    \item $4-8$ ГБ оперативної пам'яті (мінімум).
+    \item Сучасний процесор (бажано багатоядерний).
 \end{itemize}
 
 %% --------------------------------------------------------
 \subsection{Встановлення в Linux}
 %% --------------------------------------------------------
 
-Найпростіший спосіб встановлення \PySCF{} у Linux --- використання pip:
+Найпростіший спосіб встановлення \PySCF{} у \texttt{Linux} --- використання pip:
 
 \begin{minted}{bash}
 # Оновлення pip
@@ -168,7 +169,7 @@ pip install pyscf
 pip install pyscf[geomopt,dftd3,dmrgscf]
 \end{minted}
 
-Якщо потрібно встановити всі опціональні модулі PySCF:
+Якщо потрібно встановити всі опціональні модулі \PySCF:
 
 \begin{minted}{bash}
 # Повне встановлення з усіма підтримуваними розширеннями
@@ -359,9 +360,9 @@ energy = object.kernel()
 from pyscf import gto, scf
 # Етап 1: Створення молекулярного об'єкта
 mol = gto.M(
-atom='H 0 0 0',      # Координати атома
-basis='sto-3g',       # Базисний набір
-spin=1                # 2S (1 неспарений електрон)
+    atom='H 0 0 0',      # Координати атома
+    basis='sto-3g',       # Базисний набір
+    spin=1                # 2S (1 неспарений електрон)
 )
 # Етап 2: Вибір методу (UHF для відкритої оболонки)
 mf = scf.UHF(mol)
@@ -372,30 +373,22 @@ print(f'Енергія атома H: {energy:.8f} Hartree')
 print(f'Енергія атома H: {energy * 27.211386:.6f} eV')
 \end{minted}
 
-%% --------------------------------------------------------
-\subsection{Структура для атома Гелію}
-%% --------------------------------------------------------
-
 Для атома з двома електронами у замкненій оболонці:
 
 \begin{minted}{python}
 from pyscf import gto, scf
 # Атом Гелію
 mol = gto.M(
-atom='He 0 0 0',
-basis='6-31g',
-spin=0,               # Всі електрони спарені
-charge=0              # Нейтральний атом
+    atom='He 0 0 0',
+    basis='6-31g',
+    spin=0,               # Всі електрони спарені
+    charge=0              # Нейтральний атом
 )
 # RHF для замкненої оболонки
 mf = scf.RHF(mol)
 energy = mf.kernel()
 print(f'Енергія He: {energy:.8f} Ha')
 \end{minted}
-
-%% --------------------------------------------------------
-\subsection{Розрахунок з аналізом результатів}
-%% --------------------------------------------------------
 
 Більш детальний приклад з виведенням додаткової інформації:
 
@@ -527,35 +520,35 @@ mol = gto.M(atom='Ne 0 0 0', symmetry=False)
 
 \begin{center}
 \begin{tblr}{
-colspec={lX[l,m, font=\small]},
-row{1} = {c, m, font=\bfseries},
+    colspec={lX[l,m, font=\small]},
+    row{1} = {c, m, font=\bfseries},
+    row{odd} = {bg=gray!5},
 }
-\hline
+\toprule
 {Ресурс} & {URL} \\
-\hline
+\midrule
 Головний сайт & \url{https://pyscf.org} \\
 GitHub репозиторій & \url{https://github.com/pyscf/pyscf} \\
 Документація API & \url{https://pyscf.org/pyscf_api_docs/pyscf.html} \\
 Приклади коду & \url{https://github.com/pyscf/pyscf/tree/master/examples} \\
-\hline
+\bottomrule
 \end{tblr}
 \end{center}
 
 \noindent
 Окремо варто звернути увагу на велику колекцію \emph{прикладів коду},
-згадану в таблиці вище. Вона є одним із найцінніших навчальних ресурсів у екосистемі \texttt{PySCF},
+згадану в таблиці вище. Вона є одним із найцінніших навчальних ресурсів у екосистемі \PySCF,
 оскільки демонструє практичне застосування майже всіх модулів пакета.
 
 \paragraph{Структура прикладів на GitHub.}
 \begin{itemize}
-    \item \texttt{scf/} --- базові приклади методів Хартрі---Фока (\texttt{RHF}, \texttt{UHF}, \texttt{ROHF});
-    \item \texttt{dft/} --- демонстрації \texttt{DFT} і гібридних функціоналів;
-    \item \texttt{mp/}, \texttt{cc/}, \texttt{ci/} --- методи пост-Хартрі-Фока;
-    \item \texttt{mcscf/} --- розрахунки з активним простором (\texttt{CASSCF}, \texttt{NEVPT2});
-    \item \texttt{pbc/} --- періодичні системи (кристали, твердий стан);
-    \item \texttt{prop/} --- розрахунок молекулярних властивостей (дипольні моменти, поляризовності);
-    \item \texttt{geomopt/} --- оптимізація геометрії та сканування потенціалів;
-    \item \texttt{ao2mo/} --- приклади трансформацій інтегралів та роботи з орбіталями.
+    \item \href{https://github.com/pyscf/pyscf/tree/master/examples/scf/}{\texttt{scf}}--- базові приклади методів Хартрі---Фока (\texttt{RHF}, \texttt{UHF}, \texttt{ROHF});
+    \item \href{https://github.com/pyscf/pyscf/tree/master/examples/dft}{\texttt{dft}} --- демонстрації \texttt{DFT} і гібридних функціоналів;
+    \item \href{https://github.com/pyscf/pyscf/tree/master/examples/mp}{\texttt{mp}}, \href{https://github.com/pyscf/pyscf/tree/master/examples/cc}{\texttt{cc}}, \href{https://github.com/pyscf/pyscf/tree/master/examples/ci}{\texttt{ci}} --- методи пост-Хартрі-Фока;
+    \item \href{https://github.com/pyscf/pyscf/tree/master/examples/mcscf}{\texttt{mcscf}}  --- розрахунки з активним простором (\texttt{CASSCF}, \texttt{NEVPT2});
+    \item \href{https://github.com/pyscf/pyscf/tree/master/examples/pbc}{\texttt{pbc}}--- періодичні системи (кристали, твердий стан);
+    \item \href{https://github.com/pyscf/pyscf/tree/master/examples/geomopt}{\texttt{geomopt}} --- оптимізація геометрії та сканування потенціалів;
+    \item \href{https://github.com/pyscf/pyscf/tree/master/examples/ao2mo}{\texttt{ao2mo}} --- приклади трансформацій інтегралів та роботи з орбіталями.
 \end{itemize}
 
 Кожен приклад є самодостатнім Python-скриптом, який можна без змін запускати після встановлення \texttt{PySCF}.
@@ -566,7 +559,7 @@ GitHub репозиторій & \url{https://github.com/pyscf/pyscf} \\
 \subsection{Основні публікації}
 %% --------------------------------------------------------
 
-Ключові статті для цитування при використанні PySCF:
+Ключові статті для цитування при використанні \PySCF:
 
 \addtocategoryNoCi{pyscf}{%
 sun2018pyscf, sun2020pyscf, sun2017pyscf,
@@ -603,15 +596,15 @@ sun2018pyscf, sun2020pyscf, sun2017pyscf,
 \begin{enumerate}
     \item Які основні задачі розв’язує квантова хімія і чому для цього потрібні обчислювальні методи?
     \item У чому полягає ідея використання програмних пакетів для квантово-хімічних розрахунків?
-    \item Що таке \texttt{PySCF} і які його ключові переваги як навчального та дослідницького інструменту?
-    \item Які типи методів реалізовано в \texttt{PySCF}? Як вони співвідносяться між собою?
-    \item Що означає, що \texttt{PySCF} є «модульною платформою»? Які наслідки це має для користувача?
+    \item Що таке \PySCF{} і які його ключові переваги як навчального та дослідницького інструменту?
+    \item Які типи методів реалізовано в \PySCF{}? Як вони співвідносяться між собою?
+    \item Що означає, що \PySCF{} є «модульною платформою»? Які наслідки це має для користувача?
     \item Чому важливо, щоб користувач розумів фізичний зміст кожного етапу розрахунку, навіть коли його виконує програма?
-    \item Яке значення має відкритий вихідний код \texttt{PySCF} для науки й освіти?
-    \item Які можливості \texttt{PySCF} роблять його придатним як для навчання, так і для наукових досліджень?
-    \item Як організовано роботу з \texttt{PySCF} на рівні сценарію Python?
-    \item Яке місце \texttt{PySCF} посідає серед інших квантово-хімічних пакетів (наприклад, \texttt{Gaussian}, \texttt{ORCA}, \texttt{NWChem})?
-    \item Які переваги дає функціональний стиль програмування в PySCF?
+    \item Яке значення має відкритий вихідний код \PySCF{} для науки й освіти?
+    \item Які можливості \PySCF{} роблять його придатним як для навчання, так і для наукових досліджень?
+    \item Як організовано роботу з \PySCF{} на рівні сценарію Python?
+    \item Яке місце \PySCF{} посідає серед інших квантово-хімічних пакетів (наприклад, \texttt{Gaussian}, \texttt{ORCA}, \texttt{NWChem})?
+    \item Які переваги дає функціональний стиль програмування в \PySCF?
     \item Як реалізовано паралельні обчислення в \PySCF{} і чому це зручно?
 \end{enumerate}
 
@@ -622,9 +615,9 @@ sun2018pyscf, sun2020pyscf, sun2017pyscf,
 \begin{enumerate}
     \item Ознайомтеся зі структурою офіційного сайту \texttt{PySCF} та перегляньте приклади розрахунків у документації.
     \item Встановіть \texttt{PySCF} і виконайте приклад запуску, поданий у розділі.
-    \item Напишіть найпростішу програму Python, яка імпортує \texttt{pyscf} і виводить його версію.
-    \item Знайдіть у каталозі прикладів \texttt{PySCF} розрахунок для молекули \ce{H2}.
+    \item Напишіть найпростішу програму Python, яка імпортує модуль \inlinecode{pyscf} і виводить його версію.
+    \item Знайдіть у каталозі прикладів \PySCF{} розрахунок для молекули \ce{H2}.
     Запустіть його та порівняйте отриману енергію з наведеною в підручнику.
-    \item Ознайомтеся з вихідним кодом одного з прикладів (\texttt{scf/hf.py}) і прокоментуйте, які частини коду відповідають за створення молекули, базису та запуск розрахунку.
-    \item Складіть короткий список модулів \texttt{PySCF}, які ви очікуєте опанувати у наступних розділах, і поясніть, для чого вони потрібні.
+    \item Ознайомтеся з вихідним кодом одного з прикладів (\inputcode[base=https://github.com/pyscf/pyscf/blob/master/examples/scf/]{00-simple_hf.py}) і прокоментуйте, які частини коду відповідають за створення молекули, базису та запуск розрахунку.
+    \item Складіть короткий список модулів \PySCF, які ви очікуєте опанувати у наступних розділах, і поясніть, для чого вони потрібні.
 \end{enumerate}

@@ -11,7 +11,27 @@
 \pagestyle{main}
 
 
-\input{MagneticProperties/MagneticProperties.tex}
+%\input{MagneticProperties/MagneticProperties.tex}
 
+\begin{table}[h!]
+	\centering
+	\caption{Ієрархія базисних наборів}
+	\begin{tblr}{
+			colspec = {Q[l, m, font=\ttfamily]X[l]},
+			row{odd} = {bg=gray!5},
+			hlines,
+			vlines,
+            row{1} = {c, m, font=\bfseries},
+		}
+        Базис       & Опис                                  \\
+		STO-3G      & мінімальний, дуже швидкий             \\
+		6-31G       & валентно-розщеплений (double-zeta)    \\
+		6-31G*      & додано $d$-поляризаційні функції      \\
+		6-311G**    & triple-zeta + $p,d$-поляризація       \\
+		cc-pVDZ     & кореляційно-узгоджений double-zeta    \\
+		cc-pVTZ     & стандарт для високоточного розрахунку \\
+		aug-cc-pVTZ & + дифузні функції
+	\end{tblr}
+\end{table}
 
 \end{document}

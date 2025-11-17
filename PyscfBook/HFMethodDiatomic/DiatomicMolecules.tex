@@ -523,7 +523,11 @@ pip install geometric
 
 Результати виконання коду наведені в таблиці:
 \begin{center}
-	\begin{tabular}{lccc}
+	\begin{tblr}{
+        colspec={lccc},
+        row{1} = {font=\bfseries},
+        row{odd} = {bg=gray!5},
+        }
 		\toprule
 		Базис   & $R_e$ (bohr) & $E_e$ (Ha) & Похибка (mHa) \\
 		\midrule
@@ -535,7 +539,7 @@ pip install geometric
 		\midrule
 		Точне   & 2.00         & $-0.5689$  & ---           \\
 		\bottomrule
-	\end{tabular}
+	\end{tblr}
 \end{center}
 
 \textbf{Висновки:}
@@ -861,15 +865,19 @@ for basis in bases:
 \textbf{Експериментальні значення (в Дебаях):}
 \begin{table}[h]
 	\centering
-	\begin{tblr}{lcc}
-		\hline
+	\begin{tblr}{
+        colspec={lcc},
+        row{1} = {font=\bfseries},
+        row{odd} = {bg=gray!5},
+        }
+		\toprule
 		Молекула & HF (cc-pVTZ) & Експеримент \\
-		\hline
+		\midrule
 		\ce{LiH} & 5.88         & 5.88        \\
 		\ce{HF}  & 1.82         & 1.83        \\
 		\ce{HCl} & 1.11         & 1.08        \\
 		\ce{H2O} & 1.85         & 1.85        \\
-		\hline
+		\bottomrule
 	\end{tblr}
 \end{table}
 

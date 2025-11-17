@@ -159,18 +159,22 @@ mc.kernel()
     \caption{Рекомендації по вибору активного простору}
     \label{tab:casscf_active_space}
     \small
-    \begin{tabular}{lll}
-        \hline
+    \begin{tblr}{
+        colspec={lll},
+        row{1} = {font=\bfseries},
+        row{odd} = {bg=gray!5},
+        }
+        \toprule
         \textbf{Система} & \textbf{Активний простір} & \textbf{Коментар}          \\
-        \hline
+        \midrule
         Be               & (4,8): 2s,2p,3s,3p        & Враховує $2s^2 \leftrightarrow 2p^2$           \\
         C                & (4,4): 2s,2p              & Мінімальний валентний      \\
         O                & (6,6): 2s,2p + корел.     & З кореляційними орбіталями \\
         3d метали        & (n,5): 3d                 & Тільки d-орбіталі          \\
         3d метали        & (n+2,6): 3d,4s            & d + s орбіталі             \\
         Лантаноїди       & (n,7): 4f                 & f-орбіталі                 \\
-        \hline
-    \end{tabular}
+        \bottomrule
+    \end{tblr}
 \end{table}
 
 \textbf{Принципи вибору:}
