@@ -1,0 +1,487 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+% !TeX root =../PyscfBook.te
+
+%% --------------------------------------------------------
+\section{Оптимізація геометрії}
+%% --------------------------------------------------------
+
+Геометрія молекули є фундаментальною характеристикою, від якої залежить практично весь спектр її фізико-хімічних властивостей: енергія, електронна структура, спектри коливань і збуджень, поляризованість, багаточастинні відгуки та реакційна здатність. У межах наближення Борна---Оппенгаймера ця геометрія визначає форму поверхні потенціальної енергії, а отже формує локальну поведінку електронної хмари, умови зв'язування та всі похідні величини.
+
+Будь-яке відхилення від рівноважної структури --- навіть незначне --- неминуче викликає систематичні спотворення. Коливальні частоти зсуваються через некоректно визначений гесіан; дипольні, квадрупольні та вищі моменти набувають залежності від деформації, яка не має фізичного сенсу; енергії вертикальних переходів зміщуються, а похідні, що лежать в основі теорії відгуку, стають некоректними, оскільки розраховані не в точці мінімуму, де вони математично визначені.
+
+Таким чином, оптимізація геометрії не є технічним попереднім кроком, а виступає фундаментальною частиною квантово-хімічного моделювання. Вона забезпечує коректність усіх наступних розрахунків, дозволяє строго застосовувати варіаційні та аналітичні методи, та гарантує, що подальший аналіз ґрунтуватиметься на фізично осмисленій, енергетично виправданій структурі.
+
+
+
+
+Для будь-якої квантово-хімічної моделі енергія $E(\mathbf R)$ визначається положеннями ядер, і завдання оптимізації полягає в тому, щоб знайти таку конфігурацію
+\[
+\mathbf R_0 = \arg\min_{\mathbf R} E(\mathbf R),
+\]
+яка відповідає стаціонарній точці поверхні потенційної енергії. У межах наближення Борна---Оппенгаймера ця точка інтерпретується як рівноважна структура, де сили повністю компенсуються:
+\[
+\nabla_{\mathbf R} E(\mathbf R_0) = \mathbf 0.
+\]
+
+Градієнт $\nabla_{\mathbf R} E$ дає напрямок найшвидшого спаду енергії, але не враховує геометрію поверхні потенціальної енергії. Тому використання лише градієнта (градієнтний спуск) неефективне. Гесіан
+\[
+H_{\alpha\beta}=\frac{\partial^2E}{\partial R_\alpha\partial R_\beta}
+\]
+містить інформацію про локальну кривизну, тобто про те, як змінюється градієнт. Наявність хорошої оцінки гесіана дозволяє робити «Ньютонівські» кроки, які набагато швидше приводять до мінімуму. Саме тому сучасні оптимізатори експлуатують наближення до гесіана й оновлюють його в міру накопичення даних.
+
+%% --------------------------------------------------------
+\subsection{Оптимізатори геометрії в \PySCF}
+%% --------------------------------------------------------
+
+Документацію \PySCF{} з оптимізації можна знайти за посиланням \href{https://pyscf.org/user/geomopt.html}{Geometry optimization}.
+
+
+\PySCF{} надає два інструменти для оптимізації геометрії: застарілий \href{https://github.com/jhrmnn/pyberny}{PyBerny}-алгоритм та сучасний оптимізатор \texttt{geomeTRIC}. Перший підтримується для сумісності з попередніми версіями й історичного використання,та через інтерфейси до \href{https://github.com/leeping/geomeTRIC}{geomeTRIC}, який є рекомендованим методом для всіх актуальних задач оптимізації, включаючи великі системи, погані початкові геометрії та розрахунки з обмеженнями.
+
+Встановлення \texttt{PyBerny} виконується командою:
+\begin{minted}{bash}
+pip install berny
+\end{minted}
+
+Використання \texttt{PyBerny}:
+\begin{minted}{python}
+from pyscf import gto, scf
+mol = gto.M(atom='N 0 0 0; N 0 0 1.2', basis='ccpvdz')
+mf = scf.RHF(mol)
+
+from pyscf.geomopt.berny_solver import optimize
+mol_eq = optimize(mf, maxsteps=100)
+print(mol_eq.tostring())
+\end{minted}
+
+Встановлення \texttt{geomeTRIC} виконується командою:
+\begin{minted}{bash}
+pip install geometric
+\end{minted}
+
+
+Використання \texttt{geomeTRIC}:
+\begin{minted}{python}
+from pyscf import gto, scf
+mol = gto.M(atom='N 0 0 0; N 0 0 1.2', basis='ccpvdz')
+mf = scf.RHF(mol)
+
+# geomeTRIC
+from pyscf.geomopt.geometric_solver import optimize
+mol_eq = optimize(mf, maxsteps=100)
+print(mol_eq.tostring())
+\end{minted}
+
+В \PySCF{} є ще один спосіб по оптимізації --- це створення \inlinecode{optimizer()} з класу \inlinecode{Gradients}:
+
+\begin{minted}{python}
+# geomeTRIC
+mol_eq = mf.Gradients().optimizer(solver='geomeTRIC').kernel()
+print(mol_eq.tostring())
+
+# PyBerny
+mol_eq = mf.Gradients().optimizer(solver='berny').kernel()
+print(mol_eq.tostring())
+\end{minted}
+
+Для бекенду \inlinecode{geomeTRIC} критерії збіжності контролюються такими параметрами:
+
+\begin{minted}{python}
+conv_params = {  # Це налаштування за замовчуванням
+    'convergence_energy': 1e-6,  # Eh
+    'convergence_grms': 3e-4,    # Eh/Bohr
+    'convergence_gmax': 4.5e-4,  # Eh/Bohr
+    'convergence_drms': 1.2e-3,  # Angstrom
+    'convergence_dmax': 1.8e-3,  # Angstrom
+}
+mol_eq = optimize(mf, **conv_params)
+mol_eq = mf.Gradients().optimizer(solver='geomeTRIC').kernel(conv_params)
+\end{minted}
+
+Для бекенду \inlinecode{PyBerny} критерії збіжності контролюються такими параметрами:
+
+\begin{minted}{python}
+conv_params = {  # Це налаштування за замовчуванням
+    'gradientmax': 0.45e-3,  # Eh/[Bohr|rad]
+    'gradientrms': 0.15e-3,  # Eh/[Bohr|rad]
+    'stepmax': 1.8e-3,       # [Bohr|rad]
+    'steprms': 1.2e-3,       # [Bohr|rad]
+}
+mol_eq = optimize(mf, **conv_params)
+mol_eq = mf.Gradients().optimizer(solver='berny').kernel(conv_params)
+\end{minted}
+
+\subsection{Обмеження (Constraints)}
+
+У практичних квантово-хімічних розрахунках оптимізація геометрії не завжди
+повинна проходити у повністю вільному просторі $3N$ декартових координат.
+Існує широкий клас задач, у яких частина внутрішніх координат повинна бути
+зафіксована або змінюватися у контрольований спосіб. Такі \emph{обмеження}
+(\textit{constraints}) дозволяють включити додаткову фізичну інформацію
+або реалізувати специфічні вимоги до структури.
+
+\texttt{geomeTRIC} підтримує користувацькі обмеження. Обмеження можна вказати у текстовому файлі. Його формат описано в \href{https://geometric.readthedocs.io/en/latest/constraints.html#input-format}{онлайн-документації} або в \href{https://github.com/leeping/geomeTRIC/blob/master/examples/constraints.txt}{шаблонному файлі}. Потім ім'я файлу з обмеженнями потрібно передати PySCF:
+
+\begin{minted}{python}
+params = {"constraints": "constraints.txt",}
+mol_eq = optimize(mf, **params)
+mol_eq = mf.Gradients().optimizer(solver='geomeTRIC').kernel(params)
+\end{minted}
+
+Файл обмежень \texttt{constraints.txt} --- це текстовий файл, де кожен рядок задає одну інструкцію.
+
+\paragraph{Основні типи обмежень}
+\begin{itemize}
+    \item \textbf{\texttt{distance}} --- фіксація між'ядерної відстані;
+    \item \textbf{\texttt{angle}} --- фіксація валентного кута;
+    \item \textbf{\texttt{dihedral}} --- фіксація торсійного кута;
+    \item \textbf{\texttt{freeze atom}} --- заморожування координат атома;
+    \item \textbf{\texttt{freeze  --- nslation/rotation}} --- фіксація глобальних мод;
+    \item \textbf{\texttt{lineq}} --- лінійне рівняння на координати;
+    \item \textbf{\texttt{group}} --- заморожування групи атомів як єдиного фрагмента;
+    \item \textbf{\texttt{scan}} --- параметричний перегляд координати (напівоптимізація).
+\end{itemize}
+
+Приклади файлу \texttt{cons --- ints.txt}:
+
+\begin{minted}{text}
+# Фіксація довжини зв'язку O–H (атоми 1 і 2)
+distance   1   2     0.960
+
+# Фіксація валентного кута H–O–H
+angle      1   2   3   104.5
+
+# Фіксація торсійного кута C–C–O–H
+dihedral   5   6   7   8   180.0
+
+# Заморожування атома №5 (всі 3 координати)
+freeze  atom     5
+
+# Заморожування двох атомів як жорсткої групи
+group   freeze   10  11  12
+
+# Заморожування глобальних мод (інколи потрібно для кластерів)
+freeze  rotation
+freeze   --- nslation
+
+# Примусове накладання планарності через лінійне рівняння
+# x_3 - x_4 = 0
+lineq   1*x3   -1*x4    =   0.0
+
+# Примус загальної симетрії: атоми 2 і 3 на однаковій висоті
+lineq   1*z2   -1*z3    =   0.0
+
+# Дзеркальна симетрія: середня точка між 1–2 лежить у площині XY
+lineq   0.5*z1  +0.5*z2  =   0.0
+
+# Параметричне сканування відстані 1–2 (використовується у scan jobs)
+scan   distance   1  2   0.90  1.50  0.05
+
+# Сканування торсії з кроком 10 градусів
+scan   dihedral   3  4  5  6    0.0   360.0   10.0
+\end{minted}
+
+Усередині \texttt{PySCF} файл безпосередньо передається в
+\texttt{geometric.optimize}, і \texttt{geomeTRIC} інтерпретує всі інструкції.
+
+%\subsection{Користувацькі команди}
+%
+%Оптимізацію геометрії також можна виконати на основі користувацьких функцій енергії та градієнта:
+%
+%\begin{minted}{python}
+%#!/usr/bin/env python
+%
+%'''
+%Для користувацьких функцій енергії та градієнтів (наприклад, додавання
+%корекції DFT-D3) потрібно створити фальшивий метод PySCF перед передачею
+%до berny_solver.
+%'''
+%
+%import numpy as np
+%from pyscf import gto, scf
+%from pyscf.geomopt import berny_solver, geometric_solver, as_pyscf_method
+%
+%mol = gto.M(atom='N 0 0 0; N 0 0 1.8', unit='Bohr', basis='ccpvdz')
+%mf = scf.RHF(mol)
+%
+%grad_scan = scf.RHF(mol).nuc_grad_method().as_scanner()
+%def f(mol):
+%    e, g = grad_scan(mol)
+%    r = mol.atom_coords()
+%    penalty = np.linalg.norm(r[0] - r[1])**2 * 0.1
+%    e += penalty
+%    g[0] += (r[0] - r[1]) * 2 * 0.1
+%    g[1] -= (r[0] - r[1]) * 2 * 0.1
+%    print('Customized |g|', np.linalg.norm(g))
+%    return e, g
+%
+%#
+%# Функція as_pyscf_method — це обгортка, яка перетворює функцію "енергія-градієнти"
+%# для berny_solver. Функція "енергія-градієнти" приймає об'єкт Mole як
+%# вхідну геометрію та повертає енергію та градієнти для цієї геометрії.
+%#
+%fake_method = as_pyscf_method(mol, f)
+%new_mol = berny_solver.optimize(fake_method)
+%
+%print('Old geometry (Bohr)')
+%print(mol.atom_coords())
+%
+%print('New geometry (Bohr)')
+%print(new_mol.atom_coords())
+%
+%#
+%# Геометрію також можна оптимізувати з бібліотекою geomeTRIC
+%#
+%new_mol = geometric_solver.optimize(fake_method)
+%\end{minted}
+
+%\section{Оптимізація перехідних станів}
+%
+%Оптимізація перехідних станів доступна в \texttt{geomeTRIC} та \texttt{qsdopt}.
+%
+%Розширення PySCF \href{https://github.com/pyscf/qsdopt}{qsdopt} виконує оптимізацію перехідних станів через \href{https://aip.scitation.org/doi/10.1063/1.467721}{метод квадратичного спуску (quadratic steepest descent)}. Це метод другого порядку, який вимагає обчислення гессіана на деяких кроках під час оптимізації. Ось мінімальний приклад використання:
+%
+%\begin{minted}{python}
+%from pyscf import gto, scf
+%from pyscf.qsdopt.qsd_optimizer import QSD
+%
+%mol = gto.M(atom='''
+%O 0 0 0
+%H 0 0 1.2
+%H 0, 0.5, -1.2''',
+%basis='minao', verbose=0, unit="Bohr")
+%mf = scf.RHF(mol)
+%
+%optimizer = QSD(mf, stationary_point="TS")
+%optimizer.kernel()
+%\end{minted}
+%
+%До \mintinline{python}{kernel} можна передати кілька ключових аргументів:
+%
+%\begin{itemize}
+%    \item \texttt{hess\_update\_freq}: Частота чисельного переоцінювання гессіана. = 0 оцінює числовий гессіан на першій ітерації та оновлює його за правилом BFGS, якщо не наближається до пастки, де переоцінює. (За замовчуванням: 0)
+%    \item \texttt{numhess\_method}: Метод для чисельного гессіана. Доступні "forward" та "central". (За замовчуванням: "forward")
+%    \item \texttt{max\_iter}: Максимальна кількість кроків оптимізації. (За замовчуванням: 100)
+%    \item \texttt{step}: Максимальна норма між двома кроками оптимізації. (За замовчуванням: 0.1)
+%    \item \texttt{hmin}: Мінімальна відстань між поточною геометрією та стаціонарною точкою квадратичної форми для досягнення збіжності. (За замовчуванням: 1e-6)
+%    \item \texttt{gthres}: Норма градієнта для збіжності. (За замовчуванням: 1e-5)
+%\end{itemize}
+%
+%\begin{minted}{python}
+%from pyscf.qsdopt.qsd_optimizer import QSD
+%from pyscf import gto, scf
+%
+%mol = gto.M(atom='''
+%C  -2.17177  -0.46068  -0.00000
+%C  -0.02194  -0.50455  0.00000
+%H  0.35133   0.30506   -0.59169
+%H  0.33677   -0.40796  1.00344
+%H  0.31586   -1.43259  -0.41175
+%H  -2.68285  -0.25342  0.93134
+%H  -2.40018  0.15510   -0.90287
+%H   -2.53568   -1.52338   -0.17790''', basis='minao', verbose=0)
+%mf = scf.RHF(mol)
+%
+%optimizer = QSD(mf, stationary_point="TS")
+%optimizer.kernel(hess_update_freq=0, step=0.5, hmin=1e-3)
+%\end{minted}
+%
+%При використанні geomeTRIC для пошуку перехідного стану просто додайте ключове слово \texttt{transition} у конфігурацію geomeTRIC, щоб активувати модуль пошуку TS:
+%
+%\begin{minted}{python}
+%params = {'transition': True}
+%mol_ts = mf.Gradients().optimizer(solver='geomeTRIC').kernel(params)
+%
+%params = {'transition': True, 'trust': 0.02, 'tmax': 0.06}
+%mol_ts = mf.Gradients().optimizer(solver='geomeTRIC').kernel(params)
+%\end{minted}
+%
+%Ключові слова \texttt{trust} та \texttt{tmax} контролюють область довіри в пошуку TS. Вони не є обов'язковими. Налаштування за замовчуванням у бібліотеці geomeTRIC обрані для максимізації успіху завдань. Налаштування області довіри може трохи покращити продуктивність оптимізації TS. Для детальнішого обговорення доступних опцій див. \href{https://geometric.readthedocs.io/en/latest/transition.html}{онлайн-документацію geomeTRIC про перехідні стани}.
+%
+%Окрім початкового кроку, бібліотека geomeTRIC не підтримує читання аналітичного гессіана з квантовохімічних обчислень під час виконання. Початковий гессіан можна передати оптимізатору після активації ключового слова \texttt{hessian}:
+%
+%\begin{minted}{python}
+%params = {'transition': True, 'hessian': True}
+%mol_ts = mf.Gradients().optimizer(solver='geomeTRIC').kernel(params)
+%\end{minted}
+%
+%Інтерфейс у PySCF може генерувати тимчасовий файл для збереження початкового гессіана та передати його geomeTRIC. Це ключове слово ігнорується, якщо аналітичний гессіан базового методу не реалізований.
+
+\section{Збуджені стани}
+
+Оптимізація геометрії збуджених електронних станів є необхідною для
+аналізу спектроскопії, розрахунку флуоресценції, визначення безвипромінювальних переходів та пошуку міжсистемних перетинів.
+На відміну від основного стану, поверхня потенційної енергії збудженого
+стану істотно відрізняється за топологією, що змінює рівноважні довжини
+зв'язків, кути та торсії:
+\[
+\mathbf R^{(S_n)}_0 = \arg\min_{\mathbf R} E_{S_n}(\mathbf R).
+\]
+
+Для коректного пошуку стаціонарної точки треба явно вказати,
+\emph{який саме електронний стан} оптимізується, оскільки градієнт є
+стан-специфічним. У \PySCF{} це реалізовано через об’єкти
+\texttt{Gradients}, що отримують інформацію про цільовий стан з
+електронного розрахунку (TDDFT, CIS, CASSCF або MCSCF).
+
+
+Для оптимізації геометрії збуджених станів потрібно вказати стан, який оптимізується, у відповідних об'єктах \mintinline{python}{Gradients}:
+
+\begin{minted}{python}
+'''
+Оптимізація геометрії збуджених станів
+
+Примітка: при оптимізації збуджених станів стани можуть перевертатися, що
+може спричинити проблеми зі збіжністю в оптимізаторі геометрії.
+'''
+
+from pyscf import gto
+from pyscf import scf
+from pyscf import ci, tdscf, mcscf
+from pyscf import geomopt
+
+
+mol = gto.Mole()
+mol.atom="N; N 1, 1.1"
+mol.basis= "6-31g"
+mol.build()
+mol1 = mol.copy()
+
+mf = scf.RHF(mol).run()
+
+mc = mcscf.CASCI(mf, 4,4)
+mc.fcisolver.nstates = 3
+excited_grad = mc.nuc_grad_method().as_scanner(state=2)
+mol1 = excited_grad.optimizer().kernel()
+# or
+#mol1 = geomopt.optimize(excited_grad)
+
+
+td = tdscf.TDHF(mf)
+td.nstates = 5
+excited_grad = td.nuc_grad_method().as_scanner(state=4)
+mol1 = excited_grad.optimizer().kernel()
+# or
+#mol1 = geomopt.optimize(excited_grad)
+
+
+myci = ci.CISD(mf)
+myci.nstates = 2
+excited_grad = myci.nuc_grad_method().as_scanner(state=1)
+mol1 = excited_grad.optimizer().kernel()
+# or
+#geomopt.optimize(excited_grad)
+\end{minted}
+
+Для прикладів оптимізації геометрії стан-специфічного та усередненого по станах \texttt{CASSCF} див. приклад \inputcode[base=https://github.com/pyscf/pyscf/tree/master/examples/geomopt/]{12-mcscf_excited_states.py}.
+
+\section{Callback під час оптимізації}
+
+Під час оптимізації геометрії важливо мати доступ до проміжної інформації кожного кроку:
+енергії, градієнтів, зарядів, молекулярних орбіталей та інших характеристик. Стандартні
+оптимізатори надають лише фінальний результат, що ускладнює діагностику збіжності та
+аналіз поведінки системи. Механізм \texttt{callback} дозволяє виконувати довільний код після
+кожного кроку оптимізації, забезпечуючи гнучке керування процесом, відстеження стану
+молекули, запис проміжних структур і розрахунок додаткових властивостей. Це робить
+callback незамінним інструментом у складних розрахунках, зокрема в QM/MM, оптимізації
+перехідних та збуджених станів, а також під час збору даних для власних методів аналізу чи
+машинного навчання.
+
+Функції callback можна викликати на кожному кроці оптимізації. Наступний приклад показує, як додати аналіз заряду для кожної геометрії під час оптимізації.
+
+\begin{minted}{python}
+#!/usr/bin/env python
+
+'''
+Оптимізація молекулярної геометрії в середовищі зарядів QM/MM.
+'''
+
+from pyscf import gto, scf
+from pyscf.geomopt import berny_solver
+from pyscf.geomopt import geometric_solver
+
+mol = gto.M(atom='''
+C        0.000000    0.000000             -0.542500
+O        0.000000    0.000000              0.677500
+H        0.000000    0.9353074360871938   -1.082500
+H        0.000000   -0.9353074360871938   -1.082500
+            ''',
+            basis='3-21g')
+
+mf = scf.RHF(mol)
+
+# Запустити функцію analyze в callback
+def cb(envs):
+    mf = envs['g_scanner'].base
+    mf.analyze(verbose=4)
+
+#
+# Метод 1: Передати callback до функції optimize
+#
+geometric_solver.optimize(mf, callback=cb)
+
+berny_solver.optimize(mf, callback=cb)
+
+#
+# Метод 2: Додати callback до оптимізатора геометрії
+#
+opt = mf.nuc_grad_method().as_scanner().optimizer()
+opt.callback = cb
+opt.kernel()
+\end{minted}
+
+
+\section{Початковий гесіан в оптимізації геометрії}
+
+Гесіан (матриця других похідних енергії за ядерними координатами) відіграє ключову роль у методах другого порядку та квазі-ньютонівських алгоритмах. Він визначає напрямок і довжину кроку, прогнозує зміну градієнта та дозволяє ідентифікувати характер стаціонарної точки (мінімум чи сідлова точка).
+
+Сучасний оптимізатор \texttt{geomeTRIC}, який є рекомендованим у \PySCF{}, працює у делокалізованих внутрішніх координатах і за замовчуванням генерує евристичний початковий гесіан на основі простої моделі силового поля валентних зв’язків. Цього достатньо для переважної більшості задач оптимізації основного стану середнього розміру.
+
+Проте в низці випадків якість початкового наближення гесіана суттєво впливає на швидкість і надійність збіжності:
+
+\begin{itemize}
+    \item пошук перехідних станів (потрібне правильне негативне власне значення);
+    \item великі та гнучкі системи (>50–100 атомів),%, де BFGS-оновлення повільно накопичують інформацію;
+    \item сильно деформовані або штучні початкові геометрії.
+%    \item послідовні оптимізації вздовж реакційного шляху чи сканування PES (можна передавати «теплий» гесіан з попередньої точки).
+\end{itemize}
+
+У \PySCF{} аналітичний гесіан доступний для більшості методів (HF, DFT, MP2, CCSD, CASSCF тощо) і обчислюється так:
+
+\begin{minted}{python}
+hess = mf.Hessian().kernel()                  # shape (natm, 3, natm, 3)
+H = hess.transpose(0, 2, 1, 3).reshape(-1, -1) # 3N × 3N декартовий гесіан
+\end{minted}
+
+Отриману матрицю можна зберегти та повторно використати:
+
+\begin{minted}{python}
+import numpy as np
+np.save("initial_hessian.npy", H)   # збереження
+H = np.load("initial_hessian.npy")  # відновлення
+\end{minted}
+
+Передача користувацького гесіана в \texttt{geomeTRIC} надзвичайно проста:
+
+\begin{minted}{python}
+from pyscf.geomopt.geometric_solver import optimize
+
+mol_eq = optimize(mf, hessian=H)
+# або через інтерфейс Gradients
+mol_eq = mf.Gradients().optimizer(solver='geomeTRIC').kernel(hessian=H)
+\end{minted}
+
+При цьому \texttt{geomeTRIC} автоматично проєктує декартовий гесіан на свої внутрішні координати, відсікає трансляційно-обертальні моди й використовує його як стартове наближення. Подальше оновлення відбувається стандартними квазі-ньютонівськими схемами (зазвичай L-BFGS).
+
+\subsection{Практичні рекомендації}
+
+\begin{itemize}
+    \item Для звичайних молекул (до $\approx 50$ атомів) і розумних початкових геометрій передавати гесіан не потрібно --- евристика \texttt{geomeTRIC} працює відмінно.
+    \item Для пошуку TS, великих систем або «холодного старту» з поганої геометрії --- завжди обчислюйте і передавайте точний гесіан.
+    \item У релаксаційному скануванні чи IRC --- зберігайте гесіан з попередньої точки й передавайте як \texttt{hessian=}. Це часто скорочує кількість кроків у 2–5 разів.
+    \item Якщо аналітичний гесіан недоступний, можна використати числовий гесіан з методу \inlinecode{mf.Hessian().set(numerical=True)}.
+\end{itemize}
+
+Таким чином, хоча \texttt{geomeTRIC} і не вимагає від користувача думати про гесіан, можливість передати точну аналітичну матрицю других похідних залишається потужним інструментом для розв’язання складних і великих задач оптимізації.
