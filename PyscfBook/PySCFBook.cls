@@ -189,6 +189,7 @@
 	\let\phi\varphi
 	\let\epsilon\varepsilon
 	\DeclareMathOperator{\const}{const}
+%    \DeclareMathOperator{\det}{det}
 	\DeclareMathOperator{\Div}{div}
 	\DeclareMathOperator{\Rot}{rot}
 	\DeclareMathOperator{\Grad}{grad}
@@ -197,15 +198,82 @@
     \newcommand{\PySCF}{\texttt{PySCF}}
 }
 
+%===================== Definitions =====================
+%\let\Psi\varPsi
+\def\ket#1{\left| #1 \right\rangle }
+\def\bra#1{\left\langle #1 \right| }
+
+\def\eff{e\kern-2.4pt{f\kern-2.65pt f}}
+\def\vxi{\vec{\xi}}
+\def\vr{\vec{r}}
+\let\vphi\varphi
+\let\veps\varepsilon
+
+%% --------------------------------------------------------
+\def\P#1{%
+% Parity operator
+\ifnum#1=1
+    2
+\else
+    1
+\fi
+}
+
+\NewDocumentCommand{\J}{E_{\space} m E_{\space} d()}{
+\ifthenelse{\equal{#2}{\phi}}{\edef\V{V}}{\edef\V{\mathcal{V}}}
+% #1 - operator index
+% #2 - function name
+% #3 - function index
+% #4 - electron number
+\ensuremath{%
+    \int \frac{%
+               #2^*_{#1}(\P{#4})%
+               #2_{#1}(\P{#4})
+              }%
+               {r_{12}}%
+               d\V_{\P{#4}}\ #2_{#3}(#4)
+}
+}
+
+\NewDocumentCommand{\K}{E_{\space} m E_{\space} d()}{
+\ifthenelse{\equal{#2}{\phi}}{\edef\V{V}}{\edef\V{\mathcal{V}}}
+% #1 - operator index
+% #2 - function name
+% #3 - function index
+% #4 - electron number
+\ensuremath{%
+    \int \frac{%
+                #2^*_{#1}(\P{#4})%
+                #2_{#3}(\P{#4})%
+              }%
+              {r_{12}}%
+             d\V_{\P{#4}}\ #2_{#1}(#4)
+}
+}
+
 \ExplSyntaxOn
-\NewDocumentCommand{\bracket}{r<>}
+\NewDocumentCommand{\braket}{r<>}
   {
     \tl_set:Nn \l_tmpa_tl { #1 }
     \tl_replace_all:Nnn \l_tmpa_tl { | } { \middle | }
     \left\langle \l_tmpa_tl \right\rangle
   }
 
+\NewDocumentCommand{\opbraket}{m m m}
+  {
+    \left\langle #1 \middle | #2 \middle  | #3 \right\rangle
+  }
+
 \ExplSyntaxOff
+
+
+\def\braces(#1#2|#3#4){
+    \ensuremath{
+        \int \frac{\chi_#1(1)\chi_#2(1)\chi_#3(2)\chi_#4(2)}{r_{12}} dV_1 dV_2
+    }
+}
+
+%% --------------------------------------------------------
 
 \NewDocumentCommand{\emphx}{m}{\emph{\textcolor{malina}{#1}}}
 

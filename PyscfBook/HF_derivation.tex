@@ -1,0 +1,186 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+% !BIB program = biber
+
+\documentclass{PySCFBook}
+
+
+\begin{document}
+
+\pagestyle{main}
+
+
+%% --------------------------------------------------------
+\section{Виведення рівнянь Хартрі-Фока}
+%% --------------------------------------------------------
+
+%% --------------------------------------------------------
+\subsection*{Позначення}
+%% --------------------------------------------------------
+
+\begin{itemize}
+    \item \(\psi_p(\mathbf{x})\), \(\psi_q(\mathbf{x})\) --- \textbf{спін-орбіталі} (індекси \(p,q,r,s = 1,2,\dots\))
+    \item \(\Phi = \det \bigl[ \psi_1(1)\psi_2(2)\dots\psi_N(N) \bigr]\) --- \textbf{детермінант Слейтера}
+    \item Ортонормування: \(\braket<\psi_p|\psi_q> = \delta_{pq}\).
+    \item Двохелектронні інтеграли в хімічній нотації:
+      \[
+      (pq|rs) = \iint \psi_p^*(\mathbf{x}_1)\psi_q^*(\mathbf{x}_2)
+      \frac{1}{r_{12}} \psi_r(\mathbf{x}_1)\psi_s(\mathbf{x}_2)\,
+      d\mathbf{x}_1 d\mathbf{x}_2.
+      \]
+    \item Електронний гамільтоніан:
+        \[
+        \hat{H} = \sum_{i=1}^N \hat{h}(i)
+                + \frac{1}{2} \sum_{i \neq j}^N \frac{1}{r_{ij}}
+        \]
+
+        де \(\hat{h}(i) = -\frac{1}{2}\nabla_i^2 - \sum_A \frac{Z_A}{r_{iA}}\).
+        \end{itemize}
+
+
+%% --------------------------------------------------------
+\subsection*{Правила Слейтера}
+%% --------------------------------------------------------
+
+Для детермінанта Слейтера \(\Phi\) з ортонормованими спін-орбіталями діють такі формули:
+
+\begin{align}
+\opbraket{\Phi}{\hat{h}(1)}{\Phi} &= \sum_{i=1}^N \opbraket{\psi_i}{\hat{h}}{\psi_i}
+    \label{slater1} \\[6pt]
+\opbraket{\Phi}{\frac{1}{r_{12}}}{\Phi} &=
+    \sum_{i,j=1}^N \left[ (ij|ij) - (ij|ji) \right]
+    \label{slater2}
+\end{align}
+
+Доведення цих двох формул --- стандартний результат з теорії детермінантів і антисиметризатора (див. Szabo–Ostlund §2.3, Helgaker §2.2).
+Ми їх просто беремо як інструмент.
+
+Підставляючи правила Слейтера в середнє значення гамільтоніана:
+
+\begin{equation}
+E = \sum_{i=1}^N h_{ii}
+  + \frac{1}{2} \sum_{i,j=1}^N \Bigl[ (ij|ij) - (ij|ji) \Bigr]
+\label{eq:general-energy}
+\end{equation}
+
+де \(h_{ii} = \opbraket{\psi_i}{\hat{h}}{\psi_i}\).
+
+\subsection*{Варіація енергії з урахуванням ортонормування}
+
+Вводимо функціонал Лагранжа:
+
+\[
+\mathcal{L} = E - \sum_{p,q} \varepsilon_{pq}
+    \left( \braket<\psi_p | \psi_q> - \delta_{pq} \right)
+\]
+
+Множники \(\varepsilon_{pq}\) утворюють гермітову матрицю.
+
+Тепер варіюємо тільки \(\psi_p^* \to \psi_p^* + \delta\psi_p^*\) (варіація \(\psi_p\) дала б те саме через ермітовість).
+
+\subsection*{Варіація одноелектронної частини}
+
+\[
+\delta \Bigl( \sum_i h_{ii} \Bigr)
+= \sum_i \opbraket{\delta\psi_i}{ \hat{h} }{\psi_i} + \text{к.с.}
+= \sum_p \opbraket{\delta\psi_p}{\hat{h}}{\psi_p}
+\]
+
+\subsection*{Варіація двохелектронної частини (найважливіший крок)}
+
+Розглянемо внесок від інтегралів \((ij|ij)\) і \((ij|ji)\):
+
+\[
+\delta \Bigl[ \frac{1}{2} \sum_{ij} (ij|ij) \Bigr]
+= \sum_{ij} (ij|ij) \text{ від варіації } \psi_i^*(1) \text{ або } \psi_j^*(2)
+\]
+
+Варіація кулонівського члена:
+\[
+\delta \Biggl[ \frac{1}{2} \sum_{ij} (ij|ij) \Biggr]
+= \sum_{p,i,j} (pj|ij) \braket<\delta\psi_p | \psi_i> \delta_{1\in\text{першої позиції}}
+= \sum_{p=1}^N \sum_{j=1}^N \opbraket{\delta\psi_p}{\hat{J}_j}{\psi_p},
+\]
+
+де кулонівський оператор \(\hat{J}_j\) визначено як
+\[
+(\hat{J}_j \varphi)(\mathbf{x}_1)
+= \left( \int \frac{\psi_j^*(\mathbf{x}_2)\psi_j(\mathbf{x}_2)}{r_{12}}\,d\mathbf{x}_2 \right) \varphi(\mathbf{x}_1).
+\]
+
+Варіація обмінного члена:
+\[
+\delta \Biggl[ -\frac{1}{2} \sum_{ij} (ij|ji) \Biggr]
+= -\sum_{p=1}^N \sum_{j=1}^N \opbraket{\delta\psi_p}{\hat{K}_j}{\psi_p},
+\]
+
+де обмінний оператор \(\hat{K}_j\) визначено як
+\[
+(\hat{K}_j \varphi)(\mathbf{x}_1)
+= \left( \int \frac{\psi_j^*(\mathbf{x}_2)\varphi(\mathbf{x}_2)}{r_{12}}\,d\mathbf{x}_2 \right) \psi_j(\mathbf{x}_1).
+\]
+
+Отже, повна варіація двохелектронної енергії:
+\[
+\delta E_{2e} = \sum_{p=1}^N \opbraket{\delta\psi_p}{\sum_{j=1}^N (\hat{J}_j - \hat{K}_j)}{\psi_p}.
+\]
+
+де оператори діють так:
+
+\begin{align}
+(\hat{J}_j \psi_p)(\mathbf{x}_1) &=
+    \Bigl( \int \frac{\psi_j^*(\mathbf{x}_2)\psi_j(\mathbf{x}_2)}{r_{12}} d\mathbf{x}_2 \Bigr) \psi_p(\mathbf{x}_1)
+    = \sum_j (p j | j j) \psi_p(\mathbf{x}_1) \\[6pt]
+(\hat{K}_j \psi_p)(\mathbf{x}_1) &=
+    \Bigl( \int \frac{\psi_j^*(\mathbf{x}_2)\psi_p(\mathbf{x}_2)}{r_{12}} d\mathbf{x}_2 \Bigr) \psi_j(\mathbf{x}_1)
+    = \sum_j (p j | j i) \psi_j(\mathbf{x}_1) \quad \text{(для дії на \(\psi_i\))}
+\end{align}
+
+\subsection*{Повний функціонал і рівняння}
+
+\[
+\delta\mathcal{L} =
+\sum_p \Bigl\langle \delta\psi_p \Big|
+\hat{h} + \sum_j \hat{J}_j - \sum_j \hat{K}_j
+- \sum_q \varepsilon_{pq} \psi_q
+\Big| \psi_p \Bigr\rangle = 0
+\]
+
+Оскільки \(\delta\psi_p\) довільна,
+
+\[
+\Bigl( \hat{h} + \sum_{j=1}^N \hat{J}_j - \sum_{j=1}^N \hat{K}_j \Bigr) \psi_p
+= \sum_{q} \varepsilon_{pq} \psi_q
+\]
+
+\subsection*{Оператор Фока та канонічна форма}
+
+Визначаємо \textbf{загальний оператор Фока}:
+
+\[
+\hat{F} = \hat{h} + \hat{J} - \hat{K}
+\qquad\text{де}\quad
+\hat{J} = \sum_{j=1}^N \hat{J}_j, \quad
+\hat{K} = \sum_{j=1}^N \hat{K}_j
+\]
+
+Тоді:
+
+\[
+\hat{F} \psi_p = \sum_q \varepsilon_{pq} \psi_q
+\]
+
+Оскільки \(\hat{F}\) гермітовий (доводиться окремо), матриця \(\varepsilon_{pq}\) теж гермітова і може бути приведена до діагонального вигляду унітарним перетворенням зайнятих спін-орбіталей (детермінант при цьому не змінюється!).
+
+Отже, завжди можна обрати базис, у якому:
+
+\begin{equation}
+\hat{F} \psi_i = \varepsilon_i \psi_i \qquad i = 1,2,\dots,N
+\label{eq:general-canonical}
+\end{equation}
+
+Це і є \textbf{загальні канонічні рівняння Хартрі–Фока} (UHF у чистому вигляді).
+
+
+\end{document}
