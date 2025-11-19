@@ -588,6 +588,31 @@
 	use tangent/.default=1,
 	>=latex
 }
+
+\tikzset{
+    alt/.code args={<#1>#2#3}{%
+      \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}} % \pgfkeysalso doesn't change the path
+    },
+    upspinarrow/.pic = {\draw[-latex, blue, thick] (0,-0.3) -- (0, 0.3);},
+    downspinarrow/.pic = {\draw[latex-,red, thick] (0,-0.3) -- (0, 0.3);},
+    updown/.style={insert path={
+    pic at ([xshift=-0.1cm]#1) {upspinarrow}
+    pic at ([xshift=+0.1cm]#1) {downspinarrow}
+    }},
+    upup/.style={insert path={
+    pic at ([xshift=-0.1cm]#1) {upspinarrow}
+    pic at ([xshift=+0.1cm]#1) {upspinarrow}
+    }},
+    up/.style={insert path={
+    pic at ([xshift=-0.1cm]#1) {upspinarrow}
+    }},
+    down/.style={insert path={
+    pic at ([xshift=+0.1cm]#1) {downspinarrow}
+    }},
+    curlybrace/.style = {decorate,decoration={brace,amplitude=5pt, mirror, raise=10pt}},
+    curlybracel/.style = {decorate,decoration={brace,amplitude=5pt}},
+    stroke/.style 2 args = {insert path = {([yshift=-0.3cm]#1) rectangle ([yshift=0.3cm]#2)} },
+}
 % --------------------------- Електричні кола ----------------------------------
 \usetikzlibrary{circuits.ee.IEC}
 \tikzset{circuit ee IEC,

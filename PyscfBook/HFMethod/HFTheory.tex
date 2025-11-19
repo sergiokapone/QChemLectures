@@ -76,6 +76,31 @@ g(i, j) = \frac{1}{|\mathbf r_i - \mathbf r_j|}
     \end{cases}
 \end{equation*}
 і визначає проєкцію спіну електрона.
+Спінові функції є власними функціями оператора проєкції спіну:
+\begin{equation*}
+    \hat S_z \, \alpha = +\frac12\,\alpha,
+    \qquad
+    \hat S_z \, \beta = -\frac12\,\beta
+\end{equation*}
+
+і ортонормованими, що у бра–кет нотації записується як
+\begin{equation*}
+    \langle \alpha \mid \alpha \rangle = 1,
+    \qquad
+    \langle \beta \mid \beta \rangle = 1,
+    \qquad
+    \langle \alpha \mid \beta \rangle = 0.
+\end{equation*}
+
+Еквівалентно це можна записати у компактнішому вигляді:
+$\gamma_i(\sigma) \in \{\alpha(\sigma),\beta(\sigma)\}$:
+\begin{equation}\label{eq:gamma_ortho}
+    \langle \gamma_i \mid \gamma_j \rangle
+    = \int \gamma_i^*(\sigma)\,\gamma_j(\sigma)\, d\sigma
+    = \delta_{ij},
+\end{equation}
+де $\delta_{ij}$ --- символ Кронекера.
+
 
 \begin{commentbox}
 Попри те що детермінант Слейтера формально відповідає моделі незалежних частинок, його застосування виправдане вимогою антисиметричності багатоелектронної хвильової функції. Детермінант є найпростішою конструкцією, яка автоматично забезпечує цю властивість.
@@ -153,16 +178,7 @@ g(i, j) = \frac{1}{|\mathbf r_i - \mathbf r_j|}
 	  \right]\phi_j(\vect r)\gamma_j(\sigma).
 \end{equation*}
 
-Перший інтеграл --- це скалярний добуток спінових функцій:
-\[
-\int \gamma_j^*(\sigma')\gamma_i(\sigma')\, d\sigma' = \langle \gamma_j | \gamma_i \rangle = \delta_{\sigma_j, \sigma_i}.
-\]
-
-Спінові функції $\alpha$ та $\beta$ ортогональні: $\langle \alpha | \beta \rangle = 0$. Тому:
-\begin{itemize}
-\item Якщо $\gamma_i = \gamma_j$ (однаковий спін), то $\langle \gamma_j | \gamma_i \rangle = 1$ і обмінний член не зникає.
-\item Якщо $\gamma_i \neq \gamma_j$ (різні спіни), то $\langle \gamma_j | \gamma_i \rangle = 0$ і обмінний член точно дорівнює нулю.
-\end{itemize}
+Перший інтеграл --- це скалярний добуток спінових функцій, який згідно \eqref{eq:gamma_ortho} дорівнює символу Кронекера $\delta_{ij}$, тобто якщо $\gamma_i = \gamma_j$ (однаковий спін), то $\delta_{ij} = 1$ і обмінний член не зникає, а якщо  $\gamma_i \neq \gamma_j$ (різні спіни), то $\delta_{ij}  = 0$ і обмінний член точно дорівнює нулю.
 
 Таким чином, обмінна взаємодія діє лише між електронами з паралельними спінами.
 
