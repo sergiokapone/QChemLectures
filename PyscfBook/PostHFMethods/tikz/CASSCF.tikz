@@ -1,4 +1,5 @@
 \begin{tikzpicture}[
+         scale=1.2,
 		upspinarrow/.pic = {\draw[-latex, blue, thick] (0,-0.3) -- (0, 0.3);},
 		downspinarrow/.pic = {\draw[latex-,red, thick] (0,-0.3) -- (0, 0.3);},
 		updown/.style={insert path={

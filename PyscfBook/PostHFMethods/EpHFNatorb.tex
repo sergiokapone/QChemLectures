@@ -99,7 +99,7 @@ $\Gamma(\mathbf{r}_1\sigma_1, \mathbf{r}_2\sigma_2; \mathbf{r}_1\sigma_1, \mathb
 	враховуються.
 \end{commentbox}
 
-Проведемо розрахунок енергії молекули \ce{N2} методом \texttt{CI} двома способами: спочатку це зробимо прямо через API PySCF, а також по формулі \eqref{eq:E-postHF}, використовуючи матриці густини $\gamma$ та $\Gamma$ та використовуючі високорівневі API :
+Проведемо розрахунок енергії молекули \ce{N2} методом \texttt{CI} двома способами: спочатку це зробимо прямо через API \PySCF, а також по формулі \eqref{eq:E-postHF}, використовуючи матриці густини $\gamma$ та $\Gamma$ та використовуючі високорівневі API:
 \begin{minted}{python}
 from pyscf import gto, scf, ci
 import numpy as np
@@ -145,8 +145,8 @@ print(f"Енергія з RDM (MO): {energy_mo}")
 print(f"Різниця: {abs(mci.e_tot - energy_mo):.10e}")
 print(f"Чи однакові? {np.allclose(mci.e_tot, energy_mo)}\n")
 \end{minted}
+Результати роботи коду показують, що обчислення однакові в межах розрахункової похибки.
 
-Запустіть код і переконайтесь, що обчислення однакові в межах розрахункової похибки.
 
 %\paragraph{Порівняння методів.}
 %\begin{center}
