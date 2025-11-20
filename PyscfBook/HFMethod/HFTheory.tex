@@ -55,10 +55,10 @@ g(i, j) = \frac{1}{|\mathbf r_i - \mathbf r_j|}
 \begin{equation}\label{eq:det}
 	\Phi_0(\vect{r}_1, \vect{r}_2, \ldots, \vect{r}_N) = \frac{1}{\sqrt{N!}}
 	\begin{vmatrix}
-		\psi_1(\vect{r}_1) & \psi_2(\vect{r}_1) & \cdots & \psi_N(\vect{r}_1) \\
-		\psi_1(\vect{r}_2) & \psi_2(\vect{r}_2) & \cdots & \psi_N(\vect{r}_2) \\
+		\psi_1(\vect{r}_1, \sigma_1) & \psi_2(\vect{r}_1, \sigma_1) & \cdots & \psi_N(\vect{r}_1, \sigma_1) \\
+		\psi_1(\vect{r}_2, \sigma_2) & \psi_2(\vect{r}_2, \sigma_2) & \cdots & \psi_N(\vect{r}_2, \sigma_2) \\
 		\vdots               & \vdots               & \ddots & \vdots               \\
-		\psi_1(\vect{r}_N) & \psi_2(\vect{r}_N) & \cdots & \psi_N(\vect{r}_N)
+		\psi_1(\vect{r}_N, \sigma_N) & \psi_2(\vect{r}_N, \sigma_N) & \cdots & \psi_N(\vect{r}_N, \sigma_N)
 	\end{vmatrix},
 \end{equation}
 %
@@ -71,8 +71,8 @@ g(i, j) = \frac{1}{|\mathbf r_i - \mathbf r_j|}
 \begin{equation*}
     \gamma(\sigma) =
     \begin{cases}
-        {\color{blue}\alpha \; (\uparrow)},\\
-        {\color{red}\beta \; (\downarrow)},
+        {\color{blue}\alpha}\ \text{або}\ {\color{blue}(\uparrow)},\\
+        {\color{red}\beta}\ \text{або}\ {\color{red}(\downarrow)}
     \end{cases}
 \end{equation*}
 і визначає проєкцію спіну електрона.

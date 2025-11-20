@@ -1,5 +1,5 @@
 \begin{tikzpicture}[
-    scale=1.5,
+    scale=1,
 	every node/.style={font=\scriptsize, very thin},
 	node distance=1.1cm,
 	startstop/.style={rectangle, rounded corners, minimum width=1cm, minimum height=0.6cm, minimum width=6cm, text centered, draw=black, fill=red!30},
@@ -10,7 +10,7 @@
 \node (start) [io] {$\mathbf{D}^{(0)}$};
 \node (int) [io, left=1cm of start, text width=5cm] {$T_{\mu\nu}$, $V^{\text{nuc}}_{\mu\nu}$, $(\mu\nu|\lambda\sigma)$, \\ функціонал $E_{\text{xc}}[\rho]$};
 \node (buildJ) [process, below=0.6cm of start] {Обчислення кулонівського потенціалу $v_H^{(k)}(\mathbf{r})$};
-\node (buildVxc) [process, below=0.6cm of buildJ] {Обчислення потенціалу обміну–кореляції $v_{xc}^{(k)}(\mathbf{r}) = \delta E_{xc}/\delta\rho$};
+\node (buildVxc) [process, below=0.6cm of buildJ] {Обчислення потенціалу $v_{xc}^{(k)}(\mathbf{r}) = \delta E_{xc}/\delta\rho$};
 \node (buildF) [process, below=0.6cm of buildVxc, text width=5cm] {Формування ефективної матриці Кона–Шема \\ $\mathbf{F}^{(k)} = \mathbf{T} + \mathbf{V}^{\text{nuc}} + \mathbf{V}_H^{(k)} + \mathbf{V}_{xc}^{(k)}$};
 \node (solve) [process, below=0.6cm of buildF, text width=5cm] {Розв'язок рівнянь Кона–Шема \\
 $\mathbf{F}^{(k)}\mathbf{C}^{(k+1)} = \mathbf{S}\mathbf{C}^{(k+1)}\boldsymbol{\varepsilon}^{(k+1)}$};

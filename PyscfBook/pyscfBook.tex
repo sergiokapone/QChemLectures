@@ -122,6 +122,14 @@ biblatex,
 	\section*{#1\label{BibPage}}
 }
 
+\addtocategoryNoCi{pyscf}{%
+sun2018pyscf, sun2020pyscf, sun2017pyscf,
+}
+
+\printbibliography[category=pyscf, title={
+Ключові статті по \PySCF}, heading=subbibliography]
+
+
 \addtocategoryNoCi{Main}{%
     Sun2025PythonQC,
 	Jensen,
@@ -129,7 +137,7 @@ biblatex,
     Szabo,
 }
 
-\printbibliography[category=Main, title={Основна література}, heading=subbibliography, resetnumbers=true]
+\printbibliography[category=Main, title={Основна література}, heading=subbibliography]
 
 \addtocategoryNoCi{Additional}{%
 	BSE,
@@ -139,6 +147,7 @@ biblatex,
 	EGMI3
 }
 
-\printbibliography[category=Additional, title={Додаткові посилання}, heading=subbibliography, resetnumbers=true]
+\printbibliography[category=Additional, title={Додаткові посилання}, heading=subbibliography]
+
 
 \end{document}

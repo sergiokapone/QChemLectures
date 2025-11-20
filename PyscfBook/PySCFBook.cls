@@ -955,7 +955,7 @@ postaction={ decorate,
 %===============================================================================
 
 \ifbiblatex
-	\RequirePackage[backend=biber, bibstyle=gost-numeric, autolang=other, isbn=true, url=false, defernumbers=true]{biblatex}
+	\RequirePackage[backend=biber, bibstyle=gost-numeric, autolang=other, isbn=true, url=false]{biblatex}
 	\newbibmacro{string+url}[1]{%
 		\iffieldundef{url}{#1}{\href{\thefield{url}}{#1}}%
 	}
