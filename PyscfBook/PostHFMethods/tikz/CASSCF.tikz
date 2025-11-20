@@ -45,7 +45,7 @@
 	%
 	\draw [curlybracel]   (phi1.west) -- (phi2.west) node[midway, font=\scriptsize, sloped, above=5pt]{неактивні};
 	%
-	\draw [curlybracel]   (phi3.west) -- (phi6.west) node[midway, font=\scriptsize, sloped, above=5pt]{активні ({\color{red}\texttt{Norb}})};
+	\draw [curlybracel]   (phi3.west) -- (phi6.west) node[midway, font=\scriptsize, sloped, above=5pt]{активні};
 	\draw [curlybracel]   (phi7.west) -- (phi8.west) node[midway, font=\scriptsize, sloped, above=5pt]{віртуальні};
 	% ----------------------- Обводка ------------------------
 	\fill[opacity=0.1, cyan]
