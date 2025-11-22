@@ -1,0 +1,40 @@
+\begin{tikzpicture}
+\begin{axis}[
+    xlabel={Міжядерна відстань $R$ (Bohr)},
+    ylabel={Енергія $E$ (Ha)},
+    grid=major,
+    width=12cm, height=8cm,
+    xmin=0.4, xmax=8.0,
+    ymin=-1.2, ymax=-0.4,
+    width=0.8\linewidth,
+%    title={Крива потенційної енергії H$_2^+$ (UHF/cc-pVDZ)}
+]
+
+\pgfmathsetmacro{\xmin}{1.4615384615384617}
+\pgfmathsetmacro{\ymin}{-1.1283058538712398}
+\coordinate (min) at (\xmin, \ymin);
+
+% Основна крива
+\addplot[blue, ultra thick, smooth] table {\currfiledir/h2_pes.dat};
+
+% Дисоціаційна межа
+\addplot[red, dashed] table[y expr=-1] {\currfiledir/h2_pes.dat};
+
+
+% Точка мінімуму
+\node[draw, circle, fill=red, inner sep=2pt] at (min) {};
+
+% 4. Вертикальна штрихова лінія від мінімуму до осі X
+\draw[gray, dashed, very thick]
+    (min) -| (0,-1.2);
+
+% 5. Горизонтальна штрихова лінія від мінімуму до осі Y
+%\draw[gray, dashed, very thick]
+%    (min) |- (0,-0.7);
+
+\node[fill = white, draw, below, text=red, font=\scriptsize] at (6.5, -0.5) {
+$R_{\min} = \pgfmathprintnumber[precision=2, fixed, zerofill]{\xmin},
+E= \pgfmathprintnumber[precision=4, fixed, zerofill]{\ymin}$};
+
+\end{axis}
+\end{tikzpicture}

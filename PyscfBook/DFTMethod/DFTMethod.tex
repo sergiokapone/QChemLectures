@@ -221,6 +221,101 @@ DFT базується на строгих теоремах Хоенберга�
 
 \begin{tasks}
 
+\item Перевірка нормування густини в DFT.
+Обчисліть $\Tr(\mathbf{D}\mathbf{S})$. Покажіть, що значення точно дорівнює $N_e$ (як і в HF). Порівняйте з \inlinecode{mol.nelectron}.
+
+\item Відновлення KS-фокіана з його складових.
+Після запуску DFT-розрахунку отримайте \inlinecode{mf.get\_veff()}, \inlinecode{mf.get\_j()}, \inlinecode{mf.get\_k()}.
+Покажіть, що
+\[
+\mathbf{F}^{\text{KS}} = \mathbf{h} + \mathbf{J} + \mathbf{V}_{\text{xc}}
+\]
+(для не-гібридних функціоналів \inlinecode{get\_k()} повертає $0$). Перевірте норму різниці.
+
+\item Обмінно-кореляційний потенціал як матриця.
+Обчисліть
+\[\mathbf{V}_{\text{xc}} = \mathbf{F}^{\text{KS}} - \mathbf{h} - \mathbf{J}.\]
+
+Покажіть, що $\mathbf{V}_\text{xc}$ --- симетрична матриця.
+
+\item Енергія обміну-кореляції вручну.
+Використовуйте \\
+\inlinecode{mf.\_numint.get\_rho()} та \inlinecode{mf.xc\_code} для обчислення $E_{\text{xc}}$ на сітці.
+Порівняйте з \inlinecode{mf.energy\_xc()[0]}. Чому значення збігаються?
+
+\item Ручне обчислення $E_{\text{xc}}$ через vxc-матрицю.
+Для LDA/GGA: $E_{\text{xc}} \approx \mathbf{D} : \mathbf{V}_{\text{xc}}$.
+Покажіть, що це дає правильне значення з точністю $10^{-8}$ (для не-гібридів).
+
+\item Гібридний обмін: частка точного HF-обміну.
+Для B3LYP, PBE0, $\omega$B97X тощо отримайте \inlinecode{mf.get\_k()}.
+Обчисліть частку HF-обміну: $\alpha = E_{\text{HFX}} / (E_{\text{HFX}} + E_{\text{DFT-x}})$.
+Перевірте, що $\alpha = 0.20$ для B3LYP, $0.25$ для PBE0.
+
+\item Порівняння фокіанів HF та KS.
+Запустіть HF і DFT (наприклад, PBE) на одній молекулі.
+Обчисліть норму різниці $\|\mathbf{F}^{\text{HF}} - \mathbf{F}^{\text{KS}}\|_F$.
+Поясніть, чому KS-фокіан «м’якший» (менше відштовхування).
+
+\item Віріальна теорема в DFT.
+Обчисліть $T = \operatorname{Tr}(\mathbf{D}\mathbf{T})$.
+$V = E_{\text{tot}} - T$.
+Перевірте $|V/T + 2| < 10^{-4}$ (у DFT зазвичай краще, ніж у HF).
+
+\item Стаціонарність KS-SCF.
+Обчисліть $\|\mathbf{F}^{\text{KS}} \mathbf{D} \mathbf{S} - \mathbf{S} \mathbf{D} \mathbf{F}^{\text{KS}}\|_F$.
+При збіжному розрахунку має бути $< 10^{-8}$.
+
+\item Розкладання veff на складові.
+Використовуйте \inlinecode{mf.get\_veff().exc} (енергія), \inlinecode{.ecoul} (J), \inlinecode{.vxc} (матриця).
+Покажіть, що \inlinecode{mf.e\_tot} = \texttt{T + Vne + J + Exc + Vnn} з точністю $10^{-10}$.
+
+\item Порівняння XC-потенціалу для LDA vs GGA.
+Запустіть LDA (SVWN) і PBE.
+Обчисліть $\mathbf{V}_{\text{xc}}^{\text{LDA}}$ та $\mathbf{V}_{\text{xc}}^{\text{PBE}}$.
+Покажіть, що $\|\mathbf{V}_{\text{xc}}^{\text{PBE}}\|_F < \|\mathbf{V}_{\text{xc}}^{\text{LDA}}\|_F$ (GGA «пом’якшує» потенціал).
+
+\item Асимптотична поведінка XC-потенціалу.
+Для range-separated функціоналів (ωB97X, CAM-B3LYP) отримайте\\ \inlinecode{mf.\_numint.rsh\_coeff}.
+Покажіть, що на великих $r$ XC-потенціал $\to -1/r$ (як у точному обміні).
+
+\item Самовзаємодія (self-interaction error).
+Розрахуйте атом \ce{H-} (два електрони на 1s) з LDA та B3LYP.
+Покажіть, що LDA дає зв’язаний стан (помилково), а B3LYP --- ні (правильно).
+
+\item Фракційна зайнятість у DFT.
+Для атома \ce{H} отримайте HOMO-енергію $\varepsilon_{\text{HOMO}}$.
+Покажіть, що для гібридів $\varepsilon_{\text{HOMO}} \approx -I$ (іонізаційний потенціал), а для чистих GGA --- ні.
+
+\item Перевірка правильності XC-сітки.
+Збільште рівень сітки:
+
+\inlinecode{mf.grids.level = 6}.
+
+Покажіть, що енергія змінюється менш ніж на $10^{-7}$ а.о. (перевірка конвергенції).
+
+\item Ручне обчислення густини на сітці.
+Використовуйте
+
+\inlinecode{ao\_value = mf.\_numint.eval\_ao(mol, grids.coords)}.
+
+Обчисліть $\rho(\mathbf{r}) = \sum_{\mu\nu} D_{\mu\nu} \chi_\mu(\mathbf{r}) \chi_\nu(\mathbf{r})$.
+Інтегруйте по сітці: $\sum w_i \rho_i \approx N_e$ (перевірте похибку).
+
+\item Порівняння орбіталей HF та KS.
+Обчисліть $\mathbf{C}_{\text{HF}}^T \mathbf{S} \mathbf{C}_{\text{KS}}$.
+Покажіть, що орбіталі дуже схожі (перекриття $> 0.99$), але не ідентичні.
+
+\item Частка точного обміну в гібриді.
+Для B3LYP: $E_{\text{x}} = 0.8 E_{\text{x}}^{\text{DFT}} + 0.2 E_{\text{x}}^{\text{HF}}$.
+Обчисліть обидва внески вручну і перевірте коефіцієнти.
+
+\item Дисперсійна корекція D3/D4.
+Запустіть PBE і PBE-D3BJ.
+Покажіть, що різниця енергії --- це саме:
+
+\inlinecode{mf.energy\_nuc() + mf.get\_dispersion()}.
+
 \item Побудуйте криві потенційної енергії молекули \ce{F2} різними функціоналами (\texttt{LDA}, \texttt{PBE}, \texttt{B3LYP}, \texttt{PBE0}) та порівняйте з експериментом ($r_e = 1.412$~\AA, $D_e = 1.66$~eV).
 
 \item Дослідіть вплив базисного набору на властивості \ce{CO}: розрахуйте $r_e$, $D_e$, $\omega_e$ з базисами \texttt{cc-pVDZ}, \texttt{cc-pVTZ}, \texttt{cc-pVQZ} та екстраполюйте до межі.
@@ -256,13 +351,13 @@ E(X) = E_{\text{CBS}} + \frac{A}{X^3}
 \]
 де $X = 2, 3, 4, 5$ для DZ, TZ, QZ, 5Z.
 
-Порівняйте з експериментальною енергією \ce{Ne}: \textbf{-128.547 eV}
+Порівняйте з експериментальною енергією \ce{Ne}: $-128.547$ eV.
 
-\item Розрахуйте всі 3d перехідні метали (\ce{Sc}--\ce{Zn}) з функціоналом \texttt{TPSSh}. Проаналізуйте заселеності d-орбіталей.
+\item Розрахуйте всі $3d$ перехідні метали (\ce{Sc}--\ce{Zn}) з функціоналом \texttt{TPSSh}. Проаналізуйте заселеності d-орбіталей.
 
 Для яких атомів:
 \begin{enumerate}
-    \item Всі d-орбіталі рівномірно заселені?
+    \item Всі $d$-орбіталі рівномірно заселені?
     \item Є виражена асиметрія $\alpha/\beta$?
     \item Найбільше забруднення спіном?
 \end{enumerate}

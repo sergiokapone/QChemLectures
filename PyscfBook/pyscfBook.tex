@@ -75,7 +75,7 @@ biblatex,
     ResponseTheory,
     GeometryOptimization,
     Oscilations,
-    ExcitedStates,
+    ExcitedStates
 }
 
 \pagestyle{main}
@@ -118,36 +118,40 @@ biblatex,
 
 \printbibheading[heading=bibintoc]
 
+
 \defbibheading{subheading}[\bibname]{%
 	\section*{#1\label{BibPage}}
 }
 
-\addtocategoryNoCi{pyscf}{%
-sun2018pyscf, sun2020pyscf, sun2017pyscf,
-}
+\addtocategoryNoCi{pyscf}{sun2018pyscf, sun2020pyscf, sun2017pyscf}
 
-\printbibliography[category=pyscf, title={
-Ключові статті по \PySCF}, heading=subbibliography]
+\printbibliography[
+    category=pyscf,
+    title={Ключові статті по \PySCF},
+    heading=subbibliography,
+    resetnumbers=true
+]
 
 
-\addtocategoryNoCi{Main}{%
-    Sun2025PythonQC,
-	Jensen,
-	Levine,
-    Szabo,
-}
 
-\printbibliography[category=Main, title={Основна література}, heading=subbibliography]
+\addtocategoryNoCi{Main}{Sun2025PythonQC, Jensen, Levine, Szabo}
 
-\addtocategoryNoCi{Additional}{%
-	BSE,
-	SQM,
-	EGMI1,
-	EGMI2,
-	EGMI3
-}
+\printbibliography[
+    category=Main,
+    title={Основна література},
+    heading=subbibliography,
+    resetnumbers=true
+]
 
-\printbibliography[category=Additional, title={Додаткові посилання}, heading=subbibliography]
+\addtocategoryNoCi{Additional}{BSE, SQM, EGMI1, EGMI2, EGMI3}
+
+\printbibliography[
+    category=Additional,
+    title={Додаткові посилання},
+    heading=subbibliography,
+    resetnumbers=true
+]
+
 
 
 \end{document}

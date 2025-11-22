@@ -1,0 +1,29 @@
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.95\linewidth,
+    height=0.75\linewidth,
+    xlabel={Міжядерна відстань $R$ (Bohr)},
+    ylabel={Енергія $E$ (Ha)},
+    grid=major,
+    xmin=0.4, xmax=8.0,
+    ymax=-0.4, ymin=-1.2,
+]
+
+%\pgfmathsetmacro{\xmin}{2.02}
+%\pgfmathsetmacro{\ymin}{-0.600219}
+%\coordinate (min) at (\xmin, \ymin);
+
+% Основна крива
+%\addplot[blue, thick, smooth] table[x=R_bohr, y=E_UHF] {h2_comparison.dat};
+\addplot[blue, ultra thick, smooth] table[x=R_bohr, y=E_RHF] {\currfiledir h2_comparison.dat};
+\addlegendentry{RHF: $R_{\min} = 1.418$, $E_{\min} = -1.128741$}
+
+\addplot[green!50!black, ultra thick, smooth] table[x=R_bohr, y=E_FCI] {\currfiledir h2_comparison.dat};
+\addlegendentry{FCI: $R_{\min} = 1.418$, $E_{\min} = -1.163602$}
+
+% Дисоціаційна межа
+\addplot[red, dashed] table[y expr=-1] {\currfiledir h2_comparison.dat};
+\addlegendentry{Experiment: $R_{\min} = 1.401$, $E_{\min} = -1.1745$}
+
+\end{axis}
+\end{tikzpicture}

@@ -196,6 +196,7 @@
 	\DeclareMathOperator{\inv}{inv}
 	\newcommand{\Laplasian}{\Delta}
     \newcommand{\PySCF}{\texttt{PySCF}}
+    \DeclareMathOperator{\Tr}{Tr}
 }
 
 %===================== Definitions =====================
@@ -955,11 +956,64 @@ postaction={ decorate,
 %===============================================================================
 
 \ifbiblatex
-	\RequirePackage[backend=biber, bibstyle=gost-numeric, autolang=other, isbn=true, url=false]{biblatex}
+    \RequirePackage[backend=biber,
+    bibstyle=numeric,
+    maxnames = 10,
+    autolang=other,
+    isbn=true,
+    url=false,
+    defernumbers=true,
+    sorting=none,
+    ]{biblatex}
 	\newbibmacro{string+url}[1]{%
 		\iffieldundef{url}{#1}{\href{\thefield{url}}{#1}}%
 	}
 	\DeclareFieldFormat{title}{\usebibmacro{string+url}{#1}}
+
+%     % Авторы с явными запятыми
+%    \DeclareNameFormat{family-given:bold}{%
+%      \mkbibemph{%
+%        \nameparts{#1}%
+%        \namepartfamily%
+%        \ifblank{\namepartgiven}{}{\addspace\namepartgiveni}%
+%      }%
+%      \ifthenelse{\value{listcount}<\value{liststop}}
+%        {\addcomma\space}  % запятая после каждого автора кроме последнего
+%        {}%
+%    }
+%
+%    \DeclareNameAlias{sortname}{family-given:bold}
+%    \DeclareNameAlias{author}{family-given:bold}
+%    \DeclareNameAlias{editor}{family-given:bold}
+%
+%    % Разделители
+%    \renewcommand*{\multinamedelim}{\addcomma\space}
+%    \renewcommand*{\finalnamedelim}{\addcomma\space}
+%    \renewcommand*{\andothersdelim}{\addcomma\space}
+%
+%    \DeclareNameAlias{sortname}{family-given:bold}
+%    \DeclareNameAlias{author}{family-given:bold}
+%    \DeclareNameAlias{editor}{family-given:bold}
+%    \DeclareNameAlias{translator}{family-given:bold}
+%
+%    % ВАЖНО: разделитель ПЕРЕД "et al."
+%    \renewcommand*{\andothersdelim}{\addcomma\space}
+%
+%    % "и др." / "et al."
+%    \DefineBibliographyStrings{english}{andothers={et al\adddot}}
+%    \DefineBibliographyStrings{russian}{andothers={и др.\adddot}}
+%    \DefineBibliographyStrings{ukrainian}{andothers={та ін.\adddot}}
+%
+%    \ExecuteBibliographyOptions{
+%      maxcitenames=3,
+%      mincitenames=1,
+%      maxbibnames=3,
+%      minbibnames=3
+%    }
+
+    % Названия книг — жирным и без кавычек
+    \DeclareFieldFormat[book,collection,mvbook]{title}{\mkbibbold{#1}}
+
 	\RequirePackage{csquotes}
 
 	\DefineBibliographyStrings{ukrainian}{%
@@ -970,6 +1024,10 @@ postaction={ decorate,
     \DeclareBibliographyCategory{Additional}
 	\DeclareBibliographyCategory{Problems}
     \DeclareBibliographyCategory{pyscf}
+
+    \DeclareFieldFormat{labelnumberwidth}{#1}
+    \DeclareFieldFormat{labelnumber}{#1.}
+    \setlength{\biblabelsep}{0.5em}
 \else
 	\renewcommand{\@biblabel}[1]{#1.}
 	\addto\captionsukrainian{%
