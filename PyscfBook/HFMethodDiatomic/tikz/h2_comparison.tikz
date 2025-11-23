@@ -21,6 +21,9 @@
 \addplot[green!50!black, ultra thick, smooth] table[x=R_bohr, y=E_FCI] {\currfiledir h2_comparison.dat};
 \addlegendentry{FCI: $R_{\min} = 1.418$, $E_{\min} = -1.163602$}
 
+\addplot[brown, ultra thick, smooth] table[x=R(Bohr), y=E_HL(Ha)] {\currfiledir h2_hl_analytical.csv};
+\addlegendentry{HL: $R_{\min} = 1.6219$, $E_{\min} = -1.115870$}
+
 % Дисоціаційна межа
 \addplot[red, dashed] table[y expr=-1] {\currfiledir h2_comparison.dat};
 \addlegendentry{Experiment: $R_{\min} = 1.401$, $E_{\min} = -1.1745$}

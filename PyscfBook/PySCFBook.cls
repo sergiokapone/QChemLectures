@@ -1025,9 +1025,12 @@ postaction={ decorate,
 	\DeclareBibliographyCategory{Problems}
     \DeclareBibliographyCategory{pyscf}
 
-    \DeclareFieldFormat{labelnumberwidth}{#1}
-    \DeclareFieldFormat{labelnumber}{#1.}
-    \setlength{\biblabelsep}{0.5em}
+    % Цитирования в тексте остаются [1]
+    \DeclareFieldFormat{labelnumber}{#1}
+
+    % В списке литературы - номер с точкой
+    \DeclareFieldFormat{labelnumberwidth}{#1.}
+
 \else
 	\renewcommand{\@biblabel}[1]{#1.}
 	\addto\captionsukrainian{%
