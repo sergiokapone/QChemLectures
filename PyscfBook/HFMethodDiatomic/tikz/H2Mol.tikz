@@ -1,0 +1,24 @@
+\begin{tikzpicture}[scale=1.5]
+	%coordinates
+	\node[inner sep=5pt, circle, ball color=blue!50] (N1) at (-1,0) {};
+	\node[inner sep=5pt, circle, ball color=blue!50] (N2) at (2,-0.5) {};
+	\node[inner sep=2pt, circle, ball color=red!50] (e1) at (-1,3) {};
+	\node[inner sep=2pt, circle, ball color=red!50] (e2) at (3,2) {};
+
+	%Vectors
+	\begin{scope}
+	\draw[latex-latex] (N1) -- node[below] {$R$} (N2);
+	\draw[-latex] (N1) -- node[left] {$r_{A1}$} (e1);
+	\draw[-latex] (N2) -- node[left] {$r_{B1}$} (e1);
+	\draw[-latex] (N1) -- node[below right] {$r_{A2}$} (e2);
+	\draw[-latex] (N2) -- node[right] {$r_{B2}$} (e2);
+
+	\draw[latex-latex] (e1) -- node[above] {$r_{12}$} (e2);
+	\end{scope}
+	%Nuclei
+	\node[below=0.2cm] at (N1) {$A$};
+	\node[below=0.2cm] at (N2) {$B$};
+	%Electrons
+	\node[above=0.1cm] at (e1) {$e_a$} ;
+	\node[above=0.1cm] at (e2) {$e_b$};
+\end{tikzpicture}

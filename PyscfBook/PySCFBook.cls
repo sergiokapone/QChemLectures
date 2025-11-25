@@ -279,6 +279,7 @@
 \NewDocumentCommand{\emphx}{m}{\emph{\textcolor{malina}{#1}}}
 
 \RequirePackage[version=4]{mhchem}
+\RequirePackage{modiagram}
 \RequirePackage{chemfig}
 \RequirePackage{tikzorbital}
 \RequirePackage{siunitx}
