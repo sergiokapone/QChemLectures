@@ -2,16 +2,31 @@ import numpy as np
 from pyscf import gto, scf
 from collections import defaultdict
 
+DIMER_DISTANCES_HF_STO3G = {
+    'HH+': 2.0,    # Точне значення (один електрон)
+    'HH': 1.346,
+    'LiLi': 5.5,
+    'LiH': 3.015,
+    'BB': 3.1,
+    'CC': 2.4,
+    'NN': 2.0,
+    'OO': 2.4,
+    'FF': 2.7,
+    'NaNa': 6.0,
+}
+
 # ---------- Налаштування ----------
-element = "H"
-R_bohr =  2
+elementA = "H"
+elementB = 'H'
+R_bohr = DIMER_DISTANCES_HF_STO3G.get(f"{elementA}{elementB}+")
 basis = "sto-3g"
-threshold = 0.001  # мінімальний коефіцієнт для виводу
+threshold = 0.3
 # -----------------------------------
 
-# Побудова молекули та SCF
+
+# Молекула
 mol = gto.M(
-    atom=f"{element} 0 0 -{R_bohr/2}; {element} 0 0 {R_bohr/2}",
+    atom=f"{elementA} 0 0 -{R_bohr/2}; {elementB} 0 0 {R_bohr/2}",
     basis=basis,
     unit='Bohr',
     verbose=0,
@@ -20,32 +35,30 @@ mol = gto.M(
 )
 mf = scf.RHF(mol).run()
 
-# Зчитування даних
 ao_labels = mol.ao_labels()
 C = mf.mo_coeff
-E = mf.mo_energy
+E_mo = mf.mo_energy
 occ = mf.mo_occ
 
 print("=" * 80)
-print(f"MOLECULAR ORBITALS FOR {element}₂ (basis: {basis}, R = {R_bohr:.2f} Bohr)")
+print(f"MOLECULAR ORBITALS FOR {elementA}-{elementB} (basis: {basis}, R = {R_bohr:.2f} Bohr)")
 print("=" * 80)
+
 
 # Парсимо AO labels
 ao_data = []
 for i, lab in enumerate(ao_labels):
     parts = lab.split()
-    atom_idx = int(parts[0])  # 0 або 1
-    atom_name = parts[1]      # Li, Be, etc.
-    orb_type = parts[2]       # 1s, 2s, 2px, etc.
+    atom_idx = int(parts[0])
+    orb_type = parts[2]
     ao_data.append({
         'idx': i,
         'atom_idx': atom_idx,
-        'atom_name': atom_name,
         'orb': orb_type
     })
 
-def format_mo(c, ao_data, threshold=0.001):
-    """Формат з групуванням атомів"""
+def classify_mo_by_overlap(c, ao_data, threshold=0.001):
+    """Класифікує МО за знаками коефіцієнтів (перекриванням)"""
 
     # Групуємо по типу орбіталі
     orb_groups = defaultdict(lambda: [0, 0])
@@ -56,51 +69,60 @@ def format_mo(c, ao_data, threshold=0.001):
             atom_idx = ao_data[i]['atom_idx']
             orb_groups[orb][atom_idx] = coeff
 
-    # Формуємо компактний вираз
+    # Аналізуємо знаки
+    bonding_count = 0
+    antibonding_count = 0
     terms = []
-    bond_types = []  # зберігаємо типи зв'язків
+
     for orb in sorted(orb_groups.keys()):
         c_a, c_b = orb_groups[orb]
 
-        if abs(c_a - c_b) < 0.01:  # Майже однакові (bonding)
-            avg = (c_a + c_b) / 2
-            if abs(avg) > threshold:
-                terms.append(f"{avg:.3f}({orb}_(a) + {orb}_(b))")
-                bond_types.append('bonding')
-        elif abs(c_a + c_b) < 0.01:  # Майже протилежні (antibonding)
-            avg = (c_a - c_b) / 2
-            if abs(avg) > threshold:
-                terms.append(f"{avg:.3f}({orb}_(a) - {orb}_(b))")
-                bond_types.append('antibonding')
-        else:  # Змішані
+        # Пропускаємо малі коефіцієнти
+        if abs(c_a) < threshold and abs(c_b) < threshold:
+
+            continue
+
+        # Перевіряємо знаки
+        same_sign = (c_a * c_b) > 0  # Добуток додатний → однакові знаки
+        similar_magnitude = abs(abs(c_a) - abs(c_b)) < threshold
+
+        if similar_magnitude and (abs(c_a) > threshold and abs(c_b) > threshold):
+            if same_sign:  # Bonding: + + або - -
+                avg = (c_a + c_b) / 2
+                terms.append(f"{avg:.3f}({orb}_a + {orb}_b)")
+                bonding_count += 1
+            else:  # Antibonding: + - або - +
+                avg = (c_a - c_b) / 2
+                terms.append(f"{avg:.3f}({orb}_a - {orb}_b)")
+                antibonding_count += 1
+        else:  # Асиметричний внесок
             if abs(c_a) > threshold:
-                terms.append(f"{c_a:.3f}·{orb}_(a)")
+                terms.append(f"{c_a:.3f}·{orb}_a")
             if abs(c_b) > threshold:
-                terms.append(f"{c_b:+.3f}·{orb}_(b)")
-                bond_types.append('mixed')
+                terms.append(f"{c_b:+.3f}·{orb}_b")
 
-    expr = " + ".join(terms).replace("+ -", "- ")
-
-    # Визначаємо домінантний тип
-    if 'antibonding' in bond_types:
+    # Визначаємо домінантний характер
+    if antibonding_count > bonding_count:
         mo_type = 'antibonding'
-    elif 'bonding' in bond_types:
+    elif bonding_count > antibonding_count:
         mo_type = 'bonding'
+    elif bonding_count == 0 and antibonding_count == 0:
+        mo_type = 'non-bonding'
     else:
         mo_type = 'mixed'
 
+    expr = " + ".join(terms).replace("+ -", "- ")
+
     return expr, mo_type
 
-# Виводимо кожну МО
+# Використання:
 n_mo = C.shape[1]
 for mo_idx in range(n_mo):
     c = C[:, mo_idx]
-    c_filtered = np.where(np.abs(c) > threshold, c, 0)
     occ_str = "occ" if occ[mo_idx] > 0 else "virt"
 
-    expr, mo_type = format_mo(c_filtered, ao_data, threshold)
-    print(f"\n({occ_str}, {mo_type}) φ{mo_idx+1} = {expr}")
-    print(f"     (ΔE = {E[mo_idx] - (-1.0):.6f} Ha)")
+    expr, mo_type = classify_mo_by_overlap(c, ao_data, threshold)
 
-print("\n" + "=" * 80)
+    print(f"\n({occ_str}, {mo_type}) φ{mo_idx+1} = {expr}")
+    print(f"     E = {E_mo[mo_idx]:.6f} Ha")
 
