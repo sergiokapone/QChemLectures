@@ -193,59 +193,60 @@
 Нижче наводиться перелік навчальних матеріалів та ресурсів для засвоєння матеріалу, розглядуваного на лекційних заняттях та для додаткового вивчення.
 %Крім того, наводиться перелік online-ресурсів для підготовки та виконання розрахунково-графічної роботи.
 
-\nocite{
-YatsimirsijQChem,
-Sleta,
-%Yatsimirsij,
-%Cirelson,
-Szabo,
-%Zulicke,
-Levine,
-BlinderHouse,
-%Gelman,
-AtkinsQM,
-Sauer,
-%Dmitriev1,
-PySCF,
-Gaussian,
-ORCA,
-ORCAInput,
-Multiwfn,
-ChemCraft,
-CCCBDB,
-BSE,
-GB,
-sun2018pyscf,
-sun2020pyscf,
-Neese,
-Cao2019,
-Dral2020,
-McArdle2020,
-Liu2010,
-Haag2013,
-EGMI1,
-EGMI2,
-EGMI3,
-}
+%\nocite{
+%YatsimirsijQChem,
+%Sleta,
+%%Yatsimirsij,
+%%Cirelson,
+%Szabo,
+%%Zulicke,
+%Levine,
+%BlinderHouse,
+%%Gelman,
+%AtkinsQM,
+%Sauer,
+%%Dmitriev1,
+%PySCF,
+%Gaussian,
+%ORCA,
+%ORCAInput,
+%Multiwfn,
+%ChemCraft,
+%CCCBDB,
+%BSE,
+%GB,
+%sun2018pyscf,
+%sun2020pyscf,
+%Neese,
+%Cao2019,
+%Dral2020,
+%McArdle2020,
+%Liu2010,
+%Haag2013,
+%EGMI1,
+%EGMI2,
+%EGMI3,
+%}
 
 \printbibliography[category=Main, title={Основні}, heading=subbibliography]
-\addtocategory{Main}{YatsimirsijQChem, Sleta}
+\addtocategoryNoCi{Main}{YatsimirsijQChem, Sleta}
 \printbibliography[category=Additional, title={Додаткові}, heading=subbibliography]
-\addtocategory{Additional}{
+\addtocategoryNoCi{Additional}{
 %Yatsimirsij,
 %Cirelson,
 %Szabo,
-Zulicke, Levine, BlinderHouse,
+%Zulicke,
+Levine, BlinderHouse,
 %Gelman,
 AtkinsQM, Sauer,
 %Dmitriev1
 }
 \printbibliography[category=Applications, title={Програмні продукти}, heading=subbibliography]
-\addtocategory{Applications}{Gaussian, ORCA, PySCF, ORCAInput, Multiwfn, ChemCraft}
+\addtocategoryNoCi{Applications}{Gaussian, ORCA, PySCF, ORCAInput, Multiwfn, ChemCraft}
 \printbibliography[category=OnlineResources, title={Online-ресурси}, heading=subbibliography]
-\addtocategory{OnlineResources}{CCCBDB, BSE, GB}
+\addtocategoryNoCi{OnlineResources}{CCCBDB, BSE, GB}
 \printbibliography[category=SciArticles, title={Оглядові наукові статті}, heading=subbibliography]
-\addtocategory{SciArticles}{sun2018pyscf, sun2020pyscf, Neese, Cao2019, Dral2020, McArdle2020, Liu2010, Haag2013, EGMI1, EGMI2, EGMI3}
+\addtocategoryNoCi{SciArticles}{sun2018pyscf, sun2020pyscf, Neese, Cao2019, Dral2020, McArdle2020, Liu2010, Haag2013, EGMI1, EGMI2, EGMI3}
 
 %\clearpage
 \syllabuschapter{Навчальний контент}
@@ -466,23 +467,52 @@ AtkinsQM, Sauer,
 %написання реферату, виконання розрахункової роботи, виконання домашньої контрольної
 %роботи тощо) та терміни часу, які на це відводяться.
 
-Самостійна робота студентів має на меті	розвиток творчих здібностей та активізація розумової діяльності студентів, а також формування у студентів потреби безперервного самостійного поповнення знань. Завдяки самостійній роботі студенти повинні навчитись самостійно працювати з літературою, творчо сприймати навчальний матеріал і осмислювати його, сформувати навички щоденної самостійної роботи з метою одержання та узагальнення знань, умінь і навичок.
+%Самостійна робота студентів має на меті	розвиток творчих здібностей та активізація розумової діяльності студентів, а також формування у студентів потреби безперервного самостійного поповнення знань. Завдяки самостійній роботі студенти повинні навчитись самостійно працювати з літературою, творчо сприймати навчальний матеріал і осмислювати його, сформувати навички щоденної самостійної роботи з метою одержання та узагальнення знань, умінь і навичок.
+%
+%Самостійна робота над засвоєнням навчального матеріалу може виконуватися у бібліотеці, ком\-п'ю\-тер\-них класах, а також у домашніх умовах. При використанні студентами програмних продуктів передбачаються можливості отримання необхідної консультації або допомоги з боку викладача.
+%
+%На самостійну роботу виділено \SRSHours~години і відводяться наступні види завдань:
+%
+%\begin{enumerate}[label=$\bullet$]
+%\item обробка і осмислення інформації, отриманої безпосередньо на лекціях, робота з відповідними підручниками та особистим конспектом лекцій (30 годин).
+%%\item самостійне вивчення окремих тем або питань із розробкою конспекту;
+%%\item робота з відповідною літературою;
+%\item виконання підготовчої роботи написання МКР (10 годин);
+%\item робота з відповідними програмними продуктами та виконання ДКР (20 годин);
+%\item підготовка до складання семестрового контролю (30 годин).
+%\end{enumerate}
 
-Самостійна робота над засвоєнням навчального матеріалу може виконуватися у бібліотеці, ком\-п'ю\-тер\-них класах, а також у домашніх умовах. При використанні студентами програмних продуктів передбачаються можливості отримання необхідної консультації або допомоги з боку викладача.
 
-На самостійну роботу виділено \SRSHours~години і відводяться наступні види завдань:
+Самостійна робота студентів має на меті розвиток творчих здібностей та активізація їх розумової діяльності, формування потреби безперервного самостійного поповнення знань та розвиток морально-вольових зусиль. Завданням самостійної роботи студентів є навчити студентів самостійно працювати з літературою, творчо сприймати навчальний матеріал і осмислювати його та формування навичок до щоденної роботи з метою одержання та узагальнення знань, умінь і навичок.
 
+
+На самостійну роботу відводяться наступні види завдань:
 \begin{enumerate}[label=$\bullet$]
-\item обробка і осмислення інформації, отриманої безпосередньо на лекціях, робота з відповідними підручниками та особистим конспектом лекцій (30 годин).
-%\item самостійне вивчення окремих тем або питань із розробкою конспекту;
-%\item робота з відповідною літературою;
-\item виконання підготовчої роботи написання МКР (10 годин);
-\item робота з відповідними програмними продуктами та виконання ДКР (20 годин);
-\item підготовка до складання семестрового контролю (30 годин).
+	\item обробка і осмислення інформації, отриманої безпосередньо на заняттях;
+	\item робота з відповідними підручниками та особистим конспектом лекцій;
+	      %\item самостійне вивчення окремих тем або питань із розробкою конспекту;
+	      %\item робота з відповідною літературою;
+	\item виконання підготовчої роботи до практичних занять та до написання МКР;
+	\item виконання ДКР;
+	\item підготовка до складання семестрового контролю.
 \end{enumerate}
 
-
-
+\begin{center}
+\setcounter{magicrownumbers}{0}
+\begin{spreadtab}{{tblr}{
+    colspec={Q[c, m]X[]c},
+    row{1} = {bg=rowfill, c},
+    hlines = {1-Z}{infotablecolor},
+    vlines = {1-Z}{infotablecolor},
+  }}
+  @ № з/п & @ Вид самостійної роботи                 & @ Кількість годин СРС \\
+  @ \rownumber & @ Підготовка до практичних занять   & 20 \\
+  @ \rownumber & @ Підготовка до МКР                 & 8  \\
+  @ \rownumber & @ Підготовка та написання ДКР       & 20  \\
+  @ \rownumber & @ Підготовка до екзамену            & 30 \\
+  @ \SetCell[c=2]{h, l, font=\bfseries} Загалом && sum(c2:[0,-1]) \\
+\end{spreadtab}
+\end{center}
 
 \syllabuschapter{Політика та контроль}
 
@@ -621,7 +651,7 @@ AtkinsQM, Sauer,
     @ \thead{№}   & @ \thead{Контрольний захід}                & @ \thead{Бал}  & @ \thead{Кількість}  & @ \thead{Всього}   \\ \hline
     @ \rownumber               & @ Активність на лекційних заняттях   & \lecBal        & 15                   & c2*d2           \\ \hline
     @ \rownumber               & @ Модульна контрольна робота         & \mkrBal        & 1                    & c3*d3           \\ \hline
-    @ \rownumber               & @ Реферат                            & \rgrBal        & 1                    & c4*d4           \\ \hline
+    @ \rownumber               & @ Домашня контрольна робота                            & \rgrBal        & 1                    & c4*d4           \\ \hline
     @ \rownumber               & @ \Control                  & \kontrolBal    & 1                    & c5*d5           \\ \hline\hline
     @                          & @ \multicolumn{3}{l||}{Всього, $R$ }                      & sum(e1:[0,-1])  \\  \hline
     \end{spreadtab}
