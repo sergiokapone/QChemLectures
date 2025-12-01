@@ -34,7 +34,7 @@ mf = scf.RHF(mol)
 mf.conv_tol = 1e-12  # Для точних MO в CPHF
 mf.max_cycle = 200
 mf.kernel()
-print(f"\nЕнергія SCF: {mf.e_tot:.10f} Гартрі")
+print(f"\nЕнергія SCF: {mf.e_tot:.10f} Хартрі")
 
 # =====================================================
 # 3. NMR: тензори екранування
