@@ -439,7 +439,7 @@
 \setlength\epigraphwidth{.8\textwidth}
 \setlength\epigraphrule{0pt}
 \renewcommand{\textflush}{flushepinormal}
-\RequirePackage{lastpage}
+\RequirePackage[]{pageslts}
 \RequirePackage[disable]{todonotes}
 \RequirePackage{pdftexcmds}
 
