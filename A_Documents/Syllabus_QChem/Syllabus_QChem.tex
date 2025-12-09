@@ -12,7 +12,6 @@
 \creator{доцент, к.ф.-м.н., доцент Пономаренко Сергій Миколайович} % Розробник програми
 \lecturer[s.ponomarenko@kpi.ua]{доцент, к.ф.-м.н., доцент Пономаренко Сергій Миколайович}
 \disciplinename{Квантова хімія і квантово-механічні методи обчислення} % Назва дисципліни
-\kursurl{https://do.ipo.kpi.ua/course/view.php?id=1263}
 \kursurl{https://classroom.google.com/c/MjI0NzY1NTA5OTMy?cjc=ozzjpz7}
 \shedule{http://ipt.kpi.ua/navchalnij-protses}
 \kafname{прикладної фізики}
@@ -27,7 +26,7 @@
 \methodcomyear{2025}
 \methodcomnum{6} % Номер протокола ухвалення метод момісією
 % ---------------- Syllabus head -----------------
-\disciplinecode{ПО1}
+\disciplinecode{ПО 1}
 \cycle{цикл професійної підготовки}
 \level{Другий (магістерський)} % освітньо-кваліфікаційний рівень
 \status{Обов'язкова}
@@ -153,44 +152,12 @@
         \item Пост-Хартрі-Фоківські методи.
         \item Поняття про метод функціонала густини (DFT).
     \end{Rozdil}
-%    \begin{Rozdil}
-%        \item Проблеми квантової механіки для систем багатьох частинок. Метод теорії збурень.  Варіаційний принцип.
-%        \item Метод самоузгодженого поля. Рівняння Хартрі та Хартрі-Фока.
-%        \item Рівняння Хартрі-Фока в базисному представленні (Рівняння Хартрі-Фока-Рутаана). Базисні набори.
-%        \item Варіанти методу Хартрі–Фока та їх проблеми.
-%        \item Прості атомні системи.
-%        \item Енергія, орбіталі та електронна густина. Теорема Купманса.
-%    \end{Rozdil}
-%\itemR {Застосування методу Хартрі-Фока для простих молекул.} \label{R:simplemol}
-%    \begin{Rozdil}
-%        \item Поняття молекулярної структури та наближення Борна-Оппенгеймера. Методи молекулярної динаміки.
-%        \item Модельні молекулярні системи \ce{H2+} та \ce{H2}.
-%        \item Криві потенціальної енергії. Природа хімічного зв'язку. Метод МО ЛКАО та метод валентних схем.
-%        \item Дипольний момент молекул.
-%    \end{Rozdil}
-%\itemR{Пост-Хартрі-Фоківські методи.} \label{R:postHF}
-%    \begin{Rozdil}
-%        \item Врахування електронної кореляції. Пост-Хартрі-Фоківські методи.
-%        \item Теорія збурень Møller–Plesset (MP2).
-%        \item Основи методу конфігураційної взаємодії.
-%        \item Метод зв’язаних кластерів.
-%        \item Метод повного активного простору конфігурацій.
-%        \item Напівемпіричні методи обчислень.
-%    \end{Rozdil}
-%\itemR {Метод функціоналу електронної густини.} \label{R:DFT}
-%    \begin{Rozdil}
-%        \item Поняття про метод функціонала електронної густини (\texttt{DFT}-method).
-%        \item Огляд функціоналів обміну-кореляції та застосування.
-%        \item Напівемпіричні методи обчислень.
-%    \end{Rozdil}
 \itemR {Властивості молекул.}  \label{R:vlastyv}
     \begin{Rozdil}
         \item Молекулярні властивості як похідні енергії.
         \item Коливальні властивості молекул.
         \item Збуджені стани та UV/VIS спектроскопія.
         \item Магнітні властивості молекул.
-%        \item Спектральні характеристики молекул.
-%        \item Обчислення спектрів та властивостей у квантово-хімічних програмах.
     \end{Rozdil}
 
 \end{Rozdil}
@@ -212,45 +179,10 @@
 Нижче наводиться перелік навчальних матеріалів та ресурсів для засвоєння матеріалу, розглядуваного на лекційних заняттях та для додаткового вивчення.
 %Крім того, наводиться перелік online-ресурсів для підготовки та виконання розрахунково-графічної роботи.
 
-\nocite{
-YatsimirsijQChem,
-Sleta,
-%Yatsimirsij,
-%Cirelson,
-Szabo,
-%Zulicke,
-Levine,
-BlinderHouse,
-%Gelman,
-AtkinsQM,
-Sauer,
-%Dmitriev1,
-PySCF,
-Gaussian,
-ORCA,
-ORCAInput,
-Multiwfn,
-ChemCraft,
-CCCBDB,
-BSE,
-GB,
-sun2018pyscf,
-sun2020pyscf,
-Neese,
-Cao2019,
-Dral2020,
-McArdle2020,
-Liu2010,
-Haag2013,
-EGMI1,
-EGMI2,
-EGMI3,
-}
-
 \printbibliography[category=Main, title={Основні}, heading=subbibliography]
-\addtocategory{Main}{YatsimirsijQChem, Sleta}
+\addtocategoryNoCi{Main}{YatsimirsijQChem, Sleta}
 \printbibliography[category=Additional, title={Додаткові}, heading=subbibliography]
-\addtocategory{Additional}{
+\addtocategoryNoCi{Additional}{
 %Yatsimirsij,
 %Cirelson,
 %Szabo,
@@ -260,11 +192,11 @@ AtkinsQM, Sauer,
 %Dmitriev1
 }
 \printbibliography[category=Applications, title={Програмні продукти}, heading=subbibliography]
-\addtocategory{Applications}{Gaussian, ORCA, PySCF, ORCAInput, Multiwfn, ChemCraft}
+\addtocategoryNoCi{Applications}{Gaussian, ORCA, PySCF, ORCAInput, Multiwfn, ChemCraft}
 \printbibliography[category=OnlineResources, title={Online-ресурси}, heading=subbibliography]
-\addtocategory{OnlineResources}{CCCBDB, BSE, GB}
+\addtocategoryNoCi{OnlineResources}{CCCBDB, BSE, GB}
 \printbibliography[category=SciArticles, title={Оглядові наукові статті}, heading=subbibliography]
-\addtocategory{SciArticles}{sun2018pyscf, sun2020pyscf, Neese, Cao2019, Dral2020, McArdle2020, Liu2010, Haag2013, EGMI1, EGMI2, EGMI3}
+\addtocategoryNoCi{SciArticles}{sun2018pyscf, sun2020pyscf, Neese, Cao2019, Dral2020, McArdle2020, Liu2010, Haag2013, EGMI1, EGMI2, EGMI3}
 
 %\clearpage
 \syllabuschapter{Навчальний контент}
@@ -297,7 +229,7 @@ AtkinsQM, Sauer,
 \href{https://www.latex-project.org/}{\LaTeX} & Система верстки для підготовки наукових звітів. Використовується студентами для оформлення звітів, розрахунково-графічних робіт з формулами та графіками.
 \end{tblr}
 
-
+\clearpage
 \subsection*{Лекційні заняття}
 
 \DefTblrTemplate{contfoot-text}{default}{}
@@ -615,7 +547,7 @@ AtkinsQM, Sauer,
     \item Позитивний результат першої та другої атестації.
 \end{enumerate}
 
-
+\clearpage
 \subsection*{Семестровий контроль (\control)}
 
 \pgfmathsetmacro{\kontrolBal}{40}
