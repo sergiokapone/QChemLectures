@@ -77,8 +77,8 @@
 
 \textbf{Загалом}, повний дипольний момент \(\mu(\mathcal{E})\) складається з:
 \begin{itemize}
-\item \textbf{перманентного дипольного моменту} \(\mu^{(0)}\) — існує завжди (якщо \(\mu^{(0)} \neq 0\)),
-\item \textbf{наведеного дипольного моменту} — виникає під дією поля і включає як лінійний (\(\alpha \mathcal{E}\)), так і нелінійні (\(\beta \mathcal{E}^2\), \(\gamma \mathcal{E}^3\) тощо) вклади.
+	\item \textbf{перманентного дипольного моменту} \(\mu^{(0)}\) — існує завжди (якщо \(\mu^{(0)} \neq 0\)),
+	\item \textbf{наведеного дипольного моменту} — виникає під дією поля і включає як лінійний (\(\alpha \mathcal{E}\)), так і нелінійні (\(\beta \mathcal{E}^2\), \(\gamma \mathcal{E}^3\) тощо) вклади.
 \end{itemize}
 
 Тепер використаємо факт, що енергія --- це інтеграл взаємодії дипольного моменту з полем:
@@ -216,47 +216,47 @@
 В табл. \ref{tab:prop}) наведено узагальнену схему, що показує, як похідні різних порядків визначають ті чи інші властивості .
 
 \begin{commentbox}
-\textbf{Теорія відгуку} --- це узагальнення теорії збурень, в якій
-замість формального розкладу хвильової функції розглядається її \emph{варіаційний відгук} на зовнішнє поле.
+	\textbf{Теорія відгуку} --- це узагальнення теорії збурень, в якій
+	замість формального розкладу хвильової функції розглядається її \emph{варіаційний відгук} на зовнішнє поле.
 \end{commentbox}
 
 
 
 
 \begin{table}[h!]
-\centering
-\caption{Зв’язок порядку похідних енергії з молекулярними властивостями. Тут $q$ --- координати, $E$ --- зовнішнє електричне поле, $B$ --- зовнішнє магнітне поле, $I$ --- магнітне поле ядра.}\label{tab:prop}
-\begin{tblr}{
-%  cells = {font=\scriptsize},
-  colspec={Q[c,m ] Q[c,m] Q[c,m] Q[c,m] Q[l,m]},
-  cell{1}{1} = {c=4}{c},
-  cell{1}{5} = {}{c,m},
-  cell{2-Z}{1-4}={}{cmd=\bfseries},
-  stretch = -1,
-  hline{2} = {2pt},
-  hline{3} = {1pt},
-  hline{Z} = {1pt},
-  row{odd} = {bg=gray!5},
-}
-$n$-та похідна енергії &       &       &       & {Збурення} \\
-$n_R$ & $n_E$ & $n_B$ & $n_I$ & Властивість \\
-1 & 0 & 0 & 0 & Сила \\
-2 & 0 & 0 & 0 & Частоти гармонічних коливань \\
-3 & 0 & 0 & 0 & Ангармонічні поправки \\
-0 & 1 & 0 & 0 & Електричний дипольний момент $\vec{\mu}_e$ \\
-0 & 2 & 0 & 0 & Електрична поляризованість $\chi_e$ \\
-0 & 3 & 0 & 0 & Електрична надполяризованість \\
-0 & 0 & 1 & 0 & Магнітна сприйнятливість $\chi_m$ \\
-0 & 0 & 2 & 1 & Константа надтонкого зв’язку (\texttt{EPR}) \\
-0 & 0 & 0 & 2 & Стала спін-спінової взаємодії ядер \\
-1 & 1 & 0 & 0 & Інтенсивності ІЧ-спектрів \\
-2 & 1 & 0 & 0 & Інтенсивності обертонів в ІЧ-спектрах \\
-1 & 2 & 0 & 0 & Інтенсивності Раманівських спектрів \\
-2 & 2 & 0 & 0 & Інтенсивності обертонів у Раманівських спектрах \\
-0 & 1 & 1 & 0 & Циркулярний дихроїзм \\
-0 & 2 & 1 & 0 & Магнітний циркулярний дихроїзм \\
-0 & 0 & 1 & 1 & Хімічний зсув (\texttt{NMR}) \\
-\end{tblr}
+	\centering
+	\caption{Зв’язок порядку похідних енергії з молекулярними властивостями. Тут $q$ --- координати, $E$ --- зовнішнє електричне поле, $B$ --- зовнішнє магнітне поле, $I$ --- магнітне поле ядра.}\label{tab:prop}
+	\begin{tblr}{
+			%  cells = {font=\scriptsize},
+			colspec={Q[c,m ] Q[c,m] Q[c,m] Q[c,m] Q[l,m]},
+			cell{1}{1} = {c=4}{c},
+			cell{1}{5} = {}{c,m},
+			cell{2-Z}{1-4}={}{cmd=\bfseries},
+			stretch = -1,
+			hline{2} = {2pt},
+			hline{3} = {1pt},
+			hline{Z} = {1pt},
+			row{odd} = {bg=gray!5},
+		}
+		$n$-та похідна енергії &       &       &       & {Збурення}                                      \\
+		$n_R$                  & $n_E$ & $n_B$ & $n_I$ & Властивість                                     \\
+		1                      & 0     & 0     & 0     & Сила                                            \\
+		2                      & 0     & 0     & 0     & Частоти гармонічних коливань                    \\
+		3                      & 0     & 0     & 0     & Ангармонічні поправки                           \\
+		0                      & 1     & 0     & 0     & Електричний дипольний момент $\vec{\mu}_e$      \\
+		0                      & 2     & 0     & 0     & Електрична поляризованість $\chi_e$             \\
+		0                      & 3     & 0     & 0     & Електрична надполяризованість                   \\
+		0                      & 0     & 1     & 0     & Магнітна сприйнятливість $\chi_m$               \\
+		0                      & 0     & 2     & 1     & Константа надтонкого зв’язку (\texttt{EPR})     \\
+		0                      & 0     & 0     & 2     & Стала спін-спінової взаємодії ядер              \\
+		1                      & 1     & 0     & 0     & Інтенсивності ІЧ-спектрів                       \\
+		2                      & 1     & 0     & 0     & Інтенсивності обертонів в ІЧ-спектрах           \\
+		1                      & 2     & 0     & 0     & Інтенсивності Раманівських спектрів             \\
+		2                      & 2     & 0     & 0     & Інтенсивності обертонів у Раманівських спектрах \\
+		0                      & 1     & 1     & 0     & Циркулярний дихроїзм                            \\
+		0                      & 2     & 1     & 0     & Магнітний циркулярний дихроїзм                  \\
+		0                      & 0     & 1     & 1     & Хімічний зсув (\texttt{NMR})                    \\
+	\end{tblr}
 \end{table}
 
 
@@ -301,7 +301,7 @@ $n_R$ & $n_E$ & $n_B$ & $n_I$ & Властивість \\
 
 \paragraph{Змішана друга похідна.}
 
-Для двох параметрів $x$ і $y$ змішана похідна наближається як
+Для двох параметрів $x$ і $y$ змішана похідна наближено виражається як
 \begin{equation}
 	\frac{\partial^2 E}{\partial x\,\partial y}
 	\approx
@@ -372,7 +372,7 @@ $n_R$ & $n_E$ & $n_B$ & $n_I$ & Властивість \\
 варіаційних параметрів $\mathbf p$, які визначають молекулярні орбіталі.
 Енергію таких методів можна подати у вигляді
 \begin{equation}\label{eq:E_x_p}
-E = E(x, \mathbf p(x)),
+	E = E(x, \mathbf p(x)),
 \end{equation}
 де $x$ --- зовнішній параметр (координата ядра, електричне поле,
 зміна геометрії тощо).
@@ -380,33 +380,32 @@ E = E(x, \mathbf p(x)),
 Позначимо через \(\mathbf p_0(x)\) оптимальні (стаціонарні) параметри для даного \(x\),
 тобто ті, що задовольняють умову стаціонарності:
 \begin{equation}
-\left.\frac{\partial E(x,\mathbf p)}{\partial p_i}\right|_{\mathbf p=\mathbf p_0(x)} = 0
-\qquad\text{для всіх }i.
-\label{eq:stationarity_p0}
+	\left.\frac{\partial E(x,\mathbf p)}{\partial p_i}\right|_{\mathbf p=\mathbf p_0(x)} = 0
+	\qquad\text{для всіх }i.
+	\label{eq:stationarity_p0}
 \end{equation}
-У варіаційних методах (\texttt{HF}, \texttt{DFT}, \texttt{CASSCF})
-ця умова виконується умова.
+У варіаційних методах (\texttt{HF}, \texttt{DFT}, \texttt{CASSCF}) ця умова виконується.
 
 
 Тоді повна похідна енергії при зміні \(x\) записується як:
 \begin{equation}
-\frac{dE}{dx}
-=
-\left.\frac{\partial E(x,\mathbf p)}{\partial x}\right|_{\mathbf p=\mathbf p^{(0)}(x)}
-+
-\sum_i
-\left.\frac{\partial E(x,\mathbf p)}{\partial p_i}\right|_{\mathbf p=\mathbf p^{(0)}(x)}
-\frac{d p_{0i}(x)}{dx}.
-\label{eq:dE_dx_general}
+	\frac{dE}{dx}
+	=
+	\left.\frac{\partial E(x,\mathbf p)}{\partial x}\right|_{\mathbf p=\mathbf p^{(0)}(x)}
+	+
+	\sum_i
+	\left.\frac{\partial E(x,\mathbf p)}{\partial p_i}\right|_{\mathbf p=\mathbf p^{(0)}(x)}
+	\frac{d p_{0i}(x)}{dx}.
+	\label{eq:dE_dx_general}
 \end{equation}
 
 Оскільки для оптимальних параметрів \(\mathbf p^{(0)}(x)\) виконано \eqref{eq:stationarity_p0},
 другий член дорівнює нулю, і отримуємо робочу формулу для першої похідної:
 \begin{equation}
-\frac{dE}{dx}
-=
-\left.\frac{\partial E(x,\mathbf p)}{\partial x}\right|_{\mathbf p=\mathbf p^{(0)}(x)}.
-\label{eq:dE_dx_stationary}
+	\frac{dE}{dx}
+	=
+	\left.\frac{\partial E(x,\mathbf p)}{\partial x}\right|_{\mathbf p=\mathbf p^{(0)}(x)}.
+	\label{eq:dE_dx_stationary}
 \end{equation}
 Видно, що \emph{перші} похідні залежать лише від явної залежності $E$ від $x$.
 
@@ -415,37 +414,37 @@ E = E(x, \mathbf p(x)),
 запишемо повну другу похідну енергії:
 
 \begin{equation}
-\frac{d^2E}{dx^2}
-=
-\frac{\partial^2 E}{\partial x^2}
-+
-2 \sum_i
-\frac{\partial^2 E}{\partial x\,\partial p_i}\frac{dp_i}{dx}
-+
-\sum_{i,j}
-\frac{\partial^2 E}{\partial p_i \partial p_j}
-\frac{dp_i}{dx}\frac{dp_j}{dx}
-+
-\sum_i
-\frac{\partial E}{\partial p_i}\frac{d^2 p_i}{dx^2}.
-\label{eq:second_derivative_full}
+	\frac{d^2E}{dx^2}
+	=
+	\frac{\partial^2 E}{\partial x^2}
+	+
+	2 \sum_i
+	\frac{\partial^2 E}{\partial x\,\partial p_i}\frac{dp_i}{dx}
+	+
+	\sum_{i,j}
+	\frac{\partial^2 E}{\partial p_i \partial p_j}
+	\frac{dp_i}{dx}\frac{dp_j}{dx}
+	+
+	\sum_i
+	\frac{\partial E}{\partial p_i}\frac{d^2 p_i}{dx^2}.
+	\label{eq:second_derivative_full}
 \end{equation}
 
 
 
 Останній член у \eqref{eq:second_derivative_full} зникає завдяки умові \eqref{eq:stationarity_p0}, і друга похідна набуває вигляду
 \begin{equation}
-\frac{d^2E}{dx^2}
-=
-\frac{\partial^2 E}{\partial x^2}
-+
-2 \sum_i
-\frac{\partial^2 E}{\partial x\,\partial p_i}\frac{dp_i}{dx}
-+
-\sum_{i,j}
-\frac{\partial^2 E}{\partial p_i \partial p_j}
-\frac{dp_i}{dx}\frac{dp_j}{dx}.
-\label{eq:second_derivative_simplified}
+	\frac{d^2E}{dx^2}
+	=
+	\frac{\partial^2 E}{\partial x^2}
+	+
+	2 \sum_i
+	\frac{\partial^2 E}{\partial x\,\partial p_i}\frac{dp_i}{dx}
+	+
+	\sum_{i,j}
+	\frac{\partial^2 E}{\partial p_i \partial p_j}
+	\frac{dp_i}{dx}\frac{dp_j}{dx}.
+	\label{eq:second_derivative_simplified}
 \end{equation}
 
 У \emph{других} похідних з'являються складові $\partial p_i/\partial x$:
@@ -453,57 +452,57 @@ E = E(x, \mathbf p(x)),
 Оскільки рівність \eqref{eq:stationarity_p0} справедлива для всіх \(x\),
 візьмемо повну похідну по \(x\) від лівої частини (тобто продиференціюємо по \(x\) рівняння стаціонарності):
 \begin{equation}
-\frac{d}{dx}\left[
-\left.\frac{\partial E(x,\mathbf p)}{\partial p_i}\right|_{\mathbf p=\mathbf p^{(0)}(x)}
-\right] = 0.
-\label{eq:diff_stationarity_start}
+	\frac{d}{dx}\left[
+	\left.\frac{\partial E(x,\mathbf p)}{\partial p_i}\right|_{\mathbf p=\mathbf p^{(0)}(x)}
+	\right] = 0.
+	\label{eq:diff_stationarity_start}
 \end{equation}
 
 Розкриваємо повну похідну:
 \begin{equation}
-\frac{d}{dx}\left[\frac{\partial E}{\partial p_i}\right]
-=
-\left.\frac{\partial^2 E}{\partial x\,\partial p_i}\right|_{\mathbf p=\mathbf p^{(0)}(x)}
-+
-\sum_j
-\left.\frac{\partial^2 E}{\partial p_i \partial p_j}\right|_{\mathbf p=\mathbf p^{(0)}(x)}
-\frac{d p_j(x)}{dx}.
-\label{eq:diff_stationarity_explicit}
+	\frac{d}{dx}\left[\frac{\partial E}{\partial p_i}\right]
+	=
+	\left.\frac{\partial^2 E}{\partial x\,\partial p_i}\right|_{\mathbf p=\mathbf p^{(0)}(x)}
+	+
+	\sum_j
+	\left.\frac{\partial^2 E}{\partial p_i \partial p_j}\right|_{\mathbf p=\mathbf p^{(0)}(x)}
+	\frac{d p_j(x)}{dx}.
+	\label{eq:diff_stationarity_explicit}
 \end{equation}
 
 Оскільки ліва частина рівняння \eqref{eq:diff_stationarity_start} дорівнює нулю,
 отримуємо
 \begin{equation}
-\left.\frac{\partial^2 E}{\partial p_i \partial p_j}\right|_{\mathbf p=\mathbf p^{(0)}(x)}
-\frac{d p_j(x)}{dx}
-= -
-\left.\frac{\partial^2 E}{\partial x\,\partial p_i}\right|_{\mathbf p=\mathbf p^{(0)}(x)}.
-\label{eq:intermediate_CPHF}
+	\left.\frac{\partial^2 E}{\partial p_i \partial p_j}\right|_{\mathbf p=\mathbf p^{(0)}(x)}
+	\frac{d p_j(x)}{dx}
+	= -
+	\left.\frac{\partial^2 E}{\partial x\,\partial p_i}\right|_{\mathbf p=\mathbf p^{(0)}(x)}.
+	\label{eq:intermediate_CPHF}
 \end{equation}
 
 Позначимо матрицю других похідних по параметрах (\emph{електронний гессіан} у просторі параметрів)
 \begin{equation}
-H_{ij}(x) \equiv
-\left.\frac{\partial^2 E(x,\mathbf p)}{\partial p_i \partial p_j}\right|_{\mathbf p=\mathbf p^{(0)}(x)},
-\label{eq:H_matrix_def}
+	H_{ij}(x) \equiv
+	\left.\frac{\partial^2 E(x,\mathbf p)}{\partial p_i \partial p_j}\right|_{\mathbf p=\mathbf p^{(0)}(x)},
+	\label{eq:H_matrix_def}
 \end{equation}
 і вектор правої частини (змішана друга похідна)
 \begin{equation}
-g_i^{(x)} \equiv
-\left.\frac{\partial^2 E(x,\mathbf p)}{\partial x\,\partial p_i}\right|_{\mathbf p=\mathbf p^{(0)}(x)}.
-\label{eq:g_vector_def}
+	g_i^{(x)} \equiv
+	\left.\frac{\partial^2 E(x,\mathbf p)}{\partial x\,\partial p_i}\right|_{\mathbf p=\mathbf p^{(0)}(x)}.
+	\label{eq:g_vector_def}
 \end{equation}
 
 Тоді рівняння \eqref{eq:intermediate_CPHF} компактно записується як
 \begin{equation}
-\sum_j H_{ij}(x)\;\frac{d p_j^{(0)}(x)}{dx} = -\,g_i^{(x)}.
-\label{eq:CPHF_derived_compact}
+	\sum_j H_{ij}(x)\;\frac{d p_j^{(0)}(x)}{dx} = -\,g_i^{(x)}.
+	\label{eq:CPHF_derived_compact}
 \end{equation}
 
 Якщо матриця \(H(x)\) невироджена (має обернену), то формально
 \begin{equation}
-\frac{d\mathbf p^{(0)}(x)}{dx} = -\,\mathbf{H}^{-1}(x)\,\mathbf g^{(x)}.
-\label{eq:dpdx_solution}
+	\frac{d\mathbf p^{(0)}(x)}{dx} = -\,\mathbf{H}^{-1}(x)\,\mathbf g^{(x)}.
+	\label{eq:dpdx_solution}
 \end{equation}
 
 Отримане рівняння є системою, що має назву
@@ -536,12 +535,12 @@ g_i^{(x)} \equiv
 У \texttt{HF} хвильова функція --- це детермінант Слейтера, повністю
 визначений набором молекулярних орбіталей
 \[
-\phi_p = \sum_\mu C_{\mu p}\,\chi_\mu .
+	\phi_p = \sum_\mu C_{\mu p}\,\chi_\mu .
 \]
 Проте варіювати матрицю коефіцієнтів $\mathbf C$ безпосередньо неможливо через
 вимогу ортонормованості орбіталей:
 \[
-\langle\phi_p|\phi_q\rangle=\delta_{pq}.
+	\langle\phi_p|\phi_q\rangle=\delta_{pq}.
 \]
 
 Тому варіацію формулюють через \emph{нескінченно малі орбітальні обертання}. У детермінанті фізично значимими є лише ті обертання, що змішують \emph{зайняті} та \emph{віртуальні} орбіталі: обертання всередині підпросторів зайнятих або віртуальних МО не змінюють хвильову функцію, а лише переставляють базисні функції всередині однаково заселених підпросторів.
@@ -549,13 +548,13 @@ g_i^{(x)} \equiv
 
 Допустима зміна зайнятої орбіталі має вигляд:
 \begin{equation}\label{eq:small_rotation_intro}
-\phi_i \;\longrightarrow\;
-\phi_i^{(0)} + \sum_a U_{a i}\,\phi_a^{(0)},
+	\phi_i \;\longrightarrow\;
+	\phi_i^{(0)} + \sum_a U_{a i}\,\phi_a^{(0)},
 \end{equation}
 де змішуються лише зайняті $\phi_i$ з віртуальними $\phi_a$,
 а матриця орбітальних обертань має антисиметричні блоки:
 \[
-U_{ai} = -U_{ia}.
+	U_{ai} = -U_{ia}.
 \]
 
 Така заміна означає ось що зайнята орбіталь під дією збурення трохи «втрачає свою форму» і набуває легку домішку віртуальних орбіталей. Віртуальні МО відіграють роль можливих «напрямків деформації», у які електронна хмара може відхилитися, реагуючи на зовнішній вплив. В малих базисах часто спостерігають занижену поляризовність, погану відтворюваність похідних енергії. Чим багатший базис, тим повніший набір можливих напрямків деформації й тим адекватніше описується фізична відповідь електронів.
@@ -564,14 +563,14 @@ U_{ai} = -U_{ia}.
 
 У підході орбітальних обертань саме коефіцієнти
 \begin{equation}\label{eq:p_HF_definition}
-p_{ai} \equiv U_{ai}
+	p_{ai} \equiv U_{ai}
 \end{equation}
 виступають справжніми варіаційними параметрами. Вони кількісно описують,
 наскільки кожна зайнята орбіталь допускає домішку конкретної віртуальної,
 тобто наскільки електронна хмара може деформуватися в цьому напрямку.
 Таким чином, вектор параметрів
 \[
-\mathbf p = \{U_{ai}\}
+	\mathbf p = \{U_{ai}\}
 \]
 є компактним описом усіх фізично значущих змін хвильової функції
 в межах \texttt{HF}-варіації.
@@ -582,21 +581,21 @@ p_{ai} \equiv U_{ai}
 переходять у нові оптимальні орбіталі для $x+dx$.
 Лінійна зміна МО має вигляд
 \begin{equation}\label{eq:HF_MO_derivative}
-\frac{d\phi_i}{dx}
-=
-\sum_a U_{ai}^{(x)} \phi_a ,
+	\frac{d\phi_i}{dx}
+	=
+	\sum_a U_{ai}^{(x)} \phi_a ,
 \end{equation}
 що визначає коефіцієнти
 \[
-U_{ai}^{(x)} \equiv \frac{dU_{ai}}{dx}.
+	U_{ai}^{(x)} \equiv \frac{dU_{ai}}{dx}.
 \]
 
 Отже, у \texttt{HF} величини
 \[
-\frac{dp_{ai}}{dx}
-=
-\frac{dU_{ai}}{dx}
-\equiv U_{ai}^{(x)}
+	\frac{dp_{ai}}{dx}
+	=
+	\frac{dU_{ai}}{dx}
+	\equiv U_{ai}^{(x)}
 \]
 є \emph{лінійною реакцією зайнятих орбіталей на збурення $x$},
 тобто тим, як зайняті МО змішуються з віртуальними при зміні зовнішнього параметра.
@@ -604,55 +603,55 @@ U_{ai}^{(x)} \equiv \frac{dU_{ai}}{dx}.
 \paragraph{Рівняння CPHF.}
 Матриця $\mathbf H$ у просторі параметрів $U_{ai}$ набуває вигляду
 \begin{equation}\label{eq:H_ai_bj_def}
-H_{ai,bj}
-=
-\left.\frac{\partial^2 E}{\partial U_{ai}\,\partial U_{bj}}\right|_{\mathbf U= 0}.
+	H_{ai,bj}
+	=
+	\left.\frac{\partial^2 E}{\partial U_{ai}\,\partial U_{bj}}\right|_{\mathbf U= 0}.
 \end{equation}
 
 Аналогічно, компоненти вектора змішаної похідної:
 \begin{equation}\label{eq:g_ai_def}
-g_{ai}^{(x)}
-=
-\frac{\partial }{\partial U_{ai}}\left.\frac{\partial E}{\partial x}\right|_{x = 0, \mathbf U= 0}.
+	g_{ai}^{(x)}
+	=
+	\frac{\partial }{\partial U_{ai}}\left.\frac{\partial E}{\partial x}\right|_{x = 0, \mathbf U= 0}.
 \end{equation}
 
 Після цих підстановок рівняння \eqref{eq:dpdx_solution} набуває вигляду
 \begin{equation}\label{eq:CPHF_matrix_general}
-\sum_{b j} H_{ai,bj}\;U_{bj}^{(x)} = -g_{ai}^{(x)}.
+	\sum_{b j} H_{ai,bj}\;U_{bj}^{(x)} = -g_{ai}^{(x)}.
 \end{equation}
 
 Це і є загальна форма \emph{зв'язано--збурених рівнянь} (\texttt{CPHF}).
 Вони визначають реакцію МО на довільне збурення $x$.
 
 \begin{commentbox}[Приклад]
-Розглянемо спрощену систему, де є одна зайнята орбіталь $i$ та одна
-віртуальна орбіталь $a$, розкладені за тими самими базисними функціями
-$\{\chi_\mu\}$:
-\[
-\phi_i^{(0)} = C_{1i}\chi_1 + C_{2i}\chi_2 + C_{3i}\chi_3,\qquad
-\phi_a^{(0)} = C_{1a}\chi_1 + C_{2a}\chi_2 + C_{3a}\chi_3.
-\]
+	Розглянемо спрощену систему, де є одна зайнята орбіталь $i$ та одна
+	віртуальна орбіталь $a$, розкладені за тими самими базисними функціями
+	$\{\chi_\mu\}$:
+	\[
+		\phi_i^{(0)} = C_{1i}\chi_1 + C_{2i}\chi_2 + C_{3i}\chi_3,\qquad
+		\phi_a^{(0)} = C_{1a}\chi_1 + C_{2a}\chi_2 + C_{3a}\chi_3.
+	\]
 
-Після нескінченно малого обертання орбіталі змінюються за правилом
-\eqref{eq:small_rotation_intro}:
-\[
-\phi_i = \phi_i^{(0)} + U_{ai}\phi_a^{(0)}.
-\]
+	Після нескінченно малого обертання орбіталі змінюються за правилом
+	\eqref{eq:small_rotation_intro}:
+	\[
+		\phi_i = \phi_i^{(0)} + U_{ai}\phi_a^{(0)}.
+	\]
 
-Якщо система залежить від зовнішнього параметра $x$, то в першому порядку відповідь орбіталі записується як
-\[
-\phi_i(x) \approx \phi_i^{(0)} + x\sum_a U_{ai}^{(x)}\,\phi_a^{(0)},
-\]
-де $U_{ai}^{(x)}\equiv dU_{ai}/dx$ — саме ті похідні, що даються рівняннями CPHF.
+	Якщо система залежить від зовнішнього параметра $x$, то в першому порядку відповідь орбіталі записується як
+	\[
+		\phi_i(x) \approx \phi_i^{(0)} + x\sum_a U_{ai}^{(x)}\,\phi_a^{(0)},
+	\]
+	де $U_{ai}^{(x)}\equiv dU_{ai}/dx$ — саме ті похідні, що даються рівняннями CPHF.
 
-Підставивши явні розклади у базисі $\{\chi_\mu\}$, отримуємо рівняння для коефіцієнтів:
-\[
-C_{\mu i}(x) \approx C_{\mu i} + x\sum_a U_{ai}^{(x)}\,C_{\mu a},
-\qquad \mu=1,2,3.
-\]
+	Підставивши явні розклади у базисі $\{\chi_\mu\}$, отримуємо рівняння для коефіцієнтів:
+	\[
+		C_{\mu i}(x) \approx C_{\mu i} + x\sum_a U_{ai}^{(x)}\,C_{\mu a},
+		\qquad \mu=1,2,3.
+	\]
 
-Отже, похідні $U_{ai}^{(x)}$ описують, як при малому змінені $x$ змінюються
-коефіцієнти зайнятої орбіталі в напрямку коефіцієнтів віртуальної орбіталі.
+	Отже, похідні $U_{ai}^{(x)}$ описують, як при малому змінені $x$ змінюються
+	коефіцієнти зайнятої орбіталі в напрямку коефіцієнтів віртуальної орбіталі.
 \end{commentbox}
 
 
@@ -661,26 +660,26 @@ C_{\mu i}(x) \approx C_{\mu i} + x\sum_a U_{ai}^{(x)}\,C_{\mu a},
 
 У методі \texttt{HF} електронний гессіан у просторі $U_{ai}$ має вигляд
 \begin{equation}\label{eq:H_standard}
-H_{ai,bj}
-=
-(\varepsilon_a - \varepsilon_i)\,\delta_{ab}\delta_{ij}
-+ (ai||bj),
+	H_{ai,bj}
+	=
+	(\varepsilon_a - \varepsilon_i)\,\delta_{ab}\delta_{ij}
+	+ (ai||bj),
 \end{equation}
 де $(ai||bj)$ --- антисиметризовані двоелектронні інтеграли.
 
 Праві частини $g_{ai}^{(x)}$ залежать від збурення $x$.
 Наприклад, при ядерному русі це:
 \[
-g_{ai}^{(x)} = \langle \phi_a | \hat F^{(x)} | \phi_i \rangle,
+	g_{ai}^{(x)} = \langle \phi_a | \hat F^{(x)} | \phi_i \rangle,
 \]
 де $\hat h^{(x)}$ --- похідна одноелектронного гамільтоніана,
 а $\hat V^{(x)}_{ee}$ --- похідна фоківського потенціалу.
 
 Таким чином, рівняння \eqref{eq:CPHF_matrix_general} у явному вигляді стає
 \begin{equation}\label{eq:CPHF_explicit}
-(\varepsilon_a - \varepsilon_i)\,U_{ai}^{(x)}
-+ \sum_{b j} (ai||bj)\,U_{bj}^{(x)}
-= -\,g_{ai}^{(x)}.
+	(\varepsilon_a - \varepsilon_i)\,U_{ai}^{(x)}
+	+ \sum_{b j} (ai||bj)\,U_{bj}^{(x)}
+	= -\,g_{ai}^{(x)}.
 \end{equation}
 
 Це --- стандартні рівняння \texttt{CPHF}/\texttt{CPKS}, які визначають
@@ -691,91 +690,91 @@ g_{ai}^{(x)} = \langle \phi_a | \hat F^{(x)} | \phi_i \rangle,
 тобто як зайняті орбіталі <<змішуються>> з віртуальними у відповідь на збурення.
 
 \begin{commentbox}
-Розв'язок рівнянь CPHF (Coupled Perturbed Hartree-Fock) зазвичай є чисельним. У практичних обчисленнях квантової хімії ці рівняння представляють собою велику систему лінійних рівнянь виду $\mathbf{H} \mathbf{U}^{(x)} = -\mathbf{g}^{(x)}$, де матриця $\mathbf{H}$ (електронний гессіан) може мати високу розмірність (наприклад, тисячі або мільйони елементів для реальних молекул).
+	Розв'язок рівнянь CPHF (Coupled Perturbed Hartree-Fock) зазвичай є чисельним. У практичних обчисленнях квантової хімії ці рівняння представляють собою велику систему лінійних рівнянь виду $\mathbf{H} \mathbf{U}^{(x)} = -\mathbf{g}^{(x)}$, де матриця $\mathbf{H}$ (електронний гессіан) може мати високу розмірність (наприклад, тисячі або мільйони елементів для реальних молекул).
 
-\begin{itemize}
-\item Прямі методи (наприклад, інвертування матриці) використовуються рідко, тільки для малих систем, оскільки вони обчислювально дорогі ($O(N^3)$ складність, де $N$ --- розмірність).
-\item Ітераційні методи є стандартними для великих систем: наприклад, метод спряжених градієнтів (conjugate gradient), DIIS (Direct Inversion in the Iterative Subspace) або інші солвери для лінійних рівнянь. Вони дозволяють уникнути повного зберігання матриці $\mathbf{H}$ в пам'яті, обчислюючи її добутки з векторами <<на льоту>>.
-\end{itemize}
+	\begin{itemize}
+		\item Прямі методи (наприклад, інвертування матриці) використовуються рідко, тільки для малих систем, оскільки вони обчислювально дорогі ($O(N^3)$ складність, де $N$ --- розмірність).
+		\item Ітераційні методи є стандартними для великих систем: наприклад, метод спряжених градієнтів (conjugate gradient), DIIS (Direct Inversion in the Iterative Subspace) або інші солвери для лінійних рівнянь. Вони дозволяють уникнути повного зберігання матриці $\mathbf{H}$ в пам'яті, обчислюючи її добутки з векторами <<на льоту>>.
+	\end{itemize}
 
-Аналітичний розв'язок можливий лише для тривіальних або модельних систем (наприклад, атом водню), але в реальних розрахунках все робиться чисельно з контролем збіжності ітерацій. Якщо збурень багато.
+	Аналітичний розв'язок можливий лише для тривіальних або модельних систем (наприклад, атом водню), але в реальних розрахунках все робиться чисельно з контролем збіжності ітерацій. Якщо збурень багато.
 \end{commentbox}
 
 \begin{figure}[h!]
-\centering
-\begin{tikzpicture}[
-    scale=2,
-    every node/.style={font=\scriptsize, very thin},
-    node distance=1cm,
-    startstop/.style={rectangle, rounded corners,
-        minimum width=6cm, minimum height=0.6cm,
-        text centered, draw=black, fill=red!30},
-    process/.style={rectangle,
-        minimum width=6cm, minimum height=0.6cm,
-        text centered, draw=black, fill=orange!30},
-    io/.style={trapezium, trapezium left angle=70,
-        trapezium right angle=110, minimum height=0.6cm,
-        text centered, draw=black, fill=blue!30,
-        minimum width=2cm},
-    decision/.style={diamond, aspect=2,
-        text centered, draw=black, fill=green!30},
-]
+	\centering
+	\begin{tikzpicture}[
+			scale=2,
+			every node/.style={font=\scriptsize, very thin},
+			node distance=1cm,
+			startstop/.style={rectangle, rounded corners,
+					minimum width=6cm, minimum height=0.6cm,
+					text centered, draw=black, fill=red!30},
+			process/.style={rectangle,
+					minimum width=6cm, minimum height=0.6cm,
+					text centered, draw=black, fill=orange!30},
+			io/.style={trapezium, trapezium left angle=70,
+					trapezium right angle=110, minimum height=0.6cm,
+					text centered, draw=black, fill=blue!30,
+					minimum width=2cm},
+			decision/.style={diamond, aspect=2,
+					text centered, draw=black, fill=green!30},
+		]
 
-% Блоки
-\node (start) [io]
-{Початкове наближення $U_{ai}^{(x)}=0$};
+		% Блоки
+		\node (start) [io]
+		{Початкове наближення $U_{ai}^{(x)}=0$};
 
-\node (buildRHS) [process, below=0.6cm of start, text width=5cm]
-{Обчислення правої частини: \\[2pt]
-$g_{ai}^{(x)} = \displaystyle
-\left.\frac{\partial^2E}{\partial x\,\partial U_{ai}}\right|_0 $
-\\[2pt]
-(похідна Фока по $x$)};
+		\node (buildRHS) [process, below=0.6cm of start, text width=5cm]
+		{Обчислення правої частини: \\[2pt]
+			$g_{ai}^{(x)} = \displaystyle
+				\left.\frac{\partial^2E}{\partial x\,\partial U_{ai}}\right|_0 $
+			\\[2pt]
+			(похідна Фока по $x$)};
 
-\node (buildH) [process, below=0.6cm of buildRHS, text width=5cm]
-{Побудова електронного гессіана:\\[2pt]
-$H_{ai,bj} = (\varepsilon_a-\varepsilon_i)\delta_{ab}\delta_{ij}
-+ (ai||bj)$};
+		\node (buildH) [process, below=0.6cm of buildRHS, text width=5cm]
+		{Побудова електронного гессіана:\\[2pt]
+			$H_{ai,bj} = (\varepsilon_a-\varepsilon_i)\delta_{ab}\delta_{ij}
+				+ (ai||bj)$};
 
-\node (solveU) [process, below=0.6cm of buildH, text width=5cm]
-{Розв’язання матричних рівнянь CPHF:\\[4pt]
-$\displaystyle
-\sum_{bj} H_{ai,bj}\,U_{bj}^{(x)}
-= -g_{ai}^{(x)}$};
+		\node (solveU) [process, below=0.6cm of buildH, text width=5cm]
+		{Розв’язання матричних рівнянь CPHF:\\[4pt]
+		$\displaystyle
+			\sum_{bj} H_{ai,bj}\,U_{bj}^{(x)}
+			= -g_{ai}^{(x)}$};
 
-\node (buildD1) [process, below=0.6cm of solveU, text width=5cm]
-{Оновлення похідної густини:\\[4pt]
-$\displaystyle
-\mathbf D^{(1)}_{\!ov} = U^{(x)}, \qquad
-\mathbf D^{(1)}_{\!vo} = U^{(x)\dagger}$};
+		\node (buildD1) [process, below=0.6cm of solveU, text width=5cm]
+		{Оновлення похідної густини:\\[4pt]
+			$\displaystyle
+				\mathbf D^{(1)}_{\!ov} = U^{(x)}, \qquad
+				\mathbf D^{(1)}_{\!vo} = U^{(x)\dagger}$};
 
-\node (check) [decision, below=0.6cm of buildD1]
-{$\|U^{(x)}_{n+1}-U^{(x)}_{n}\|\le\delta$};
+		\node (check) [decision, below=0.6cm of buildD1]
+		{$\|U^{(x)}_{n+1}-U^{(x)}_{n}\|\le\delta$};
 
-\node (props) [startstop, below=0.8cm of check, text width=10cm]
-{Використання $\mathbf D^{(1)}$ або $U^{(x)}$ \\[2pt]
-для обчислення другої похідної енергії, \\[2pt]
-тензорів поляризовності, Раман-поляризовності та гессіанів.};
+		\node (props) [startstop, below=0.8cm of check, text width=10cm]
+		{Використання $\mathbf D^{(1)}$ або $U^{(x)}$ \\[2pt]
+			для обчислення другої похідної енергії, \\[2pt]
+			тензорів поляризовності, Раман-поляризовності та гессіанів.};
 
-% Стрілки
-\draw[-latex] (start) -- (buildRHS);
-\draw[-latex] (buildRHS) -- (buildH);
-\draw[-latex] (buildH) -- (solveU);
-\draw[-latex] (solveU) -- (buildD1);
-\draw[-latex] (buildD1) -- (check);
+		% Стрілки
+		\draw[-latex] (start) -- (buildRHS);
+		\draw[-latex] (buildRHS) -- (buildH);
+		\draw[-latex] (buildH) -- (solveU);
+		\draw[-latex] (solveU) -- (buildD1);
+		\draw[-latex] (buildD1) -- (check);
 
-% Петля (Ні)
-\draw[-latex] (check.west) -- node[above]{Ні} +(-2,0)
-    coordinate (loop) -- (loop |- solveU.west)
-    |- (solveU.west);
+		% Петля (Ні)
+		\draw[-latex] (check.west) -- node[above]{Ні} +(-2,0)
+		coordinate (loop) -- (loop |- solveU.west)
+		|- (solveU.west);
 
-% Так — вихід
-\draw[-latex] (check.east) -- node[above]{Так} +(2,0)
-    coordinate (out) |- (props.east);
+		% Так — вихід
+		\draw[-latex] (check.east) -- node[above]{Так} +(2,0)
+		coordinate (out) |- (props.east);
 
-\end{tikzpicture}
-\caption{Процедура розв`язку рівнянь \texttt{CPHF}.
-}
+	\end{tikzpicture}
+	\caption{Процедура розв`язку рівнянь \texttt{CPHF}.
+	}
 \end{figure}
 
 
@@ -806,21 +805,21 @@ $\displaystyle
 
 У методі \texttt{HF} умова стаціонарності \eqref{eq:stationarity_p0} набуває вигляду
 \[
-\left.\frac{\partial E}{\partial U_{ai}}\right|_{U=U^{(0)}} = 0.
+	\left.\frac{\partial E}{\partial U_{ai}}\right|_{U=U^{(0)}} = 0.
 \]
 
 Отже, перша похідна енергії визначається \emph{лише} явною залежністю
 гамільтоніана від $x$:
 \begin{equation}\label{eq:HF_gradient_basic}
-\frac{dE}{dx}
-=
-\left.\frac{\partial E}{\partial x}\right|_{U=U^{(0)}} .
+	\frac{dE}{dx}
+	=
+	\left.\frac{\partial E}{\partial x}\right|_{U=U^{(0)}} .
 \end{equation}
 
 \paragraph{Одноелектронний внесок.}
 У \texttt{HF} енергія має вигляд
 \[
-E = \sum_i h_{ii} + \tfrac{1}{2}\sum_{ij}\big( J_{ij} - K_{ij} \big),
+	E = \sum_i h_{ii} + \tfrac{1}{2}\sum_{ij}\big( J_{ij} - K_{ij} \big),
 \]
 де $h_{pq}$ --- одноелектронна частина, $J_{ij}$ і $K_{ij}$ --- кулонівський
 та обмінний інтеграли.
@@ -829,16 +828,16 @@ E = \sum_i h_{ii} + \tfrac{1}{2}\sum_{ij}\big( J_{ij} - K_{ij} \big),
 оператор, то перша похідна енергії включає зміну тільки відповідних
 інтегралів:
 \begin{equation}\label{eq:HF_gradient_one_electron}
-\frac{dE}{dx}
-=
-\sum_i \frac{\partial h_{ii}}{\partial x}
-+
-\tfrac12 \sum_{ij}
-\left(
-\frac{\partial J_{ij}}{\partial x}
--
-\frac{\partial K_{ij}}{\partial x}
-\right),
+	\frac{dE}{dx}
+	=
+	\sum_i \frac{\partial h_{ii}}{\partial x}
+	+
+	\tfrac12 \sum_{ij}
+	\left(
+	\frac{\partial J_{ij}}{\partial x}
+	-
+	\frac{\partial K_{ij}}{\partial x}
+	\right),
 \end{equation}
 оскільки зміна коефіцієнтів МО (тобто зміна $U_{ai}$) не дає внеску
 в першу похідну через стаціонарність.
@@ -846,11 +845,11 @@ E = \sum_i h_{ii} + \tfrac{1}{2}\sum_{ij}\big( J_{ij} - K_{ij} \big),
 \paragraph{Форма через матрицю густини.}
 У більш компактній матричній формі:
 \begin{equation}\label{eq:HF_gradient_density_matrix}
-\frac{dE}{dx}
-=
-\mathrm{Tr}\!\left[\,\mathbf D\,\frac{\partial \mathbf h}{\partial x}\right]
-+
-\tfrac12\,\mathrm{Tr}\!\left[\mathbf D\,\frac{\partial (\mathbf J - \mathbf K)}{\partial x}\right],
+	\frac{dE}{dx}
+	=
+	\mathrm{Tr}\!\left[\,\mathbf D\,\frac{\partial \mathbf h}{\partial x}\right]
+	+
+	\tfrac12\,\mathrm{Tr}\!\left[\mathbf D\,\frac{\partial (\mathbf J - \mathbf K)}{\partial x}\right],
 \end{equation}
 де $\mathbf D$ --- матриця густини у базисі АО.
 
@@ -891,12 +890,12 @@ E = \sum_i h_{ii} + \tfrac{1}{2}\sum_{ij}\big( J_{ij} - K_{ij} \big),
 
 У попередніх підрозділах ми показали загальний варіаційний результат
 \[
-\frac{d^2E}{dx^2}
-=
-\frac{\partial^2 E}{\partial x^2}
-+2\sum_{ai}\frac{\partial^2 E}{\partial x\,\partial U_{ai}}\frac{dU_{ai}}{dx}
-+\sum_{ai}\sum_{bj}\frac{\partial^2 E}{\partial U_{ai}\partial U_{bj}}
-\frac{dU_{ai}}{dx}\frac{dU_{bj}}{dx}.
+	\frac{d^2E}{dx^2}
+	=
+	\frac{\partial^2 E}{\partial x^2}
+	+2\sum_{ai}\frac{\partial^2 E}{\partial x\,\partial U_{ai}}\frac{dU_{ai}}{dx}
+	+\sum_{ai}\sum_{bj}\frac{\partial^2 E}{\partial U_{ai}\partial U_{bj}}
+	\frac{dU_{ai}}{dx}\frac{dU_{bj}}{dx}.
 \]
 Тепер випишемо цю формулу в термінах вже введених об'єктів
 $g^{(x)}_{ai}$ та $H_{ai,bj}$ і одержимо робочу форму для другої похідної.
@@ -904,44 +903,44 @@ $g^{(x)}_{ai}$ та $H_{ai,bj}$ і одержимо робочу форму дл
 
 Остаточний вираз для другої похідної набуває компактної форми
 \begin{equation}\label{eq:d2E_final_boxed}
-\displaystyle
-\frac{d^2E}{dx^2}
-=
-\left.\frac{\partial^2 E}{\partial x^2}\right|_{U}
--
-\sum_{ai}\sum_{bj}
-g^{(x)}_{ai}\,(\mathbf{H}^{-1})_{ai,bj}\,g^{(x)}_{bj}.
+	\displaystyle
+	\frac{d^2E}{dx^2}
+	=
+	\left.\frac{\partial^2 E}{\partial x^2}\right|_{U}
+	-
+	\sum_{ai}\sum_{bj}
+	g^{(x)}_{ai}\,(\mathbf{H}^{-1})_{ai,bj}\,g^{(x)}_{bj}.
 \end{equation}
 
 Цю формулу часто записують у скороченому матричному вигляді:
 \[
-\frac{d^2E}{dx^2} = \left.\frac{\partial^2 E}{\partial x^2}\right|_{U} - \mathbf g^{(x)\,\mathrm T} \mathbf{H}^{-1}\mathbf g^{(x)}.
+	\frac{d^2E}{dx^2} = \left.\frac{\partial^2 E}{\partial x^2}\right|_{U} - \mathbf g^{(x)\,\mathrm T} \mathbf{H}^{-1}\mathbf g^{(x)}.
 \]
 
 \paragraph{Інтерпретація і розгорнуті компоненти.}
 \begin{itemize}
-    \item Перший член $\displaystyle\left.\frac{\partial^2 E}{\partial x^2}\right|_{U}$ — пряма (явна) друга похідна енергії по $x$ при фіксованих орбіталях. У матричній формі її можна виписати як слід:
-\begin{multline*}
-    \left.\frac{\partial^2 E}{\partial x^2}\right|_{U}
-    =
-    \mathrm{Tr}\!\left[\mathbf D\,\frac{\partial^2\mathbf h}{\partial x^2}\right]
-    +\tfrac12\,\mathrm{Tr}\!\left[\mathbf D\,\frac{\partial^2(\mathbf J-\mathbf K)}{\partial x^2}\right]
-    + \\ +\text{додаткові Pulay-терміни явного другого порядку}.
-\end{multline*}
-    \item Другий член $-\mathbf g^{\mathrm T} H^{-1}\mathbf g$ — вклад, що походить від лінійної реакції орбіталей. Він завжди від'ємний для позитивно визначного $\mathbf H$ і фізично відповідає зниженню енергії за рахунок релаксації орбіталей під дією збурення.
-    \item Компоненти $g^{(x)}_{ai}$ у випадку \texttt{HF} зазвичай мають вигляд
-    \[
-    g^{(x)}_{ai} = \langle \phi_a | \hat h^{(x)} | \phi_i \rangle
-    + \langle \phi_a | \hat V^{(x)}_\text{HF} | \phi_i \rangle,
-    \]
-    де $\hat h^{(x)}$ — явна похідна одноелектронного оператора (наприклад, похідна ядерного потенціалу), а $\hat V^{(x)}_\text{HF}$ — похідна фоківського потенціалу (вона містить похідні двоелектронних інтегралів).
+	\item Перший член $\displaystyle\left.\frac{\partial^2 E}{\partial x^2}\right|_{U}$ — пряма (явна) друга похідна енергії по $x$ при фіксованих орбіталях. У матричній формі її можна виписати як слід:
+	      \begin{multline*}
+		      \left.\frac{\partial^2 E}{\partial x^2}\right|_{U}
+		      =
+		      \mathrm{Tr}\!\left[\mathbf D\,\frac{\partial^2\mathbf h}{\partial x^2}\right]
+		      +\tfrac12\,\mathrm{Tr}\!\left[\mathbf D\,\frac{\partial^2(\mathbf J-\mathbf K)}{\partial x^2}\right]
+		      + \\ +\text{додаткові Pulay-терміни явного другого порядку}.
+	      \end{multline*}
+	\item Другий член $-\mathbf g^{\mathrm T} H^{-1}\mathbf g$ — вклад, що походить від лінійної реакції орбіталей. Він завжди від'ємний для позитивно визначного $\mathbf H$ і фізично відповідає зниженню енергії за рахунок релаксації орбіталей під дією збурення.
+	\item Компоненти $g^{(x)}_{ai}$ у випадку \texttt{HF} зазвичай мають вигляд
+	      \[
+		      g^{(x)}_{ai} = \langle \phi_a | \hat h^{(x)} | \phi_i \rangle
+		      + \langle \phi_a | \hat V^{(x)}_\text{HF} | \phi_i \rangle,
+	      \]
+	      де $\hat h^{(x)}$ — явна похідна одноелектронного оператора (наприклад, похідна ядерного потенціалу), а $\hat V^{(x)}_\text{HF}$ — похідна фоківського потенціалу (вона містить похідні двоелектронних інтегралів).
 \end{itemize}
 
 \paragraph{Примітки щодо практики обчислення.}
 \begin{enumerate}
-    \item Якщо базис залежить від параметра $x$ (наприклад, при зміщенні ядер у атомно-орбітальному базисі), то необхідно врахувати Pulay-терміни як у першій, так і у другій похідній; вони входять у явну частину $\partial^2E/\partial x^2$ і в компоненту $g^{(x)}$ (через похідні інтегралів).
-    \item У випадку виродженості або слабко визначеного H потрібно проектувати фізичний підпростір обертань (ці обернення, що фізично змінюють хвильову функцію) і інвертувати H в цьому підпросторі.
-    \item Формула \eqref{eq:d2E_final_boxed} є базовою для обчислення других похідних: матриці силових констант, поляризованості 2-го порядку, динамічних поправок тощо.
+	\item Якщо базис залежить від параметра $x$ (наприклад, при зміщенні ядер у атомно-орбітальному базисі), то необхідно врахувати Pulay-терміни як у першій, так і у другій похідній; вони входять у явну частину $\partial^2E/\partial x^2$ і в компоненту $g^{(x)}$ (через похідні інтегралів).
+	\item У випадку виродженості або слабко визначеного H потрібно проектувати фізичний підпростір обертань (ці обернення, що фізично змінюють хвильову функцію) і інвертувати H в цьому підпросторі.
+	\item Формула \eqref{eq:d2E_final_boxed} є базовою для обчислення других похідних: матриці силових констант, поляризованості 2-го порядку, динамічних поправок тощо.
 \end{enumerate}
 
 
@@ -951,42 +950,42 @@ g^{(x)}_{ai}\,(\mathbf{H}^{-1})_{ai,bj}\,g^{(x)}_{bj}.
 
 Розглянемо два зовнішні параметри $x$ і $y$. Для методу \texttt{HF} змішана похідна
 \[
-\frac{d^2E}{dx\,dy}
+	\frac{d^2E}{dx\,dy}
 \]
 має ту саму структурну форму, що й у загальному варіаційному випадку, але всі складові можна виписати явно.
 
 \paragraph{1. Явна (пряма) часткова друга похідна при фіксованих орбіталях.}
 При фіксованих орбіталях ($U$ константні)
 \begin{multline}\label{eq:explicit_partial_xy}
-\left.\frac{\partial^2 E}{\partial x\,\partial y}\right|_{U}
-=
-\mathrm{Tr}\!\left[\mathbf D\,\frac{\partial^2\mathbf h}{\partial x\,\partial y}\right]
-+\tfrac12\,\mathrm{Tr}\!\left[\mathbf D\,\frac{\partial^2(\mathbf J-\mathbf K)}{\partial x\,\partial y}\right]
-+ \\ + \text{(Pulay-доданки при залежному базисі)}.
+	\left.\frac{\partial^2 E}{\partial x\,\partial y}\right|_{U}
+	=
+	\mathrm{Tr}\!\left[\mathbf D\,\frac{\partial^2\mathbf h}{\partial x\,\partial y}\right]
+	+\tfrac12\,\mathrm{Tr}\!\left[\mathbf D\,\frac{\partial^2(\mathbf J-\mathbf K)}{\partial x\,\partial y}\right]
+	+ \\ + \text{(Pulay-доданки при залежному базисі)}.
 \end{multline}
 Тут $\mathbf D$ — матриця густини у АО-базисі, $\mathbf h$ — матриця одноелектронного оператора, $\mathbf J,\mathbf K$ — відповідні матриці кулон- та обмінних операторів.
 
 \paragraph{2. Вектори змішаних похідних \(g^{(x)}\) та \(g^{(y)}\).}
 Для \texttt{HF} компоненти вектора $g^{(x)}$ мають класичний вигляд
 \begin{equation}\label{eq:g_ai_HF_explicit}
-g^{(x)}_{ai}
-=
-\langle \phi_a \,|\, \tfrac{\partial\hat h}{\partial x} \,|\, \phi_i \rangle
-+
-\langle \phi_a \,|\, \tfrac{\partial\hat V_{\mathrm{HF}}}{\partial x} \,|\, \phi_i \rangle
-+
-\text{(Pulay-доданку від залежного базису)},
+	g^{(x)}_{ai}
+	=
+	\langle \phi_a \,|\, \tfrac{\partial\hat h}{\partial x} \,|\, \phi_i \rangle
+	+
+	\langle \phi_a \,|\, \tfrac{\partial\hat V_{\mathrm{HF}}}{\partial x} \,|\, \phi_i \rangle
+	+
+	\text{(Pulay-доданку від залежного базису)},
 \end{equation}
 де
 \[
-\hat V_{\mathrm{HF}} = \hat J - \hat K
+	\hat V_{\mathrm{HF}} = \hat J - \hat K
 \]
 — фоківський оператор. Аналогічно для $g^{(y)}_{ai}$:
 \[
-g^{(y)}_{ai}
-=
-\langle \phi_a \,|\, \tfrac{\partial\hat F}{\partial y} \,|\, \phi_i \rangle
-+ \text{(Pulay)}.
+	g^{(y)}_{ai}
+	=
+	\langle \phi_a \,|\, \tfrac{\partial\hat F}{\partial y} \,|\, \phi_i \rangle
+	+ \text{(Pulay)}.
 \]
 
 Якщо базис залежить від параметрів ($\chi_\mu=\chi_\mu(x,y,\dots)$), то в $g^{(x)}_{ai}$ додатково входять члени, пропорційні похідним перекриттів $\mathbf S^{(x)}$ і похідним інтегралів; ці Pulay-доданки можна виписати стандартно через $\mathbf F$ і $\mathbf S^{(x)}$.
@@ -996,38 +995,38 @@ g^{(y)}_{ai}
 \paragraph{3. Рівняння лінійної реакції і розв'язок.}
 Зв'язані рівняння для реакції при збуренні $y$:
 \begin{equation}\label{eq:CPHF_HF_xy}
-\sum_{bj} H_{ai,bj}\,\frac{dU_{bj}}{dy} = -\,g^{(y)}_{ai},
+	\sum_{bj} H_{ai,bj}\,\frac{dU_{bj}}{dy} = -\,g^{(y)}_{ai},
 \end{equation}
 і при невиродженому $H$ розв'язок
 \[
-\frac{dU_{ai}}{dy} = -\sum_{bj}(H^{-1})_{ai,bj}\,g^{(y)}_{bj}.
+	\frac{dU_{ai}}{dy} = -\sum_{bj}(H^{-1})_{ai,bj}\,g^{(y)}_{bj}.
 \]
 
 \paragraph{5. Остаточна формула для змішаної похідної у HF.}
 Підставивши розв'язок у загальну формулу \eqref{eq:mixed_start}, одержуємо
 \begin{equation}\label{eq:mixed_HF_final}
-\frac{d^2E}{dx\,dy}
-=
-\mathrm{Tr}\!\left[\mathbf D\,\frac{\partial^2\mathbf h}{\partial x\,\partial y}\right]
-+\tfrac12\,\mathrm{Tr}\!\left[\mathbf D\,\frac{\partial^2(\mathbf J-\mathbf K)}{\partial x\,\partial y}\right]
--
-\sum_{ai}\sum_{bj} g^{(x)}_{ai}\,(\mathbf{H}^{-1})_{ai,bj}\,g^{(y)}_{bj}
+	\frac{d^2E}{dx\,dy}
+	=
+	\mathrm{Tr}\!\left[\mathbf D\,\frac{\partial^2\mathbf h}{\partial x\,\partial y}\right]
+	+\tfrac12\,\mathrm{Tr}\!\left[\mathbf D\,\frac{\partial^2(\mathbf J-\mathbf K)}{\partial x\,\partial y}\right]
+	-
+	\sum_{ai}\sum_{bj} g^{(x)}_{ai}\,(\mathbf{H}^{-1})_{ai,bj}\,g^{(y)}_{bj}
 \end{equation}
 або компактно
 \[
-\frac{d^2E}{dx\,dy}
-=
-\left.\frac{\partial^2 E}{\partial x\,\partial y}\right|_{U}
--
-\mathbf g^{(x)\,\mathrm T} H^{-1}\mathbf g^{(y)}.
+	\frac{d^2E}{dx\,dy}
+	=
+	\left.\frac{\partial^2 E}{\partial x\,\partial y}\right|_{U}
+	-
+	\mathbf g^{(x)\,\mathrm T} H^{-1}\mathbf g^{(y)}.
 \]
 
 \paragraph{6. Коментарі щодо Pulay-термінів і практики.}
 \begin{itemize}
-  \item Якщо базис залежить від $x$ або $y$, то перший член у формулі \eqref{eq:mixed_HF_final} повинен включати Pulay-члени першого та другого порядку. Зокрема, у частковій другій похідній при фіксованих орбіталях входять члени з $\partial^2\mathbf h/\partial x\partial y$ та члени виду $\mathrm{Tr}[\mathbf F\,\partial^2\mathbf S/\partial x\partial y]$ (або еквівалентні вирази).
-  \item Вектори $\mathbf g^{(x)}$ і $\mathbf g^{(y)}$ також містять похідні двоелектронних інтегралів — їх треба збирати при побудові правих частин CPHF.
-  \item Для обчислення кількох змішаних похідних доцільно однаково розкладати або факторизувати матрицю $H$ (наприклад, LU/Cholesky/диагоналізація в робочому підпросторі) і потім для кожного збурення швидко знаходити $H^{-1}\mathbf g^{(z)}$ шляхом прямого чи зворотного ходу.
-  \item Симетрія змішаної похідної ($d^2E/dxdy = d^2E/dydx$) гарантується при правильному урахуванні всіх Pulay-термінів і при точному розв'язанні CPHF.
+	\item Якщо базис залежить від $x$ або $y$, то перший член у формулі \eqref{eq:mixed_HF_final} повинен включати Pulay-члени першого та другого порядку. Зокрема, у частковій другій похідній при фіксованих орбіталях входять члени з $\partial^2\mathbf h/\partial x\partial y$ та члени виду $\mathrm{Tr}[\mathbf F\,\partial^2\mathbf S/\partial x\partial y]$ (або еквівалентні вирази).
+	\item Вектори $\mathbf g^{(x)}$ і $\mathbf g^{(y)}$ також містять похідні двоелектронних інтегралів — їх треба збирати при побудові правих частин CPHF.
+	\item Для обчислення кількох змішаних похідних доцільно однаково розкладати або факторизувати матрицю $H$ (наприклад, LU/Cholesky/диагоналізація в робочому підпросторі) і потім для кожного збурення швидко знаходити $H^{-1}\mathbf g^{(z)}$ шляхом прямого чи зворотного ходу.
+	\item Симетрія змішаної похідної ($d^2E/dxdy = d^2E/dydx$) гарантується при правильному урахуванні всіх Pulay-термінів і при точному розв'язанні CPHF.
 \end{itemize}
 
 
@@ -1038,48 +1037,48 @@ g^{(y)}_{ai}
 Поляризовність визначається як друга похідна енергії за компонентами
 зовнішнього електричного поля:
 \begin{equation}\label{eq:alpha_def}
-\alpha_{\mu\nu}
-=
--\left.\frac{\partial^2 E}{\partial \mathcal E_\mu\,\partial \mathcal E_\nu}\right|_{\mathcal E = 0}.
+	\alpha_{\mu\nu}
+	=
+	-\left.\frac{\partial^2 E}{\partial \mathcal E_\mu\,\partial \mathcal E_\nu}\right|_{\mathcal E = 0}.
 \end{equation}
 
 У присутності однорідного електричного поля одноелектронний оператор
 набуває вигляду
 \[
-\hat h(\boldsymbol{\mathcal E})
-=
-\hat h_0 - \sum_{\mu} \mathcal E_\mu\,\hat\mu_\mu,
+	\hat h(\boldsymbol{\mathcal E})
+	=
+	\hat h_0 - \sum_{\mu} \mathcal E_\mu\,\hat\mu_\mu,
 \]
 тому
 \[
-\frac{\partial \hat h}{\partial \mathcal E_\mu} = -\hat\mu_\mu,
-\qquad
-\frac{\partial^2 \hat h}{\partial \mathcal E_\mu\,\partial \mathcal E_\nu}=0.
+	\frac{\partial \hat h}{\partial \mathcal E_\mu} = -\hat\mu_\mu,
+	\qquad
+	\frac{\partial^2 \hat h}{\partial \mathcal E_\mu\,\partial \mathcal E_\nu}=0.
 \]
 
 % ------------------------------------------------------------
 
 Похідна фокіана по компоненті поля \(\mu\) збігається з похідною одноелектронної частини:
 \[
-\hat F^{(\mu)} = \frac{\partial \hat F}{\partial \mathcal E_\mu}
-= -\hat\mu_\mu.
+	\hat F^{(\mu)} = \frac{\partial \hat F}{\partial \mathcal E_\mu}
+	= -\hat\mu_\mu.
 \]
 
 Звідси елементи вектора збурення у рівняннях \texttt{CPHF}:
 \begin{equation}\label{eq:HF_g_vector_field}
-g^{(\mu)}_{ai}
-=
-\left.\frac{\partial^2 E}{\partial \mathcal E_\mu\,\partial U_{ai}}\right|_{\mathcal E=0}
-=
-F^{(\mu)}_{ai}
-=
--(\mu_{\mu})_{ai},
+	g^{(\mu)}_{ai}
+	=
+	\left.\frac{\partial^2 E}{\partial \mathcal E_\mu\,\partial U_{ai}}\right|_{\mathcal E=0}
+	=
+	F^{(\mu)}_{ai}
+	=
+	-(\mu_{\mu})_{ai},
 \end{equation}
 де \(\mu = x,y,z\) - компонента поля (або дипольного моменту) вздовж відповідної осі.
 
 Розв’язавши рівняння \texttt{CPHF},
 \[
-\sum_{bj} H_{ai,bj}\,U^{(\mu)}_{bj} = -g^{(\mu)}_{ai},
+	\sum_{bj} H_{ai,bj}\,U^{(\mu)}_{bj} = -g^{(\mu)}_{ai},
 \]
 отримуємо орбітальну відповідь \(U^{(\mu)}_{ai}\).
 
@@ -1087,37 +1086,37 @@ F^{(\mu)}_{ai}
 
 Перший порядок густини:
 \[
-D^{(\mu)}_{ai} = 2\,U^{(\mu)}_{ai},
-\qquad
-D^{(\mu)}_{ia} = 2\,U^{(\mu)}_{ai},
-\qquad
-D^{(\mu)}_{ij}=0,\quad
-D^{(\mu)}_{ab}=0.
+	D^{(\mu)}_{ai} = 2\,U^{(\mu)}_{ai},
+	\qquad
+	D^{(\mu)}_{ia} = 2\,U^{(\mu)}_{ai},
+	\qquad
+	D^{(\mu)}_{ij}=0,\quad
+	D^{(\mu)}_{ab}=0.
 \]
 
 Оскільки похідна Фока за компонентами поля лінійна й дорівнює
 \[
-F^{(\nu)}_{pq} = -(\mu_{\nu})_{pq},
+	F^{(\nu)}_{pq} = -(\mu_{\nu})_{pq},
 \]
 змішана друга похідна енергії у RHF набуває вигляду:
 \begin{equation}\label{eq:HF_mixed_second_derivative}
-\frac{\partial^2 E}{\partial \mathcal E_\mu\,\partial \mathcal E_\nu}
-=
-\mathrm{Tr}\!\left[D^{(\mu)} F^{(\nu)}\right]
-=
--4 \sum_{ai}
-U^{(\mu)}_{ai}\,(\mu_{\nu})_{ai}.
+	\frac{\partial^2 E}{\partial \mathcal E_\mu\,\partial \mathcal E_\nu}
+	=
+	\mathrm{Tr}\!\left[D^{(\mu)} F^{(\nu)}\right]
+	=
+	-4 \sum_{ai}
+	U^{(\mu)}_{ai}\,(\mu_{\nu})_{ai}.
 \end{equation}
 
 Підставляючи у означення поляризовності~\eqref{eq:alpha_def},
 маємо остаточний симетричний результат:
 \begin{equation}\label{eq:HF_polarizability_final_sym}
-\alpha_{\mu\nu}
-=
-4 \sum_{ai}
-U^{(\mu)}_{ai}\,(\mu_{\nu})_{ai}
-\qquad
-\alpha_{\mu\nu}=\alpha_{\nu\mu}.
+	\alpha_{\mu\nu}
+	=
+	4 \sum_{ai}
+	U^{(\mu)}_{ai}\,(\mu_{\nu})_{ai}
+	\qquad
+	\alpha_{\mu\nu}=\alpha_{\nu\mu}.
 \end{equation}
 
 Поляризовність у HF --- це подвійний проєкційний добуток між лінійною
@@ -1136,15 +1135,15 @@ U^{(\mu)}_{ai}\,(\mu_{\nu})_{ai}
 
 Початковий етап: будуємо молекулу, виконуємо \texttt{RHF} та отримуємо
 \(
- \mathbf C,\;
- \varepsilon_i,\;
- n_{\text{occ}},\;
- n_{\text{vir}}
+\mathbf C,\;
+\varepsilon_i,\;
+n_{\text{occ}},\;
+n_{\text{vir}}
 \),
 де
 \[
-\mathbf F \mathbf C = \mathbf S\,\mathbf C\,\boldsymbol\varepsilon ,\qquad
-\mathbf C=\{C_{pi}\}.
+	\mathbf F \mathbf C = \mathbf S\,\mathbf C\,\boldsymbol\varepsilon ,\qquad
+	\mathbf C=\{C_{pi}\}.
 \]
 
 \begin{minted}{python}
@@ -1182,7 +1181,7 @@ ov = nocc * nvir                # розмірність простору ia
 \( (\mu_x)_{pq}, (\mu_y)_{pq}, (\mu_z)_{pq}\)
 та проєктуються на МО:
 \[
-(\mu_{\nu})_{ij} = C_{pi}\cdot (\mu_\nu)_{pq}\cdot C_{qj}.
+	(\mu_{\nu})_{ij} = C_{pi}\cdot (\mu_\nu)_{pq}\cdot C_{qj}.
 \]
 
 \begin{minted}{python}
@@ -1196,8 +1195,8 @@ dip_mo = np.einsum('pi,xpq,qj->xij', mo_coeff, dip_ao, mo_coeff)
 \paragraph{3. Підготовка підпросторів $C_{\text{occ}}$, $C_{\text{vir}}$.}
 
 \[
-C_{\text{occ}} = C[:,\, i],\qquad
-C_{\text{vir}} = C[:,\, a].
+	C_{\text{occ}} = C[:,\, i],\qquad
+	C_{\text{vir}} = C[:,\, a].
 \]
 
 \begin{minted}{python}
@@ -1213,11 +1212,11 @@ C_vir = mo_coeff[:, nocc:]
 які входять у CPHF-гессіан.
 
 \begin{align*}
-(ia|jb) &= C_{pi}^{\text{occ}} C_{qa}^{\text{vir}}
-          C_{rj}^{\text{occ}} C_{sb}^{\text{vir}}\, (pq|rs),
-\\
-(ij|ab) &= C_{pi}^{\text{occ}} C_{qj}^{\text{occ}}
-          C_{ra}^{\text{vir}} C_{sb}^{\text{vir}}\, (pq|rs).
+	(ia|jb) & = C_{pi}^{\text{occ}} C_{qa}^{\text{vir}}
+	C_{rj}^{\text{occ}} C_{sb}^{\text{vir}}\, (pq|rs),
+	\\
+	(ij|ab) & = C_{pi}^{\text{occ}} C_{qj}^{\text{occ}}
+	C_{ra}^{\text{vir}} C_{sb}^{\text{vir}}\, (pq|rs).
 \end{align*}
 
 \begin{minted}{python}
@@ -1246,9 +1245,9 @@ eri_ibja = eri_iajb.transpose(0, 3, 2, 1)
 
 Електронний гессіан:
 \[
-H_{ia,jb}
-= (\varepsilon_a - \varepsilon_i)\delta_{ij}\delta_{ab}
-+ 4(ia|jb) - (ij|ab) - (ib|ja).
+	H_{ia,jb}
+	= (\varepsilon_a - \varepsilon_i)\delta_{ij}\delta_{ab}
+	+ 4(ia|jb) - (ij|ab) - (ib|ja).
 \]
 
 \begin{minted}{python}
@@ -1270,8 +1269,8 @@ print(f"H: {H.shape}")
 \paragraph{6. Права частина CPHF: блок дипольних матриць.}
 
 \[
-g^{(x)}_{ia} = - (\mu_x)_{ia} =
-- \langle \phi_i \mid \hat{\mu}_x \mid \phi_a \rangle,.
+	g^{(x)}_{ia} = - (\mu_x)_{ia} =
+	- \langle \phi_i \mid \hat{\mu}_x \mid \phi_a \rangle,.
 \]
 
 \begin{minted}{python}
@@ -1281,7 +1280,7 @@ g_ov = -dip_mo[:, :nocc, nocc:]
 % ============================================================
 \paragraph{7. Розв'язання системи CPHF:}
 \[
-\mathbf{H}\,\mathbf{U}^{(x)} = -\mathbf{g}^{(x)}.
+	\mathbf{H}\,\mathbf{U}^{(x)} = -\mathbf{g}^{(x)}.
 \]
 
 \begin{minted}{python}
@@ -1297,11 +1296,11 @@ for x in range(3):
 
 Основна формула:
 \[
-\alpha_{\nu\mu}
-=  4 \sum_{ai}
-U^{(\mu)}_{ai}\, (\mu_\nu)_{ai}
-\qquad
-\alpha_{\nu\mu} = \alpha_{\mu\nu}.
+	\alpha_{\nu\mu}
+	=  4 \sum_{ai}
+	U^{(\mu)}_{ai}\, (\mu_\nu)_{ai}
+	\qquad
+	\alpha_{\nu\mu} = \alpha_{\mu\nu}.
 \]
 
 \begin{minted}{python}
@@ -1311,11 +1310,11 @@ alpha = 4 * np.einsum('xia,yia->xy', mu_ov, U)
 \end{minted}
 
 \begin{commentbox}
-\begin{itemize}
-   \item  Тут використано пряму лінійну алгебру (\inlinecode{np.linalg.solve}) --- тобто жодної ітераційної процедури в коді немає: матриця \(H\) розв'язується одразу (алгоритмічно --- LU-розклад або гасіння, як реалізовано в NumPy).
-  \item Матриця \(H\) має розмір \((n_\text{occ} n_\text{vir})^2\). Для великих молекул це швидко стає непрактичним; у реальних імплементаціях використовують розріджені або ітеративні методи, а також симетрії.
-  \item Перетворення ERI в МО-базис є дорогим по пам'яті; часто будують лише блоки, як це зроблено вище, або використовують часткові трансформації (поступово).
-\end{itemize}
+	\begin{itemize}
+		\item  Тут використано пряму лінійну алгебру (\inlinecode{np.linalg.solve}) --- тобто жодної ітераційної процедури в коді немає: матриця \(H\) розв'язується одразу (алгоритмічно --- LU-розклад або гасіння, як реалізовано в NumPy).
+		\item Матриця \(H\) має розмір \((n_\text{occ} n_\text{vir})^2\). Для великих молекул це швидко стає непрактичним; у реальних імплементаціях використовують розріджені або ітеративні методи, а також симетрії.
+		\item Перетворення ERI в МО-базис є дорогим по пам'яті; часто будують лише блоки, як це зроблено вище, або використовують часткові трансформації (поступово).
+	\end{itemize}
 \end{commentbox}
 
 
@@ -1368,9 +1367,9 @@ alpha = 4 * np.einsum('xia,yia->xy', mu_ov, U)
 Ядерний гесіан --- це матриця других похідних повної електронної
 енергії за двома довільними ядерними координатами $x=\vect{R}_A$ і $y=\vect{R}_B$:
 \begin{equation}\label{eq:HF_Hessian_def}
-H_{xy}
-=
-\frac{d^2 E}{dx\,dy}.
+	H_{xy}
+	=
+	\frac{d^2 E}{dx\,dy}.
 \end{equation}
 
 У методі Хартрі--Фока енергія залежить від координат ядер двома способами:
@@ -1378,17 +1377,17 @@ H_{xy}
 (2) неявно — через матрицю густини, яка змінюється при збуренні геометрії.
 Тому друга похідна завжди розкладається на явну і неявну частини:
 \begin{equation}\label{eq:HF_Hessian_split}
-\frac{d^2E}{dx\,dy}
-=
-\left.
-\frac{\partial^2E}{\partial x\,\partial y}
-\right|_{\mathbf D}
-+
-\mathrm{Tr}
-\!\left[
-\frac{d\mathbf D}{dx}\,
-\frac{\partial \mathbf F}{\partial y}
-\right].
+	\frac{d^2E}{dx\,dy}
+	=
+	\left.
+	\frac{\partial^2E}{\partial x\,\partial y}
+	\right|_{\mathbf D}
+	+
+	\mathrm{Tr}
+	\!\left[
+		\frac{d\mathbf D}{dx}\,
+		\frac{\partial \mathbf F}{\partial y}
+		\right].
 \end{equation}
 
 % ------------------------------------------------------------
@@ -1397,18 +1396,18 @@ H_{xy}
 
 Явна частина містить похідні інтегралів за ядерними координатами:
 \begin{equation}
-\left.
-\frac{\partial^2E}{\partial x\,\partial y}
-\right|_{\mathbf D}
-=
-\mathrm{Tr}\!\left[
-\mathbf D\,\frac{\partial^2 \mathbf h}{\partial x\,\partial y}
-\right]
-+
-\frac12
-\mathrm{Tr}\!\left[
-\mathbf D\,\frac{\partial^2 (\mathbf J - \mathbf K)}{\partial x\,\partial y}
-\right].
+	\left.
+	\frac{\partial^2E}{\partial x\,\partial y}
+	\right|_{\mathbf D}
+	=
+	\mathrm{Tr}\!\left[
+		\mathbf D\,\frac{\partial^2 \mathbf h}{\partial x\,\partial y}
+		\right]
+	+
+	\frac12
+	\mathrm{Tr}\!\left[
+		\mathbf D\,\frac{\partial^2 (\mathbf J - \mathbf K)}{\partial x\,\partial y}
+		\right].
 \end{equation}
 Це чисто інтегральні (геометричні) внески.
 
@@ -1420,38 +1419,38 @@ H_{xy}
 Похідна густини задається амплітудами обертань $U_{ai}^{(x)}$, отриманими
 з рівнянь \texttt{CPHF}:
 \begin{equation}\label{eq:HF_Hessian_CPHF}
-\sum_{bj}
-H_{ai,bj}\,U^{(x)}_{bj}
-=
--g^{(x)}_{ai}.
+	\sum_{bj}
+	H_{ai,bj}\,U^{(x)}_{bj}
+	=
+	-g^{(x)}_{ai}.
 \end{equation}
 
 Перший порядок густини:
 \begin{equation}
-D^{(x)}_{ai}=U^{(x)}_{ai},\qquad
-D^{(x)}_{ia}=U^{(x)}_{ai},\qquad
-D^{(x)}_{ij}=0,\qquad
-D^{(x)}_{ab}=0.
+	D^{(x)}_{ai}=U^{(x)}_{ai},\qquad
+	D^{(x)}_{ia}=U^{(x)}_{ai},\qquad
+	D^{(x)}_{ij}=0,\qquad
+	D^{(x)}_{ab}=0.
 \end{equation}
 
 Похідна фокіана:
 \begin{equation}
-F^{(y)}=\frac{\partial F}{\partial y}
-=
-\frac{\partial h}{\partial y}
-+
-\frac{\partial (J-K)}{\partial y}.
+	F^{(y)}=\frac{\partial F}{\partial y}
+	=
+	\frac{\partial h}{\partial y}
+	+
+	\frac{\partial (J-K)}{\partial y}.
 \end{equation}
 
 Неявний внесок:
 \begin{equation}\label{eq:HF_Hessian_implicit}
-\mathrm{Tr}\!\left[
-D^{(x)}\,F^{(y)}
-\right]
-=
-2\sum_{ai}
-U^{(x)}_{ai}\,
-F^{(y)}_{ai}.
+	\mathrm{Tr}\!\left[
+	D^{(x)}\,F^{(y)}
+	\right]
+	=
+	2\sum_{ai}
+	U^{(x)}_{ai}\,
+	F^{(y)}_{ai}.
 \end{equation}
 
 % ------------------------------------------------------------
@@ -1460,20 +1459,20 @@ F^{(y)}_{ai}.
 
 Збираючи явну і неявну частини, отримуємо:
 \begin{equation}\label{eq:HF_Hessian_final}
-H_{xy}
-=
-\mathrm{Tr}\!\left[
-\mathbf D\,\frac{\partial^2 \mathbf h}{\partial x\,\partial y}
-\right]
-+
-\frac12
-\mathrm{Tr}\!\left[
-\mathbf D\,\frac{\partial^2 (\mathbf J-\mathbf K)}{\partial x\,\partial y}
-\right]
-+
-2\sum_{ai}
-U^{(x)}_{ai}\,
-F^{(y)}_{ai}.
+	H_{xy}
+	=
+	\mathrm{Tr}\!\left[
+		\mathbf D\,\frac{\partial^2 \mathbf h}{\partial x\,\partial y}
+		\right]
+	+
+	\frac12
+	\mathrm{Tr}\!\left[
+		\mathbf D\,\frac{\partial^2 (\mathbf J-\mathbf K)}{\partial x\,\partial y}
+		\right]
+	+
+	2\sum_{ai}
+	U^{(x)}_{ai}\,
+	F^{(y)}_{ai}.
 \end{equation}
 
 Перші два доданки --- \emph{геометричні}, останній — \emph{орбітальна реакція},

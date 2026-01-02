@@ -15,22 +15,22 @@
 
 Рівняння Шредінгера для електронної підсистеми має вигляд
 \begin{equation}\label{eq:ShE}
-    \hat{H}_\text{e} \Phi = E_{\text{exact}}\, \Phi,
+	\hat{H}_\text{e} \Phi = E_{\text{exact}}\, \Phi,
 \end{equation}
 де \(\hat{H}_e\) --- повний електронний гамільтоніан:
 \begin{equation}\label{eq:H_e}
-\hat H_\text{e}
-= \sum_{i=1}^N \hat h(i)
-+ \sum_{i<j} g(i, j)
+	\hat H_\text{e}
+	= \sum_{i=1}^N \hat h(i)
+	+ \sum_{i<j} g(i, j)
 \end{equation}
 є сумою одноелектронних та двоелектронних частин. Одноелектронний оператор:
 \[
-\hat h = -\frac{1}{2}\nabla^2 - \sum_A \frac{Z_A}{|\mathbf r - \mathbf R_A|}
+	\hat h = -\frac{1}{2}\nabla^2 - \sum_A \frac{Z_A}{|\mathbf r - \mathbf R_A|}
 \]
 описує кінетичну енергію електрона та його притягання до ядер.
 Двоелектронний оператор
 \[
-g(i, j) = \frac{1}{|\mathbf r_i - \mathbf r_j|}
+	g(i, j) = \frac{1}{|\mathbf r_i - \mathbf r_j|}
 \]
 відповідає кулонівському відштовхуванню між електронами;
 \(\Phi\) --- точна багатоелектронна хвильова функція.
@@ -43,7 +43,7 @@ g(i, j) = \frac{1}{|\mathbf r_i - \mathbf r_j|}
 \]
 З цього принципу випливає, що будь-яке наближення \(\Phi_\text{trial}\) дає енергію, яка є \emph{верхньою межею} до істинної енергії основного стану \(E_{\text{exact}}\).
 \begin{commentbox}
-Варіаційний метод забезпечує фундаментальну гарантію: енергія пробної функції \(\Phi_\text{trial}\)​ завжди перевищує або дорівнює точному значенню. Це перетворює мінімізацію у керований односторонній процес покращення --- енергія може лише зменшуватись, монотонно наближаючись до істинного значення зверху. Розширюючи варіаційний простір, ми посилюємо це наближення, ніколи не втрачаючи контролю над точністю. Енергія стає природною мірою якості, а метод допускає послідовне вдосконалення.
+	Варіаційний метод забезпечує фундаментальну гарантію: енергія пробної функції \(\Phi_\text{trial}\)​ завжди перевищує або дорівнює точному значенню. Це перетворює мінімізацію у керований односторонній процес покращення --- енергія може лише зменшуватись, монотонно наближаючись до істинного значення зверху. Розширюючи варіаційний простір, ми посилюємо це наближення, ніколи не втрачаючи контролю над точністю. Енергія стає природною мірою якості, а метод допускає послідовне вдосконалення.
 \end{commentbox}
 
 
@@ -57,60 +57,60 @@ g(i, j) = \frac{1}{|\mathbf r_i - \mathbf r_j|}
 	\begin{vmatrix}
 		\psi_1(\vect{r}_1, \sigma_1) & \psi_2(\vect{r}_1, \sigma_1) & \cdots & \psi_N(\vect{r}_1, \sigma_1) \\
 		\psi_1(\vect{r}_2, \sigma_2) & \psi_2(\vect{r}_2, \sigma_2) & \cdots & \psi_N(\vect{r}_2, \sigma_2) \\
-		\vdots               & \vdots               & \ddots & \vdots               \\
+		\vdots                       & \vdots                       & \ddots & \vdots                       \\
 		\psi_1(\vect{r}_N, \sigma_N) & \psi_2(\vect{r}_N, \sigma_N) & \cdots & \psi_N(\vect{r}_N, \sigma_N)
 	\end{vmatrix},
 \end{equation}
 %
 де $\psi_i(\vect{r}_k, \sigma_k)$ --- спін-орбіталі, які є добутком просторової орбіталі $\phi_i(\vect{r})$ та спінової функції $\gamma_i(\sigma_k)$:
 \begin{equation}\label{eq:spin-orbital}
-    \psi_i(\vect{r}_k, \sigma_k) = \phi_i(\vect{r}_k) \gamma_i(\sigma_k).
+	\psi_i(\vect{r}_k, \sigma_k) = \phi_i(\vect{r}_k) \gamma_i(\sigma_k).
 \end{equation}
 Просторова орбіталь $\phi_i(\vect{r}_k)$ описує розподіл електронної густини \( |\phi_i(\vect{r}_k)|^2 \), а спінова частина забезпечує правильну антисиметрію. Орбіталі вважаються ортонормованими, що спрощує обчислення.
 Спінова функція має вигляд:
 \begin{equation*}
-    \gamma(\sigma) =
-    \begin{cases}
-        {\color{blue}\alpha}\ \text{або}\ {\color{blue}(\uparrow)},\\
-        {\color{red}\beta}\ \text{або}\ {\color{red}(\downarrow)}
-    \end{cases}
+	\gamma(\sigma) =
+	\begin{cases}
+		{\color{blue}\alpha}\ \text{або}\ {\color{blue}(\uparrow)}, \\
+		{\color{red}\beta}\ \text{або}\ {\color{red}(\downarrow)}
+	\end{cases}
 \end{equation*}
 і визначає проєкцію спіну електрона.
 Спінові функції є власними функціями оператора проєкції спіну:
 \begin{equation*}
-    \hat S_z \, \alpha = +\frac12\,\alpha,
-    \qquad
-    \hat S_z \, \beta = -\frac12\,\beta
+	\hat S_z \, \alpha = +\frac12\,\alpha,
+	\qquad
+	\hat S_z \, \beta = -\frac12\,\beta
 \end{equation*}
 
 і ортонормованими, що у бра–кет нотації записується як
 \begin{equation*}
-    \langle \alpha \mid \alpha \rangle = 1,
-    \qquad
-    \langle \beta \mid \beta \rangle = 1,
-    \qquad
-    \langle \alpha \mid \beta \rangle = 0.
+	\langle \alpha \mid \alpha \rangle = 1,
+	\qquad
+	\langle \beta \mid \beta \rangle = 1,
+	\qquad
+	\langle \alpha \mid \beta \rangle = 0.
 \end{equation*}
 
 Еквівалентно це можна записати у компактнішому вигляді:
 $\gamma_i(\sigma) \in \{\alpha(\sigma),\beta(\sigma)\}$:
 \begin{equation}\label{eq:gamma_ortho}
-    \langle \gamma_i \mid \gamma_j \rangle
-    = \int \gamma_i^*(\sigma)\,\gamma_j(\sigma)\, d\sigma
-    = \delta_{ij},
+	\langle \gamma_i \mid \gamma_j \rangle
+	= \int \gamma_i^*(\sigma)\,\gamma_j(\sigma)\, d\sigma
+	= \delta_{ij},
 \end{equation}
 де $\delta_{ij}$ --- символ Кронекера.
 
 
 \begin{commentbox}
-Попри те що детермінант Слейтера формально відповідає моделі незалежних частинок, його застосування виправдане вимогою антисиметричності багатоелектронної хвильової функції. Детермінант є найпростішою конструкцією, яка автоматично забезпечує цю властивість.
-%
-Водночас взаємодія електронів нікуди не зникає. Вона входить міститься в функціоналі енергії, мінімізація якого приводить до рівнянь, де кожен електрон рухається в ефективному середньому полі, створеному ядрами та всіма іншими електронами.
-%Взаємодія електронів при цьому не відкидається:
-%вона враховується через варіаційну оптимізацію орбіталей --- мінімізацію енергетичного функціонала системи.
-%Як ми побачимо далі, в результаті такої оптимізації виявиться, що кожен електрон рухається в ефективному середньому полі, створеному ядрами та всіма іншими електронами.
-%
-Тому використання однодетермінантної форми слід розуміти не як припущення про відсутність взаємодії, а як математично зручний і коректний спосіб задати структуру хвильової функції.
+	Попри те що детермінант Слейтера формально відповідає моделі незалежних частинок, його застосування виправдане вимогою антисиметричності багатоелектронної хвильової функції. Детермінант є найпростішою конструкцією, яка автоматично забезпечує цю властивість.
+	%
+	Водночас взаємодія електронів нікуди не зникає. Вона міститься в функціоналі енергії, мінімізація якого приводить до рівнянь, де кожен електрон рухається в ефективному середньому полі, створеному ядрами та всіма іншими електронами.
+	%Взаємодія електронів при цьому не відкидається:
+	%вона враховується через варіаційну оптимізацію орбіталей --- мінімізацію енергетичного функціонала системи.
+	%Як ми побачимо далі, в результаті такої оптимізації виявиться, що кожен електрон рухається в ефективному середньому полі, створеному ядрами та всіма іншими електронами.
+	%
+	Тому використання однодетермінантної форми слід розуміти не як припущення про відсутність взаємодії, а як математично зручний і коректний спосіб задати структуру хвильової функції.
 \end{commentbox}
 
 Застосування варіаційного принципу до детермінанта Слейтера \eqref{eq:det}  приводить до
@@ -120,7 +120,7 @@ $\gamma_i(\sigma) \in \{\alpha(\sigma),\beta(\sigma)\}$:
 \end{equation}
 де \(\varepsilon_i\) --- орбітальні енергії, а оператор Фока $\hat{F}$ (або \emph{фокіан}) має вигляд:
 \begin{equation}\label{eq:fockian}
-\hat{F} = \hat{h} + \sum_{j=1}^{N} (\hat{J}_j - \hat{K}_j)
+	\hat{F} = \hat{h} + \sum_{j=1}^{N} (\hat{J}_j - \hat{K}_j)
 \end{equation}
 і включає як одноелектронний внесок $\hat h$, так і
 ефективні двоелектронні внески $\hat J_j$ та $\hat K_j$,
@@ -132,8 +132,8 @@ $\gamma_i(\sigma) \in \{\alpha(\sigma),\beta(\sigma)\}$:
 	\hat J_j \psi_i(\vect r)
 	= \left[
 		\int \frac{|\psi_j(\vect r')|^2}
-		     {|\vect r - \vect r'|}\, d\vect r'
-	  \right]\psi_i(\vect r).
+		{|\vect r - \vect r'|}\, d\vect r'
+		\right]\psi_i(\vect r).
 \end{equation}
 Оператор діє на \(\psi_i(\mathbf r)\); тобто електрон на орбіталі \(i\)
 відчуває середнє електростатичне поле електронної «хмари» \(j\).
@@ -144,43 +144,43 @@ $\gamma_i(\sigma) \in \{\alpha(\sigma),\beta(\sigma)\}$:
 	\hat K_j \psi_i(\vect r)
 	= \left[
 		\int \frac{\psi_j^*(\vect r')\,\psi_i(\vect r')}
-		     {|\vect r - \vect r'|}\, d\vect r'
-	  \right]\psi_j(\vect r).
+		{|\vect r - \vect r'|}\, d\vect r'
+		\right]\psi_j(\vect r).
 \end{equation}
 
 
 Обмінний оператор $\hat{K}_j$ \emph{не відповідає жодному класичному електростатичному потенціалу} і не може бути представлений як локальне множення хвильової функції на скалярну функцію координати. На відміну від кулонівського оператора $\hat{J}_j$, обмінний оператор $\hat{K}_j$  \emph{замінює} саму хвильову функцію $\psi_i \to \psi_j$ і помножує результат на скалярний інтеграл перекривання густин $\psi_j^* \psi_i$. Така структура зумовлена виключно антисиметрією багатоелектронної хвильової функції ферміонів (принцип Паулі). При варіаційному виведенні рівнянь Хартрі–Фока антисиметризація детермінанта Слейтера породжує додатковий член саме цієї форми, що не має класичного аналога.
 
 \begin{commentbox}
-\emph{Обмінний член відмінний від нуля лише для спін-орбіталей з однаковим спіном}. Якщо спіни різні, обмінні інтеграли точно дорівнюють нулю через ортогональність спінових функцій.
+	\emph{Обмінний член відмінний від нуля лише для спін-орбіталей з однаковим спіном}. Якщо спіни різні, обмінні інтеграли точно дорівнюють нулю через ортогональність спінових функцій.
 
-Щоб це побачити, використаємо формулу \eqref{eq:spin-orbital} і підставимо її в \eqref{eq:K_operator}:
-\begin{multline*}
-	\hat K_j \psi_i(\vect r, \sigma)
-	= \left[
-		\int \frac{\psi_j^*(\vect r', \sigma')\,\psi_i(\vect r', \sigma')}
-		     {|\vect r - \vect r'|}\, d\vect r'\, d\sigma'
-	  \right]\psi_j(\vect r, \sigma) = \\
-	= \left[
-		\int \frac{\phi_j^*(\vect r')\gamma_j^*(\sigma')\,\phi_i(\vect r')\gamma_i(\sigma')}
-		     {|\vect r - \vect r'|}\, d\vect r'\, d\sigma'
-	  \right]\phi_j(\vect r)\gamma_j(\sigma).
-\end{multline*}
+	Щоб це побачити, використаємо формулу \eqref{eq:spin-orbital} і підставимо її в \eqref{eq:K_operator}:
+	\begin{multline*}
+		\hat K_j \psi_i(\vect r, \sigma)
+		= \left[
+			\int \frac{\psi_j^*(\vect r', \sigma')\,\psi_i(\vect r', \sigma')}
+			{|\vect r - \vect r'|}\, d\vect r'\, d\sigma'
+			\right]\psi_j(\vect r, \sigma) = \\
+		= \left[
+			\int \frac{\phi_j^*(\vect r')\gamma_j^*(\sigma')\,\phi_i(\vect r')\gamma_i(\sigma')}
+			{|\vect r - \vect r'|}\, d\vect r'\, d\sigma'
+			\right]\phi_j(\vect r)\gamma_j(\sigma).
+	\end{multline*}
 
-Оскільки інтегрування за $\sigma'$ та за $\vect r'$ незалежні, можемо розділити інтеграл:
-\begin{equation*}
-	\hat K_j \psi_i(\vect r, \sigma)
-	= \left[
-		\int \gamma_j^*(\sigma')\gamma_i(\sigma')\, d\sigma'
-	  \right]  \times \left[
-		\int \frac{\phi_j^*(\vect r')\phi_i(\vect r')}
-		     {|\vect r - \vect r'|}\, d\vect r'
-	  \right]\phi_j(\vect r)\gamma_j(\sigma).
-\end{equation*}
+	Оскільки інтегрування за $\sigma'$ та за $\vect r'$ незалежні, можемо розділити інтеграл:
+	\begin{equation*}
+		\hat K_j \psi_i(\vect r, \sigma)
+		= \left[
+			\int \gamma_j^*(\sigma')\gamma_i(\sigma')\, d\sigma'
+			\right]  \times \left[
+			\int \frac{\phi_j^*(\vect r')\phi_i(\vect r')}
+			{|\vect r - \vect r'|}\, d\vect r'
+			\right]\phi_j(\vect r)\gamma_j(\sigma).
+	\end{equation*}
 
-Перший інтеграл --- це скалярний добуток спінових функцій, який згідно \eqref{eq:gamma_ortho} дорівнює символу Кронекера $\delta_{ij}$, тобто якщо $\gamma_i = \gamma_j$ (однаковий спін), то $\delta_{ij} = 1$ і обмінний член не зникає, а якщо  $\gamma_i \neq \gamma_j$ (різні спіни), то $\delta_{ij}  = 0$ і обмінний член точно дорівнює нулю.
+	Перший інтеграл --- це скалярний добуток спінових функцій, який згідно \eqref{eq:gamma_ortho} дорівнює символу Кронекера $\delta_{ij}$, тобто якщо $\gamma_i = \gamma_j$ (однаковий спін), то $\delta_{ij} = 1$ і обмінний член не зникає, а якщо  $\gamma_i \neq \gamma_j$ (різні спіни), то $\delta_{ij}  = 0$ і обмінний член точно дорівнює нулю.
 
-Таким чином, обмінна взаємодія діє лише між електронами з паралельними спінами.
+	% Таким чином, обмінна взаємодія діє лише між електронами з паралельними спінами.
 
 \end{commentbox}
 
@@ -203,18 +203,18 @@ $\gamma_i(\sigma) \in \{\alpha(\sigma),\beta(\sigma)\}$:
 
 У межах наближення Хартрі–Фока повна енергія системи виражається через середнє значення електронного гамільтоніана на хвильовій функції у вигляді детермінанта Слейтера $\Phi_0$:
 \begin{equation*}
-    E_{\mathrm{HF}} = \frac{\langle \Phi_0 | \hat{H}_e | \Phi_0 \rangle}{\langle \Phi_0 | \Phi_0 \rangle}.
+	E_{\mathrm{HF}} = \frac{\langle \Phi_0 | \hat{H}_e | \Phi_0 \rangle}{\langle \Phi_0 | \Phi_0 \rangle}.
 \end{equation*}
 Оскільки детермінант Слейтера, побудований з ортонормованих орбіталей, є нормованим ($\langle \Phi_0 | \Phi_0 \rangle = 1$), формула спрощується до:
 \begin{equation*}
-    E_{\mathrm{HF}} = \langle \Phi_0 | \hat{H}_e | \Phi_0 \rangle.
+	E_{\mathrm{HF}} = \langle \Phi_0 | \hat{H}_e | \Phi_0 \rangle.
 \end{equation*}
 
 Для того, щоб обчислити цю енергію, потрібно ввести кілька типів інтегралів, які виникають при розкритті скалярного добутку. Розглянемо їх послідовно.
 
 Перший тип --- це \textbf{одноелектронні інтеграли}, які описують кінетичну енергію електрона на орбіталі $\phi_i$ та його притягання до всіх ядер:
 \[
-h_{ii} = \langle \phi_i(\mathbf r) | \hat{h} | \phi_i(\mathbf r) \rangle = \int \phi_i(\mathbf r)\, \hat h\, \phi_i(\mathbf r)\, d\mathbf r.
+	h_{ii} = \langle \phi_i(\mathbf r) | \hat{h} | \phi_i(\mathbf r) \rangle = \int \phi_i(\mathbf r)\, \hat h\, \phi_i(\mathbf r)\, d\mathbf r.
 \]
 
 Другий тип --- це \textbf{двоелектронні інтеграли}, які безпосередньо пов'язані з операторами Кулона \eqref{eq:J_operator} та обміну \eqref{eq:K_operator}, введеними раніше.
@@ -223,30 +223,30 @@ h_{ii} = \langle \phi_i(\mathbf r) | \hat{h} | \phi_i(\mathbf r) \rangle = \int 
 
 \textit{Кулонівський інтеграл} $J_{ij}$ --- це матричний елемент оператора Кулона:
 \[
-J_{ij} = \langle \phi_i | \hat{J}_j | \phi_i \rangle = (ii|jj) =
-\iint
-\phi_i(\mathbf r_1)\phi_i(\mathbf r_1)\,
-\frac{1}{|\mathbf r_1 - \mathbf r_2|}\,
-\phi_j(\mathbf r_2)\phi_j(\mathbf r_2)\,
-d\mathbf r_1\, d\mathbf r_2.
+	J_{ij} = \langle \phi_i | \hat{J}_j | \phi_i \rangle = (ii|jj) =
+	\iint
+	\phi_i(\mathbf r_1)\phi_i(\mathbf r_1)\,
+	\frac{1}{|\mathbf r_1 - \mathbf r_2|}\,
+	\phi_j(\mathbf r_2)\phi_j(\mathbf r_2)\,
+	d\mathbf r_1\, d\mathbf r_2.
 \]
 Цей інтеграл має чіткий фізичний зміст: він обчислює енергію класичного електростатичного відштовхування між електронними густинами $|\phi_i|^2$ та $|\phi_j|^2$.
 
 \textit{Обмінний інтеграл} $K_{ij}$ --- це матричний елемент оператора обміну:
 \[
-K_{ij} = \langle \phi_i | \hat{K}_j | \phi_i \rangle = (ij|ji) =
-\iint
-\phi_i(\mathbf r_1)\phi_j(\mathbf r_1)\,
-\frac{1}{|\mathbf r_1 - \mathbf r_2|}\,
-\phi_j(\mathbf r_2)\phi_i(\mathbf r_2)\,
-d\mathbf r_1\, d\mathbf r_2.
+	K_{ij} = \langle \phi_i | \hat{K}_j | \phi_i \rangle = (ij|ji) =
+	\iint
+	\phi_i(\mathbf r_1)\phi_j(\mathbf r_1)\,
+	\frac{1}{|\mathbf r_1 - \mathbf r_2|}\,
+	\phi_j(\mathbf r_2)\phi_i(\mathbf r_2)\,
+	d\mathbf r_1\, d\mathbf r_2.
 \]
 Обмінна взаємодія --- суто квантовий ефект, що виникає через антисиметричність детермінанта Слейтера і не має класичного аналога.
 
 Підставляючи детермінант Слейтера у вираз для енергії та виконуючи інтегрування, отримуємо повну енергію системи у вигляді суми одно- та двоелектронних внесків:
 \begin{equation*}
-    E_{\mathrm{HF}} = \sum_{i=1}^{N} h_{ii}
-    + \tfrac{1}{2}\sum_{i,j=1}^{N} (J_{ij} - K_{ij}) + V_{NN},
+	E_{\mathrm{HF}} = \sum_{i=1}^{N} h_{ii}
+	+ \tfrac{1}{2}\sum_{i,j=1}^{N} (J_{ij} - K_{ij}) + V_{NN},
 \end{equation*}
 де $N$ --- кількість зайнятих орбіталей (число електронів), а $V_{NN}$ --- енергія між'ядерного відштовхування (для атомів $V_{NN}=0$).
 
@@ -254,60 +254,60 @@ d\mathbf r_1\, d\mathbf r_2.
 
 Альтернативний запис енергії через орбітальні енергії $\epsilon_i$ (власні значення рівнянь Хартрі–Фока) має вигляд:
 \begin{equation*}
-    E_{\mathrm{HF}} = \sum_{i=1}^{N} \epsilon_i - \tfrac{1}{2}\sum_{i,j=1}^{N} (J_{ij} - K_{ij}) + V_{NN}.
+	E_{\mathrm{HF}} = \sum_{i=1}^{N} \epsilon_i - \tfrac{1}{2}\sum_{i,j=1}^{N} (J_{ij} - K_{ij}) + V_{NN}.
 \end{equation*}
 Тут від суми орбітальних енергій віднімається половина двоелектронних взаємодій, оскільки в кожній орбітальній енергії $\epsilon_i$ ці взаємодії вже враховані повністю, і їх потрібно <<віднести>> назад, щоб не рахувати двічі.
 
 \begin{commentbox}[Хімічна нотація та двоелектронні інтеграли]
-У хімічній літературі інтеграли кулонівської взаємодії записують через
-символи типу $(pq|rs)$:
-\[
-	(pq|rs) =
-	\iint
-	\phi_p(\vect r_1)\,
-	\phi_q(\vect r_1)\,
-	\frac{1}{|\vect r_1 - \vect r_2|}\,
-	\phi_r(\vect r_2)\,
-	\phi_s(\vect r_2)\,
-	d\vect r_1\, d\vect r_2.
-\]
-Тут комбінація $(pq|rs)$ описує взаємодію пари $(p,q)$ із парою $(r,s)$.
+	У хімічній літературі інтеграли кулонівської взаємодії записують через
+	символи типу $(pq|rs)$:
+	\[
+		(pq|rs) =
+		\iint
+		\phi_p(\vect r_1)\,
+		\phi_q(\vect r_1)\,
+		\frac{1}{|\vect r_1 - \vect r_2|}\,
+		\phi_r(\vect r_2)\,
+		\phi_s(\vect r_2)\,
+		d\vect r_1\, d\vect r_2.
+	\]
+	Тут комбінація $(pq|rs)$ описує взаємодію пари $(p,q)$ із парою $(r,s)$.
 
-У квантовій хімії, окрім стандартного двоелектронного інтеграла
-$(pq|rs)$,
-використовують також позначення з \textbf{подвійною рискою}:
-\[
-	(pq||rs) = (pq|rs) - (ps|rq).
-\]
-Це --- так званий \textbf{антисиметризований двоелектронний інтеграл}
-(або інтеграл Кулон–мінус–обмін), який природно виникає у формалізмі
-Хартрі–Фока і об'єднує кулонівський та обмінний внески.
+	У квантовій хімії, окрім стандартного двоелектронного інтеграла
+	$(pq|rs)$,
+	використовують також позначення з \textbf{подвійною рискою}:
+	\[
+		(pq||rs) = (pq|rs) - (ps|rq).
+	\]
+	Це --- так званий \textbf{антисиметризований двоелектронний інтеграл}
+	(або інтеграл Кулон–мінус–обмін), який природно виникає у формалізмі
+	Хартрі–Фока і об'єднує кулонівський та обмінний внески.
 
-У розгорнутому вигляді:
-\begin{multline*}
-	(pq||rs)
-	=
-	\iint
-	\phi_p(\vect r_1)\phi_q(\vect r_1)\,
-	\frac{1}{|\vect r_1 - \vect r_2|}\,
-	\phi_r(\vect r_2)\phi_s(\vect r_2)\,
-	d\vect r_1 d\vect r_2
-	- \\ -
-	\iint
-	\phi_p(\vect r_1)\phi_s(\vect r_1)\,
-	\frac{1}{|\vect r_1 - \vect r_2|}\,
-	\phi_r(\vect r_2)\phi_q(\vect r_2)\,
-	d\vect r_1 d\vect r_2.
-\end{multline*}
-Перша частина --- це кулонівський інтеграл $(pq|rs)$,
-друга --- обмінний інтеграл $(ps|rq)$.
-Така нотація дозволяє компактніше записувати вирази для енергії та матричних елементів операторів:
+	У розгорнутому вигляді:
+	\begin{multline*}
+		(pq||rs)
+		=
+		\iint
+		\phi_p(\vect r_1)\phi_q(\vect r_1)\,
+		\frac{1}{|\vect r_1 - \vect r_2|}\,
+		\phi_r(\vect r_2)\phi_s(\vect r_2)\,
+		d\vect r_1 d\vect r_2
+		- \\ -
+		\iint
+		\phi_p(\vect r_1)\phi_s(\vect r_1)\,
+		\frac{1}{|\vect r_1 - \vect r_2|}\,
+		\phi_r(\vect r_2)\phi_q(\vect r_2)\,
+		d\vect r_1 d\vect r_2.
+	\end{multline*}
+	Перша частина --- це кулонівський інтеграл $(pq|rs)$,
+	друга --- обмінний інтеграл $(ps|rq)$.
+	Така нотація дозволяє компактніше записувати вирази для енергії та матричних елементів операторів:
 
-\begin{equation*}
-    E_{\mathrm{HF}} = \sum_{i=1}^{N} h_{ii}
-    + \tfrac{1}{2}\sum_{i,j=1}^{N} \bigl[(ii|jj) - (ij|ji)\bigr] + V_{NN} = \sum_{i=1}^{N} h_{ii}
-    + \tfrac{1}{2}\sum_{i,j=1}^{N} (ii||jj) + V_{NN}.
-\end{equation*}
+	\begin{equation*}
+		E_{\mathrm{HF}} = \sum_{i=1}^{N} h_{ii}
+		+ \tfrac{1}{2}\sum_{i,j=1}^{N} \bigl[(ii|jj) - (ij|ji)\bigr] + V_{NN} = \sum_{i=1}^{N} h_{ii}
+		+ \tfrac{1}{2}\sum_{i,j=1}^{N} (ii||jj) + V_{NN}.
+	\end{equation*}
 \end{commentbox}
 
 %% --------------------------------------------------------
@@ -334,50 +334,50 @@ $(pq|rs)$,
 У такому розкладі кожна орбіталь описується набором коефіцієнтів $C_{\mu i}$. Подальший \emph{розв’язок рівнянь Хартрі–Фока зводиться до знаходження саме цих коефіцієнтів}.
 
 \begin{commentbox}[]
-Формулювання задачі в такому вигляді уперше було запропоновано Клеменсом К. Й. Рутааном у класичній статті
-\fullcite{Roothaan1951}. У цій роботі вперше встановлено матричну форму рівнянь Хартрі–Фока,
-що нині відома як рівняння Хартрі–Фока-Рутаана (в англомовній літературі --- \href{https://en.wikipedia.org/wiki/Roothaan\_equations}{Roothaan equations}). Запроваджений Рутааном підхід зробив метод Хартрі–Фока придатним для ефективної чисельної реалізації.
+	Формулювання задачі в такому вигляді уперше було запропоновано Клеменсом К. Й. Рутааном у класичній статті
+	\fullcite{Roothaan1951}. У цій роботі вперше встановлено матричну форму рівнянь Хартрі–Фока,
+	що нині відома як рівняння Хартрі–Фока-Рутаана (в англомовній літературі --- \href{https://en.wikipedia.org/wiki/Roothaan\_equations}{Roothaan equations}). Запроваджений Рутааном підхід зробив метод Хартрі–Фока придатним для ефективної чисельної реалізації.
 \end{commentbox}
 
 Отже, продовжуючи підхід, закладений Рутааном, перейдемо до компактного матрично-векторного запису орбітального розкладу. Введемо вектор базисних функцій розмірності $M\times 1$:
 \[
-\boldsymbol{\chi}(\mathbf r)=
-\begin{pmatrix}
-\chi_1(\mathbf r)\\
-\chi_2(\mathbf r)\\
-\vdots\\
-\chi_M(\mathbf r)
-\end{pmatrix},
+	\boldsymbol{\chi}(\mathbf r)=
+	\begin{pmatrix}
+		\chi_1(\mathbf r) \\
+		\chi_2(\mathbf r) \\
+		\vdots            \\
+		\chi_M(\mathbf r)
+	\end{pmatrix},
 \]
 та матрицю коефіцієнтів $\,\mathbf C\in\mathbb R^{M\times N}\,$,
 стовпці якої є коефіцієнтами окремих молекулярних орбіталей:
 \[
-\mathbf C=
-\begin{pmatrix}
-C_{11} & C_{12} & \cdots & C_{1N}\\
-C_{21} & C_{22} & \cdots & C_{2N}\\
-\vdots & \vdots & \ddots & \vdots\\
-C_{M1} & C_{M2} & \cdots & C_{MN}
-\end{pmatrix}.
+	\mathbf C=
+	\begin{pmatrix}
+		C_{11} & C_{12} & \cdots & C_{1N} \\
+		C_{21} & C_{22} & \cdots & C_{2N} \\
+		\vdots & \vdots & \ddots & \vdots \\
+		C_{M1} & C_{M2} & \cdots & C_{MN}
+	\end{pmatrix}.
 \]
 
 Тоді просторові орбіталі можна зібрати у вектор
 $\boldsymbol{\varphi}(\mathbf r)\in\mathbb R^{N\times 1}$:
 \[
-\boldsymbol{\varphi}(\mathbf r)=
-\begin{pmatrix}
-\varphi_1(\mathbf r)\\
-\varphi_2(\mathbf r)\\
-\vdots\\
-\varphi_N(\mathbf r)
-\end{pmatrix},
+	\boldsymbol{\varphi}(\mathbf r)=
+	\begin{pmatrix}
+		\varphi_1(\mathbf r) \\
+		\varphi_2(\mathbf r) \\
+		\vdots               \\
+		\varphi_N(\mathbf r)
+	\end{pmatrix},
 \]
 і повний AO\,$\to$\,MO перехід записується компактно:
 \[
-\boldsymbol{\varphi}(\mathbf r)=
-\mathbf C^{\mathrm T}\boldsymbol{\chi}(\mathbf r),
-\qquad
-\mathbf C^{\mathrm T}\in \mathbb R^{N\times M}.
+	\boldsymbol{\varphi}(\mathbf r)=
+	\mathbf C^{\mathrm T}\boldsymbol{\chi}(\mathbf r),
+	\qquad
+	\mathbf C^{\mathrm T}\in \mathbb R^{N\times M}.
 \]
 
 Цей запис лише переписує ту саму лінійну комбінацію в матричній формі, де
@@ -397,7 +397,7 @@ $\mathbf C$ виконує зміну базису до МО-представл�
 
 У матричній формі це записують як
 \begin{equation*}
-    \mathbf D = \mathbf C_{\text{occ}}\,\mathbf C_{\text{occ}}^{\mathrm T},\quad \mathbf D \in \mathbb{R}^{M \times M},
+	\mathbf D = \mathbf C_{\text{occ}}\,\mathbf C_{\text{occ}}^{\mathrm T},\quad \mathbf D \in \mathbb{R}^{M \times M},
 \end{equation*}
 де \(\mathbf C_{\text{occ}}\) --- матриця коефіцієнтів лише зайнятих
 молекулярних орбіталей.
@@ -405,8 +405,8 @@ $\mathbf C$ виконує зміну базису до МО-представл�
 Матриця $\vect{D}$ зберігає всю інформацію про електронну густину:
 \begin{equation}\label{eq:rhoDchi}
 	\rho(\vect{r}) = \sum\limits_{\mu\nu} \chi_\mu\, D_{\mu\nu}\,  \chi_\nu = \boldsymbol{\chi}^{\mathrm T}(\mathbf r)\,
-\mathbf D\,
-\boldsymbol{\chi}(\mathbf r).
+	\mathbf D\,
+	\boldsymbol{\chi}(\mathbf r).
 \end{equation}
 і дозволяє обчислювати середні значення спостережуваної $O$:
 
@@ -443,7 +443,7 @@ $\mathbf C$ виконує зміну базису до МО-представл�
 \end{equation}
 У компактному матричному вигляді фокіан записується як
 \begin{equation}\label{eq:F_matrix}
-    \mathbf F = \mathbf h + \mathbf J[\mathbf D] - \mathbf K[\mathbf D],
+	\mathbf F = \mathbf h + \mathbf J[\mathbf D] - \mathbf K[\mathbf D],
 \end{equation}
 
 У базисному представленні канонічні рівняння Хартрі-Фока для молекулярних орбіталей записуються як:
@@ -612,31 +612,31 @@ print('F (з PySCF):\n', np.round(F_pyscf, 6))
 
 Компоненти енергії системи в \emph{представленні атомних орбіталей} (АО-представлення) природно записуються в матричному вигляді. Кінетична енергія, енергія взаємодії електрон–ядро та електрон–електронна взаємодія набувають форми
 \begin{equation*}
-T = \mathrm{Tr} \big[\mathbf{D}\,\mathbf{T}\big],
-\qquad
-V_{\mathrm{eN}} = \mathrm{Tr} \big[\mathbf{D}\,\mathbf{V}^{\mathrm{nuc}}\big],
-\qquad
-V_{\mathrm{ee}}=\tfrac{1}{2}\,\mathrm{Tr} \big[\mathbf{D}\,(\mathbf{J}-\mathbf{K})\big].
+	T = \mathrm{Tr} \big[\mathbf{D}\,\mathbf{T}\big],
+	\qquad
+	V_{\mathrm{eN}} = \mathrm{Tr} \big[\mathbf{D}\,\mathbf{V}^{\mathrm{nuc}}\big],
+	\qquad
+	V_{\mathrm{ee}}=\tfrac{1}{2}\,\mathrm{Tr} \big[\mathbf{D}\,(\mathbf{J}-\mathbf{K})\big].
 \end{equation*}
 
 Повна енергія Хартрі-Фока тоді записується компактно:
 \begin{equation}\label{eq:E_HF_matrix_form_hJK}
-E_{\mathrm{HF}}
-=
-\mathrm{Tr} \big[\mathbf{D}\,\mathbf{h}\big]
-+
-\tfrac{1}{2}\,\mathrm{Tr} \big[\mathbf{D}\,(\mathbf{J}-\mathbf{K})\big]
-+
-V_{NN}.
+	E_{\mathrm{HF}}
+	=
+	\mathrm{Tr} \big[\mathbf{D}\,\mathbf{h}\big]
+	+
+	\tfrac{1}{2}\,\mathrm{Tr} \big[\mathbf{D}\,(\mathbf{J}-\mathbf{K})\big]
+	+
+	V_{NN}.
 \end{equation}
 
 Або використовуючи матрицю Фока \eqref{eq:F_matrix}, можна переписати енергію у симетризованому вигляді
 \begin{equation}\label{eq:E_HF_matrix_form_hF}
-E_{\text{HF}}
-=
-\tfrac{1}{2}\,\mathrm{Tr} \big[\mathbf{D}\,(\mathbf{h}+\mathbf{F})\big]
-+
-V_{NN}.
+	E_{\text{HF}}
+	=
+	\tfrac{1}{2}\,\mathrm{Tr} \big[\mathbf{D}\,(\mathbf{h}+\mathbf{F})\big]
+	+
+	V_{NN}.
 \end{equation}
 
 Розрахунок енергії та компонент в PySCF:
@@ -704,16 +704,16 @@ SCF-процедура --- ітераційна: з початкового на�
 %---------------------------------------------------------
 
 \begin{commentbox}[Метод DIIS у SCF-процедурі]
-Для стабілізації та прискорення збіжності SCF-ітерацій зазвичай
-застосовують алгоритм \textit{DIIS} (Direct Inversion in the Iterative
-Subspace). Його суть полягає у побудові екстрапольованої матриці Фока
-як лінійної комбінації кількох попередніх ітерацій, причому коефіцієнти
-обираються так, щоб мінімізувати комутаційний залишок
-\[
-\mathbf R = \mathbf F\mathbf D\mathbf S - \mathbf S\mathbf D\mathbf F.
-\]
-Отримана таким чином матриця Фока має значно кращі збіжні властивості.
-Детальний опис методу DIIS наведено в додатку~\ref{sec:DIIS}.
+	Для стабілізації та прискорення збіжності SCF-ітерацій зазвичай
+	застосовують алгоритм \textit{DIIS} (Direct Inversion in the Iterative
+	Subspace). Його суть полягає у побудові екстрапольованої матриці Фока
+	як лінійної комбінації кількох попередніх ітерацій, причому коефіцієнти
+	обираються так, щоб мінімізувати комутаційний залишок
+	\[
+		\mathbf R = \mathbf F\mathbf D\mathbf S - \mathbf S\mathbf D\mathbf F.
+	\]
+	Отримана таким чином матриця Фока має значно кращі збіжні властивості.
+	Детальний опис методу DIIS наведено в додатку~\ref{sec:DIIS}.
 \end{commentbox}
 
 
@@ -914,13 +914,13 @@ mf = scf.RHF(mol).run(init_guess='minao')
 	\centering
 	\caption{Ієрархія базисних наборів}
 	\begin{tblr}{
-			colspec = {Q[l, m, font=\ttfamily]X[l]},
-			row{odd} = {bg=gray!5},
-			hlines,
-			vlines,
-            row{1} = {c, m, font=\bfseries},
+		colspec = {Q[l, m, font=\ttfamily]X[l]},
+		row{odd} = {bg=gray!5},
+		hlines,
+		vlines,
+		row{1} = {c, m, font=\bfseries},
 		}
-        Базис       & Опис                                  \\
+		Базис       & Опис                                  \\
 		STO-3G      & мінімальний, дуже швидкий             \\
 		6-31G       & валентно-розщеплений (double-zeta)    \\
 		6-31G*      & додано $d$-поляризаційні функції      \\
@@ -962,12 +962,12 @@ print(sorted(basis.ALIAS.keys()))  # відсортований список б�
 %% --------------------------------------------------------
 
 \begin{wrapfigure}[12]{O}{0.2\linewidth}
-    \centering
+	\centering
 	\begin{tikzpicture}[scale=0.6]
 		\foreach \i[count=\xi, count=\yi from 4] in {0,2,...,4}{ \draw[ultra thick]  (0,\i) -- pic[pos=0.3] {upspinarrow}  pic[pos=0.7] {downspinarrow} (1,\i) node[right] {$\phi_{\xi}$};}
 	\end{tikzpicture}
-\caption{}
-\label{tikz:rhf}
+	\caption{}
+	\label{tikz:rhf}
 \end{wrapfigure}
 Обмежений метод Хартрі-Фока (Restricted Hartree–Fock, або RHF) застосовується до систем із \emph{замкненими оболонками}, де всі орбіталі заповнені парами електронів з протилежними спінами (\ref{tikz:rhf}):
 \[
@@ -988,7 +988,7 @@ print(sorted(basis.ALIAS.keys()))  # відсортований список б�
 \end{equation*}
 або в компактному вигляді:
 \begin{equation*}
-    \mathbf{F} = \mathbf{h} + \left(\mathbf{J}[\mathbf D] - \frac12\mathbf{K}[\mathbf D]\right).
+	\mathbf{F} = \mathbf{h} + \left(\mathbf{J}[\mathbf D] - \frac12\mathbf{K}[\mathbf D]\right).
 \end{equation*}
 %
 RHF підходить для синглетних систем (\ce{He}, \ce{Ne}, \ce{H2} у синглетному стані).
@@ -1012,13 +1012,13 @@ print('E(RHF) =', mf.e_tot)
 %
 
 \begin{wrapfigure}[8]{O}{0.2\linewidth}
-    \centering
-    \begin{tikzpicture}[scale=0.6]
-    	\foreach \i[count=\xi] in {0,2,...,4}{ \draw[ultra thick]  (0,\i) -- pic[pos=0.5] {upspinarrow}   ++(1,0) node[right] {$\phi_{\xi}\alpha$};}
-    	\foreach \i[count=\xi from 4] in {0,2}{ \draw[ultra thick]  (2.75,\i+0.3) -- pic[pos=0.5] {downspinarrow}   ++(1,0) node[right] {$\phi_{\xi}\beta$};}
-    \end{tikzpicture}
-\caption{}
-\label{tikz:uhf}
+	\centering
+	\begin{tikzpicture}[scale=0.6]
+		\foreach \i[count=\xi] in {0,2,...,4}{ \draw[ultra thick]  (0,\i) -- pic[pos=0.5] {upspinarrow}   ++(1,0) node[right] {$\phi_{\xi}\alpha$};}
+		\foreach \i[count=\xi from 4] in {0,2}{ \draw[ultra thick]  (2.75,\i+0.3) -- pic[pos=0.5] {downspinarrow}   ++(1,0) node[right] {$\phi_{\xi}\beta$};}
+	\end{tikzpicture}
+	\caption{}
+	\label{tikz:uhf}
 \end{wrapfigure}
 Таким чином, будується дві окремі матриці густини:
 \[
@@ -1039,13 +1039,13 @@ print('E(RHF) =', mf.e_tot)
 
 У компактному матричному вигляді це можна записати як
 \[
-    \mathbf F^{\alpha}
-    = \mathbf h + \mathbf J[\mathbf D^{\alpha}+\mathbf D^{\beta}]
-      - \mathbf K[\mathbf D^{\alpha}],
-    \qquad
-    \mathbf F^{\beta}
-    = \mathbf h + \mathbf J[\mathbf D^{\alpha}+\mathbf D^{\beta}]
-      - \mathbf K[\mathbf D^{\beta}].
+	\mathbf F^{\alpha}
+	= \mathbf h + \mathbf J[\mathbf D^{\alpha}+\mathbf D^{\beta}]
+	- \mathbf K[\mathbf D^{\alpha}],
+	\qquad
+	\mathbf F^{\beta}
+	= \mathbf h + \mathbf J[\mathbf D^{\alpha}+\mathbf D^{\beta}]
+	- \mathbf K[\mathbf D^{\beta}].
 \]
 
 UHF добре описує системи з непарною кількістю електронів (H, O, NO, радикали).
@@ -1116,14 +1116,14 @@ mf = scf.GHF(mol).run()
 	\begin{tblr}{
 			colspec={lccX[l,m]},
 			row{1} = {c, m, font=\bfseries},
-            row{odd} = {bg=gray!5},
+			row{odd} = {bg=gray!5},
 		}
 		\toprule
 		{Метод} & {Спінова                                                                                     \\ структура} & {Відкриті\\ оболонки} & \textbf{Коментар} \\
 		\midrule
 		UHF     & $\phi_i^\alpha \neq \phi_i^\beta$ & Так & Радикали, порушення $\langle \hat{S}^2 \rangle$    \\
 		RHF     & $\phi_i^\alpha = \phi_i^\beta$    & Ні  & Закриті оболонки (синглети)                        \\
-		ROHF    & {частково\\ спільні орбіталі}         & Так & Виправлення до UHF для правильного спіну           \\
+		ROHF    & {частково                                                                                    \\ спільні орбіталі}         & Так & Виправлення до UHF для правильного спіну           \\
 		GHF     & $\psi_i$ --- спінор               & Так & Повністю узагальнена форма, рідко використовується \\
 		\bottomrule
 	\end{tblr}

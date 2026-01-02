@@ -30,7 +30,7 @@
 Із теорії взаємодії електромагнітного поля з речовиною відомо, що інтенсивність $A_i$ для $i$-го коливального переходу визначається як:
 \begin{equation*}
     A_i = \frac{N_A \pi}{3 c^2}
-        \left| \frac{\partial \boldsymbol{\mu}}{\partial Q_i} \right|^2,
+    \left| \frac{\partial \boldsymbol{\mu}}{\partial Q_i} \right|^2,
 \end{equation*}
 де $\tfrac{\partial \boldsymbol{\mu}}{\partial Q_i}$ --- похідна дипольного моменту за нормальною координатою
 $Q_i$ у рівноважному положенні, $N_A$ --- число Авогадро, а $c$ --- швидкість світла.
@@ -107,19 +107,19 @@ $Q_i$ у рівноважному положенні, $N_A$ --- число Ав�
 %% --------------------------------------------------------
 
 \begin{center}
-\begin{tblr}{
-    colspec={ll},
-    row{1} = {c, m, font=\bfseries},
-    row{odd} = {bg=gray!5},
-}
-\toprule
-\textbf{Інтенсивність (км/моль)} & \textbf{Класифікація} \\
-\midrule
-$I > 100$ & Сильна смуга \\
-$10 < I \leq 100$ & Середня смуга \\
-$I \leq 10$ & Слабка смуга \\
-\bottomrule
-\end{tblr}
+    \begin{tblr}{
+            colspec={ll},
+            row{1} = {c, m, font=\bfseries},
+            row{odd} = {bg=gray!5},
+        }
+        \toprule
+        \textbf{Інтенсивність (км/моль)} & \textbf{Класифікація} \\
+        \midrule
+        $I > 100$                        & Сильна смуга          \\
+        $10 < I \leq 100$                & Середня смуга         \\
+        $I \leq 10$                      & Слабка смуга          \\
+        \bottomrule
+    \end{tblr}
 \end{center}
 
 
@@ -130,9 +130,9 @@ $I \leq 10$ & Слабка смуга \\
 ІЧ-інтенсивність нормальної моди пропорційна квадрату похідної дипольного моменту
 за координатою цієї моди:
 \begin{equation*}
-I_i \sim \left| \frac{d\boldsymbol{\mu}}{dQ_i} \right|^2.
+    I_i \sim \left| \frac{d\boldsymbol{\mu}}{dQ_i} \right|^2.
 \end{equation*}
-На практиці цю похідну можна отримати двома різними шляхами, однак у
+На практиці цю похідну можна отримати двома різними шляхами: чисельним та аналітичним диференціюванням.
 
 %---------------------------------------------------------
 \subsubsection{Чисельне диференціювання}
@@ -143,12 +143,11 @@ I_i \sim \left| \frac{d\boldsymbol{\mu}}{dQ_i} \right|^2.
 у двох геометріях --- \emph{«плюс»} і \emph{«мінус»}.
 Похідна апроксимується центральною різницею:
 \begin{equation*}
-\left( \frac{d\boldsymbol{\mu}}{dQ_i} \right)_0 \approx
-\frac{\boldsymbol{\mu}(Q_i+\delta) - \boldsymbol{\mu}(Q_i-\delta)}{2\delta}.
+    \left( \frac{d\boldsymbol{\mu}}{dQ_i} \right)_0 \approx
+    \frac{\boldsymbol{\mu}(Q_i+\delta) - \boldsymbol{\mu}(Q_i-\delta)}{2\delta}.
 \end{equation*}
 
 В файлі \inputcode{h2o_ir_spectrum.py} наведено програму, яка  використовує \textbf{метод центральних різниць} для чисельного обчислення $\frac{d\boldsymbol{\mu}}{dQ_i}$:
-
 
 
 \subsubsection{Алгоритм обчислення}
@@ -156,30 +155,30 @@ I_i \sim \left| \frac{d\boldsymbol{\mu}}{dQ_i} \right|^2.
 \begin{enumerate}
     \item \textbf{Отримання нормальної моди:}
 
-    З діагоналізації масово-зваженого Гесіану отримуємо власний вектор $\mathbf{L}_k$ (нормальну моду):
-    \begin{equation}
-        \mathbf{L}_k = (l_{1x}, l_{1y}, l_{1z}, l_{2x}, l_{2y}, l_{2z}, \ldots, l_{Nx}, l_{Ny}, l_{Nz})^T
-    \end{equation}
-    де $N$ --- кількість атомів.
+          З діагоналізації масово-зваженого Гесіану отримуємо власний вектор $\mathbf{L}_k$ (нормальну моду):
+          \begin{equation}
+              \mathbf{L}_k = (l_{1x}, l_{1y}, l_{1z}, l_{2x}, l_{2y}, l_{2z}, \ldots, l_{Nx}, l_{Ny}, l_{Nz})^T
+          \end{equation}
+          де $N$ --- кількість атомів.
 
-    \begin{minted}{python}
+          \begin{minted}{python}
     freq_info = thermo.harmonic_analysis(mol, hess)
     normal_modes = freq_info['norm_mode']       # власні вектори
 
     L_k = normal_modes[:, k].reshape(natm, 3)
     \end{minted}
 
-    Код \inlinecode{L\_k = normal\_modes[:, k].reshape(natm, 3)} відповідає $\mathbf{L}_k$ у формулі.
+          Код \inlinecode{L\_k = normal\_modes[:, k].reshape(natm, 3)} відповідає $\mathbf{L}_k$ у формулі.
 
     \item \textbf{Зміщення координат:}
 
-    Для чисельного диференціювання вибираємо крок $h$ та зміщуємо атоми вздовж нормальної моди:
-    \begin{align}
-        \mathbf{R}^{(+)} &= \mathbf{R}_0 + h \cdot \mathbf{L}_k \\
-        \mathbf{R}^{(-)} &= \mathbf{R}_0 - h \cdot \mathbf{L}_k
-    \end{align}
+          Для чисельного диференціювання вибираємо крок $h$ та зміщуємо атоми вздовж нормальної моди:
+          \begin{align}
+              \mathbf{R}^{(+)} & = \mathbf{R}_0 + h \cdot \mathbf{L}_k \\
+              \mathbf{R}^{(-)} & = \mathbf{R}_0 - h \cdot \mathbf{L}_k
+          \end{align}
 
-    \begin{minted}{python}
+          \begin{minted}{python}
     h = 0.001  # Bohr
     R_0 = mol.atom_coords()
     R_pos = R_0 + h * L_k
@@ -188,13 +187,13 @@ I_i \sim \left| \frac{d\boldsymbol{\mu}}{dQ_i} \right|^2.
 
     \item \textbf{SCF-розрахунки:}
 
-    Для кожної зміщеної геометрії виконуємо SCF-розрахунок, отримуємо енергію $E$ та дипольний момент $\boldsymbol{\mu}$:
-    \begin{align}
-        E^{(+)}, \boldsymbol{\mu}^{(+)} &= \text{SCF}(\mathbf{R}^{(+)}) \\
-        E^{(-)}, \boldsymbol{\mu}^{(-)} &= \text{SCF}(\mathbf{R}^{(-)})
-    \end{align}
+          Для кожної зміщеної геометрії виконуємо SCF-розрахунок, отримуємо енергію $E$ та дипольний момент $\boldsymbol{\mu}$:
+          \begin{align}
+              E^{(+)}, \boldsymbol{\mu}^{(+)} & = \text{SCF}(\mathbf{R}^{(+)}) \\
+              E^{(-)}, \boldsymbol{\mu}^{(-)} & = \text{SCF}(\mathbf{R}^{(-)})
+          \end{align}
 
-    \begin{minted}{python}
+          \begin{minted}{python}
     mf_pos = scf.RHF(mol_pos); mf_pos.kernel()
     dip_pos = mf_pos.dip_moment(unit='Bohr')
 
@@ -204,24 +203,24 @@ I_i \sim \left| \frac{d\boldsymbol{\mu}}{dQ_i} \right|^2.
 
     \item \textbf{Обчислення похідної дипольного моменту:}
 
-    Чисельна похідна за нормальною координатою $Q_k$:
-    \begin{equation}
-        \frac{\partial \boldsymbol{\mu}}{\partial Q_k} = \frac{\boldsymbol{\mu}^{(+)} - \boldsymbol{\mu}^{(-)}}{2h}
-    \end{equation}
+          Чисельна похідна за нормальною координатою $Q_k$:
+          \begin{equation}
+              \frac{\partial \boldsymbol{\mu}}{\partial Q_k} = \frac{\boldsymbol{\mu}^{(+)} - \boldsymbol{\mu}^{(-)}}{2h}
+          \end{equation}
 
-    \begin{minted}{python}
+          \begin{minted}{python}
     dip_derivative = (dip_pos - dip_neg) / (2 * h)
     \end{minted}
 
     \item \textbf{Обчислення інтегральної інтенсивності:}
 
-    Інтенсивність ІЧ-переходу пропорційна квадрату норми похідної дипольного моменту:
-    \begin{equation}
-        I_k = 974.8638 \times \left|\frac{\partial \boldsymbol{\mu}}{\partial Q_k}\right|^2_{\text{a.u.}}
-        \quad \text{[км/моль]}
-    \end{equation}
+          Інтенсивність ІЧ-переходу пропорційна квадрату норми похідної дипольного моменту:
+          \begin{equation}
+              I_k = 974.8638 \times \left|\frac{\partial \boldsymbol{\mu}}{\partial Q_k}\right|^2_{\text{a.u.}}
+              \quad \text{[км/моль]}
+          \end{equation}
 
-    \begin{minted}{python}
+          \begin{minted}{python}
     intensity = np.linalg.norm(dip_derivative)**2 * 974.8638
     intensities.append(intensity)
     \end{minted}
@@ -242,11 +241,11 @@ I_i \sim \left| \frac{d\boldsymbol{\mu}}{dQ_i} \right|^2.
 Похідна дипольного моменту за нормальною координатою $Q_i$ виражається через
 матрицю нормальних мод $\mathbf{L}$:
 \begin{equation*}
-\frac{\partial \vect{\mu}}{\partial Q_i}
-= \sum_{A=1}^{N_{\text{атм}}}
+    \frac{\partial \vect{\mu}}{\partial Q_i}
+    = \sum_{A=1}^{N_{\text{атм}}}
     \frac{\partial \vect{\mu}}{\partial \vect{R}_{A}} \cdot
     \frac{\partial \vect{R}_A}{\partial Q_i}
-= \sum_{A=1}^{N_{\text{атм}}}
+    = \sum_{A=1}^{N_{\text{атм}}}
     \frac{\partial \vect{\mu}}{\partial \vect{R}_{A}} \cdot \frac{\vect{L}_A^i}{\sqrt{m_A}},
 \end{equation*}
 де $\vect L_A^i = (L_{Ax}^i, L_{Ay}^i, L_{Az}^i)$ --- вектор нормальної моди для атома $A$, а множник $1/\sqrt{m_A}$ враховує мас-зважування.
@@ -255,13 +254,13 @@ I_i \sim \left| \frac{d\boldsymbol{\mu}}{dQ_i} \right|^2.
 У \texttt{PySCF} тензор похідних \inlinecode{vib.de} має розмірність $(N_{\text{атм}}, N_{\text{атм}}, 3, 3)$
 і зберігає похідні компонент дипольного моменту за координатами атомів:
 \begin{equation*}
-(\texttt{vib.de})_{ABaj} = \frac{\partial \mu_j^{(A)}}{\partial R_{Ba}},
+    (\texttt{vib.de})_{ABaj} = \frac{\partial \mu_j^{(A)}}{\partial R_{Ba}},
 \end{equation*}
 
 Діагональні елементи ($A=B$) відповідають похідній внеску атома в дипольний момент по його власних координатах:
 \begin{equation*}
-D_{Aaj} = (\texttt{vib.de})_{AAaj}
-= \frac{\partial \mu_j}{\partial R_{Aa}}.
+    D_{Aaj} = (\texttt{vib.de})_{AAaj}
+    = \frac{\partial \mu_j}{\partial R_{Aa}}.
 \end{equation*}
 
 \begin{minted}{python}
@@ -271,19 +270,19 @@ de_diag = np.einsum('AAaj->Aaj', vib.de)
 
 Для кожного атома $A$ отримуємо матрицю Якобі дипольного моменту:
 \begin{equation*}
-\mathbf{D}_A =
-\begin{pmatrix}
-\partial \mu_x/\partial x_A & \partial \mu_y/\partial x_A & \partial \mu_z/\partial x_A \\
-\partial \mu_x/\partial y_A & \partial \mu_y/\partial y_A & \partial \mu_z/\partial y_A \\
-\partial \mu_x/\partial z_A & \partial \mu_y/\partial z_A & \partial \mu_z/\partial z_A
-\end{pmatrix}.
+    \mathbf{D}_A =
+    \begin{pmatrix}
+        \partial \mu_x/\partial x_A & \partial \mu_y/\partial x_A & \partial \mu_z/\partial x_A \\
+        \partial \mu_x/\partial y_A & \partial \mu_y/\partial y_A & \partial \mu_z/\partial y_A \\
+        \partial \mu_x/\partial z_A & \partial \mu_y/\partial z_A & \partial \mu_z/\partial z_A
+    \end{pmatrix}.
 \end{equation*}
 
 \paragraph{Похідні за нормальними координатами.}
 Матриця похідних дипольного моменту за всіма нормальними модами:
 \begin{equation*}
-\frac{\partial \mu_j}{\partial Q_i}
-= \sum_{A=1}^{N_{\text{атм}}} \sum_{a=x,y,z} \frac{L_{Aa}^i}{\sqrt{m_A}} \, D_{Aaj}.
+    \frac{\partial \mu_j}{\partial Q_i}
+    = \sum_{A=1}^{N_{\text{атм}}} \sum_{a=x,y,z} \frac{L_{Aa}^i}{\sqrt{m_A}} \, D_{Aaj}.
 \end{equation*}
 
 \begin{minted}{python}
@@ -297,8 +296,8 @@ dipole_derivs = np.einsum('iAa,Aaj->ij', modes_unweighted, de_diag)
 \paragraph{Інтенсивності ІЧ-переходів.}
 Інтенсивність $i$-го коливального переходу:
 \begin{equation*}
-I_i = 974.8638 \sum_{j=x,y,z} \left( \frac{\partial \mu_j}{\partial Q_i} \right)^2
-= 974.8638 \, \left\| \frac{\partial \boldsymbol{\mu}}{\partial Q_i} \right\|^2
+    I_i = 974.8638 \sum_{j=x,y,z} \left( \frac{\partial \mu_j}{\partial Q_i} \right)^2
+    = 974.8638 \, \left\| \frac{\partial \boldsymbol{\mu}}{\partial Q_i} \right\|^2
 \end{equation*}
 
 \begin{minted}{python}
@@ -362,38 +361,38 @@ print("="*70)
 Експериментальні дані
 
 \begin{table}[h]
-\centering
-\small
-\caption{Експериментальні дані коливань молекули H$_2$O (джерела: \url{https://cccbdb.nist.gov/expvibs2x.asp}).}
-\label{tab:exp_vib_H2O}
-\begin{tblr}{
-    colspec = {Q[c,m] Q[l,m,] Q[c,m] Q[c,m] Q[c,m] X[l,m]},
-    row{1} = {font=\bfseries, c},
-    hline{1,2,Z} = {-}{0.08em},
-    row{odd} = {bg=gray!5},
-}
-Мода & Симетрія & {Частота\\ гармонічна (см$^{-1}$)} & {Інтенсивність\\ (км моль$^{-1}$)} \\
-1 & \ce{H-O-H} вигин &  1648.5 & 62.5  \\
-2 & \ce{O-H} сим. розтяг &  3832.2 & 2.93 \\
-3 & \ce{O-H} антисим. розтяг  & 3942.5 & 41.7  \\
-\end{tblr}
+    \centering
+    \small
+    \caption{Експериментальні дані коливань молекули H$_2$O (джерела: \url{https://cccbdb.nist.gov/expvibs2x.asp}).}
+    \label{tab:exp_vib_H2O}
+    \begin{tblr}{
+        colspec = {Q[c,m] Q[l,m,] Q[c,m] Q[c,m] Q[c,m] X[l,m]},
+        row{1} = {font=\bfseries, c},
+        hline{1,2,Z} = {-}{0.08em},
+                row{odd} = {bg=gray!5},
+            }
+        Мода & Симетрія                 & {Частота        \\ гармонічна (см$^{-1}$)} & {Інтенсивність\\ (км моль$^{-1}$)} \\
+        1    & \ce{H-O-H} вигин         & 1648.5   & 62.5 \\
+        2    & \ce{O-H} сим. розтяг     & 3832.2   & 2.93 \\
+        3    & \ce{O-H} антисим. розтяг & 3942.5   & 41.7 \\
+    \end{tblr}
 \end{table}
 
 
 Молекула H$_2$O має $3N - 6 = 3$ коливальні моди:
 
 \begin{center}
-\begin{tblr}{
-    colspec = {Q[c,m] Q[c,m] Q[c,m] Q[c,m]},
-    row{1} = {font=\bfseries, c, m},
-    hline{1, Z} = {solid},
-    row{odd} = {bg=gray!5},
-}
-Мода & $\nu$ (см$^{-1}$) & $I$ (км/моль) & Тип \\
-1 & 1828.9 & 1.4 & Слабка (деформаційна) \\
-2 & 3906.0 & 102.3 & Сильна (симетричне валентне) \\
-3 & 4001.1 & 138.6 & Сильна (асиметричне валентне) \\
-\end{tblr}
+    \begin{tblr}{
+        colspec = {Q[c,m] Q[c,m] Q[c,m] Q[c,m]},
+        row{1} = {font=\bfseries, c, m},
+        hline{1, Z} = {solid},
+                row{odd} = {bg=gray!5},
+            }
+        Мода & $\nu$ (см$^{-1}$) & $I$ (км/моль) & Тип                           \\
+        1    & 1828.9            & 1.4           & Слабка (деформаційна)         \\
+        2    & 3906.0            & 102.3         & Сильна (симетричне валентне)  \\
+        3    & 4001.1            & 138.6         & Сильна (асиметричне валентне) \\
+    \end{tblr}
 \end{center}
 
 \smallskip
@@ -410,35 +409,35 @@ print("="*70)
 \paragraph{Ключові положення:}
 \begin{itemize}
     \item ІЧ-інтенсивність коливальної моди визначається квадратом похідної
-    дипольного моменту за нормальною координатою:
-    $I_i = 974.8638 \left|\frac{\partial\boldsymbol{\mu}}{\partial Q_i}\right|^2$ [км/моль].
+          дипольного моменту за нормальною координатою:
+          $I_i = 974.8638 \left|\frac{\partial\boldsymbol{\mu}}{\partial Q_i}\right|^2$ [км/моль].
 
     \item Інтенсивність відображає \emph{силу взаємодії} молекули з ІЧ-випромінюванням:
-    чим більша зміна дипольного моменту при коливанні, тим інтенсивніша смуга поглинання.
-    Класифікація: сильні смуги ($I > 100$~км/моль), середні ($10 < I \leq 100$),
-    слабкі ($I \leq 10$~км/моль).
+          чим більша зміна дипольного моменту при коливанні, тим інтенсивніша смуга поглинання.
+          Класифікація: сильні смуги ($I > 100$~км/моль), середні ($10 < I \leq 100$),
+          слабкі ($I \leq 10$~км/моль).
 
     \item Два методи обчислення похідних:
-    \begin{itemize}
-        \item \textit{Чисельний} --- простий, але вимагає додаткових SCF-розрахунків
-        для зміщених геометрій та чутливий до вибору кроку $h$;
-        \item \textit{Аналітичний} --- ефективніший і точніший, базується на аналітичних
-        градієнтах густини заряду. Реалізований у \texttt{PySCF} як для HF,
-        так і для DFT-методів.
-    \end{itemize}
+          \begin{itemize}
+              \item \textit{Чисельний} --- простий, але вимагає додаткових SCF-розрахунків
+                    для зміщених геометрій та чутливий до вибору кроку $h$;
+              \item \textit{Аналітичний} --- ефективніший і точніший, базується на аналітичних
+                    градієнтах густини заряду. Реалізований у \texttt{PySCF} як для HF,
+                    так і для DFT-методів.
+          \end{itemize}
 
     \item Для молекули H$_2$O розраховані частоти ($\sim 1829$, $3906$, $4001$~см$^{-1}$)
-    якісно узгоджуються з експериментом ($1648$, $3832$, $3943$~см$^{-1}$),
-    а систематичне завищення пояснюється гармонічним наближенням і вибором базису.
+          якісно узгоджуються з експериментом ($1648$, $3832$, $3943$~см$^{-1}$),
+          а систематичне завищення пояснюється гармонічним наближенням і вибором базису.
 
     \item Інтенсивності ($I_1 = 1.4$, $I_2 = 102.3$, $I_3 = 138.6$~км/моль)
-    демонструють, що найінтенсивніші смуги відповідають валентним коливанням \ce{O-H} зв'язків,
-    тоді як деформаційна мода має слабку інтенсивність. Експериментальні значення
-    ($62.5$, $2.93$, $41.7$~км/моль) показують іншу картину через ангармонічні ефекти
-    та обмеження гармонічного наближення.
+          демонструють, що найінтенсивніші смуги відповідають валентним коливанням \ce{O-H} зв'язків,
+          тоді як деформаційна мода має слабку інтенсивність. Експериментальні значення
+          ($62.5$, $2.93$, $41.7$~км/моль) показують іншу картину через ангармонічні ефекти
+          та обмеження гармонічного наближення.
 
     \item Висока інтенсивність валентних коливань робить пару води потужним поглиначем
-    ІЧ-випромінювання в атмосфері, що має значення для клімату та парникового ефекту.
+          ІЧ-випромінювання в атмосфері, що має значення для клімату та парникового ефекту.
 \end{itemize}
 
 \paragraph{Практичне значення:}
