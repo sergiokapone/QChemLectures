@@ -184,8 +184,8 @@
 
 	Перше наближення теорії збурень:
 	\begin{equation*}\label{PerturbedValues}
-		E_n = E_n^{(0)} + \bracket<\psi_n^{(0)}|\hat{V}|\psi_n^{(0)}>, \quad
-		\psi_n = \psi_n^{(0)} + \sum\limits_{\substack{m\\m \neq n}} \frac{\bracket<\psi_n^{(0)}|\hat{V}|\psi_m^{(0)}>}{E_n^{(0)} - E_m^{(0)}} \psi_m^{(0)}.
+		E_n = E_n^{(0)} + \opbracket{\psi_n^{(0)}}{\hat{V}}{\psi_n^{(0)}}, \quad
+		\psi_n = \psi_n^{(0)} + \sum\limits_{\substack{m\\m \neq n}} \frac{\opbracket{\psi_n^{(0)}}{\hat{V}}{\psi_m^{(0)}}}{E_n^{(0)} - E_m^{(0)}} \psi_m^{(0)}.
 	\end{equation*}
 	%---------------------------------------------------------------------------
 \end{frame}
@@ -252,7 +252,7 @@
 
 		Перша поправка до енергії в теорії збурень:
 		\begin{equation*}
-			E^{(1)} = \bracket<{\Psi_0}|{\hat{V}}|{\Psi_0}> \equiv J = \frac{Z^6}{\pi^2} \int\limits_{V_1}\int\limits_{V_2}\frac{1}{r_{12}} e^{-2Z(r_1 + r_2)} dV_1dV_2 = + \frac58 Z.
+			E^{(1)} = \opbracket{\Psi_0}{\hat{V}}{\Psi_0} \equiv J = \frac{Z^6}{\pi^2} \int\limits_{V_1}\int\limits_{V_2}\frac{1}{r_{12}} e^{-2Z(r_1 + r_2)} dV_1dV_2 = + \frac58 Z.
 		\end{equation*}
 		$J$~--- кулонівський інтеграл.
 		Енергія атома \ce{He} :
@@ -357,7 +357,7 @@
 	\only<1>{%
 		Енергію системи в стані $\Psi$ можна розрахувати як:
 		\begin{equation*}
-			E[\Psi]  = \bracket<{\Psi}|{\hat{H}}|{\Psi}> = \int \Psi^* \hat{H} \Psi d\xi, \quad \int \Psi^*  \Psi d\xi = 1.
+			E[\Psi]  = \opbracket{\Psi}{\hat{H}}{\Psi} = \int \Psi^* \hat{H} \Psi d\xi, \quad \int \Psi^*  \Psi d\xi = 1.
 		\end{equation*}
 		Застосуємо варіаційний принцип $\delta E = 0$
 		\[
@@ -376,19 +376,16 @@
 		\end{center}
 	}
 	\only<2>{%
-		Припустимо, що довільна функція $\tilde{\Psi} = \sum\limits_m C_m\Psi_m$ є розв'язком, $(\sum\limits_m|C_m|^2 = 1)$, $\bracket<\tilde{\Psi}|\tilde{\Psi}> = 1$, розкладена в ряд по точним (але невідомим) власним функціям гамільтоніана $\hat H$ :
+		Припустимо, що довільна функція $\tilde{\Psi} = \sum\limits_m C_m\Psi_m$ є розв'язком, $(\sum\limits_m|C_m|^2 = 1)$, $\bracket{\tilde{\Psi}}{\tilde{\Psi}} = 1$, розкладена в ряд по точним (але невідомим) власним функціям гамільтоніана $\hat H$ :
 
 		\begin{equation*}
-			E[\Psi]  = \bracket<{\tilde\Psi}|{\hat{H}}|{\tilde\Psi}> = \sum\limits_m |C_m|^2 E_m.
+			E[\Psi]  = \bracket{\tilde\Psi}{\hat{H}}{\tilde\Psi} = \sum\limits_m |C_m|^2 E_m.
 		\end{equation*}
 
 		Нехай $E_0$ найменше  значення енергії основного стану гамільтоніана $\hat{H}$, тоді
 		\begin{equation*}
-			E[\tilde\Psi]  = \bracket<{\tilde\Psi}|{\hat{H}}|{\tilde\Psi}> = \sum\limits_m |C_m|^2 E_m \ge \sum\limits_m |C_m|^2 E_0  = E_0.
+			E[\tilde\Psi]  = \bracket{\tilde\Psi}{\hat{H}}{\tilde\Psi} = \sum\limits_m |C_m|^2 E_m \ge \sum\limits_m |C_m|^2 E_0  = E_0.
 		\end{equation*}
-		\begin{alertblock}{}\centering
-			Енергія обчислена з довільною функцією $\tilde\Psi$  буде оцінкою зверху для точного значення енергії основного стану
-		\end{alertblock}
 	}
 	\only<3>%
 	{    \framesubtitle<3>{Реалізація методу}
@@ -404,6 +401,9 @@
 		\[
 			E_{\min}[\tilde\Psi(\lambda_{1_{\min}}, \lambda_{2_{\min}}, \ldots)] \ge E_0.
 		\]
+		\begin{alertblock}{}\centering
+			Енергія обчислена з довільною функцією $\tilde\Psi$  буде оцінкою зверху для точного значення енергії основного стану
+		\end{alertblock}
 	}
 	%----------------------------------------------------------------------------
 \end{frame}
@@ -552,7 +552,7 @@
 			\left(-\frac12 \nabla_2^2  - \frac{1}{r_2}\right)\psi_2 + \int\frac{|\psi_1|^2}{r_{12}} dV_1 \cdot \psi_2  & = \varepsilon_2 \psi_2.
 		\end{align*}
 		\onslide<3>
-		Енергія атома методом Хартрі $E = \bracket<{\Psi}|{\hat{H}}|{\Psi}>$:
+		Енергія атома методом Хартрі $E = \opbracket{\Psi}{\hat{H}}{\Psi}$:
 		\begin{multline*}
 			E =  \int \psi^*_1 \left( -\frac12 \nabla_1^2 - \frac{1}{r_{1}}\right) \psi_1 dV_1 + \int \psi^*_2 \left( -\frac12 \nabla_2и и ^2 - \frac{1}{r_{2}}\right) \psi_2 dV_2 + \\ +  \int\frac{|\psi_1|^2 |\psi_2|^2}{r_{12}} dV_1 dV_2
 			= \varepsilon_1 + \varepsilon_2 - \int\frac{|\psi_1|^2 |\psi_2|^2}{r_{12}} dV_1 dV_2.
@@ -1290,7 +1290,7 @@ Virial Ratio       :            2.00001409
 %============================================================================
 \begin{frame}{Чи є життя після Хартрі-Фока?}{Врахування кореляції електронів}\small
 	%----------------------------------------------------------------------------
-	{\scriptsize \fullcite[Глава V, \S 5]{Yatsimirsij}}
+%	{\scriptsize \fullcite[Глава V, \S 5]{Yatsimirsij}}
 
 	\bigskip
 	\begin{overprint}
@@ -1330,11 +1330,11 @@ Virial Ratio       :            2.00001409
 
 
 %============================================================================
-\begin{frame}[allowframebreaks]{Література}\scriptsize
-	%----------------------------------------------------------------------------
-	\printbibliography
-	%----------------------------------------------------------------------------
-\end{frame}
+%\begin{frame}[allowframebreaks]{Література}\scriptsize
+%	%----------------------------------------------------------------------------
+%	\printbibliography
+%	%----------------------------------------------------------------------------
+%\end{frame}
 %============================================================================
 
 

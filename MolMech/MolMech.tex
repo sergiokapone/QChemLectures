@@ -46,15 +46,11 @@
 \begin{document}
 %============================================================================
 
-
 \begin{frame}
 	\titlepage
 \end{frame}
 
 %============================================================================
-
-
-
 
 %============================================================================
 \begin{frame}{Будова молекули}{}
@@ -65,10 +61,6 @@
 	\end{itemize}
 \end{frame}
 %============================================================================
-
-
-
-
 
 %============================================================================
 \begin{frame}{Моделювання структури та властивостей молекул}{}
@@ -85,13 +77,29 @@
 		\item взаємодії розглядаються як <<пружини>> із рівноважною довжиною рівною експериментальній чи розрахованій довжині хімічного зв'язку.
 	\end{itemize}
 
+\end{frame}
 
-
-
+%============================================================================
+\begin{frame}{Межі застосування молекулярної механіки}{Температура виродження}
+	\begin{alertblock}{Характеристична температура коливань}\small\justifying
+		\begin{equation*}
+			\Theta_i = \frac{\hbar\,\omega_i}{k_B}
+		\end{equation*}
+		При $T \ll \Theta_i$ дана коливальна мода «заморожена» --- підпорядковується \emphs{квантовій} статистиці, класичні методи дають хибний результат.
+	\end{alertblock}
+	\emphs[red]{Класична ММ некоректна, якщо:}
+	\begin{itemize}
+		\item $T \ll \Theta_i$ --- нульова коливальна енергія $\tfrac{1}{2}\hbar\omega$ не врахована
+		\item Присутні \emphs{легкі атоми} (H, D) --- тунелювання суттєве навіть при $T = 300$~К
+		\item Досліджуються \emphs{збуджені електронні стани} або фотохімічні реакції
+		\item Відбувається \emphs{розрив або утворення} хімічних зв'язків
+		\item Параметри силового поля екстрапольовані \emphs{поза межі} навчальної вибірки
+	\end{itemize}
 \end{frame}
 %============================================================================
 
 
+%============================================================================
 \begin{frame}{Способи опису структури хімічної системи}{}
 	Для опису атомно-молекулярних систем існує кілька способів задавання координат, кожен з яких має свої переваги і
 	недоліки:
@@ -103,10 +111,6 @@
 	\end{enumerate}
 \end{frame}
 %============================================================================
-
-
-
-
 
 %============================================================================
 \begin{frame}[fragile, t]{Декартові координати}{}
@@ -239,30 +243,30 @@
 		\begin{equation*}
 			U_\text{chem} = \overbrace{
 				\sum\limits_\text{bond} \frac{k_i}{2} (x_i - x_{0_i})^2}^{
-			\tikz[]{
-				\node[atom] (A) at (-2,0) {}; \node[atom] (B) at (-0.5,0) {};
-				\draw[boundH] (A) -- node[above] {$x$} (B);
-			}
+				\tikz[]{
+					\node[atom] (A) at (-2,0) {}; \node[atom] (B) at (-0.5,0) {};
+					\draw[boundH] (A) -- node[above] {$x$} (B);
+				}
 			}
 			+
 			\overbrace{
 				\sum\limits_\text{angle}\frac{b_i}{2} (\alpha_i - \alpha_{0_i})^2
 			}^{
-			\tikz[xshift=-1cm]{
-				\node[atom] (O) at (0,0) {}; 	\node[atom] (A) at (135:1) {}; \node[atom] (B) at (45:1) {};
-				\draw[] (O) -- (A) (O) -- (B); \draw[<->] (135:0.5) arc(135:45:0.5) node[above=-1pt, pos=0.5] {$\alpha$};
+				\tikz[xshift=-1cm]{
+					\node[atom] (O) at (0,0) {}; 	\node[atom] (A) at (135:1) {}; \node[atom] (B) at (45:1) {};
+					\draw[] (O) -- (A) (O) -- (B); \draw[<->] (135:0.5) arc(135:45:0.5) node[above=-1pt, pos=0.5] {$\alpha$};
 
-			}
+				}
 			}
 			+
 			\overbrace{
 				\sum\limits_\text{torsion} + \frac{V_i}{2} (1 - \cos\phi_i)
 			}^{
-			\tikz[xshift=-2cm]{
-				\node[atom] (A) at (-0.5,-0.5) {}; \node[atom] (B) at (0,0) {}; \node[atom] (C) at (1,0) {}; \node[atom] (D) at (1.5,0.5) {};
-				\draw[] (A) -- (B) -- (C) -- (D);
-				\draw[->, thick] (0.5,-0.2) arc (-150:150:0.15 and 0.5) node[left] {$\phi$};
-			}
+				\tikz[xshift=-2cm]{
+					\node[atom] (A) at (-0.5,-0.5) {}; \node[atom] (B) at (0,0) {}; \node[atom] (C) at (1,0) {}; \node[atom] (D) at (1.5,0.5) {};
+					\draw[] (A) -- (B) -- (C) -- (D);
+					\draw[->, thick] (0.5,-0.2) arc (-150:150:0.15 and 0.5) node[left] {$\phi$};
+				}
 			}
 		\end{equation*}
 
@@ -334,7 +338,7 @@
 
 		\onslide<3>
 
-		\framesubtitle<3>{\href{https://avogadro.cc/docs/optimizing-geometry/molecular-mechanics/}{Molecular Mechanics \& Force Fields}}
+		\framesubtitle<3>{\href{https://avogadro.cc/docs/optimizing-geometry/molecular-mechanics/}{Силові поля, реалізовані в Avogadro}}
 
 		\bigskip
 		\begin{enumerate}\small
@@ -444,7 +448,6 @@
 \end{frame}
 %============================================================================
 
-
 %============================================================================
 \begin{frame}{Алгоритми пошуку стаціонарних точок на ППЕ}{Чисельні методи}
 	\begin{enumerate}\small
@@ -471,9 +474,6 @@
 \end{frame}
 %============================================================================
 
-
-
-
 %============================================================================
 \begin{frame}[t]{Ізомери, таутомери та конформери}{}
 	\begin{itemize}
@@ -488,19 +488,19 @@
 			      \end{center}
 		      \end{onlyenv}
 		\item<2-> \emphs[red]{Конформери} --- частковий випадок ізомерів, які отримуються один з одного без розриву хімічного зв'язку.
-			\begin{onlyenv}<2>
-				\begin{center}
-					\includegraphics[width=0.75\linewidth]{conformers}\\
-					{\scriptsize Поворотні конформери бутану}
-				\end{center}
-			\end{onlyenv}
+		      \begin{onlyenv}<2>
+			      \begin{center}
+				      \includegraphics[width=0.75\linewidth]{conformers}\\
+				      {\scriptsize Поворотні конформери бутану}
+			      \end{center}
+		      \end{onlyenv}
 		\item<3> \emphs[red]{Таутомери} ---ізомери, які легко переходять один в одного. Найчастіше це відбувається за рахунок переносу атома водню.
-			\begin{onlyenv}<3>
-				\begin{center}
-					\includegraphics[width=0.5\linewidth]{Ethanal_Ethenol_Tautomerie}\\
-					{\scriptsize Таутомерія етаналь—етенол}
-				\end{center}
-			\end{onlyenv}
+		      \begin{onlyenv}<3>
+			      \begin{center}
+				      \includegraphics[width=0.5\linewidth]{Ethanal_Ethenol_Tautomerie}\\
+				      {\scriptsize Таутомерія етаналь—етенол}
+			      \end{center}
+		      \end{onlyenv}
 	\end{itemize}
 	\begin{center}
 		\emphs[red]{Чим глибший мінімум на ППЕ, тим стабільніший ізомер.}
@@ -523,6 +523,81 @@
 		\item Для врахування міжмолекулярних взаємодій необхідно знати ефективні заряди атомів, дипольні моменти груп атомів та хімічних зв'язків. \emphs[red]{Їх знаходження є самостійною задачею і може бути здійснено тільки квантово-хімічним методам}.
 		\item Не застосовуються для моделювання систем, властивості яких визначаються електронними ефектами та у випадку розриву хімічних зв'язків.
 	\end{itemize}
+\end{frame}
+%============================================================================
+
+%============================================================================
+\begin{frame}{Молекулярна динаміка}{Розвиток молекулярної механіки}\small
+	\begin{block}{}
+		\emphs[red]{Молекулярна динаміка (МД)} --- рух атомів описується \emphs{рівняннями Ньютона}:
+		\begin{equation*}
+			m_i\,\ddot{\vec{r}}_i = -\vec{\nabla}_i U(\vec{r}_1,\dots,\vec{r}_N),
+		\end{equation*}
+		де сила обчислюється з тих самих емпіричних потенціалів, що й у ММ.
+	\end{block}
+
+	\begin{block}{}\scriptsize
+		\emphs[red]{МД дозволяє розраховувати:}
+		\begin{itemize}
+			\item пружні константи ($C_{11}$, $C_{12}$, $C_{44}$)
+			\item теплопровідність (метод Гріна--Кубо)
+			\item дифузію, конформаційні зміни
+			\item температурну залежність властивостей
+		\end{itemize}
+		\vspace{0.4em}
+		\emphs[red]{Типові програми:}
+		\begin{itemize}
+			\item \href{https://www.lammps.org/\#gsc.tab=0}{LAMMPS} --- кристали, матеріали
+			\item \href{https://www.gromacs.org}{GROMACS / NAMD} --- білки, ДНК
+			\item \href{https://www.ovito.org}{OVITO} --- візуалізація траєкторій
+		\end{itemize}
+	\end{block}
+\end{frame}
+%============================================================================
+
+
+%============================================================================
+\begin{frame}{Чому не квантова механіка?}\small
+	\begin{alertblock}{}\centering
+		Вибір методу — це компроміс між точністю та обчислювальною вартістю.
+	\end{alertblock}
+	\begin{center}\scriptsize
+		\begin{tabular}{lccc}
+			\toprule
+			\textbf{Метод} & \textbf{Масштаб} & \textbf{Атомів} & \textbf{Точність} \\
+			\midrule
+			Ab initio (CCSD(T)) & $O(N^7)$ & $<50$        & висока \\
+			DFT                 & $O(N^3)$ & $<500$       & середня \\
+			Молекулярна механіка & $O(N^2)$ & $<10^6$     & емпірична \\
+			Молекулярна динаміка & $O(N)$   & до $10^9$   & емпірична \\
+			\bottomrule
+		\end{tabular}
+	\end{center}
+	\begin{columns}[t]\scriptsize
+		\begin{column}{0.5\linewidth}
+			\emphs[red]{ММ/МД виправдана, якщо:}
+			\begin{itemize}
+				\item система велика ($>10^3$ атомів)
+				\item хімічні зв'язки не рвуться
+				\item збуджені стани не потрібні
+				\item потрібна часова динаміка (нс і більше)
+				\item $T \gg \Theta_i = \hbar\omega_i/k_B$ --- коливання класичні
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.5\linewidth}
+			\emphs[red]{Квантова хімія необхідна, якщо:}
+			\begin{itemize}
+				\item відбувається хімічна реакція
+				\item важливі електронні ефекти
+				\item потрібні спектри, збуджені стани
+				\item система мала і потрібна висока точність
+				\item $T \ll \Theta_i$ --- квантові ефекти в коливаннях (легкі атоми)
+			\end{itemize}
+		\end{column}
+	\end{columns}
+	\begin{block}{}\small\centering
+		Компроміс --- гібридний метод \emphs{QM/MM}: квантова хімія для активного центру молекули + ММ для оточення.
+	\end{block}
 \end{frame}
 %============================================================================
 
