@@ -6,6 +6,10 @@
 \documentclass[]{beamer}
 \usetheme{QuantumChemistry}
 \usepackage{QuantumChemistry}
+\usepackage{minted}
+\setminted{fontsize=\tiny, breaklines, breakanywhere, frame=lines, framesep=2mm, bgcolor=black!3}
+% Компіляція вимагає прапорця -shell-escape (потрібен встановлений Pygments):
+%   lualatex -shell-escape Atom_H.tex
 
 \title[Лекції з квантової хімії]{\huge\bfseries Атом водню та воднеподібні атоми}
 \subtitle{Лекції з квантової хімії}
@@ -243,6 +247,34 @@ $Ry = 1.77576096 \cdot 10^{7}$~1/м
 	\begin{equation}\label{Psi}
 		\psi (r,\theta,\phi) = R(r) \cdot Y(\theta,\phi ).
 	\end{equation}
+\end{frame}
+
+\begin{frame}{Безрозмірне рівняння}{Процедура розділення змінних}
+	\only<1>{
+		Підставимо~\eqref{Psi} в рівняння~\eqref{ShEdimlessSpherical}. Оператор $\nabla_r^2$ діє лише на $R(r)$, а $\hat L^2$~--- лише на $Y(\theta,\varphi)$, тому:
+		\begin{equation*}
+			Y(\theta,\varphi) \left( -\frac{\nabla_{r}^2 R(r)}{2} - \frac{Z}{r} R(r)\right)  + \frac{R(r)}{2r^2}\hat L^2 Y(\theta,\varphi) = E\, R(r)Y(\theta,\varphi).
+		\end{equation*}
+
+		Домножимо обидві частини на $\dfrac{2r^2}{R(r)Y(\theta,\varphi)}$ і згрупуємо доданки так, щоб в одній частині рівняння залишилась лише залежність від $r$, а в іншій~--- лише від кутів:
+		\begin{equation*}
+			\underbrace{\frac{r^2}{R}\left( -\nabla_{r}^2 R - \frac{2Z}{r} R - 2ER\right)}_{\text{залежить лише від } r} = \underbrace{-\frac{\hat L^2 Y}{Y}}_{\text{залежить лише від } \theta,\varphi}.
+		\end{equation*}
+	}
+	\only<2>{
+		Ліва частина рівняння залежить лише від $r$, права~--- лише від кутів $\theta,\varphi$, а рівність зберігається при будь-яких (незалежних одна від одної) значеннях цих змінних. Це можливо лише тоді, коли обидві частини дорівнюють одній і тій самій сталій, яку зручно позначити як $l(l+1)$:
+		\begin{block}{Кутове рівняння}
+			\begin{equation*}
+				\hat L^2 Y(\theta,\varphi) = l(l+1)\, Y(\theta,\varphi)
+			\end{equation*}
+		\end{block}
+		\begin{block}{Радіальне рівняння}
+			\begin{equation*}
+				\left( \nabla^2_{r} - \frac{l(l+1)}{ r^2} + \frac{2Z}{r} + 2E \right) R(r) = 0
+			\end{equation*}
+		\end{block}
+		Отже, рівняння~\eqref{ShEdimlessSpherical} розпалось на два незалежних рівняння: кутове, розв'язками якого є сферичні функції $Y_l^m(\theta,\varphi)$, та радіальне, розв'язками якого є функції $R_{n,l}(r)$.
+	}
 \end{frame}
 
 \begin{frame}{Аналіз кутової частини}{}
@@ -534,6 +566,122 @@ $Ry = 1.77576096 \cdot 10^{7}$~1/м
 \end{equation*}
 
 
+\end{frame}
+
+%============================================================================
+%======================  ДОДАТОК: РЕАЛІЗАЦІЯ НА PYTHON  ====================
+%============================================================================
+\begin{frame}[fragile]
+	\frametitle{Практична реалізація в Python}
+	\framesubtitle{SymPy: символьні обчислення}
+
+	Усе, що обговорювалось аналітично, можна відтворити символьно за допомогою бібліотеки \texttt{SymPy}, зокрема готового модуля \texttt{sympy.physics.hydrogen}, який містить хвильові функції атома водню.
+
+	\begin{minted}{python}
+from sympy import *
+from sympy.physics.hydrogen import Psi_nlm, R_nl, E_nl, Ynm
+from sympy.abc import phi, theta, n, l, m
+
+r, Z, zeta = symbols('r Z zeta', positive=True)
+
+# Хвильова функція основного стану psi_100 = R_10 * Y_0^0
+psi_100 = Psi_nlm(1, 0, 0, r, theta, phi, zeta)
+	\end{minted}
+
+	Функція \texttt{Psi\_nlm(n, l, m, r, $\theta$, $\phi$, Z)} автоматично будує саме той добуток $R_{nl}(r)\cdot Y_l^m(\theta,\phi)$~\eqref{Psi}, який ми отримали розділенням змінних.
+\end{frame}
+%=======================================================================================================
+\begin{frame}[fragile]
+	\frametitle{Практична реалізація в Python}
+	\framesubtitle{Нормування та теорема віріала}
+
+	Перевіримо чисельно-символьно, що $\psi_{100}$ нормована, і обчислимо середні енергії:
+	\begin{minted}{python}
+# Нормування: <psi|psi> = 4*pi * int_0^inf |psi|^2 r^2 dr
+norm = integrate(conjugate(psi_100) * psi_100
+                  * 4 * pi * r**2, (r, 0, oo))          # -> 1
+
+U = -Z / r
+U_avg = integrate(conjugate(psi_100) * U * psi_100
+                   * 4 * pi * r**2, (r, 0, oo))
+
+T_psi_100 = -Rational(1, 2) * (1 / r**2) \
+            * diff(r**2 * diff(psi_100, r), r)
+T_avg = integrate(conjugate(psi_100) * T_psi_100
+                   * 4 * pi * r**2, (r, 0, oo))
+
+E_avg   = T_avg + U_avg          # -Z**2/2
+E_exact = E_nl(1, Z)             # -Z**2/2
+	\end{minted}
+
+	Результат: $\left\langle E\right\rangle = E_1 = -Z^2/2$, тобто $\left\langle T\right\rangle = -\tfrac12\left\langle U\right\rangle$~--- теорема віріала виконується точно.
+\end{frame}
+%=======================================================================================================
+\begin{frame}[fragile]
+	\frametitle{Практична реалізація в Python}
+	\framesubtitle{Радіальні функції $R_{nl}(r)$ для довільних $n,l$}
+
+	Модуль \texttt{sympy.physics.hydrogen} дозволяє отримати $R_{nl}(r,Z)$ для будь-якого набору квантових чисел без ручного виведення поліномів Лагерра, а \texttt{lambdify} перетворює символьний вираз на числову функцію \texttt{NumPy} для побудови графіків:
+	\begin{minted}{python}
+levels = [(1, 0), (2, 0), (2, 1), (3, 0), (3, 1), (3, 2)]
+
+funcs = {
+    (nn, ll): lambdify(r, R_nl(nn, ll, r, 1), 'numpy')
+    for nn, ll in levels
+}
+
+r_vals = np.linspace(0, 15, 200)
+for nn, ll in levels:
+    plt.plot(r_vals, funcs[(nn, ll)](r_vals),
+             label=fr'$R_{{{nn}{ll}}}$')
+	\end{minted}
+
+	На графіках видно закономірність: кількість вузлів радіальної функції дорівнює $n-l-1$.
+\end{frame}
+%=======================================================================================================
+\begin{frame}[fragile]
+	\frametitle{Практична реалізація в Python}
+	\framesubtitle{Кутова частина: $p_x, p_y, p_z$ через сферичні гармоніки}
+
+	Дійсні $p$-орбіталі~--- лінійні комбінації комплексних сферичних гармонік $Y_1^{\pm1}, Y_1^0$ (функція \texttt{Ynm}):
+	\begin{minted}{python}
+px = (1/sqrt(2)) * (Ynm(1, -1, theta, phi).expand(func=True)
+                     - Ynm(1, 1, theta, phi).expand(func=True))
+py = (I/sqrt(2)) * (Ynm(1, -1, theta, phi).expand(func=True)
+                     + Ynm(1, 1, theta, phi).expand(func=True))
+pz = Ynm(1, 0, theta, phi).expand(func=True)
+
+px = trigsimp(px).subs(exp(I*phi) + exp(-I*phi), 2*cos(phi))
+py = trigsimp(py).subs(exp(I*phi) - exp(-I*phi), 2*I*sin(phi))
+pz = simplify(pz)
+	\end{minted}
+
+	Після спрощення \texttt{SymPy} відтворює точно ті ж дійсні вирази, що й аналітично: $p_x=\sqrt{\tfrac{3}{4\pi}}\sin\theta\cos\phi$, $p_y=\sqrt{\tfrac{3}{4\pi}}\sin\theta\sin\phi$, $p_z=\sqrt{\tfrac{3}{4\pi}}\cos\theta$.
+\end{frame}
+%=======================================================================================================
+\begin{frame}[fragile]
+	\frametitle{Практична реалізація в Python}
+	\framesubtitle{Тривимірна візуалізація $p$-орбіталей}
+
+	Переходимо до декартових координат $x=|p|\sin\theta\cos\phi$, $y=|p|\sin\theta\sin\phi$, $z=|p|\cos\theta$ і будуємо поверхню в \texttt{Matplotlib}; колір кодує знак хвильової функції (червоний~--- додатний, синій~--- від'ємний):
+	\begin{minted}{python}
+theta_v = np.linspace(0, np.pi, 50)
+phi_v   = np.linspace(0, 2*np.pi, 50)
+Theta, Phi = np.meshgrid(theta_v, phi_v)
+
+pz_func = lambdify((theta, phi), pz, 'numpy')
+vals = pz_func(Theta, Phi)
+
+X = np.abs(vals) * np.sin(Theta) * np.cos(Phi)
+Y = np.abs(vals) * np.sin(Theta) * np.sin(Phi)
+Zc = np.abs(vals) * np.cos(Theta)
+colors = np.where(vals >= 0, 'red', 'blue')
+
+ax = plt.figure().add_subplot(111, projection='3d')
+ax.plot_surface(X, Y, Zc, facecolors=colors, alpha=0.8)
+	\end{minted}
+
+	Форма поверхні~--- класична \emph{«гантель»}, витягнута вздовж відповідної осі.
 \end{frame}
 
 \end{document}
