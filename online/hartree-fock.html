@@ -1006,6 +1006,7 @@ style="display:none"
 \(\newcommand {\mittheta }{\theta }\)
 \(\newcommand {\mitphi }{\varphi }\)
 \(\newcommand {\tcbhighmath }[1]{\boxed {#1}}\)
+\(\newcommand {\inlinecode }[1]{\texttt {#1}}\)
 \(\newcommand {\Efield }{\mathbf {E}}\)
 \(\newcommand {\Dfield }{\mathbf {D}}\)
 \(\newcommand {\Bfield }{\mathbf {B}}\)
@@ -4789,7 +4790,7 @@ class="lateximage"
 <ul class="enumerate" style="list-style-type:none">
 <li>
 <p>
-<span class="listmarker"><b>Задача 1:</b></span> Побудуйте всі можливі Слейтерівські детермінанти для двоелектронної системи на орбіталі \(1s\) зі спінами \(\alpha \) та \(\beta \). Визначте:
+<span class="listmarker"><b>1.</b></span> Побудуйте всі можливі Слейтерівські детермінанти для двоелектронної системи на орбіталі \(1s\) зі спінами \(\alpha \) та \(\beta \). Визначте:
 </p>
 <ul class="itemize" style="list-style-type:none">
 <li>
@@ -4811,7 +4812,7 @@ class="lateximage"
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 2:</b></span> Слейтерівські детермінанти для <span
+<span class="listmarker"><b>2.</b></span> Слейтерівські детермінанти для <span
 id="lateximage-main-html-37"
 class="lateximagesource"
 ><!--
@@ -4826,7 +4827,7 @@ class="lateximage"
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 3:</b></span> Слейтерівські детермінанти для <span
+<span class="listmarker"><b>3.</b></span> Слейтерівські детермінанти для <span
 id="lateximage-main-html-38"
 class="lateximagesource"
 ><!--
@@ -4841,39 +4842,38 @@ class="lateximage"
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 4:</b></span> Збереження числа електронів. Покажіть, що \(\operatorname {Tr}(\mathbf {D} \mathbf {S}) = N_e\).
+<span class="listmarker"><b>4.</b></span> Збереження числа електронів. Покажіть, що \(\operatorname {Tr}(\mathbf {D} \mathbf {S}) = N_e\).
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 5:</b></span> Відновлення матриці густини з МО-коефіцієнтів. \(\mathbf {D}_{\text {rec}} = 2 \mathbf {C}_{\text {occ}} \mathbf {C}_{\text {occ}}^T\). Перевірте збіжність з оригінальною \(\mathbf
-{D}\).
+<span class="listmarker"><b>5.</b></span> Відновлення матриці густини з МО-коефіцієнтів. \(\mathbf {D}_{\text {rec}} = 2 \mathbf {C}_{\text {occ}} \mathbf {C}_{\text {occ}}^T\). Перевірте збіжність з оригінальною \(\mathbf {D}\).
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 6:</b></span> Ортонормування молекулярних орбіталей. Обчисліть \(\mathbf {C}^T \mathbf {S} \mathbf {C} \approx \mathbf {1}\) (точність \(10^{-10}\)).
+<span class="listmarker"><b>6.</b></span> Ортонормування молекулярних орбіталей. Обчисліть \(\mathbf {C}^T \mathbf {S} \mathbf {C} \approx \mathbf {1}\) (точність \(10^{-10}\)).
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 7:</b></span> Відновлення фокіана з \(\mathbf {J}\) та \(\mathbf {K}\). Покажіть \(\|\mathbf {F} - (\mathbf {h} + \mathbf {J} - 0.5\mathbf {K})\|_F &lt; 10^{-12}\).
+<span class="listmarker"><b>7.</b></span> Відновлення фокіана з \(\mathbf {J}\) та \(\mathbf {K}\). Покажіть \(\|\mathbf {F} - (\mathbf {h} + \mathbf {J} - 0.5\mathbf {K})\|_F &lt; 10^{-12}\).
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 8:</b></span> Ручне обчислення обмінної матриці \(\mathbf {K}\) через ERI. \(K_{\mu \nu } = \sum _{\lambda \sigma } D_{\lambda \sigma } (\mu \lambda |\nu \sigma )\) через <span
+<span class="listmarker"><b>8.</b></span> Ручне обчислення обмінної матриці \(\mathbf {K}\) через ERI. \(K_{\mu \nu } = \sum _{\lambda \sigma } D_{\lambda \sigma } (\mu \lambda |\nu \sigma )\) через <span
 class="inlinecode"><kbd>np.einsum</kbd></span>. Порівняйте з <span class="inlinecode"><kbd>mf.get_jk()[1]</kbd></span>.
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 9:</b></span> Канонічні орбіталі. Перевірте, чи \(\mathbf {C}^T \mathbf {F} \mathbf {C}\) діагональна на зайнятій підпросторі.
+<span class="listmarker"><b>9.</b></span> Канонічні орбіталі. Перевірте, чи \(\mathbf {C}^T \mathbf {F} \mathbf {C}\) діагональна на зайнятій підпросторі.
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 10:</b></span> Альтернативна форма енергії HF. Доведіть чисельно:
+<span class="listmarker"><b>10.</b></span> Альтернативна форма енергії HF. Доведіть чисельно:
 </p>
 <p>
 \[ E_{\text {HF}} = \tfrac {1}{2} \operatorname {Tr}[\mathbf {D} (\mathbf {h} + \mathbf {F})] + E_{\text {nuc}} \]
@@ -4881,53 +4881,52 @@ class="inlinecode"><kbd>np.einsum</kbd></span>. Порівняйте з <span cl
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 11:</b></span> Ручне обчислення кулонівської та обмінної енергії. \(E_J = \tfrac {1}{2} \Tr (\mathbf {D}\mathbf {J})\), \(E_K = -\tfrac {1}{4} \Tr (\mathbf {D}\mathbf {K})\). Перевірте суму.
+<span class="listmarker"><b>11.</b></span> Ручне обчислення кулонівської та обмінної енергії. \(E_J = \tfrac {1}{2} \Tr (\mathbf {D}\mathbf {J})\), \(E_K = -\tfrac {1}{4} \Tr (\mathbf {D}\mathbf {K})\). Перевірте суму.
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 12:</b></span> Одноелектронна частина енергії. Покажіть \(\operatorname {Tr}(\mathbf {D} \mathbf {h}) = \sum _i \varepsilon _i - (E_J + E_K)\).
+<span class="listmarker"><b>12.</b></span> Одноелектронна частина енергії. Покажіть \(\operatorname {Tr}(\mathbf {D} \mathbf {h}) = \sum _i \varepsilon _i - (E_J + E_K)\).
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 13:</b></span> Віріальна теорема. Обчисліть \(T = \operatorname {Tr}(\mathbf {D} \mathbf {T})\). Перевірте \(|V/T + 2| &lt; 10^{-3}\).
+<span class="listmarker"><b>13.</b></span> Віріальна теорема. Обчисліть \(T = \operatorname {Tr}(\mathbf {D} \mathbf {T})\). Перевірте \(|V/T + 2| &lt; 10^{-3}\).
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 14:</b></span> Стаціонарність SCF-розв’язку. Обчисліть норму комутатора \(\|\mathbf {F}\mathbf {D}\mathbf {S} - \mathbf {S}\mathbf {D}\mathbf {F}\|_F &lt; 10^{-8}\).
+<span class="listmarker"><b>14.</b></span> Стаціонарність SCF-розв’язку. Обчисліть норму комутатора \(\|\mathbf {F}\mathbf {D}\mathbf {S} - \mathbf {S}\mathbf {D}\mathbf {F}\|_F &lt; 10^{-8}\).
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 15:</b></span> Енергія окремих канонічних орбіталей. \(\varepsilon _i = \mathbf {c}_i^T \mathbf {F} \mathbf {c}_i\). Поясніть збіжність з <span
-class="inlinecode"><kbd>mf.mo_energy[i]</kbd></span>.
+<span class="listmarker"><b>15.</b></span> Енергія окремих канонічних орбіталей. \(\varepsilon _i = \mathbf {c}_i^T \mathbf {F} \mathbf {c}_i\). Поясніть збіжність з <span class="inlinecode"><kbd>mf.mo_energy[i]</kbd></span>.
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 16:</b></span> Електронна густина в довільній точці простору. Обчисліть \(\rho (\mathbf {r}_0)\) вручну через <span class="inlinecode"><kbd>mol.eval_gto('GTOval', coords)</kbd></span>.
+<span class="listmarker"><b>16.</b></span> Електронна густина в довільній точці простору. Обчисліть \(\rho (\mathbf {r}_0)\) вручну через <span class="inlinecode"><kbd>mol.eval_gto('GTOval', coords)</kbd></span>.
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 17:</b></span> HOMO-LUMO gap без <span class="inlinecode"><kbd>mo_energy</kbd></span>. Ортонормалізуйте базис (\(\mathbf {X}=\mathbf {S}^{-1/2}\)), діагоналізуйте \(\mathbf {F}&apos;\).
+<span class="listmarker"><b>17.</b></span> HOMO-LUMO gap без <span class="inlinecode"><kbd>mo_energy</kbd></span>. Ортонормалізуйте базис (\(\mathbf {X}=\mathbf {S}^{-1/2}\)), діагоналізуйте \(\mathbf {F}&apos;\).
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 18:</b></span> Теорема Купманса. Порівняйте \(-\varepsilon _{\text {HOMO}}\) з \(\Delta \) SCF-іонізацією.
+<span class="listmarker"><b>18.</b></span> Теорема Купманса. Порівняйте \(-\varepsilon _{\text {HOMO}}\) з \(\Delta \) SCF-іонізацією.
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 19:</b></span> Спін-поляризація (UHF). Обчисліть \(\mathbf {D}_s = \mathbf {D}^\alpha - \mathbf {D}^\beta \). Перевірте спін-контамінацію навіть для синглету.
+<span class="listmarker"><b>19.</b></span> Спін-поляризація (UHF). Обчисліть \(\mathbf {D}_s = \mathbf {D}^\alpha - \mathbf {D}^\beta \). Перевірте спін-контамінацію навіть для синглету.
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 20:</b></span> Збіжність до базисної межі. Обчисліть енергії <span
+<span class="listmarker"><b>20.</b></span> Збіжність до базисної межі. Обчисліть енергії <span
 id="lateximage-main-html-39"
 class="lateximagesource"
 ><!--
@@ -4952,7 +4951,7 @@ class="lateximage"
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 21:</b></span> Енергії іонізації першого ряду. Обчисліть IE\({}_1\) та IE\({}_2\) для <span
+<span class="listmarker"><b>21.</b></span> Енергії іонізації першого ряду. Обчисліть IE\({}_1\) та IE\({}_2\) для <span
 id="lateximage-main-html-41"
 class="lateximagesource"
 ><!--
@@ -4977,7 +4976,7 @@ class="lateximage"
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 22:</b></span> Побудуйте на одному графіку \(\rho (r)\) для <span
+<span class="listmarker"><b>22.</b></span> Побудуйте на одному графіку \(\rho (r)\) для <span
 id="lateximage-main-html-43"
 class="lateximagesource"
 ><!--
@@ -5012,7 +5011,7 @@ class="lateximage"
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 23:</b></span> Знайдіть положення максимумів \(4\pi r^2 \rho (r)\) для <span
+<span class="listmarker"><b>23.</b></span> Знайдіть положення максимумів \(4\pi r^2 \rho (r)\) для <span
 id="lateximage-main-html-46"
 class="lateximagesource"
 ><!--
@@ -5047,7 +5046,7 @@ class="lateximage"
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 24:</b></span> Порівняйте радіальні функції \(R_{2p}(r)\) для <span
+<span class="listmarker"><b>24.</b></span> Порівняйте радіальні функції \(R_{2p}(r)\) для <span
 id="lateximage-main-html-49"
 class="lateximagesource"
 ><!--

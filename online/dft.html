@@ -1006,6 +1006,7 @@ style="display:none"
 \(\newcommand {\mittheta }{\theta }\)
 \(\newcommand {\mitphi }{\varphi }\)
 \(\newcommand {\tcbhighmath }[1]{\boxed {#1}}\)
+\(\newcommand {\inlinecode }[1]{\texttt {#1}}\)
 \(\newcommand {\Efield }{\mathbf {E}}\)
 \(\newcommand {\Dfield }{\mathbf {D}}\)
 \(\newcommand {\Bfield }{\mathbf {B}}\)
@@ -3076,13 +3077,13 @@ class="lateximage"
 <ul class="enumerate" style="list-style-type:none">
 <li>
 <p>
-<span class="listmarker"><b>Задача 1:</b></span> Перевірка нормування густини в DFT. Обчисліть \(\Tr (\mathbf {D}\mathbf {S})\). Покажіть, що значення точно дорівнює \(N_e\) (як і в HF). Порівняйте з <span
+<span class="listmarker"><b>1.</b></span> Перевірка нормування густини в DFT. Обчисліть \(\Tr (\mathbf {D}\mathbf {S})\). Покажіть, що значення точно дорівнює \(N_e\) (як і в HF). Порівняйте з <span
 class="inlinecode"><kbd>mol.nelectron</kbd></span>.
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 2:</b></span> Відновлення KS-фокіана з його складових. Після запуску DFT-розрахунку отримайте <span class="inlinecode"><kbd>mf.get_veff()</kbd></span>, <span
+<span class="listmarker"><b>2.</b></span> Відновлення KS-фокіана з його складових. Після запуску DFT-розрахунку отримайте <span class="inlinecode"><kbd>mf.get_veff()</kbd></span>, <span
 class="inlinecode"><kbd>mf.get_j()</kbd></span>, <span class="inlinecode"><kbd>mf.get_k()</kbd></span>. Покажіть, що
 </p>
 <p>
@@ -3094,7 +3095,7 @@ class="inlinecode"><kbd>mf.get_j()</kbd></span>, <span class="inlinecode"><kbd>m
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 3:</b></span> Обмінно-кореляційний потенціал як матриця. Обчисліть
+<span class="listmarker"><b>3.</b></span> Обмінно-кореляційний потенціал як матриця. Обчисліть
 </p>
 <p>
 \[\mathbf {V}_{\text {xc}} = \mathbf {F}^{\text {KS}} - \mathbf {h} - \mathbf {J}.\]
@@ -3105,62 +3106,61 @@ class="inlinecode"><kbd>mf.get_j()</kbd></span>, <span class="inlinecode"><kbd>m
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 4:</b></span> Енергія обміну-кореляції вручну. Використовуйте<br />
+<span class="listmarker"><b>4.</b></span> Енергія обміну-кореляції вручну. Використовуйте<br />
 <span class="inlinecode"><kbd>mf._numint.get_rho()</kbd></span> та <span class="inlinecode"><kbd>mf.xc_code</kbd></span> для обчислення \(E_{\text {xc}}\) на сітці. Порівняйте з <span
 class="inlinecode"><kbd>mf.energy_xc()[0]</kbd></span>. Чому значення збігаються?
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 5:</b></span> Ручне обчислення \(E_{\text {xc}}\) через vxc-матрицю. Для LDA/GGA: \(E_{\text {xc}} \approx \mathbf {D} : \mathbf {V}_{\text {xc}}\). Покажіть, що це дає правильне значення з
-точністю \(10^{-8}\) (для не-гібридів).
+<span class="listmarker"><b>5.</b></span> Ручне обчислення \(E_{\text {xc}}\) через vxc-матрицю. Для LDA/GGA: \(E_{\text {xc}} \approx \mathbf {D} : \mathbf {V}_{\text {xc}}\). Покажіть, що це дає правильне значення з точністю
+\(10^{-8}\) (для не-гібридів).
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 6:</b></span> Гібридний обмін: частка точного HF-обміну. Для B3LYP, PBE0, \(\omega \)B97X тощо отримайте <span class="inlinecode"><kbd>mf.get_k()</kbd></span>. Обчисліть частку HF-обміну: \(\alpha
-= E_{\text {HFX}} / (E_{\text {HFX}} + E_{\text {DFT-x}})\). Перевірте, що \(\alpha = 0.20\) для B3LYP, \(0.25\) для PBE0.
+<span class="listmarker"><b>6.</b></span> Гібридний обмін: частка точного HF-обміну. Для B3LYP, PBE0, \(\omega \)B97X тощо отримайте <span class="inlinecode"><kbd>mf.get_k()</kbd></span>. Обчисліть частку HF-обміну: \(\alpha =
+E_{\text {HFX}} / (E_{\text {HFX}} + E_{\text {DFT-x}})\). Перевірте, що \(\alpha = 0.20\) для B3LYP, \(0.25\) для PBE0.
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 7:</b></span> Порівняння фокіанів HF та KS. Запустіть HF і DFT (наприклад, PBE) на одній молекулі. Обчисліть норму різниці \(\|\mathbf {F}^{\text {HF}} - \mathbf {F}^{\text {KS}}\|_F\). Поясніть, чому
+<span class="listmarker"><b>7.</b></span> Порівняння фокіанів HF та KS. Запустіть HF і DFT (наприклад, PBE) на одній молекулі. Обчисліть норму різниці \(\|\mathbf {F}^{\text {HF}} - \mathbf {F}^{\text {KS}}\|_F\). Поясніть, чому
 KS-фокіан «м’якший» (менше відштовхування).
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 8:</b></span> Віріальна теорема в DFT. Обчисліть \(T = \operatorname {Tr}(\mathbf {D}\mathbf {T})\). \(V = E_{\text {tot}} - T\). Перевірте \(|V/T + 2| &lt; 10^{-4}\) (у DFT зазвичай краще, ніж у
-HF).
+<span class="listmarker"><b>8.</b></span> Віріальна теорема в DFT. Обчисліть \(T = \operatorname {Tr}(\mathbf {D}\mathbf {T})\). \(V = E_{\text {tot}} - T\). Перевірте \(|V/T + 2| &lt; 10^{-4}\) (у DFT зазвичай краще, ніж у HF).
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 9:</b></span> Стаціонарність KS-SCF. Обчисліть \(\|\mathbf {F}^{\text {KS}} \mathbf {D} \mathbf {S} - \mathbf {S} \mathbf {D} \mathbf {F}^{\text {KS}}\|_F\). При збіжному розрахунку має
-бути \(&lt; 10^{-8}\).
+<span class="listmarker"><b>9.</b></span> Стаціонарність KS-SCF. Обчисліть \(\|\mathbf {F}^{\text {KS}} \mathbf {D} \mathbf {S} - \mathbf {S} \mathbf {D} \mathbf {F}^{\text {KS}}\|_F\). При збіжному розрахунку має бути \(&lt;
+10^{-8}\).
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 10:</b></span> Розкладання veff на складові. Використовуйте <span class="inlinecode"><kbd>mf.get_veff().exc</kbd></span> (енергія), <span class="inlinecode"><kbd>.ecoul</kbd></span> (J), <span
+<span class="listmarker"><b>10.</b></span> Розкладання veff на складові. Використовуйте <span class="inlinecode"><kbd>mf.get_veff().exc</kbd></span> (енергія), <span class="inlinecode"><kbd>.ecoul</kbd></span> (J), <span
 class="inlinecode"><kbd>.vxc</kbd></span> (матриця). Покажіть, що <span class="inlinecode"><kbd>mf.e_tot</kbd></span> = <kbd>T + Vne + J + Exc + Vnn</kbd> з точністю \(10^{-10}\).
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 11:</b></span> Порівняння XC-потенціалу для LDA vs GGA. Запустіть LDA (SVWN) і PBE. Обчисліть \(\mathbf {V}_{\text {xc}}^{\text {LDA}}\) та \(\mathbf {V}_{\text {xc}}^{\text {PBE}}\). Покажіть,
-що \(\|\mathbf {V}_{\text {xc}}^{\text {PBE}}\|_F &lt; \|\mathbf {V}_{\text {xc}}^{\text {LDA}}\|_F\) (GGA «пом’якшує» потенціал).
+<span class="listmarker"><b>11.</b></span> Порівняння XC-потенціалу для LDA vs GGA. Запустіть LDA (SVWN) і PBE. Обчисліть \(\mathbf {V}_{\text {xc}}^{\text {LDA}}\) та \(\mathbf {V}_{\text {xc}}^{\text {PBE}}\). Покажіть, що
+\(\|\mathbf {V}_{\text {xc}}^{\text {PBE}}\|_F &lt; \|\mathbf {V}_{\text {xc}}^{\text {LDA}}\|_F\) (GGA «пом’якшує» потенціал).
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 12:</b></span> Асимптотична поведінка XC-потенціалу. Для range-separated функціоналів (ωB97X, CAM-B3LYP) отримайте<br />
+<span class="listmarker"><b>12.</b></span> Асимптотична поведінка XC-потенціалу. Для range-separated функціоналів (ωB97X, CAM-B3LYP) отримайте<br />
 <span class="inlinecode"><kbd>mf._numint.rsh_coeff</kbd></span>. Покажіть, що на великих \(r\) XC-потенціал \(\to -1/r\) (як у точному обміні).
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 13:</b></span> Самовзаємодія (self-interaction error). Розрахуйте атом <span
+<span class="listmarker"><b>13.</b></span> Самовзаємодія (self-interaction error). Розрахуйте атом <span
 id="lateximage-main-html-155"
 class="lateximagesource"
 ><!--
@@ -3175,7 +3175,7 @@ class="lateximage"
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 14:</b></span> Фракційна зайнятість у DFT. Для атома <span
+<span class="listmarker"><b>14.</b></span> Фракційна зайнятість у DFT. Для атома <span
 id="lateximage-main-html-156"
 class="lateximagesource"
 ><!--
@@ -3190,7 +3190,7 @@ class="lateximage"
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 15:</b></span> Перевірка правильності XC-сітки. Збільште рівень сітки:
+<span class="listmarker"><b>15.</b></span> Перевірка правильності XC-сітки. Збільште рівень сітки:
 </p>
 <p>
 <span class="inlinecode"><kbd>mf.grids.level = 6</kbd></span>.
@@ -3201,7 +3201,7 @@ class="lateximage"
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 16:</b></span> Ручне обчислення густини на сітці. Використовуйте
+<span class="listmarker"><b>16.</b></span> Ручне обчислення густини на сітці. Використовуйте
 </p>
 <p>
 <span class="inlinecode"><kbd>ao_value = mf._numint.eval_ao(mol, grids.coords)</kbd></span>.
@@ -3212,19 +3212,17 @@ class="lateximage"
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 17:</b></span> Порівняння орбіталей HF та KS. Обчисліть \(\mathbf {C}_{\text {HF}}^T \mathbf {S} \mathbf {C}_{\text {KS}}\). Покажіть, що орбіталі дуже схожі (перекриття \(&gt; 0.99\)), але не
-ідентичні.
+<span class="listmarker"><b>17.</b></span> Порівняння орбіталей HF та KS. Обчисліть \(\mathbf {C}_{\text {HF}}^T \mathbf {S} \mathbf {C}_{\text {KS}}\). Покажіть, що орбіталі дуже схожі (перекриття \(&gt; 0.99\)), але не ідентичні.
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 18:</b></span> Частка точного обміну в гібриді. Для B3LYP: \(E_{\text {x}} = 0.8 E_{\text {x}}^{\text {DFT}} + 0.2 E_{\text {x}}^{\text {HF}}\). Обчисліть обидва внески вручну і перевірте
-коефіцієнти.
+<span class="listmarker"><b>18.</b></span> Частка точного обміну в гібриді. Для B3LYP: \(E_{\text {x}} = 0.8 E_{\text {x}}^{\text {DFT}} + 0.2 E_{\text {x}}^{\text {HF}}\). Обчисліть обидва внески вручну і перевірте коефіцієнти.
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 19:</b></span> Дисперсійна корекція D3/D4. Запустіть PBE і PBE-D3BJ. Покажіть, що різниця енергії — це саме:
+<span class="listmarker"><b>19.</b></span> Дисперсійна корекція D3/D4. Запустіть PBE і PBE-D3BJ. Покажіть, що різниця енергії — це саме:
 </p>
 <p>
 <span class="inlinecode"><kbd>mf.energy_nuc() + mf.get_dispersion()</kbd></span>.
@@ -3232,7 +3230,7 @@ class="lateximage"
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 20:</b></span> Побудуйте криві потенційної енергії молекули <span
+<span class="listmarker"><b>20.</b></span> Побудуйте криві потенційної енергії молекули <span
 id="lateximage-main-html-157"
 class="lateximagesource"
 ><!--
@@ -3247,7 +3245,7 @@ class="lateximage"
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 21:</b></span> Дослідіть вплив базисного набору на властивості <span
+<span class="listmarker"><b>21.</b></span> Дослідіть вплив базисного набору на властивості <span
 id="lateximage-main-html-158"
 class="lateximagesource"
 ><!--
@@ -3262,7 +3260,7 @@ class="lateximage"
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 22:</b></span> Порівняйте RKS та UKS підходи для дисоціації <span
+<span class="listmarker"><b>22.</b></span> Порівняйте RKS та UKS підходи для дисоціації <span
 id="lateximage-main-html-159"
 class="lateximagesource"
 ><!--
@@ -3277,7 +3275,7 @@ class="lateximage"
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 23:</b></span> Розрахуйте перші три збуджені стани <span
+<span class="listmarker"><b>23.</b></span> Розрахуйте перші три збуджені стани <span
 id="lateximage-main-html-160"
 class="lateximagesource"
 ><!--
@@ -3292,7 +3290,7 @@ class="lateximage"
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 24:</b></span> Дослідіть молекулу <span
+<span class="listmarker"><b>24.</b></span> Дослідіть молекулу <span
 id="lateximage-main-html-161"
 class="lateximagesource"
 ><!--
@@ -3317,7 +3315,7 @@ class="lateximage"
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 25:</b></span> Виконайте систематичне дослідження галогенів (<span
+<span class="listmarker"><b>25.</b></span> Виконайте систематичне дослідження галогенів (<span
 id="lateximage-main-html-163"
 class="lateximagesource"
 ><!--
@@ -3362,7 +3360,7 @@ class="lateximage"
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 26:</b></span> Побудуйте benchmark для молекул <span
+<span class="listmarker"><b>26.</b></span> Побудуйте benchmark для молекул <span
 id="lateximage-main-html-167"
 class="lateximagesource"
 ><!--
@@ -3397,12 +3395,12 @@ class="lateximage"
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 27:</b></span> Розрахуйте тестовий набір G2 (8 молекул) функціоналами <kbd>PBE</kbd>, <kbd>B3LYP</kbd>, <kbd>PBE0</kbd>, <kbd>M06-2X</kbd>. Порівняйте MAE, RMSE та визначте найкращий функціонал.
+<span class="listmarker"><b>27.</b></span> Розрахуйте тестовий набір G2 (8 молекул) функціоналами <kbd>PBE</kbd>, <kbd>B3LYP</kbd>, <kbd>PBE0</kbd>, <kbd>M06-2X</kbd>. Порівняйте MAE, RMSE та визначте найкращий функціонал.
 </p>
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 28:</b></span> Розрахуйте енергії всіх атомів третього періоду (<span
+<span class="listmarker"><b>28.</b></span> Розрахуйте енергії всіх атомів третього періоду (<span
 id="lateximage-main-html-170"
 class="lateximagesource"
 ><!--
@@ -3430,7 +3428,7 @@ class="lateximage"
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 29:</b></span> Для атома Заліза (<span
+<span class="listmarker"><b>29.</b></span> Для атома Заліза (<span
 id="lateximage-main-html-172"
 class="lateximagesource"
 ><!--
@@ -3457,7 +3455,7 @@ class="lateximage"
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 30:</b></span> Для атома Неону розрахуйте енергію з функціоналом <kbd>PBE0</kbd> та базисами <kbd>cc-pVDZ</kbd>, <kbd>cc-pVTZ</kbd>, <kbd>cc-pVQZ</kbd>, <kbd>cc-pV5Z</kbd>.
+<span class="listmarker"><b>30.</b></span> Для атома Неону розрахуйте енергію з функціоналом <kbd>PBE0</kbd> та базисами <kbd>cc-pVDZ</kbd>, <kbd>cc-pVTZ</kbd>, <kbd>cc-pVQZ</kbd>, <kbd>cc-pV5Z</kbd>.
 </p>
 <p>
 Екстраполюйте енергію до базисної межі (CBS) за формулою:
@@ -3484,7 +3482,7 @@ class="lateximage"
 </li>
 <li>
 <p>
-<span class="listmarker"><b>Задача 31:</b></span> Розрахуйте всі \(3d\) перехідні метали (<span
+<span class="listmarker"><b>31.</b></span> Розрахуйте всі \(3d\) перехідні метали (<span
 id="lateximage-main-html-174"
 class="lateximagesource"
 ><!--

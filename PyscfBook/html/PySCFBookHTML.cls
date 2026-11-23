@@ -176,7 +176,7 @@
 \NewDocumentEnvironment{commentbox}{O{Коментар}}{\begin{BlockClass}{cb-comment}\textbf{#1}\par}{\end{BlockClass}}
 \newenvironment{remark}[1][]{\begin{BlockClass}{cb-comment}\textbf{Зауваження.}\ }{\end{BlockClass}}
 \newlist{tasks}{enumerate}{1}
-\setlist[tasks]{label=\textbf{Задача \arabic*:}}
+\setlist[tasks]{label=\textbf{\arabic*.}}% print: "Задача N:"; in HTML the marker column is narrow and the word wrapped
 \RequirePackage{ntheorem}
 \theoremstyle{plain}\theoremheaderfont{\bfseries}\theorembodyfont{\normalfont}\theoremseparator{.}
 \newtheorem{problem}{Задача}[chapter]

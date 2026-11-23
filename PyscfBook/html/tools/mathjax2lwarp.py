@@ -28,6 +28,7 @@ ALWAYS = {'emf': r'\newcommand{\emf}{\mathcal{E}}',
           # print: tcolorbox \tcbhighmath; the generator of mathjax-macros.tex drops it when ConspectBook.cls changes
           'tcbhighmath': r'\newcommand{\tcbhighmath}[1]{\boxed{#1}}',
           # PySCF book (PySCFBook.cls): macros of the formulas
+          'inlinecode': r'\newcommand{\inlinecode}[1]{\texttt{#1}}',   # \text{\inlinecode{..}} inside a formula
           'Efield': r'\newcommand{\Efield}{\mathbf{E}}',
           'Dfield': r'\newcommand{\Dfield}{\mathbf{D}}',
           'Bfield': r'\newcommand{\Bfield}{\mathbf{B}}',
