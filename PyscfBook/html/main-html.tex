@@ -1,0 +1,45 @@
+% !TeX program = lualatex
+% HTML (lwarp) variant of pyscfBook.tex. Sources of the HTML pipeline live in html/; html/build-html.ps1 copies this file
+% to the project root for the build and removes it (and everything lwarp makes) afterwards.
+\documentclass{PySCFBookHTML}
+\addbibresource{../Bibliography/QuantumChemistry.bib}
+\addbibresource[label=soft]{Articles.bib}
+
+\title{Квантово-механічні методи обчислення}
+\author{С.~М.~Пономаренко}
+\begin{document}
+\maketitle
+\tableofcontents
+\ForceHTMLPage
+\htmlinput{intro}
+
+\newcommand{\ChaptersI}{WelcomeWithPyscf,BasePyscf}
+\newcommand{\ChaptersII}{HFMethod,HFMethodDiatomic,PostHFMethods,DFTMethod}
+\newcommand{\ChaptersIII}{ResponseTheory,GeometryOptimization,Oscilations,ExcitedStates}
+
+\part{Вступ до PySCF: основи та перші кроки}
+\epigraph{«Теорія без практики --- порожня, практика без теорії — сліпа.»}{--- Іммануїл Кант, адаптовано}
+\multiinclude{\ChaptersI}[]
+
+\part{Ab Initio методи: від Хартрі-Фока до пост-HF і DFT}
+\epigraph{«Рівняння --- це мова, якою природа говорить із нами.»}{--- Поль Дірак}
+\multiinclude{\ChaptersII}[]
+
+\part{Властивості молекул}
+\epigraph{«Ми змушені визнавати, що кожне спостереження неминуче порушує явище, але водночас саме спостереження й дає нам знання про нього.»}{--- Нільс Бор}
+\multiinclude{\ChaptersIII}[]
+
+\appendix
+\htmlinput{Additions/Abbr}
+\htmlinput{Additions/mo-representation}
+\htmlinput{Additions/DIIS}
+\htmlinput{Additions/Convergence}
+
+\printbibheading[heading=bibintoc]
+\addtocategoryNoCi{pyscf}{sun2018pyscf, sun2020pyscf, sun2017pyscf}
+\printbibliography[category=pyscf,title={Ключові статті по \PySCF},heading=subheading,resetnumbers=true]
+\addtocategoryNoCi{Main}{YatsimirsijQChem, Sleta, Sun2025PythonQC, Jensen, Levine, Szabo}
+\printbibliography[category=Main,title={Основна література},heading=subheading,resetnumbers=true]
+\addtocategoryNoCi{Additional}{BSE, SQM, EGMI1, EGMI2, EGMI3}
+\printbibliography[category=Additional,title={Додаткові посилання},heading=subheading,resetnumbers=true]
+\end{document}

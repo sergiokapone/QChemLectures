@@ -22,3 +22,18 @@ _minted*/
 
 
 
+
+# PyscfBook: HTML-збірка (lwarp) - тимчасові файли в корені проєкту, кеш і тестові виходи
+/PyscfBook/main-html*
+/PyscfBook/_html/
+/PyscfBook/lwarp*
+/PyscfBook/lateximage*
+/PyscfBook/comment_*.cut
+/PyscfBook/PySCFBookHTML.cls
+/PyscfBook/build-error.txt
+/PyscfBook/sample_project.css
+/PyscfBook/html/_test/
+/PyscfBook/html/cache/
+/PyscfBook/html/logs/
+/PyscfBook/html/node_modules/
+/PyscfBook/html/tools/__pycache__/

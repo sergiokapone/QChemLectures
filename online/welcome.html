@@ -1,0 +1,2246 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="generator" content="LaTeX Lwarp package" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Квантово-механічні методи обчислення — Вступ до PySCF: основи та перші кроки</title>
+<link rel="stylesheet" type="text/css" href="assets/conspect.css" />
+<script>
+// Lwarp MathJax emulation code
+//
+// Based on code by Davide P. Cervone.
+// Equation numbering: https://github.com/mathjax/MathJax/issues/2427
+// Starred and ifnextchar macros: https://github.com/mathjax/MathJax/issues/2428
+// \left, \right delimiters: https://github.com/mathjax/MathJax/issues/2535
+//
+// Modified by Brian Dunn to adjust equation numbering and add subequations.
+//
+// LaTeX can use \seteqnumber{subequations?}{section}{number} before each equation.
+// subequations? is 0 usually, 1 if inside subequations.
+// section is a string printed as-is, or empty.
+// number is auto-incremented by MathJax between equations.
+//
+MathJax = {
+subequations: "0",
+section: "",
+loader: {
+load: ['[tex]/tagformat', '[tex]/textmacros'],
+},
+startup: {
+ready() {
+// These would be replaced by import commands if you wanted to make
+// a proper extension.
+const Configuration = MathJax._.input.tex.Configuration.Configuration;
+const CommandMap = MathJax._.input.tex.SymbolMap.CommandMap;
+const Macro = MathJax._.input.tex.Symbol.Macro;
+const TexError = MathJax._.input.tex.TexError.default;
+const ParseUtil = MathJax._.input.tex.ParseUtil.default;
+const expandable = MathJax._.util.Options.expandable;
+// Insert the replacement string into the TeX string, and check
+// that there haven't been too many maxro substitutions (prevents
+// infinite loops).
+const useArgument = (parser, text) => {
+parser.string = ParseUtil.addArgs(parser, text, parser.string.slice(parser.i));
+parser.i = 0;
+if (++parser.macroCount > parser.configuration.options.maxMacros) {
+throw new TexError('MaxMacroSub1',
+'MathJax maximum macro substitution count exceeded; ' +
+'is there a recursive macro call?');
+}
+}
+// Create the command map for:
+// \ifstar, \ifnextchar, \ifblank, \ifstrequal, \gsub, \seteqnumber
+new CommandMap('Lwarp-macros', {
+ifstar: 'IfstarFunction',
+ifnextchar: 'IfnextcharFunction',
+ifblank: 'IfblankFunction',
+ifstrequal: 'IfstrequalFunction',
+gsubstitute: 'GsubstituteFunction',
+seteqnumber: 'SeteqnumberFunction'
+}, {
+// This function implements an ifstar macro.
+IfstarFunction(parser, name) {
+const resultstar = parser.GetArgument(name);
+const resultnostar = parser.GetArgument(name);
+const star = parser.GetStar(); // true if there is a *
+useArgument(parser, star ? resultstar : resultnostar);
+},
+// This function implements an ifnextchar macro.
+IfnextcharFunction(parser, name) {
+let whichchar = parser.GetArgument(name);
+if (whichchar.match(/^(?:0x[0-9A-F]+|[0-9]+)$/i)) {
+// $ syntax highlighting
+whichchar = String.fromCodePoint(parseInt(whichchar));
+}
+const resultnextchar = parser.GetArgument(name);
+const resultnotnextchar = parser.GetArgument(name);
+const gotchar = (parser.GetNext() === whichchar);
+useArgument(parser, gotchar ? resultnextchar : resultnotnextchar);
+},
+// This function implements an ifblank macro.
+IfblankFunction(parser, name) {
+const blankarg = parser.GetArgument(name);
+const resultblank = parser.GetArgument(name);
+const resultnotblank = parser.GetArgument(name);
+const isblank = (blankarg.trim() == "");
+useArgument(parser, isblank ? resultblank : resultnotblank);
+},
+// This function implements an ifstrequal macro.
+IfstrequalFunction(parser, name) {
+const strequalfirst = parser.GetArgument(name);
+const strequalsecond = parser.GetArgument(name);
+const resultequal = parser.GetArgument(name);
+const resultnotequal = parser.GetArgument(name);
+const isequal = (strequalfirst == strequalsecond);
+useArgument(parser, isequal ? resultequal : resultnotequal);
+},
+// This function implements a gsub macro.
+GsubstituteFunction(parser, name) {
+const gsubfirst = parser.GetArgument(name);
+const gsubsecond = parser.GetArgument(name);
+const gsubthird = parser.GetArgument(name);
+let gsubresult=gsubfirst.replace(gsubsecond, gsubthird);
+useArgument(parser, gsubresult);
+},
+// This function modifies the equation numbers.
+SeteqnumberFunction(parser, name) {
+// Get the macro parameters
+const star = parser.GetStar(); // true if there is a *
+const optBrackets = parser.GetBrackets(name); // contents of optional brackets
+const newsubequations = parser.GetArgument(name); // the subequations argument
+const neweqsection = parser.GetArgument(name); // the eq section argument
+const neweqnumber = parser.GetArgument(name); // the eq number argument
+MathJax.config.subequations=newsubequations ; // a string with boolean meaning
+MathJax.config.section=neweqsection ; // a string with numeric meaning
+parser.tags.counter = parser.tags.allCounter = neweqnumber ;
+}
+});
+// Create the Lwarp-macros package
+Configuration.create('Lwarp-macros', {
+handler: {macro: ['Lwarp-macros']}
+});
+MathJax.startup.defaultReady();
+// For forward references:
+MathJax.startup.input[0].preFilters.add(({math}) => {
+if (math.inputData.recompile){
+MathJax.config.subequations = math.inputData.recompile.subequations;
+MathJax.config.section = math.inputData.recompile.section;
+}
+});
+MathJax.startup.input[0].postFilters.add(({math}) => {
+if (math.inputData.recompile){
+math.inputData.recompile.subequations = MathJax.config.subequations;
+math.inputData.recompile.section = MathJax.config.section;
+}
+});
+// For \left, \right with unicode-math:
+const {DelimiterMap} = MathJax._.input.tex.SymbolMap;
+const {Symbol} = MathJax._.input.tex.Symbol;
+const {MapHandler} = MathJax._.input.tex.MapHandler;
+const delimiter = MapHandler.getMap('delimiter');
+delimiter.add('\\lBrack', new Symbol('\\lBrack', '\u27E6'));
+delimiter.add('\\rBrack', new Symbol('\\rBrack', '\u27E7'));
+delimiter.add('\\lAngle', new Symbol('\\lAngle', '\u27EA'));
+delimiter.add('\\rAngle', new Symbol('\\rAngle', '\u27EB'));
+delimiter.add('\\lbrbrak', new Symbol('\\lbrbrak', '\u2772'));
+delimiter.add('\\rbrbrak', new Symbol('\\rbrbrak', '\u2773'));
+delimiter.add('\\lbag', new Symbol('\\lbag', '\u27C5'));
+delimiter.add('\\rbag', new Symbol('\\rbag', '\u27C6'));
+delimiter.add('\\llparenthesis', new Symbol('\\llparenthesis', '\u2987'));
+delimiter.add('\\rrparenthesis', new Symbol('\\rrparenthesis', '\u2988'));
+delimiter.add('\\llangle', new Symbol('\\llangle', '\u2989'));
+delimiter.add('\\rrangle', new Symbol('\\rrangle', '\u298A'));
+delimiter.add('\\Lbrbrak', new Symbol('\\Lbrbrak', '\u27EC'));
+delimiter.add('\\Rbrbrak', new Symbol('\\Rbrbrak', '\u27ED'));
+delimiter.add('\\lBrace', new Symbol('\\lBrace', '\u2983'));
+delimiter.add('\\rBrace', new Symbol('\\rBrace', '\u2984'));
+delimiter.add('\\lParen', new Symbol('\\lParen', '\u2985'));
+delimiter.add('\\rParen', new Symbol('\\rParen', '\u2986'));
+delimiter.add('\\lbrackubar', new Symbol('\\lbrackubar', '\u298B'));
+delimiter.add('\\rbrackubar', new Symbol('\\rbrackubar', '\u298C'));
+delimiter.add('\\lbrackultick', new Symbol('\\lbrackultick', '\u298D'));
+delimiter.add('\\rbracklrtick', new Symbol('\\rbracklrtick', '\u298E'));
+delimiter.add('\\lbracklltick', new Symbol('\\lbracklltick', '\u298F'));
+delimiter.add('\\rbrackurtick', new Symbol('\\rbrackurtick', '\u2990'));
+delimiter.add('\\langledot', new Symbol('\\langledot', '\u2991'));
+delimiter.add('\\rangledot', new Symbol('\\rangledot', '\u2992'));
+delimiter.add('\\lparenless', new Symbol('\\lparenless', '\u2993'));
+delimiter.add('\\rparengtr', new Symbol('\\rparengtr', '\u2994'));
+delimiter.add('\\Lparengtr', new Symbol('\\Lparengtr', '\u2995'));
+delimiter.add('\\Rparenless', new Symbol('\\Rparenless', '\u2996'));
+delimiter.add('\\lblkbrbrak', new Symbol('\\lblkbrbrak', '\u2997'));
+delimiter.add('\\rblkbrbrak', new Symbol('\\rblkbrbrak', '\u2998'));
+delimiter.add('\\lvzigzag', new Symbol('\\lvzigzag', '\u29D8'));
+delimiter.add('\\rvzigzag', new Symbol('\\rvzigzag', '\u29D9'));
+delimiter.add('\\Lvzigzag', new Symbol('\\Lvzigzag', '\u29DA'));
+delimiter.add('\\Rvzigzag', new Symbol('\\Rvzigzag', '\u29DB'));
+delimiter.add('\\lcurvyangle', new Symbol('\\lcurvyangle', '\u29FC'));
+delimiter.add('\\rcurvyangle', new Symbol('\\rcurvyangle', '\u29FD'));
+delimiter.add('\\Vvert', new Symbol('\\Vvert', '\u2980'));
+} // ready
+}, // startup
+tex: {
+packages: {'[+]': ['tagformat', 'Lwarp-macros', 'textmacros']},
+tags: "ams",
+tagformat: {
+number: function (n) {
+if(MathJax.config.subequations==0)
+return(MathJax.config.section + n);
+else
+return(MathJax.config.section + String.fromCharCode(96+n));
+},
+},
+}
+}
+</script>
+<script
+id="MathJax-script"
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
+></script>
+</head>
+<body>
+<a id="main-html-autopage-23"></a>
+<div class="pagegrid">
+<nav class="topnavigation"><a href="main-html.html" class="linkhome" >
+Головна</a></nav>
+<div class="sidetoccontainer">
+<nav class="sidetoc">
+<div class="sidetoctitle">
+<p>
+<span class="sidetocthetitle">Квантово-механічні методи обчислення</span>
+</p>
+<p class="sidetoc-meta"><a href="../PyscfBook/index.html">Про посібник</a><span aria-hidden="true">·</span><a href="../PyscfBook/pyscfBook.pdf">PDF</a></p>
+</div>
+<div class="sidetoccontents">
+<p>
+<a href="main-html.html" class="linkhome" >
+Головна</a>
+</p>
+<p>
+<a href="preface.html#autosec-7" class="tocchapter" >
+Передмова</a>
+</p>
+<p>
+<a href="preface.html#autosec-8" class="tocsection" >
+Актуальність квантово-механічних обчислень</a>
+</p>
+<p>
+<a href="preface.html#autosec-9" class="tocsection" >
+Передумови</a>
+</p>
+<p>
+<a href="preface.html#autosec-13" class="tocsection" >
+Організація навчальних матеріалів</a>
+</p>
+<p>
+<a href="preface.html#autosec-19" class="tocsection" >
+Як користуватися посібником</a>
+</p>
+<p>
+<a href="preface.html#autosec-20" class="tocsection" >
+Зворотний зв’язок</a>
+</p>
+<p>
+<a href="preface.html#autosec-21" class="tocsection" >
+Ліцензія та використання</a>
+</p>
+<p>
+<a href="welcome.html#autosec-25" class="tocpart" >
+<span class="sectionnumber">I</span><span class="toctitle">&#x2003;Вступ до PySCF: основи та перші кроки</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-26" class="tocchapter" >
+<span class="sectionnumber">1</span><span class="toctitle">&#x2003;Знайомство з PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-27" class="tocsection" >
+<span class="sectionnumber">1.1</span><span class="toctitle">&#x2003;PySCF: концепція та філософія</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-28" class="tocsection" >
+<span class="sectionnumber">1.2</span><span class="toctitle">&#x2003;Основні можливості PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-29" class="tocsection" >
+<span class="sectionnumber">1.3</span><span class="toctitle">&#x2003;Архітектура і дизайн PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-36" class="tocsection" >
+<span class="sectionnumber">1.4</span><span class="toctitle">&#x2003;Порівняння з іншими програмами</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-40" class="tocsection" >
+<span class="sectionnumber">1.5</span><span class="toctitle">&#x2003;Встановлення PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-58" class="tocsection" >
+<span class="sectionnumber">1.6</span><span class="toctitle">&#x2003;Базова структура програми на PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-62" class="tocsection" >
+<span class="sectionnumber">1.7</span><span class="toctitle">&#x2003;Система одиниць та конвенції</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-71" class="tocsection" >
+<span class="sectionnumber">1.8</span><span class="toctitle">&#x2003;Документація та ресурси</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-76" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="welcome.html#autosec-77" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="mole.html#autosec-84" class="tocchapter" >
+<span class="sectionnumber">2</span><span class="toctitle">&#x2003;Базові об’єкти <kbd>PySCF</kbd></span></a>
+</p>
+<p>
+<a href="mole.html#autosec-85" class="tocsection" >
+<span class="sectionnumber">2.1</span><span class="toctitle">&#x2003;Молекулярний об’єкт (Mole)</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-109" class="tocsection" >
+<span class="sectionnumber">2.2</span><span class="toctitle">&#x2003;Періодичний об’єкт (Cell)</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-117" class="tocsection" >
+<span class="sectionnumber">2.3</span><span class="toctitle">&#x2003;Базисні набори в <kbd>PySCF</kbd></span></a>
+</p>
+<p>
+<a href="mole.html#autosec-128" class="tocsection" >
+<span class="sectionnumber">2.4</span><span class="toctitle">&#x2003;Симетрія в атомних розрахунках</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-134" class="tocsection" >
+<span class="sectionnumber">2.5</span><span class="toctitle">&#x2003;Спін та мультиплетність</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-138" class="tocsection" >
+<span class="sectionnumber">2.6</span><span class="toctitle">&#x2003;Типова схема розрахунків у <kbd>PySCF</kbd></span></a>
+</p>
+<p>
+<a href="mole.html#autosec-139" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="mole.html#autosec-140" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-147" class="tocpart" >
+<span class="sectionnumber">II</span><span class="toctitle">&#x2003;Ab Initio методи: від Хартрі-Фока до пост-HF і DFT</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-148" class="tocchapter" >
+<span class="sectionnumber">3</span><span class="toctitle">&#x2003;Метод Хартрі-Фока</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-149" class="tocsection" >
+<span class="sectionnumber">3.1</span><span class="toctitle">&#x2003;Теоретичні основи методу Хартрі–Фока</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-155" class="tocsection" >
+<span class="sectionnumber">3.2</span><span class="toctitle">&#x2003;SFC-процедура</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-160" class="tocsection" >
+<span class="sectionnumber">3.3</span><span class="toctitle">&#x2003;Які бувають базиси</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-169" class="tocsection" >
+<span class="sectionnumber">3.4</span><span class="toctitle">&#x2003;Варіанти методу Хартрі–Фока</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-195" class="tocsection" >
+<span class="sectionnumber">3.5</span><span class="toctitle">&#x2003;Метод UHF та спінове забруднення</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-205" class="tocsection" >
+<span class="sectionnumber">3.6</span><span class="toctitle">&#x2003;Прості атомні системи</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-212" class="tocsection" >
+<span class="sectionnumber">3.7</span><span class="toctitle">&#x2003;Атоми другого періоду (Li–Ne)</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-248" class="tocsection" >
+<span class="sectionnumber">3.8</span><span class="toctitle">&#x2003;Енергія, орбіталі та електронна густина</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-278" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-279" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="diatomic.html#autosec-314" class="tocchapter" >
+<span class="sectionnumber">4</span><span class="toctitle">&#x2003;Метод Хартрі–Фока для простих молекул</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-319" class="tocsection" >
+<span class="sectionnumber">4.1</span><span class="toctitle">&#x2003;Наближення Борна–Опенгеймера</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-320" class="tocsection" >
+<span class="sectionnumber">4.2</span><span class="toctitle">&#x2003;Орбіталі і електронні стани молекул</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-332" class="tocsection" >
+<span class="sectionnumber">4.3</span><span class="toctitle">&#x2003;Модельні молекули: \(\mathrm {H_{2}^{+}}\) та \(\mathrm {H_{2}}\)</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-345" class="tocsection" >
+<span class="sectionnumber">4.4</span><span class="toctitle">&#x2003;Іон молекули водню \(\mathrm {H_{2}^{+}}\)</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-382" class="tocsection" >
+<span class="sectionnumber">4.5</span><span class="toctitle">&#x2003;Крива потенціальної енергії</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-402" class="tocsection" >
+<span class="sectionnumber">4.6</span><span class="toctitle">&#x2003;Молекула водню \(\mathrm {H_{2}}\)</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-435" class="tocsection" >
+<span class="sectionnumber">4.7</span><span class="toctitle">&#x2003;Дипольний момент молекул</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-463" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="diatomic.html#autosec-464" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="post-hf.html#autosec-519" class="tocchapter" >
+<span class="sectionnumber">5</span><span class="toctitle">&#x2003;Пост-Хартрі-Фоківські методи</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-520" class="tocsection" >
+<span class="sectionnumber">5.1</span><span class="toctitle">&#x2003;Вступ до електронної кореляції</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-531" class="tocsection" >
+<span class="sectionnumber">5.2</span><span class="toctitle">&#x2003;Теорія збурень Møller–Plesset (MP2)</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-548" class="tocsection" >
+<span class="sectionnumber">5.3</span><span class="toctitle">&#x2003;Основи методу конфігураційної взаємодії</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-565" class="tocsection" >
+<span class="sectionnumber">5.4</span><span class="toctitle">&#x2003;Метод зв’язаних кластерів</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-586" class="tocsection" >
+<span class="sectionnumber">5.5</span><span class="toctitle">&#x2003;Метод повного активного простору конфігурацій</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-608" class="tocsection" >
+<span class="sectionnumber">5.6</span><span class="toctitle">&#x2003;Функціонал енергії та натуральні орбіталі</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-616" class="tocsection" >
+<span class="sectionnumber">5.7</span><span class="toctitle">&#x2003;Межі наближень і рівняння Шредінґера</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-623" class="tocsection" >
+<span class="sectionnumber">5.8</span><span class="toctitle">&#x2003;Корисні посилання</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-624" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="post-hf.html#autosec-626" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="dft.html#autosec-663" class="tocchapter" >
+<span class="sectionnumber">6</span><span class="toctitle">&#x2003;Теорія функціоналу густини (DFT)</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-664" class="tocsection" >
+<span class="sectionnumber">6.1</span><span class="toctitle">&#x2003;Основи теорії функціоналу густини</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-675" class="tocsection" >
+<span class="sectionnumber">6.2</span><span class="toctitle">&#x2003;Базова структура DFT розрахунку</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-683" class="tocsection" >
+<span class="sectionnumber">6.3</span><span class="toctitle">&#x2003;Функціонали обміну-кореляції</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-714" class="tocsection" >
+<span class="sectionnumber">6.4</span><span class="toctitle">&#x2003;Практичні рекомендації</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-716" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="dft.html#autosec-717" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="response.html#autosec-764" class="tocpart" >
+<span class="sectionnumber">III</span><span class="toctitle">&#x2003;Властивості молекул</span></a>
+</p>
+<p>
+<a href="response.html#autosec-765" class="tocchapter" >
+<span class="sectionnumber">7</span><span class="toctitle">&#x2003;Молекулярні властивості як похідні енергії</span></a>
+</p>
+<p>
+<a href="response.html#autosec-766" class="tocsection" >
+<span class="sectionnumber">7.1</span><span class="toctitle">&#x2003;Молекулярні властивості як похідні енергії</span></a>
+</p>
+<p>
+<a href="response.html#autosec-773" class="tocsection" >
+<span class="sectionnumber">7.2</span><span class="toctitle">&#x2003;Чисельні та аналітичні похідні</span></a>
+</p>
+<p>
+<a href="response.html#autosec-777" class="tocsection" >
+<span class="sectionnumber">7.3</span><span class="toctitle">&#x2003;Варіаційні методи та залежність енергії від параметрів</span></a>
+</p>
+<p>
+<a href="response.html#autosec-778" class="tocsection" >
+<span class="sectionnumber">7.4</span><span class="toctitle">&#x2003;Аналітичні похідні в методі Хартрі-Фока</span></a>
+</p>
+<p>
+<a href="response.html#autosec-800" class="tocsection" >
+<span class="sectionnumber">7.5</span><span class="toctitle">&#x2003;Поляризовність у методі HF</span></a>
+</p>
+<p>
+<a href="response.html#autosec-812" class="tocsection" >
+<span class="sectionnumber">7.6</span><span class="toctitle">&#x2003;Ядерний гесіан у методі HF</span></a>
+</p>
+<p>
+<a href="response.html#autosec-816" class="tocsection" >
+<span class="sectionnumber">7.7</span><span class="toctitle">&#x2003;Оптимізація геометрії</span></a>
+</p>
+<p>
+<a href="response.html#autosec-824" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="vibrations.html#autosec-851" class="tocchapter" >
+<span class="sectionnumber">8</span><span class="toctitle">&#x2003;Коливальні властивості молекул</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-854" class="tocsection" >
+<span class="sectionnumber">8.1</span><span class="toctitle">&#x2003;Гессіан та нормальні моди</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-876" class="tocsection" >
+<span class="sectionnumber">8.2</span><span class="toctitle">&#x2003;Інфрачервоні (ІЧ) спектри</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-907" class="tocsection" >
+<span class="sectionnumber">8.3</span><span class="toctitle">&#x2003;Термохімія та нульова енергія</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-919" class="tocsection" >
+<span class="sectionnumber">8.4</span><span class="toctitle">&#x2003;Перехідні стани та уявні частоти</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-927" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="vibrations.html#autosec-928" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="excited-states.html#autosec-941" class="tocchapter" >
+<span class="sectionnumber">9</span><span class="toctitle">&#x2003;Збуджені стани та UV/VIS спектроскопія</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-942" class="tocsection" >
+<span class="sectionnumber">9.1</span><span class="toctitle">&#x2003;Спектроскопічні властивості: перехідні дипольні моменти і сили осцилятора</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-948" class="tocsection" >
+<span class="sectionnumber">9.2</span><span class="toctitle">&#x2003;Збуджені стани в рамках методу Хартрі–Фока</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-954" class="tocsection" >
+<span class="sectionnumber">9.3</span><span class="toctitle">&#x2003;Часозалежна теорія функціонала густини (TD-DFT)</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-958" class="tocsection" >
+<span class="sectionnumber">9.4</span><span class="toctitle">&#x2003;Збуджені стани у методах конфігураційної взаємодії</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-959" class="tocsection" >
+<span class="sectionnumber">9.5</span><span class="toctitle">&#x2003;Метод рівнянь руху (EOM)</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-973" class="tocsection" >
+<span class="sectionnumber">9.6</span><span class="toctitle">&#x2003;Збуджені стани у CASSCF / NEVPT2</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-974" class="tocsection" >
+<span class="sectionnumber">9.7</span><span class="toctitle">&#x2003;Рекомендації з вибору методу</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-975" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="excited-states.html#autosec-976" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="appendices.html#autosec-991" class="tocchapter" >
+Додатки</a>
+</p>
+<p>
+<a href="appendices.html#autosec-992" class="tocsection" >
+<span class="sectionnumber">А</span><span class="toctitle">&#x2003;Список абревіатур</span></a>
+</p>
+<p>
+<a href="appendices.html#autosec-993" class="tocsection" >
+<span class="sectionnumber">Б</span><span class="toctitle">&#x2003;Молекулярно-орбітальне (МО) представлення</span></a>
+</p>
+<p>
+<a href="appendices.html#autosec-999" class="tocsection" >
+<span class="sectionnumber">В</span><span class="toctitle">&#x2003;Метод DIIS та прискорення збіжності SCF</span></a>
+</p>
+<p>
+<a href="appendices.html#autosec-1000" class="tocsection" >
+<span class="sectionnumber">Г</span><span class="toctitle">&#x2003;Проблеми збіжності SCF та їх усунення</span></a>
+</p>
+<p>
+<a href="bibliography.html#autosec-1020" class="tocchapter" >
+Література</a>
+</p>
+</div>
+</nav>
+</div>
+<main class="bodycontainer" data-pagefind-body data-pagefind-meta="title[data-title]" data-title="Вступ до PySCF: основи та перші кроки">
+<section class="textbody">
+<h1 data-pagefind-ignore>Квантово-механічні методи обчислення</h1>
+<!--MathJax customizations:-->
+<div data-nosnippet
+style="display:none"
+>
+\(\newcommand{\footnotename}{footnote}\)
+\(\def \LWRfootnote {1}\)
+\(\newcommand {\footnote }[2][\LWRfootnote ]{{}^{\mathrm {#1}}}\)
+\(\newcommand {\footnotemark }[1][\LWRfootnote ]{{}^{\mathrm {#1}}}\)
+\(\let \LWRorighspace \hspace \)
+\(\renewcommand {\hspace }{\ifstar \LWRorighspace \LWRorighspace }\)
+\(\newcommand {\TextOrMath }[2]{#2}\)
+\(\newcommand {\mathnormal }[1]{{#1}}\)
+\(\newcommand \ensuremath [1]{#1}\)
+\(\newcommand {\LWRframebox }[2][]{\fbox {#2}} \newcommand {\framebox }[1][]{\LWRframebox } \)
+\(\newcommand {\setlength }[2]{}\)
+\(\newcommand {\addtolength }[2]{}\)
+\(\newcommand {\setcounter }[2]{}\)
+\(\newcommand {\addtocounter }[2]{}\)
+\(\newcommand {\arabic }[1]{}\)
+\(\newcommand {\number }[1]{}\)
+\(\newcommand {\noalign }[1]{\text {#1}\notag \\}\)
+\(\newcommand {\cline }[1]{}\)
+\(\newcommand {\directlua }[1]{\text {(directlua)}}\)
+\(\newcommand {\luatexdirectlua }[1]{\text {(directlua)}}\)
+\(\newcommand {\protect }{}\)
+\(\def \LWRabsorbnumber #1 {}\)
+\(\def \LWRabsorbquotenumber &quot;#1 {}\)
+\(\newcommand {\LWRabsorboption }[1][]{}\)
+\(\newcommand {\LWRabsorbtwooptions }[1][]{\LWRabsorboption }\)
+\(\def \mathchar {\ifnextchar &quot;\LWRabsorbquotenumber \LWRabsorbnumber }\)
+\(\def \mathcode #1={\mathchar }\)
+\(\let \delcode \mathcode \)
+\(\let \delimiter \mathchar \)
+\(\def \oe {\unicode {x0153}}\)
+\(\def \OE {\unicode {x0152}}\)
+\(\def \ae {\unicode {x00E6}}\)
+\(\def \AE {\unicode {x00C6}}\)
+\(\def \aa {\unicode {x00E5}}\)
+\(\def \AA {\unicode {x00C5}}\)
+\(\def \o {\unicode {x00F8}}\)
+\(\def \O {\unicode {x00D8}}\)
+\(\def \l {\unicode {x0142}}\)
+\(\def \L {\unicode {x0141}}\)
+\(\def \ss {\unicode {x00DF}}\)
+\(\def \SS {\unicode {x1E9E}}\)
+\(\def \dag {\unicode {x2020}}\)
+\(\def \ddag {\unicode {x2021}}\)
+\(\def \P {\unicode {x00B6}}\)
+\(\def \copyright {\unicode {x00A9}}\)
+\(\def \pounds {\unicode {x00A3}}\)
+\(\let \LWRref \ref \)
+\(\renewcommand {\ref }{\ifstar \LWRref \LWRref }\)
+\( \newcommand {\multicolumn }[3]{#3}\)
+\(\require {textcomp}\)
+\(\require {colortbl}\)
+\(\let \LWRorigcolumncolor \columncolor \)
+\(\renewcommand {\columncolor }[2][named]{\LWRorigcolumncolor [#1]{#2}\LWRabsorbtwooptions }\)
+\(\let \LWRorigrowcolor \rowcolor \)
+\(\renewcommand {\rowcolor }[2][named]{\LWRorigrowcolor [#1]{#2}\LWRabsorbtwooptions }\)
+\(\let \LWRorigcellcolor \cellcolor \)
+\(\renewcommand {\cellcolor }[2][named]{\LWRorigcellcolor [#1]{#2}\LWRabsorbtwooptions }\)
+\(\newcommand {\intertext }[1]{\text {#1}\notag \\}\)
+\(\let \Hat \hat \)
+\(\let \Check \check \)
+\(\let \Tilde \tilde \)
+\(\let \Acute \acute \)
+\(\let \Grave \grave \)
+\(\let \Dot \dot \)
+\(\let \Ddot \ddot \)
+\(\let \Breve \breve \)
+\(\let \Bar \bar \)
+\(\let \Vec \vec \)
+\(\let \symnormal \mathit \)
+\(\let \symliteral \mathrm \)
+\(\let \symbb \mathbb \)
+\(\let \symbbit \mathbb \)
+\(\let \symcal \mathcal \)
+\(\let \symscr \mathscr \)
+\(\let \symfrak \mathfrak \)
+\(\let \symsfup \mathsf \)
+\(\let \symsfit \mathit \)
+\(\let \symbfsf \mathbf \)
+\(\let \symbfup \mathbf \)
+\(\newcommand {\symbfit }[1]{\boldsymbol {#1}}\)
+\(\let \symbfcal \mathcal \)
+\(\let \symbfscr \mathscr \)
+\(\let \symbffrak \mathfrak \)
+\(\let \symbfsfup \mathbf \)
+\(\newcommand {\symbfsfit }[1]{\boldsymbol {#1}}\)
+\(\let \symup \mathrm \)
+\(\let \symbf \mathbf \)
+\(\let \symit \mathit \)
+\(\let \symtt \mathtt \)
+\(\let \symbffrac \mathbffrac \)
+\(\newcommand {\mathfence }[1]{\mathord {#1}}\)
+\(\newcommand {\mathover }[1]{#1}\)
+\(\newcommand {\mathunder }[1]{#1}\)
+\(\newcommand {\mathaccent }[1]{#1}\)
+\(\newcommand {\mathbotaccent }[1]{#1}\)
+\(\newcommand {\mathalpha }[1]{\mathord {#1}}\)
+\(\def\upAlpha{\unicode{x0391}}\)
+\(\def\upBeta{\unicode{x0392}}\)
+\(\def\upGamma{\unicode{x0393}}\)
+\(\def\upDigamma{\unicode{x03DC}}\)
+\(\def\upDelta{\unicode{x0394}}\)
+\(\def\upEpsilon{\unicode{x0395}}\)
+\(\def\upZeta{\unicode{x0396}}\)
+\(\def\upEta{\unicode{x0397}}\)
+\(\def\upTheta{\unicode{x0398}}\)
+\(\def\upVartheta{\unicode{x03F4}}\)
+\(\def\upIota{\unicode{x0399}}\)
+\(\def\upKappa{\unicode{x039A}}\)
+\(\def\upLambda{\unicode{x039B}}\)
+\(\def\upMu{\unicode{x039C}}\)
+\(\def\upNu{\unicode{x039D}}\)
+\(\def\upXi{\unicode{x039E}}\)
+\(\def\upOmicron{\unicode{x039F}}\)
+\(\def\upPi{\unicode{x03A0}}\)
+\(\def\upVarpi{\unicode{x03D6}}\)
+\(\def\upRho{\unicode{x03A1}}\)
+\(\def\upSigma{\unicode{x03A3}}\)
+\(\def\upTau{\unicode{x03A4}}\)
+\(\def\upUpsilon{\unicode{x03A5}}\)
+\(\def\upPhi{\unicode{x03A6}}\)
+\(\def\upChi{\unicode{x03A7}}\)
+\(\def\upPsi{\unicode{x03A8}}\)
+\(\def\upOmega{\unicode{x03A9}}\)
+\(\def\itAlpha{\unicode{x1D6E2}}\)
+\(\def\itBeta{\unicode{x1D6E3}}\)
+\(\def\itGamma{\unicode{x1D6E4}}\)
+\(\def\itDigamma{\mathit{\unicode{x03DC}}}\)
+\(\def\itDelta{\unicode{x1D6E5}}\)
+\(\def\itEpsilon{\unicode{x1D6E6}}\)
+\(\def\itZeta{\unicode{x1D6E7}}\)
+\(\def\itEta{\unicode{x1D6E8}}\)
+\(\def\itTheta{\unicode{x1D6E9}}\)
+\(\def\itVartheta{\unicode{x1D6F3}}\)
+\(\def\itIota{\unicode{x1D6EA}}\)
+\(\def\itKappa{\unicode{x1D6EB}}\)
+\(\def\itLambda{\unicode{x1D6EC}}\)
+\(\def\itMu{\unicode{x1D6ED}}\)
+\(\def\itNu{\unicode{x1D6EE}}\)
+\(\def\itXi{\unicode{x1D6EF}}\)
+\(\def\itOmicron{\unicode{x1D6F0}}\)
+\(\def\itPi{\unicode{x1D6F1}}\)
+\(\def\itRho{\unicode{x1D6F2}}\)
+\(\def\itSigma{\unicode{x1D6F4}}\)
+\(\def\itTau{\unicode{x1D6F5}}\)
+\(\def\itUpsilon{\unicode{x1D6F6}}\)
+\(\def\itPhi{\unicode{x1D6F7}}\)
+\(\def\itChi{\unicode{x1D6F8}}\)
+\(\def\itPsi{\unicode{x1D6F9}}\)
+\(\def\itOmega{\unicode{x1D6FA}}\)
+\(\def\upalpha{\unicode{x03B1}}\)
+\(\def\upbeta{\unicode{x03B2}}\)
+\(\def\upvarbeta{\unicode{x03D0}}\)
+\(\def\upgamma{\unicode{x03B3}}\)
+\(\def\updigamma{\unicode{x03DD}}\)
+\(\def\updelta{\unicode{x03B4}}\)
+\(\def\upepsilon{\unicode{x03F5}}\)
+\(\def\upvarepsilon{\unicode{x03B5}}\)
+\(\def\upzeta{\unicode{x03B6}}\)
+\(\def\upeta{\unicode{x03B7}}\)
+\(\def\uptheta{\unicode{x03B8}}\)
+\(\def\upvartheta{\unicode{x03D1}}\)
+\(\def\upiota{\unicode{x03B9}}\)
+\(\def\upkappa{\unicode{x03BA}}\)
+\(\def\upvarkappa{\unicode{x03F0}}\)
+\(\def\uplambda{\unicode{x03BB}}\)
+\(\def\upmu{\unicode{x03BC}}\)
+\(\def\upnu{\unicode{x03BD}}\)
+\(\def\upxi{\unicode{x03BE}}\)
+\(\def\upomicron{\unicode{x03BF}}\)
+\(\def\uppi{\unicode{x03C0}}\)
+\(\def\upvarpi{\unicode{x03D6}}\)
+\(\def\uprho{\unicode{x03C1}}\)
+\(\def\upvarrho{\unicode{x03F1}}\)
+\(\def\upsigma{\unicode{x03C3}}\)
+\(\def\upvarsigma{\unicode{x03C2}}\)
+\(\def\uptau{\unicode{x03C4}}\)
+\(\def\upupsilon{\unicode{x03C5}}\)
+\(\def\upphi{\unicode{x03D5}}\)
+\(\def\upvarphi{\unicode{x03C6}}\)
+\(\def\upchi{\unicode{x03C7}}\)
+\(\def\uppsi{\unicode{x03C8}}\)
+\(\def\upomega{\unicode{x03C9}}\)
+\(\def\italpha{\unicode{x1D6FC}}\)
+\(\def\itbeta{\unicode{x1D6FD}}\)
+\(\def\itvarbeta{\unicode{x03D0}}\)
+\(\def\itgamma{\unicode{x1D6FE}}\)
+\(\def\itdigamma{\mathit{\unicode{x03DD}}}\)
+\(\def\itdelta{\unicode{x1D6FF}}\)
+\(\def\itepsilon{\unicode{x1D716}}\)
+\(\def\itvarepsilon{\unicode{x1D700}}\)
+\(\def\itzeta{\unicode{x1D701}}\)
+\(\def\iteta{\unicode{x1D702}}\)
+\(\def\ittheta{\unicode{x1D703}}\)
+\(\def\itvartheta{\unicode{x1D717}}\)
+\(\def\itiota{\unicode{x1D704}}\)
+\(\def\itkappa{\unicode{x1D705}}\)
+\(\def\itvarkappa{\unicode{x1D718}}\)
+\(\def\itlambda{\unicode{x1D706}}\)
+\(\def\itmu{\unicode{x1D707}}\)
+\(\def\itnu{\unicode{x1D708}}\)
+\(\def\itxi{\unicode{x1D709}}\)
+\(\def\itomicron{\unicode{x1D70A}}\)
+\(\def\itpi{\unicode{x1D70B}}\)
+\(\def\itvarpi{\unicode{x1D71B}}\)
+\(\def\itrho{\unicode{x1D70C}}\)
+\(\def\itvarrho{\unicode{x1D71A}}\)
+\(\def\itsigma{\unicode{x1D70E}}\)
+\(\def\itvarsigma{\unicode{x1D70D}}\)
+\(\def\ittau{\unicode{x1D70F}}\)
+\(\def\itupsilon{\unicode{x1D710}}\)
+\(\def\itphi{\unicode{x1D719}}\)
+\(\def\itvarphi{\unicode{x1D711}}\)
+\(\def\itchi{\unicode{x1D712}}\)
+\(\def\itpsi{\unicode{x1D713}}\)
+\(\def\itomega{\unicode{x1D714}}\)
+\(\let \lparen (\)
+\(\let \rparen )\)
+\(\newcommand {\cuberoot }[1]{\,{}^3\!\!\sqrt {#1}}\,\)
+\(\newcommand {\fourthroot }[1]{\,{}^4\!\!\sqrt {#1}}\,\)
+\(\newcommand {\longdivision }[1]{\mathord {\unicode {x027CC}#1}}\)
+\(\newcommand {\mathcomma }{,}\)
+\(\newcommand {\mathcolon }{:}\)
+\(\newcommand {\mathsemicolon }{;}\)
+\(\newcommand {\overbracket }[1]{\mathinner {\overline {\ulcorner {#1}\urcorner }}}\)
+\(\newcommand {\underbracket }[1]{\mathinner {\underline {\llcorner {#1}\lrcorner }}}\)
+\(\newcommand {\overbar }[1]{\mathord {#1\unicode {x00305}}}\)
+\(\newcommand {\ovhook }[1]{\mathord {#1\unicode {x00309}}}\)
+\(\newcommand {\ocirc }[1]{\mathord {#1\unicode {x0030A}}}\)
+\(\newcommand {\candra }[1]{\mathord {#1\unicode {x00310}}}\)
+\(\newcommand {\oturnedcomma }[1]{\mathord {#1\unicode {x00312}}}\)
+\(\newcommand {\ocommatopright }[1]{\mathord {#1\unicode {x00315}}}\)
+\(\newcommand {\droang }[1]{\mathord {#1\unicode {x0031A}}}\)
+\(\newcommand {\leftharpoonaccent }[1]{\mathord {#1\unicode {x020D0}}}\)
+\(\newcommand {\rightharpoonaccent }[1]{\mathord {#1\unicode {x020D1}}}\)
+\(\newcommand {\vertoverlay }[1]{\mathord {#1\unicode {x020D2}}}\)
+\(\newcommand {\leftarrowaccent }[1]{\mathord {#1\unicode {x020D0}}}\)
+\(\newcommand {\annuity }[1]{\mathord {#1\unicode {x020E7}}}\)
+\(\newcommand {\widebridgeabove }[1]{\mathord {#1\unicode {x020E9}}}\)
+\(\newcommand {\asteraccent }[1]{\mathord {#1\unicode {x020F0}}}\)
+\(\newcommand {\threeunderdot }[1]{\mathord {#1\unicode {x020E8}}}\)
+\(\newcommand {\Bbbsum }{\mathop {\unicode {x2140}}\limits }\)
+\(\newcommand {\oiint }{\mathop {\unicode {x222F}}\limits }\)
+\(\newcommand {\oiiint }{\mathop {\unicode {x2230}}\limits }\)
+\(\newcommand {\intclockwise }{\mathop {\unicode {x2231}}\limits }\)
+\(\newcommand {\ointclockwise }{\mathop {\unicode {x2232}}\limits }\)
+\(\newcommand {\ointctrclockwise }{\mathop {\unicode {x2233}}\limits }\)
+\(\newcommand {\varointclockwise }{\mathop {\unicode {x2232}}\limits }\)
+\(\newcommand {\leftouterjoin }{\mathop {\unicode {x27D5}}\limits }\)
+\(\newcommand {\rightouterjoin }{\mathop {\unicode {x27D6}}\limits }\)
+\(\newcommand {\fullouterjoin }{\mathop {\unicode {x27D7}}\limits }\)
+\(\newcommand {\bigbot }{\mathop {\unicode {x27D8}}\limits }\)
+\(\newcommand {\bigtop }{\mathop {\unicode {x27D9}}\limits }\)
+\(\newcommand {\xsol }{\mathop {\unicode {x29F8}}\limits }\)
+\(\newcommand {\xbsol }{\mathop {\unicode {x29F9}}\limits }\)
+\(\newcommand {\bigcupdot }{\mathop {\unicode {x2A03}}\limits }\)
+\(\newcommand {\bigsqcap }{\mathop {\unicode {x2A05}}\limits }\)
+\(\newcommand {\conjquant }{\mathop {\unicode {x2A07}}\limits }\)
+\(\newcommand {\disjquant }{\mathop {\unicode {x2A08}}\limits }\)
+\(\newcommand {\bigtimes }{\mathop {\unicode {x2A09}}\limits }\)
+\(\newcommand {\modtwosum }{\mathop {\unicode {x2A0A}}\limits }\)
+\(\newcommand {\sumint }{\mathop {\unicode {x2A0B}}\limits }\)
+\(\newcommand {\intbar }{\mathop {\unicode {x2A0D}}\limits }\)
+\(\newcommand {\intBar }{\mathop {\unicode {x2A0E}}\limits }\)
+\(\newcommand {\fint }{\mathop {\unicode {x2A0F}}\limits }\)
+\(\newcommand {\cirfnint }{\mathop {\unicode {x2A10}}\limits }\)
+\(\newcommand {\awint }{\mathop {\unicode {x2A11}}\limits }\)
+\(\newcommand {\rppolint }{\mathop {\unicode {x2A12}}\limits }\)
+\(\newcommand {\scpolint }{\mathop {\unicode {x2A13}}\limits }\)
+\(\newcommand {\npolint }{\mathop {\unicode {x2A14}}\limits }\)
+\(\newcommand {\pointint }{\mathop {\unicode {x2A15}}\limits }\)
+\(\newcommand {\sqint }{\mathop {\unicode {x2A16}}\limits }\)
+\(\newcommand {\intlarhk }{\mathop {\unicode {x2A17}}\limits }\)
+\(\newcommand {\intx }{\mathop {\unicode {x2A18}}\limits }\)
+\(\newcommand {\intcap }{\mathop {\unicode {x2A19}}\limits }\)
+\(\newcommand {\intcup }{\mathop {\unicode {x2A1A}}\limits }\)
+\(\newcommand {\upint }{\mathop {\unicode {x2A1B}}\limits }\)
+\(\newcommand {\lowint }{\mathop {\unicode {x2A1C}}\limits }\)
+\(\newcommand {\bigtriangleleft }{\mathop {\unicode {x2A1E}}\limits }\)
+\(\newcommand {\zcmp }{\mathop {\unicode {x2A1F}}\limits }\)
+\(\newcommand {\zpipe }{\mathop {\unicode {x2A20}}\limits }\)
+\(\newcommand {\zproject }{\mathop {\unicode {x2A21}}\limits }\)
+\(\newcommand {\biginterleave }{\mathop {\unicode {x2AFC}}\limits }\)
+\(\newcommand {\bigtalloblong }{\mathop {\unicode {x2AFF}}\limits }\)
+\(\newcommand {\arabicmaj }{\mathop {\unicode {x1EEF0}}\limits }\)
+\(\newcommand {\arabichad }{\mathop {\unicode {x1EEF1}}\limits }\)
+\(\newcommand {\nicefrac }[3][]{\mathinner {{}^{#2}\!/\!_{#3}}}\)
+\(\require {mhchem}\)
+\(\newcommand {\LWRnicearrayarray }[1]{\begin {array}{#1}}\)
+\(\def \LWRnicearrayarrayopt #1[#2] {\begin {array}{#1}}\)
+\(\newenvironment {NiceArray}[2][]{\ifnextchar [{\LWRnicearrayarrayopt {#2}}{\LWRnicearrayarray {#2}}}{\end {array}}\)
+\(\newcommand {\LWRnicearraywithdelimtwo }[2][]{\ifnextchar [{\LWRnicearrayarrayopt {#2}}{\LWRnicearrayarray {#2}}}\)
+\(\newenvironment {NiceArrayWithDelims}[2]{\def \LWRnicearrayrightdelim {\right #2}\left #1\LWRnicearraywithdelimtwo }{\end {array}\LWRnicearrayrightdelim }\)
+\(\newenvironment {pNiceArray} {\begin {NiceArrayWithDelims}{(}{)}} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {bNiceArray} {\begin {NiceArrayWithDelims}{[}{]}} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {BNiceArray} {\begin {NiceArrayWithDelims}{\{}{\}}} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {vNiceArray} {\begin {NiceArrayWithDelims}{\vert }{\vert }} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {VNiceArray} {\begin {NiceArrayWithDelims}{\Vert }{\Vert }} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {NiceMatrix}[1][]{\begin {matrix}}{\end {matrix}}\)
+\(\newenvironment {pNiceMatrix}[1][]{\begin {pmatrix}}{\end {pmatrix}}\)
+\(\newenvironment {bNiceMatrix}[1][]{\begin {bmatrix}}{\end {bmatrix}}\)
+\(\newenvironment {BNiceMatrix}[1][]{\begin {Bmatrix}}{\end {Bmatrix}}\)
+\(\newenvironment {vNiceMatrix}[1][]{\begin {vmatrix}}{\end {vmatrix}}\)
+\(\newenvironment {VNiceMatrix}[1][]{\begin {Vmatrix}}{\end {Vmatrix}}\)
+\(\newcommand {\LWRnicematrixBlock }[1]{#1}\)
+\(\def \LWRnicematrixBlockopt &lt;#1&gt;#2{#2}\)
+\(\newcommand {\Block }[2][]{\ifnextchar &lt;\LWRnicematrixBlockopt \LWRnicematrixBlock }\)
+\(\newcommand {\diagbox }[2]{\begin {array}{l}\hfill \quad #2\\\hline #1\quad \hfill \end {array}}\)
+\(\let \hdottedline \hdashline \)
+\(\newcommand {\Hline }[1][]{\hline }\)
+\(\newcommand {\CodeBefore }{}\)
+\(\newcommand {\Body }{}\)
+\(\newcommand {\CodeAfter }{}\)
+\(\newcommand {\line }[3][]{}\)
+\(\newcommand {\RowStyle }[2][]{}\)
+\(\newcommand {\LWRSubMatrix }[1][]{}\)
+\(\newcommand {\SubMatrix }[4]{\LWRSubMatrix }\)
+\(\newcommand {\OverBrace }[4][]{}\)
+\(\newcommand {\UnderBrace }[4][]{}\)
+\(\newcommand {\HBrace }[3][]{}\)
+\(\newcommand {\VBrace }[3][]{}\)
+\(\newcommand {\ShowCellNames }{}\)
+\(\newcommand {\tabularnote }[2][]{}\)
+\(\newcommand {\cellcolor }[3][]{}\)
+\(\newcommand {\rowcolor }[3][]{}\)
+\(\newcommand {\LWRrowcolors }[1][]{}\)
+\(\newcommand {\rowcolors }[4][]{\LWRrowcolors }\)
+\(\newcommand {\rowlistcolors }[3][]{\LWRrowcolors }\)
+\(\newcommand {\columncolor }[3][]{}\)
+\(\newcommand {\rectanglecolor }[4][]{}\)
+\(\newcommand {\arraycolor }[2][]{}\)
+\(\newcommand {\chessboardcolors }[3][]{}\)
+\(\newcommand {\ldots }[1][]{\dots }\)
+\(\newcommand {\Cdots }[1][]{\cdots }\)
+\(\newcommand {\Vdots }[1][]{\vdots }\)
+\(\newcommand {\Ddots }[1][]{\ddots }\)
+\(\newcommand {\Iddots }[1][]{\mathinner {\unicode {x22F0}}}\)
+\(\newcommand {\Hdotsfor }[1]{\ldots }\)
+\(\newcommand {\Vdotsfor }[1]{\vdots }\)
+\(\newcommand {\AutoNiceMatrix }[2]{\text {(AutoNiceMatrix #1)}}\)
+\(\let \pAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \bAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \BAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \vAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \VAutoNiceMatrix \AutoNiceMatrix \)
+\(\newcommand {\toprule }[1][]{\hline }\)
+\(\let \midrule \toprule \)
+\(\let \bottomrule \toprule \)
+\(\def \LWRbooktabscmidruleparen (#1)#2{}\)
+\(\newcommand {\LWRbooktabscmidrulenoparen }[1]{}\)
+\(\newcommand {\cmidrule }[1][]{\ifnextchar (\LWRbooktabscmidruleparen \LWRbooktabscmidrulenoparen }\)
+\(\newcommand {\morecmidrules }{}\)
+\(\newcommand {\specialrule }[3]{\hline }\)
+\(\newcommand {\addlinespace }[1][]{}\)
+\(\newcommand {\LWRsubmultirow }[2][]{#2}\)
+\(\newcommand {\LWRmultirow }[2][]{\LWRsubmultirow }\)
+\(\newcommand {\multirow }[2][]{\LWRmultirow }\)
+\(\newcommand {\mrowcell }{}\)
+\(\newcommand {\mcolrowcell }{}\)
+\(\newcommand {\STneed }[1]{}\)
+\(\DeclareMathOperator {\const }{const}\)
+\(\DeclareMathOperator {\Div }{div}\)
+\(\DeclareMathOperator {\Rot }{rot}\)
+\(\DeclareMathOperator {\Grad }{grad}\)
+\(\DeclareMathOperator {\inv }{inv}\)
+\(\DeclareMathOperator {\Tr }{Tr}\)
+\(\newcommand {\emf }{ℰ}\)
+\(\newcommand {\tikzmarknode }[2]{#2}\)
+\(\newcommand {\tikzmark }[1]{}\)
+\(\newcommand {\enquote }[1]{«#1»}\)
+\(\newcommand {\allowbreak }{}\)
+\(\newcommand {\mitlambda }{\lambda }\)
+\(\newcommand {\mitomega }{\omega }\)
+\(\newcommand {\mittheta }{\theta }\)
+\(\newcommand {\mitphi }{\varphi }\)
+\(\newcommand {\tcbhighmath }[1]{\boxed {#1}}\)
+\(\newcommand {\Efield }{\mathbf {E}}\)
+\(\newcommand {\Dfield }{\mathbf {D}}\)
+\(\newcommand {\Bfield }{\mathbf {B}}\)
+\(\newcommand {\Hfield }{\mathbf {H}}\)
+\(\newcommand {\ket }[1]{\left | #1 \right \rangle }\)
+\(\newcommand {\bra }[1]{\left \langle #1 \right |}\)
+\(\newcommand {\opbraket }[3]{\left \langle #1 \middle | #2 \middle | #3 \right \rangle }\)
+\(\newcommand {\diff }[2]{\frac {\partial #1}{\partial #2}}\)
+\(\newcommand {\ddiff }[2]{\frac {\partial ^2 #1}{\partial #2^2}}\)
+\(\newcommand {\grad }{\mathbf {\nabla }}\)
+\(\newcommand {\rot }{\mathbf {\nabla }\times }\)
+\(\newcommand {\divg }{\mathbf {\nabla }\cdot }\)
+\(\newcommand {\Laplasian }{\Delta }\)
+\(\newcommand {\EMF }{\mathcal {E}}\)
+\(\newcommand {\vxi }{\vec {\xi }}\)
+\(\newcommand {\vr }{\vec {r}}\)
+\(\newcommand {\vphi }{\varphi }\)
+\(\newcommand {\veps }{\varepsilon }\)
+\(\newcommand {\eff }{\mathrm {eff}}\)
+\(\newcommand {\PySCF }{\texttt {PySCF}}\)
+\(\newcommand {\vect }[1]{\mathbf {#1}}\)
+\(\newcommand {\symbf }[1]{\mathbf {#1}}\)
+\(\DeclareMathOperator {\sh }{sh}\)
+\(\DeclareMathOperator {\ch }{ch}\)
+\(\DeclareMathOperator {\tg }{tg}\)
+\(\DeclareMathOperator {\ctg }{ctg}\)
+\(\DeclareMathOperator {\arctg }{arctg}\)
+\(\DeclareMathOperator {\arcctg }{arcctg}\)
+\(\DeclareMathOperator {\cth }{cth}\)
+\(\DeclareMathOperator {\cosec }{cosec}\)
+\(\let \symsf \symsfup \)
+\(\def\Alpha{\unicode{x0391}}\)
+\(\def\Beta{\unicode{x0392}}\)
+\(\def\Gamma{\unicode{x0393}}\)
+\(\def\Digamma{\unicode{x03DC}}\)
+\(\def\Delta{\unicode{x0394}}\)
+\(\def\Epsilon{\unicode{x0395}}\)
+\(\def\Zeta{\unicode{x0396}}\)
+\(\def\Eta{\unicode{x0397}}\)
+\(\def\Theta{\unicode{x0398}}\)
+\(\def\Vartheta{\unicode{x03F4}}\)
+\(\def\Iota{\unicode{x0399}}\)
+\(\def\Kappa{\unicode{x039A}}\)
+\(\def\Lambda{\unicode{x039B}}\)
+\(\def\Mu{\unicode{x039C}}\)
+\(\def\Nu{\unicode{x039D}}\)
+\(\def\Xi{\unicode{x039E}}\)
+\(\def\Omicron{\unicode{x039F}}\)
+\(\def\Pi{\unicode{x03A0}}\)
+\(\def\Varpi{\unicode{x03D6}}\)
+\(\def\Rho{\unicode{x03A1}}\)
+\(\def\Sigma{\unicode{x03A3}}\)
+\(\def\Tau{\unicode{x03A4}}\)
+\(\def\Upsilon{\unicode{x03A5}}\)
+\(\def\Phi{\unicode{x03A6}}\)
+\(\def\Chi{\unicode{x03A7}}\)
+\(\def\Psi{\unicode{x03A8}}\)
+\(\def\Omega{\unicode{x03A9}}\)
+\(\def\alpha{\unicode{x1D6FC}}\)
+\(\def\beta{\unicode{x1D6FD}}\)
+\(\def\varbeta{\unicode{x03D0}}\)
+\(\def\gamma{\unicode{x1D6FE}}\)
+\(\def\digamma{\mathit{\unicode{x03DD}}}\)
+\(\def\delta{\unicode{x1D6FF}}\)
+\(\def\epsilon{\unicode{x1D716}}\)
+\(\def\varepsilon{\unicode{x1D700}}\)
+\(\def\zeta{\unicode{x1D701}}\)
+\(\def\eta{\unicode{x1D702}}\)
+\(\def\theta{\unicode{x1D703}}\)
+\(\def\vartheta{\unicode{x1D717}}\)
+\(\def\iota{\unicode{x1D704}}\)
+\(\def\kappa{\unicode{x1D705}}\)
+\(\def\varkappa{\unicode{x1D718}}\)
+\(\def\lambda{\unicode{x1D706}}\)
+\(\def\mu{\unicode{x1D707}}\)
+\(\def\nu{\unicode{x1D708}}\)
+\(\def\xi{\unicode{x1D709}}\)
+\(\def\omicron{\unicode{x1D70A}}\)
+\(\def\pi{\unicode{x1D70B}}\)
+\(\def\varpi{\unicode{x1D71B}}\)
+\(\def\rho{\unicode{x1D70C}}\)
+\(\def\varrho{\unicode{x1D71A}}\)
+\(\def\sigma{\unicode{x1D70E}}\)
+\(\def\varsigma{\unicode{x1D70D}}\)
+\(\def\tau{\unicode{x1D70F}}\)
+\(\def\upsilon{\unicode{x1D710}}\)
+\(\def\phi{\unicode{x1D719}}\)
+\(\def\varphi{\unicode{x1D711}}\)
+\(\def\chi{\unicode{x1D712}}\)
+\(\def\psi{\unicode{x1D713}}\)
+\(\def\omega{\unicode{x1D714}}\)
+</div>
+<!--
+...... part Вступ до PySCF: основи та перші кроки ......
+-->
+<h2 id="autosec-25">Частина&nbsp;<span class="sectionnumber">I&#x2003;</span>Вступ до PySCF: основи та перші кроки</h2>
+<a id="main-html-autopage-25"></a>
+<a id="main-html-autofile-2"></a>
+<div class="epigraph" role="note">
+<div class="qitem">
+<p>
+«Теорія без практики — порожня, практика без теорії — сліпа.»
+</p>
+<div class="epigraphsource">
+<p>
+— Іммануїл Кант, адаптовано
+</p>
+</div>
+</div>
+</div>
+<!--
+...... chapter Знайомство з PySCF ......
+-->
+<h3 id="autosec-26"><span class="sectionnumber">1&#x2003;</span>Знайомство з PySCF</h3>
+<a id="main-html-autopage-26"></a>
+<a id="WelcomeWithPyscf"></a>
+<!--
+...... section PySCF: концепція та філософія ......
+-->
+<h4 id="autosec-27"><span class="sectionnumber">&#xA7;&#x202F;1.1&#x2003;</span>PySCF: концепція та філософія</h4>
+<a id="main-html-autopage-27"></a>
+<p>
+<kbd>PySCF</kbd> (<em>Python-based Simulations of Chemistry Framework</em>) — це сучасний відкритий програмний пакет для квантово-хімічних розрахунків, написаний переважно на мові Python з критичними для продуктивності компонентами на <kbd>C</kbd>.
+Розроблений під керівництвом професора <em>Garnet Chan</em> у Каліфорнійському технологічному інституті, <kbd>PySCF</kbd> став новим стандартом відкритої наукової платформи, яка поєднує:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> простоту навчання;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> гнучкість експериментування;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> високу точність і масштабованість.
+</p>
+</li>
+</ul>
+<p>
+Його головна ідея — зробити квантову хімію <em>прозорою та інтерактивною</em>. Замість монолітних пакетів із власними скриптовими мовами (<kbd>Gaussian</kbd>, <kbd>ORCA</kbd>), <kbd>PySCF</kbd> використовує чистий Python, дозволяючи виконувати
+розрахунки без компіляції, прямо в <kbd>Jupyter Notebook</kbd> або <kbd>Google Colab</kbd>.
+</p>
+<p>
+Проєкт започаткований <em>Qiming Sun</em> у співпраці з <em>Garnet K.-L. Chan</em> та міжнародною командою розробників, серед яких <em>Sandeep Sharma</em>, <em>Thomas Berkelbach</em>, <em>Zhendong Li</em> та інші, що зробили внесок у розвиток
+модулів <kbd>HF</kbd>, <kbd>DFT</kbd>, <kbd>CC</kbd>, <kbd>DMRG</kbd> та <kbd>PBC</kbd>.
+</p>
+<p>
+Актуальна стабільна версія пакета (на час написання книги) — <b>PySCF v2.11.0</b> (див. <a href="https://github.com/pyscf/pyscf/releases" target="_blank" >https://github.com/pyscf/pyscf/releases</a>).
+</p>
+<!--
+...... section Основні можливості PySCF ......
+-->
+<h4 id="autosec-28"><span class="sectionnumber">&#xA7;&#x202F;1.2&#x2003;</span>Основні можливості PySCF</h4>
+<a id="main-html-autopage-28"></a>
+<p>
+<kbd>PySCF</kbd> підтримує широкий спектр квантово-хімічних методів:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <b>Метод Хартрі-Фока (<kbd>HF</kbd>):</b> <kbd>RHF</kbd>, <kbd>UHF</kbd>, <kbd>ROHF</kbd>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Теорія функціонала густини (<kbd>DFT</kbd>):</b> інтеграція з бібліотекою <kbd>libxc</kbd>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Post-Hartree–Fock методи:</b> <kbd>MP2</kbd>, <kbd>CCSD</kbd>, <kbd>CCSD(T)</kbd>, <kbd>CASSCF</kbd>, <kbd>CASPT2</kbd>, <kbd>NEVPT2</kbd>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Configuration Interaction (<kbd>CI</kbd>):</b> <kbd>CISD</kbd>, <kbd>Full CI</kbd>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Релятивістські методи:</b> <kbd>ECP</kbd>, <kbd>X2C</kbd>, чотирикомпонентні <kbd>HF</kbd>/<kbd>MP2</kbd>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Періодичні системи:</b> модуль <kbd>PBC</kbd> — <kbd>HF</kbd>, <kbd>DFT</kbd>, <kbd>MP2</kbd>, <kbd>CCSD</kbd>.
+</p>
+</li>
+</ul>
+<!--
+...... section Архітектура і дизайн PySCF ......
+-->
+<h4 id="autosec-29"><span class="sectionnumber">&#xA7;&#x202F;1.3&#x2003;</span>Архітектура і дизайн PySCF</h4>
+<a id="main-html-autopage-29"></a>
+<!--
+...... paragraph Ключові принципи. ......
+-->
+<p>
+<span class="paragraph" id="autosec-30">Ключові принципи.</span>
+<a id="main-html-autopage-30"></a>
+</p>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> <b>Простота</b> — мінімум прихованої логіки, усе у вигляді Python-коду;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> <b>Універсальність</b> — підтримка молекул, кластерів і кристалів;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> <b>Ефективність</b> — продуктивність наближена до реалізацій на <kbd>Fortran/C</kbd>.
+</p>
+</li>
+</ul>
+<!--
+...... paragraph Архітектурний принцип. ......
+-->
+<p>
+<span class="paragraph" id="autosec-31">Архітектурний принцип.</span>
+<a id="main-html-autopage-31"></a>
+Кожен метод реалізує універсальну функцію <span class="inlinecode"><kbd>.kernel()</kbd></span>, яка запускає розрахунок незалежно від рівня теорії:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">4 рядки</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">scf</span><span class="tk-p">,</span> <span class="tk-n">mp</span>
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">run</span><span class="tk-p">()</span>
+<span class="tk-n">e_mp2</span> <span class="tk-o">=</span> <span class="tk-n">mp</span><span class="tk-o">.</span><span class="tk-n">MP2</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span></code></pre>
+</div>
+<!--
+...... paragraph Модульна структура. ......
+-->
+<p>
+<span class="paragraph" id="autosec-32">Модульна структура.</span>
+<a id="main-html-autopage-32"></a>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>gto</kbd> — геометрія, базис, інтеграли;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>scf</kbd> — методи Хартрі—Фока і <kbd>DFT</kbd>;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>mp</kbd>, <kbd>cc</kbd>, <kbd>ci</kbd> — пост-Хартрі–Фоківські методи;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>mcscf</kbd>, <kbd>dmrgscf</kbd>, <kbd>fciqmc</kbd> — багатоконфігураційні;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>pbc</kbd> — періодичні системи;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>lib</kbd> — оптимізовані обчислення інтегралів (<kbd>Libcint</kbd>).
+</p>
+</li>
+</ul>
+<!--
+...... paragraph Інтеграція з Python-екосистемою. ......
+-->
+<p>
+<span class="paragraph" id="autosec-33">Інтеграція з Python-екосистемою.</span>
+<a id="main-html-autopage-33"></a>
+Результати розрахунків — це звичайні Python-об’єкти (<kbd>NumPy</kbd>-масиви, списки, словники), які можна одразу візуалізувати або обробити.
+</p>
+<!--
+...... paragraph Паралельні обчислення. ......
+-->
+<p>
+<span class="paragraph" id="autosec-34">Паралельні обчислення.</span>
+<a id="main-html-autopage-34"></a>
+<kbd>PySCF</kbd> підтримує:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> внутрішній багатопоточний паралелізм (<kbd>OpenMP</kbd>);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> MPI-кластеризацію із сервер-клієнт архітектурою;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> однаковий код у серійному та паралельному режимах.
+</p>
+</li>
+</ul>
+<!--
+...... paragraph Прозорість коду. ......
+-->
+<p>
+<span class="paragraph" id="autosec-35">Прозорість коду.</span>
+<a id="main-html-autopage-35"></a>
+<kbd>PySCF</kbd> — це не «чорна скринька», а лабораторія для експериментів. Будь-який SCF-цикл, побудова матриці Фока або перетворення інтегралів — доступні для перегляду і модифікації.
+</p>
+<!--
+...... section Порівняння з іншими програмами ......
+-->
+<h4 id="autosec-36"><span class="sectionnumber">&#xA7;&#x202F;1.4&#x2003;</span>Порівняння з іншими програмами</h4>
+<a id="main-html-autopage-36"></a>
+<p>
+Для кращого розуміння місця <kbd>PySCF</kbd> у сучасній квантовій хімії варто порівняти його з іншими поширеними програмними пакетами. Попри схожість у базовому наборі реалізованих методів (<kbd>HF</kbd>, <kbd>DFT</kbd>, <kbd>MP2</kbd>,
+<kbd>CCSD(T)</kbd> тощо), різниця полягає у філософії проєктування, структурі коду, способі взаємодії користувача з програмою та рівні відкритості вихідного коду. Деякі системи орієнтовані на швидкі «production» розрахунки без втручання у внутрішню логіку, інші
+— на дослідницьку гнучкість і навчальні цілі.
+</p>
+<p>
+У таблиці&nbsp;<a href="welcome.html#tab:soft">1.1</a> наведено коротке порівняння ключових характеристик найвідоміших пакетів.
+</p>
+<figure id="autoid-1" class="table ">
+<div class="center">
+<div class="figurecaption">
+Таблиця&nbsp;1.1. Порівняння популярних квантово-хімічних пакетів
+</div>
+<a id="tab:soft"></a>
+<p>
+<span
+id="lateximage-main-html-1"
+class="lateximagesource"
+><!--
+Програма Ліцензія Мова Архітектура Гнучкість
+<a href="https://pyscf.org/" target="_blank" >PySCF</a> Відкрита Python/C Функціональна Висока
+<a href="https://gaussian.com/" target="_blank" >Gaussian</a> Комерційна Fortran Імперативна Низька
+<a href="https://www.faccts.de/orca" target="_blank" >ORCA</a> Академічна Fortran/C Модульна Середня
+<a href="https://psicode.org/" target="_blank" >Psi4</a> Відкрита C++/Python Об’єктно-орієнтована Висока
+--><img
+src="main-html-images/image-1.svg"
+alt="Рисунок 1"
+style=""
+class="lateximage"
+></span>
+</p>
+</div>
+</figure>
+<p>
+На відміну від закритих систем, <kbd>PySCF</kbd> дозволяє безпосередньо працювати з алгоритмами, змінювати їх і комбінувати з бібліотеками машинного навчання або оптимізації.
+</p>
+<!--
+...... section Встановлення PySCF ......
+-->
+<h4 id="autosec-40"><span class="sectionnumber">&#xA7;&#x202F;1.5&#x2003;</span>Встановлення PySCF</h4>
+<a id="main-html-autopage-40"></a>
+<!--
+...... subsection Системні вимоги ......
+-->
+<h5 id="autosec-41"><span class="sectionnumber">1.5.1&#x2003;</span>Системні вимоги</h5>
+<a id="main-html-autopage-41"></a>
+<p>
+Для роботи з <kbd>PySCF</kbd> необхідно:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>Python 3.7</kbd> або новіший.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>NumPy</kbd> версії 1.13.0 або новішої.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>SciPy</kbd> версії 1.0.0 або новішої.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>H5py</kbd> (для збереження великих масивів даних).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(4-8\) ГБ оперативної пам’яті (мінімум).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Сучасний процесор (бажано багатоядерний).
+</p>
+</li>
+</ul>
+<!--
+...... subsection Встановлення в Linux ......
+-->
+<h5 id="autosec-42"><span class="sectionnumber">1.5.2&#x2003;</span>Встановлення в Linux</h5>
+<a id="main-html-autopage-42"></a>
+<p>
+Найпростіший спосіб встановлення <kbd>PySCF</kbd> у <kbd>Linux</kbd> — використання pip:
+</p>
+<div class="codeblock code-bash" data-lang="bash" data-nosnippet>
+<div class="code-head"><span class="code-lang">Термінал</span><span class="code-lines">6 рядків</span></div>
+<pre class="code"><code><span class="tk-c1"># Оновлення pip</span>
+pip<span class="tk-w"> </span>install<span class="tk-w"> </span>--upgrade<span class="tk-w"> </span>pip
+
+<span class="tk-c1"># Встановлення PySCF</span>
+pip<span class="tk-w"> </span>install<span class="tk-w"> </span>pyscf</code></pre>
+</div>
+<p>
+Для встановлення з додатковими можливостями:
+</p>
+<div class="codeblock code-bash" data-lang="bash" data-nosnippet>
+<div class="code-head"><span class="code-lang">Термінал</span><span class="code-lines">3 рядки</span></div>
+<pre class="code"><code><span class="tk-c1"># З підтримкою XC функціоналів</span>
+pip<span class="tk-w"> </span>install<span class="tk-w"> </span>pyscf<span class="tk-o">[</span>geomopt,dftd3,dmrgscf<span class="tk-o">]</span></code></pre>
+</div>
+<p>
+Якщо потрібно встановити всі опціональні модулі <kbd>PySCF</kbd>:
+</p>
+<div class="codeblock code-bash" data-lang="bash" data-nosnippet>
+<div class="code-head"><span class="code-lang">Термінал</span><span class="code-lines">3 рядки</span></div>
+<pre class="code"><code><span class="tk-c1"># Повне встановлення з усіма підтримуваними розширеннями</span>
+pip<span class="tk-w"> </span>install<span class="tk-w"> </span>pyscf<span class="tk-o">[</span>all<span class="tk-o">]</span></code></pre>
+</div>
+<p>
+Альтернативно, можна встановити з вихідного коду:
+</p>
+<div class="codeblock code-bash" data-lang="bash" data-nosnippet>
+<div class="code-head"><span class="code-lang">Термінал</span><span class="code-lines">4 рядки</span></div>
+<pre class="code"><code>git<span class="tk-w"> </span>clone<span class="tk-w"> </span>https://github.com/pyscf/pyscf.git
+<span class="tk-nb">cd</span><span class="tk-w"> </span>pyscf
+pip<span class="tk-w"> </span>install<span class="tk-w"> </span>-e<span class="tk-w"> </span>.</code></pre>
+</div>
+<!--
+...... subsection Встановлення в Windows ......
+-->
+<h5 id="autosec-43"><span class="sectionnumber">1.5.3&#x2003;</span>Встановлення в Windows</h5>
+<a id="main-html-autopage-43"></a>
+<p>
+Для Windows рекомендується використання Anaconda:
+</p>
+<div class="codeblock code-bash" data-lang="bash" data-nosnippet>
+<div class="code-head"><span class="code-lang">Термінал</span><span class="code-lines">7 рядків</span></div>
+<pre class="code"><code><span class="tk-c1"># Створення нового середовища</span>
+conda<span class="tk-w"> </span>create<span class="tk-w"> </span>-n<span class="tk-w"> </span>pyscf_env<span class="tk-w"> </span><span class="tk-nv">python</span><span class="tk-o">=</span><span class="tk-m">3</span>.10
+conda<span class="tk-w"> </span>activate<span class="tk-w"> </span>pyscf_env
+
+<span class="tk-c1"># Встановлення PySCF</span>
+conda<span class="tk-w"> </span>install<span class="tk-w"> </span>-c<span class="tk-w"> </span>pyscf<span class="tk-w"> </span>pyscf</code></pre>
+</div>
+<!--
+...... subsection Встановлення в macOS ......
+-->
+<h5 id="autosec-44"><span class="sectionnumber">1.5.4&#x2003;</span>Встановлення в <kbd>macOS</kbd></h5>
+<a id="main-html-autopage-44"></a>
+<p>
+Для macOS процес аналогічний до Linux:
+</p>
+<div class="codeblock code-bash" data-lang="bash" data-nosnippet>
+<div class="code-head"><span class="code-lang">Термінал</span><span class="code-lines">7 рядків</span></div>
+<pre class="code"><code><span class="tk-c1"># Встановлення через pip</span>
+pip3<span class="tk-w"> </span>install<span class="tk-w"> </span>pyscf
+
+<span class="tk-c1"># Або через Homebrew + pip</span>
+brew<span class="tk-w"> </span>install<span class="tk-w"> </span>python3
+pip3<span class="tk-w"> </span>install<span class="tk-w"> </span>pyscf</code></pre>
+</div>
+<!--
+...... subsection Перевірка встановлення ......
+-->
+<h5 id="autosec-45"><span class="sectionnumber">1.5.5&#x2003;</span>Перевірка встановлення</h5>
+<a id="main-html-autopage-45"></a>
+<p>
+Після встановлення перевіримо, чи <kbd>PySCF</kbd> працює коректно:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">10 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">import</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span>
+<span class="tk-c1"># Вивід версії</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-n">pyscf</span><span class="tk-o">.</span><span class="tk-n">__version__</span><span class="tk-p">)</span>
+<span class="tk-c1"># Простий тест</span>
+<span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'H 0 0 0; H 0 0 0.74'</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'sto-3g'</span><span class="tk-p">)</span>
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span>
+<span class="tk-n">energy</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Енергія H2: </span><span class="tk-si">{</span><span class="tk-n">energy</span><span class="tk-si">:</span><span class="tk-s1">.6f</span><span class="tk-si">}</span><span class="tk-s1"> Ha'</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Якщо програма виводить версію та обчислює енергію молекули <span
+id="lateximage-main-html-2"
+class="lateximagesource"
+><!--
+H2
+--><img
+src="main-html-images/B210D6A401BAC692FAB8840283B0CE59.svg"
+alt="\ce{H2}"
+style=""
+class="lateximage"
+></span>, встановлення виконано успішно.
+</p>
+<!--
+...... subsection Запуск PySCF у Docker ......
+-->
+<h5 id="autosec-48"><span class="sectionnumber">1.5.6&#x2003;</span>Запуск <kbd>PySCF</kbd> у Docker</h5>
+<a id="main-html-autopage-48"></a>
+<p>
+<kbd>PySCF</kbd> також можна запускати у готовому контейнері <kbd>Docker</kbd>, що особливо зручно для відтворюваних розрахунків та роботи на серверних системах без прямого доступу до Python-середовища.
+</p>
+<!--
+...... paragraph Встановлення Docker. ......
+-->
+<p>
+<span class="paragraph" id="autosec-49">Встановлення Docker.</span>
+<a id="main-html-autopage-49"></a>
+Для початку встановіть Docker відповідно до вашої операційної системи:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Linux: <a href="https://docs.docker.com/engine/install/ubuntu/" target="_blank" >https://docs.docker.com/engine/install/ubuntu/</a>
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Windows/macOS: <a href="https://www.docker.com/products/docker-desktop" target="_blank" >https://www.docker.com/products/docker-desktop</a>
+</p>
+</li>
+</ul>
+<!--
+...... paragraph Завантаження контейнера PySCF. ......
+-->
+<p>
+<span class="paragraph" id="autosec-50">Завантаження контейнера PySCF.</span>
+<a id="main-html-autopage-50"></a>
+Офіційний образ доступний на GitHub у репозиторії <a href="https://github.com/pyscf/pyscf/tree/master/docker" target="_blank" ><kbd>pyscf/docker</kbd></a>:
+</p>
+<div class="codeblock code-bash" data-lang="bash" data-nosnippet>
+<div class="code-head"><span class="code-lang">Термінал</span><span class="code-lines">6 рядків</span></div>
+<pre class="code"><code><span class="tk-c1"># Завантаження останнього образу PySCF</span>
+docker<span class="tk-w"> </span>pull<span class="tk-w"> </span>pyscf/pyscf
+
+<span class="tk-c1"># Запуск інтерактивного контейнера</span>
+docker<span class="tk-w"> </span>run<span class="tk-w"> </span>-it<span class="tk-w"> </span>pyscf/pyscf<span class="tk-w"> </span>/bin/bash</code></pre>
+</div>
+<p>
+Після запуску ви опинитесь усередині контейнера, де <kbd>PySCF</kbd> уже встановлений і готовий до використання:
+</p>
+<div class="codeblock code-bash" data-lang="bash" data-nosnippet>
+<div class="code-head"><span class="code-lang">Термінал</span><span class="code-lines">2 рядки</span></div>
+<pre class="code"><code>python<span class="tk-w"> </span>-c<span class="tk-w"> </span><span class="tk-s2">"import pyscf; print(pyscf.__version__)"</span></code></pre>
+</div>
+<!--
+...... paragraph Запуск власних скриптів. ......
+-->
+<p>
+<span class="paragraph" id="autosec-51">Запуск власних скриптів.</span>
+<a id="main-html-autopage-51"></a>
+Щоб запустити локальний Python-файл із вашої системи, можна підключити робочий каталог через параметр <kbd>-v</kbd>:
+</p>
+<div class="codeblock code-bash" data-lang="bash" data-nosnippet>
+<div class="code-head"><span class="code-lang">Термінал</span><span class="code-lines">2 рядки</span></div>
+<pre class="code"><code>docker<span class="tk-w"> </span>run<span class="tk-w"> </span>-it<span class="tk-w"> </span>-v<span class="tk-w"> </span><span class="tk-k">$(</span><span class="tk-nb">pwd</span><span class="tk-k">)</span>:/workspace<span class="tk-w"> </span>pyscf/pyscf<span class="tk-w"> </span>python<span class="tk-w"> </span>/workspace/mycalc.py</code></pre>
+</div>
+<!--
+...... paragraph Переваги контейнерного підходу. ......
+-->
+<p>
+<span class="paragraph" id="autosec-52">Переваги контейнерного підходу.</span>
+<a id="main-html-autopage-52"></a>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Повна ізоляція середовища — не впливає на локальні пакети Python.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Ідентична конфігурація на будь-якій системі (Linux, Windows, macOS).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Простота використання на кластерах і у хмарних обчисленнях.
+</p>
+</li>
+</ul>
+<!--
+...... subsection Розширення та додаткові модулі PySCF ......
+-->
+<h5 id="autosec-53"><span class="sectionnumber">1.5.7&#x2003;</span>Розширення та додаткові модулі PySCF</h5>
+<a id="main-html-autopage-53"></a>
+<p>
+Крім основного пакета <kbd>pyscf</kbd>, існує низка супутніх бібліотек, що розширюють його можливості. Деякі з них підтримуються офіційною командою розробників, інші — незалежними групами дослідників, але сумісні через відкрите API.
+</p>
+<!--
+...... paragraph Офіційні модулі PySCF (GitHub <a href=https://github.com/pyscf target=-blank >pyscf/</a>): ......
+-->
+<p>
+<span class="paragraph" id="autosec-54">Офіційні модулі <kbd>PySCF</kbd> (GitHub <a href="https://github.com/pyscf" target="_blank" >pyscf/</a>):</span>
+<a id="main-html-autopage-54"></a>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <a href="https://pyscf.org/interface/geomopt.html" target="_blank" ><kbd>geomopt</kbd></a> — оптимізація геометрії (на основі <kbd>PyBerny</kbd>);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <a href="https://github.com/pyscf/dmrgscf" target="_blank" ><kbd>pyscf-dmrgscf</kbd></a> — інтерфейс до <kbd>DMRG</kbd> солверів (<kbd>Block2</kbd>, <kbd>CheMPS2</kbd>);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <a href="https://github.com/pyscf/cubegen" target="_blank" ><kbd>pyscf-cubegen</kbd></a> — побудова кубічних сіток густини та орбіталей;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <a href="https://github.com/pyscf/properties" target="_blank" ><kbd>pyscf-properties</kbd></a> — розрахунок молекулярних властивостей (дипольні моменти, поляризовності, ЯМР, спектри);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <a href="https://github.com/pyscf/gpu4pyscf" target="_blank" ><kbd>gpu4pyscf</kbd></a> — прискорення обчислень на GPU.
+</p>
+</li>
+</ul>
+<!--
+...... paragraph Сторонні розширення, сумісні з PySCF: ......
+-->
+<p>
+<span class="paragraph" id="autosec-55">Сторонні розширення, сумісні з PySCF:</span>
+<a id="main-html-autopage-55"></a>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <a href="https://github.com/CQCL/pyscf-ac0" target="_blank" ><kbd>pyscf-ac0</kbd></a> — реалізація методу <kbd>CAS-AC0</kbd> (Covalent Approximation);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <a href="https://github.com/ZhaoYilin/pyscf-itchem" target="_blank" ><kbd>pyscf-itchem</kbd></a> — аналіз електронної структури засобами інформаційно-теоретичної хімії;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <a href="https://github.com/jparkhill/RealtimePySCF" target="_blank" ><kbd>RealtimePySCF</kbd></a> — розрахунки в реальному часі (<kbd>TDDFT</kbd>);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <a href="https://github.com/qiskit-community/qiskit-nature-pyscf" target="_blank" ><kbd>qiskit-nature-pyscf</kbd></a> — інтерфейс між <kbd>PySCF</kbd> і квантовими симуляціями у
+<kbd>Qiskit</kbd>;
+</p>
+</li>
+</ul>
+<!--
+...... paragraph Встановлення. ......
+-->
+<p>
+<span class="paragraph" id="autosec-56">Встановлення.</span>
+<a id="main-html-autopage-56"></a>
+Модулі можна встановити через <kbd>pip</kbd>:
+</p>
+<div class="codeblock code-bash" data-lang="bash" data-nosnippet>
+<div class="code-head"><span class="code-lang">Термінал</span><span class="code-lines">2 рядки</span></div>
+<pre class="code"><code>pip<span class="tk-w"> </span>install<span class="tk-w"> </span>pyscf-dftd3<span class="tk-w"> </span>pyscf-geomopt<span class="tk-w"> </span>pyscf-dmrgscf</code></pre>
+</div>
+<p>
+або клонувати з GitHub:
+</p>
+<div class="codeblock code-bash" data-lang="bash" data-nosnippet>
+<div class="code-head"><span class="code-lang">Термінал</span><span class="code-lines">3 рядки</span></div>
+<pre class="code"><code>git<span class="tk-w"> </span>clone<span class="tk-w"> </span>https://github.com/pyscf/pyscf-dmrgscf.git
+pip<span class="tk-w"> </span>install<span class="tk-w"> </span>-e<span class="tk-w"> </span>pyscf-dmrgscf</code></pre>
+</div>
+<!--
+...... paragraph Примітки. ......
+-->
+<p>
+<span class="paragraph" id="autosec-57">Примітки.</span>
+<a id="main-html-autopage-57"></a>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Офіційні модулі розміщені в організації <a href="https://github.com/pyscf" target="_blank" ><kbd>github.com/pyscf</kbd></a>;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Сторонні модулі можуть бути експериментальними, але часто додають нову функціональність;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Більшість з них встановлюються незалежно від основного <kbd>PySCF</kbd>.
+</p>
+</li>
+</ul>
+<!--
+...... section Базова структура програми на PySCF ......
+-->
+<h4 id="autosec-58"><span class="sectionnumber">&#xA7;&#x202F;1.6&#x2003;</span>Базова структура програми на PySCF</h4>
+<a id="main-html-autopage-58"></a>
+<!--
+...... subsection Загальна схема розрахунку ......
+-->
+<h5 id="autosec-59"><span class="sectionnumber">1.6.1&#x2003;</span>Загальна схема розрахунку</h5>
+<a id="main-html-autopage-59"></a>
+<p>
+Типовий розрахунок у <kbd>PySCF</kbd> складається з трьох основних етапів:
+</p>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> <b>Створення молекулярного об’єкта</b> — визначення геометрії системи, базисного набору, заряду та спіну.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> <b>Вибір та налаштування методу</b> — вибір квантово-хімічного методу (HF, DFT, CC тощо).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> <b>Виконання розрахунку</b> — запуск обчислень та отримання результатів.
+</p>
+</li>
+</ul>
+<!--
+...... paragraph Примітка. ......
+-->
+<p>
+<span class="paragraph" id="autosec-60">Примітка.</span>
+<a id="main-html-autopage-60"></a>
+Майже всі модулі <kbd>PySCF</kbd> дотримуються однакової структури виклику:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">3 рядки</span></div>
+<pre class="code"><code><span class="tk-nb">object</span> <span class="tk-o">=</span> <span class="tk-n">method</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span>
+<span class="tk-n">energy</span> <span class="tk-o">=</span> <span class="tk-nb">object</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span></code></pre>
+</div>
+<p>
+Ця уніфікована схема спрощує роботу з різними теоретичними рівнями та дозволяє легко будувати багаторівневі розрахунки.
+</p>
+<!--
+...... subsection Мінімальний приклад ......
+-->
+<h5 id="autosec-61"><span class="sectionnumber">1.6.2&#x2003;</span>Мінімальний приклад</h5>
+<a id="main-html-autopage-61"></a>
+<p>
+Розглянемо найпростіший приклад розрахунку атома Гідрогену:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">15 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+<span class="tk-c1"># Етап 1: Створення молекулярного об'єкта</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span>
+    <span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'H 0 0 0'</span><span class="tk-p">,</span>      <span class="tk-c1"># Координати атома</span>
+    <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'sto-3g'</span><span class="tk-p">,</span>       <span class="tk-c1"># Базисний набір</span>
+    <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">1</span>                <span class="tk-c1"># 2S (1 неспарений електрон)</span>
+<span class="tk-p">)</span>
+<span class="tk-c1"># Етап 2: Вибір методу (UHF для відкритої оболонки)</span>
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">UHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span>
+<span class="tk-c1"># Етап 3: Виконання розрахунку</span>
+<span class="tk-n">energy</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+<span class="tk-c1"># Виведення результатів</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Енергія атома H: </span><span class="tk-si">{</span><span class="tk-n">energy</span><span class="tk-si">:</span><span class="tk-s1">.8f</span><span class="tk-si">}</span><span class="tk-s1"> Hartree'</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Енергія атома H: </span><span class="tk-si">{</span><span class="tk-n">energy</span><span class="tk-w"> </span><span class="tk-o">*</span><span class="tk-w"> </span><span class="tk-mf">27.211386</span><span class="tk-si">:</span><span class="tk-s1">.6f</span><span class="tk-si">}</span><span class="tk-s1"> eV'</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Для атома з двома електронами у замкненій оболонці:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">13 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+<span class="tk-c1"># Атом Гелію</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span>
+    <span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'He 0 0 0'</span><span class="tk-p">,</span>
+    <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'6-31g'</span><span class="tk-p">,</span>
+    <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">0</span><span class="tk-p">,</span>               <span class="tk-c1"># Всі електрони спарені</span>
+    <span class="tk-n">charge</span><span class="tk-o">=</span><span class="tk-mi">0</span>              <span class="tk-c1"># Нейтральний атом</span>
+<span class="tk-p">)</span>
+<span class="tk-c1"># RHF для замкненої оболонки</span>
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span>
+<span class="tk-n">energy</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Енергія He: </span><span class="tk-si">{</span><span class="tk-n">energy</span><span class="tk-si">:</span><span class="tk-s1">.8f</span><span class="tk-si">}</span><span class="tk-s1"> Ha'</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Більш детальний приклад з виведенням додаткової інформації:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">8 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'Li 0 0 0'</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'cc-pvdz'</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">1</span><span class="tk-p">)</span>
+
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">UHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span>
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">verbose</span> <span class="tk-o">=</span> <span class="tk-mi">4</span>            <span class="tk-c1"># Детальний вивід</span>
+<span class="tk-n">energy</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span></code></pre>
+</div>
+<!--
+...... section Система одиниць та конвенції ......
+-->
+<h4 id="autosec-62"><span class="sectionnumber">&#xA7;&#x202F;1.7&#x2003;</span>Система одиниць та конвенції</h4>
+<a id="main-html-autopage-62"></a>
+<!--
+...... subsection Атомні одиниці ......
+-->
+<h5 id="autosec-63"><span class="sectionnumber">1.7.1&#x2003;</span>Атомні одиниці</h5>
+<a id="main-html-autopage-63"></a>
+<p>
+<kbd>PySCF</kbd> використовує атомну систему одиниць (atomic units, a.u.), де:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{1.}{0}\)</span>
+<!--
+ℏ = 1 (стала Планка)
+𝑚𝑒 = 1 (маса електрона)
+𝑒 = 1 (елементарний заряд)
+-->
+<p>
+\begin{align*}
+\hbar &amp;= 1 \quad \text {(стала Планка)} \\ m_e &amp;= 1 \quad \text {(маса електрона)} \\ e &amp;= 1 \quad \text {(елементарний заряд)} \\
+\end{align*}
+</p>
+<p>
+У цій системі:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Енергія вимірюється в Hartree (Ha): 1 Ha = 27.211386 eV = 627.509 kcal/mol.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Відстань вимірюється в Bohr (\(a_0\)): 1 Bohr = 0.529177 Å.
+</p>
+</li>
+</ul>
+<!--
+...... subsection Конвертація одиниць ......
+-->
+<h5 id="autosec-64"><span class="sectionnumber">1.7.2&#x2003;</span>Конвертація одиниць</h5>
+<a id="main-html-autopage-64"></a>
+<p>
+<kbd>PySCF</kbd> надає <a href="https://github.com/pyscf/pyscf/blob/master/pyscf/data/nist.py" target="_blank" >модуль для конвертації</a> одиниць вимірювання та фізичних констант:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">16 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.data</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">nist</span>
+
+<span class="tk-c1"># Конвертація енергії</span>
+<span class="tk-n">energy_ha</span> <span class="tk-o">=</span> <span class="tk-o">-</span><span class="tk-mf">2.85516</span>
+<span class="tk-n">energy_ev</span> <span class="tk-o">=</span> <span class="tk-n">energy_ha</span> <span class="tk-o">*</span> <span class="tk-n">nist</span><span class="tk-o">.</span><span class="tk-n">HARTREE2EV</span>
+<span class="tk-n">energy_kcal</span> <span class="tk-o">=</span> <span class="tk-n">energy_ha</span> <span class="tk-o">*</span> <span class="tk-n">nist</span><span class="tk-o">.</span><span class="tk-n">HARTREE2KCAL</span>
+
+<span class="tk-c1"># Конвертація відстані</span>
+<span class="tk-n">dist_bohr</span> <span class="tk-o">=</span> <span class="tk-mf">2.0</span>
+<span class="tk-n">dist_angstrom</span> <span class="tk-o">=</span> <span class="tk-n">dist_bohr</span> <span class="tk-o">*</span> <span class="tk-n">nist</span><span class="tk-o">.</span><span class="tk-n">BOHR</span>
+
+<span class="tk-c1"># Фізичні константи</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Швидкість світла: </span><span class="tk-si">{</span><span class="tk-n">nist</span><span class="tk-o">.</span><span class="tk-n">LIGHT_SPEED</span><span class="tk-si">}</span><span class="tk-s1"> a.u.'</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Константа Планка: </span><span class="tk-si">{</span><span class="tk-n">nist</span><span class="tk-o">.</span><span class="tk-n">PLANCK</span><span class="tk-si">}</span><span class="tk-s1"> J·s'</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Число Авогадро: </span><span class="tk-si">{</span><span class="tk-n">nist</span><span class="tk-o">.</span><span class="tk-n">AVOGADRO</span><span class="tk-si">}</span><span class="tk-s1"> mol^-1'</span><span class="tk-p">)</span></code></pre>
+</div>
+<!--
+...... subsection Конвенції для атомів ......
+-->
+<h5 id="autosec-65"><span class="sectionnumber">1.7.3&#x2003;</span>Конвенції для атомів</h5>
+<a id="main-html-autopage-65"></a>
+<!--
+...... paragraph Координати. ......
+-->
+<p>
+<span class="paragraph" id="autosec-66">Координати.</span>
+<a id="main-html-autopage-66"></a>
+Координати задаються у формі рядка або списку. За замовчуванням використовуються ангстреми (Ångström), але можна вказати одиниці:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">7 рядків</span></div>
+<pre class="code"><code><span class="tk-c1"># Координати в Ångströм (за замовчуванням)</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'C 0 0 0'</span><span class="tk-p">)</span>
+<span class="tk-c1"># Явне вказання одиниць</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'C 0 0 0'</span><span class="tk-p">,</span> <span class="tk-n">unit</span><span class="tk-o">=</span><span class="tk-s1">'Angstrom'</span><span class="tk-p">)</span>
+<span class="tk-c1"># Координати в Bohr</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'C 0 0 0'</span><span class="tk-p">,</span> <span class="tk-n">unit</span><span class="tk-o">=</span><span class="tk-s1">'Bohr'</span><span class="tk-p">)</span></code></pre>
+</div>
+<div class="cb-comment">
+<p>
+<b>Коментар</b>
+</p>
+<p>
+Параметр <kbd>unit</kbd> нечутливий до регістру й приймає декілька синонімів. За замовчуванням використовується <kbd>'Angstrom'</kbd>. Допустимі значення подані нижче.
+</p>
+<div class="center">
+<table>
+<tr style="display:none"><th>.</th></tr>
+<tr>
+<td colspan="1" class="tdc"><b>Фізична одиниця</b></td>
+<td colspan="1" class="tdc"><b>Допустимі варіанти запису</b></td>
+</tr>
+<tr>
+<td class="tdl">Ангстреми (Å)</td>
+<td class="tdl"><kbd>'Angstrom'</kbd>, <kbd>'angstrom'</kbd>, <kbd>'A'</kbd>, <kbd>'a'</kbd></td>
+</tr>
+<tr>
+<td class="tdl">Бори (атомні одиниці довжини)</td>
+<td class="tdl"><kbd>'Bohr'</kbd>, <kbd>'bohr'</kbd>, <kbd>'B'</kbd>, <kbd>'b'</kbd>, <kbd>'AU'</kbd>, <kbd>'au'</kbd></td>
+</tr>
+</table>
+</div>
+</div>
+<p>
+Якщо передано невідоме значення параметра, <kbd>PySCF</kbd> генерує помилку типу <span class="inlinecode"><kbd>ValueError: Unknown unit <...></kbd></span>.
+</p>
+<!--
+...... paragraph Спін. ......
+-->
+<p>
+<span class="paragraph" id="autosec-69">Спін.</span>
+<a id="main-html-autopage-69"></a>
+Параметр <kbd>spin</kbd> визначає \(2S = N_\alpha - N_\beta \), де \(N_\alpha \) та \(N_\beta \) — кількість альфа та бета електронів:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">7 рядків</span></div>
+<pre class="code"><code><span class="tk-c1"># Атом H (1 неспарений електрон): S=1/2, 2S=1</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'H 0 0 0'</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">1</span><span class="tk-p">)</span>
+<span class="tk-c1"># Атом He (всі спарені): S=0, 2S=0</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'He 0 0 0'</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">0</span><span class="tk-p">)</span>
+<span class="tk-c1"># Атом O у триплетному стані: S=1, 2S=2</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'O 0 0 0'</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">2</span><span class="tk-p">)</span></code></pre>
+</div>
+<!--
+...... paragraph Симетрія. ......
+-->
+<p>
+<span class="paragraph" id="autosec-70">Симетрія.</span>
+<a id="main-html-autopage-70"></a>
+За замовчуванням <kbd>PySCF</kbd> використовує повну точкову симетрію системи:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">6 рядків</span></div>
+<pre class="code"><code><span class="tk-c1"># Автоматичне визначення симетрії</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'Ne 0 0 0'</span><span class="tk-p">,</span> <span class="tk-n">symmetry</span><span class="tk-o">=</span><span class="tk-kc">True</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Точкова група: </span><span class="tk-si">{</span><span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">groupname</span><span class="tk-si">}</span><span class="tk-s1">'</span><span class="tk-p">)</span>
+<span class="tk-c1"># Вимкнення симетрії</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'Ne 0 0 0'</span><span class="tk-p">,</span> <span class="tk-n">symmetry</span><span class="tk-o">=</span><span class="tk-kc">False</span><span class="tk-p">)</span></code></pre>
+</div>
+<!--
+...... section Документація та ресурси ......
+-->
+<h4 id="autosec-71"><span class="sectionnumber">&#xA7;&#x202F;1.8&#x2003;</span>Документація та ресурси</h4>
+<a id="main-html-autopage-71"></a>
+<!--
+...... subsection Офіційна документація ......
+-->
+<h5 id="autosec-72"><span class="sectionnumber">1.8.1&#x2003;</span>Офіційна документація</h5>
+<a id="main-html-autopage-72"></a>
+<div class="center">
+<table>
+<tr style="display:none"><th>.</th></tr>
+<tr class="hline">
+<td colspan="1" class="tdc" style="background:#F9F9F9"><b>Ресурс</b></td>
+<td colspan="1" class="tdc" style="background:#F9F9F9"><b>URL</b></td>
+</tr>
+<tr class="hline">
+<td class="tdl">Головний сайт</td>
+<td class="tdp tdleft">
+<p>
+<a href="https://pyscf.org" target="_blank" >https://pyscf.org</a>
+</p>
+</td>
+</tr>
+<tr>
+<td class="tdl" style="background:#F9F9F9">GitHub репозиторій</td>
+<td class="tdp tdleft" style="background:#F9F9F9">
+<p>
+<a href="https://github.com/pyscf/pyscf" target="_blank" >https://github.com/pyscf/pyscf</a>
+</p>
+</td>
+</tr>
+<tr>
+<td class="tdl">Документація API</td>
+<td class="tdp tdleft">
+<p>
+<a href="https://pyscf.org/pyscf_api_docs/pyscf.html" target="_blank" >https://pyscf.org/pyscf_api_docs/pyscf.html</a>
+</p>
+</td>
+</tr>
+<tr>
+<td class="tdl" style="background:#F9F9F9">Приклади коду</td>
+<td class="tdp tdleft" style="background:#F9F9F9">
+<p>
+<a href="https://github.com/pyscf/pyscf/tree/master/examples" target="_blank" >https://github.com/pyscf/pyscf/tree/master/examples</a>
+</p>
+</td>
+</tr>
+<tr class="hline" aria-hidden="true">
+<td class="tdl"></td>
+<td class="tdp tdleft">
+</td>
+</tr>
+</table>
+</div>
+<p>
+Окремо варто звернути увагу на велику колекцію <em>прикладів коду</em>, згадану в таблиці вище. Вона є одним із найцінніших навчальних ресурсів у екосистемі <kbd>PySCF</kbd>, оскільки демонструє практичне застосування майже всіх модулів пакета.
+</p>
+<!--
+...... paragraph Структура прикладів на GitHub. ......
+-->
+<p>
+<span class="paragraph" id="autosec-75">Структура прикладів на GitHub.</span>
+<a id="main-html-autopage-75"></a>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <a href="https://github.com/pyscf/pyscf/tree/master/examples/scf/" target="_blank" ><kbd>scf</kbd></a>— базові приклади методів Хартрі—Фока (<kbd>RHF</kbd>, <kbd>UHF</kbd>,
+<kbd>ROHF</kbd>);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <a href="https://github.com/pyscf/pyscf/tree/master/examples/dft" target="_blank" ><kbd>dft</kbd></a> — демонстрації <kbd>DFT</kbd> і гібридних функціоналів;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <a href="https://github.com/pyscf/pyscf/tree/master/examples/mp" target="_blank" ><kbd>mp</kbd></a>, <a href="https://github.com/pyscf/pyscf/tree/master/examples/cc"
+target="_blank" ><kbd>cc</kbd></a>, <a href="https://github.com/pyscf/pyscf/tree/master/examples/ci" target="_blank" ><kbd>ci</kbd></a> — методи пост-Хартрі-Фока;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <a href="https://github.com/pyscf/pyscf/tree/master/examples/mcscf" target="_blank" ><kbd>mcscf</kbd></a> — розрахунки з активним простором (<kbd>CASSCF</kbd>, <kbd>NEVPT2</kbd>);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <a href="https://github.com/pyscf/pyscf/tree/master/examples/pbc" target="_blank" ><kbd>pbc</kbd></a>— періодичні системи (кристали, твердий стан);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <a href="https://github.com/pyscf/pyscf/tree/master/examples/geomopt" target="_blank" ><kbd>geomopt</kbd></a> — оптимізація геометрії та сканування потенціалів;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <a href="https://github.com/pyscf/pyscf/tree/master/examples/ao2mo" target="_blank" ><kbd>ao2mo</kbd></a> — приклади трансформацій інтегралів та роботи з орбіталями.
+</p>
+</li>
+</ul>
+<p>
+Кожен приклад є самодостатнім Python-скриптом, який можна без змін запускати після встановлення <kbd>PySCF</kbd>. Це робить репозиторій чудовим навчальним ресурсом як для студентів, так і для викладачів, а також зручним стартовим майданчиком для
+розробки власних розрахункових сценаріїв.
+</p>
+<!--
+...... section Резюме ......
+-->
+<h4 id="autosec-76">Резюме</h4>
+<a id="main-html-autopage-76"></a>
+<p>
+У цьому розділі ми познайомились з <kbd>PySCF</kbd> — потужним інструментом для квантово-хімічних розрахунків. Основні моменти:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>PySCF</kbd> є сучасним, відкритим та гнучким програмним пакетом.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Встановлення здійснюється просто через <kbd>pip</kbd> або <kbd>conda</kbd>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Базова структура програми включає три етапи: створення системи, вибір методу, виконання розрахунку
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>PySCF</kbd> використовує атомну систему одиниць.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Доступна велика кількість документації та навчальних матеріалів.
+</p>
+</li>
+</ul>
+<p>
+У наступному розділі ми детально розглянемо базові об’єкти <kbd>PySCF</kbd> та навчимось налаштовувати параметри розрахунків для атомних систем.
+</p>
+<!--
+...... section Контрольні запитання та завдання ......
+-->
+<h4 id="autosec-77">Контрольні запитання та завдання</h4>
+<a id="main-html-autopage-77"></a>
+<!--
+...... subsection Контрольні запитання ......
+-->
+<h5 id="autosec-78">Контрольні запитання</h5>
+<a id="main-html-autopage-78"></a>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> Які основні задачі розв’язує квантова хімія і чому для цього потрібні обчислювальні методи?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> У чому полягає ідея використання програмних пакетів для квантово-хімічних розрахунків?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> Що таке <kbd>PySCF</kbd> і які його ключові переваги як навчального та дослідницького інструменту?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">4.</span> Які типи методів реалізовано в <kbd>PySCF</kbd>? Як вони співвідносяться між собою?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">5.</span> Що означає, що <kbd>PySCF</kbd> є «модульною платформою»? Які наслідки це має для користувача?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">6.</span> Чому важливо, щоб користувач розумів фізичний зміст кожного етапу розрахунку, навіть коли його виконує програма?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">7.</span> Яке значення має відкритий вихідний код <kbd>PySCF</kbd> для науки й освіти?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">8.</span> Які можливості <kbd>PySCF</kbd> роблять його придатним як для навчання, так і для наукових досліджень?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">9.</span> Як організовано роботу з <kbd>PySCF</kbd> на рівні сценарію Python?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">10.</span> Яке місце <kbd>PySCF</kbd> посідає серед інших квантово-хімічних пакетів (наприклад, <kbd>Gaussian</kbd>, <kbd>ORCA</kbd>, <kbd>NWChem</kbd>)?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">11.</span> Які переваги дає функціональний стиль програмування в <kbd>PySCF</kbd>?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">12.</span> Як реалізовано паралельні обчислення в <kbd>PySCF</kbd> і чому це зручно?
+</p>
+</li>
+</ul>
+<!--
+...... subsection Практичні завдання ......
+-->
+<h5 id="autosec-79">Практичні завдання</h5>
+<a id="main-html-autopage-79"></a>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> Ознайомтеся зі структурою офіційного сайту <kbd>PySCF</kbd> та перегляньте приклади розрахунків у документації.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> Встановіть <kbd>PySCF</kbd> і виконайте приклад запуску, поданий у розділі.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> Напишіть найпростішу програму Python, яка імпортує модуль <span class="inlinecode"><kbd>pyscf</kbd></span> і виводить його версію.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">4.</span> Знайдіть у каталозі прикладів <kbd>PySCF</kbd> розрахунок для молекули <span
+id="lateximage-main-html-3"
+class="lateximagesource"
+><!--
+H2
+--><img
+src="main-html-images/B210D6A401BAC692FAB8840283B0CE59.svg"
+alt="\ce{H2}"
+style=""
+class="lateximage"
+></span>. Запустіть його та порівняйте отриману енергію з наведеною в підручнику.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">5.</span> Ознайомтеся з вихідним кодом одного з прикладів (<span class="codebutton"><a href="https://github.com/pyscf/pyscf/blob/master/examples/scf/00-simple_hf.py" target="_blank"
+><kbd>00-simple_hf.py</kbd></a></span>) і прокоментуйте, які частини коду відповідають за створення молекули, базису та запуск розрахунку.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">6.</span> Складіть короткий список модулів <kbd>PySCF</kbd>, які ви очікуєте опанувати у наступних розділах, і поясніть, для чого вони потрібні.
+</p>
+</li>
+</ul>
+</section>
+</main>
+<nav class="botnavigation"><a href="main-html.html" class="linkhome" >
+Головна</a></nav>
+</div><!-- grid -->
+<script src="assets/book.js" defer></script>
+</body>
+</html>

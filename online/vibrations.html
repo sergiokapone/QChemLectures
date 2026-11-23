@@ -1,0 +1,4425 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="generator" content="LaTeX Lwarp package" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Квантово-механічні методи обчислення — Коливальні властивості молекул</title>
+<link rel="stylesheet" type="text/css" href="assets/conspect.css" />
+<script>
+// Lwarp MathJax emulation code
+//
+// Based on code by Davide P. Cervone.
+// Equation numbering: https://github.com/mathjax/MathJax/issues/2427
+// Starred and ifnextchar macros: https://github.com/mathjax/MathJax/issues/2428
+// \left, \right delimiters: https://github.com/mathjax/MathJax/issues/2535
+//
+// Modified by Brian Dunn to adjust equation numbering and add subequations.
+//
+// LaTeX can use \seteqnumber{subequations?}{section}{number} before each equation.
+// subequations? is 0 usually, 1 if inside subequations.
+// section is a string printed as-is, or empty.
+// number is auto-incremented by MathJax between equations.
+//
+MathJax = {
+subequations: "0",
+section: "",
+loader: {
+load: ['[tex]/tagformat', '[tex]/textmacros'],
+},
+startup: {
+ready() {
+// These would be replaced by import commands if you wanted to make
+// a proper extension.
+const Configuration = MathJax._.input.tex.Configuration.Configuration;
+const CommandMap = MathJax._.input.tex.SymbolMap.CommandMap;
+const Macro = MathJax._.input.tex.Symbol.Macro;
+const TexError = MathJax._.input.tex.TexError.default;
+const ParseUtil = MathJax._.input.tex.ParseUtil.default;
+const expandable = MathJax._.util.Options.expandable;
+// Insert the replacement string into the TeX string, and check
+// that there haven't been too many maxro substitutions (prevents
+// infinite loops).
+const useArgument = (parser, text) => {
+parser.string = ParseUtil.addArgs(parser, text, parser.string.slice(parser.i));
+parser.i = 0;
+if (++parser.macroCount > parser.configuration.options.maxMacros) {
+throw new TexError('MaxMacroSub1',
+'MathJax maximum macro substitution count exceeded; ' +
+'is there a recursive macro call?');
+}
+}
+// Create the command map for:
+// \ifstar, \ifnextchar, \ifblank, \ifstrequal, \gsub, \seteqnumber
+new CommandMap('Lwarp-macros', {
+ifstar: 'IfstarFunction',
+ifnextchar: 'IfnextcharFunction',
+ifblank: 'IfblankFunction',
+ifstrequal: 'IfstrequalFunction',
+gsubstitute: 'GsubstituteFunction',
+seteqnumber: 'SeteqnumberFunction'
+}, {
+// This function implements an ifstar macro.
+IfstarFunction(parser, name) {
+const resultstar = parser.GetArgument(name);
+const resultnostar = parser.GetArgument(name);
+const star = parser.GetStar(); // true if there is a *
+useArgument(parser, star ? resultstar : resultnostar);
+},
+// This function implements an ifnextchar macro.
+IfnextcharFunction(parser, name) {
+let whichchar = parser.GetArgument(name);
+if (whichchar.match(/^(?:0x[0-9A-F]+|[0-9]+)$/i)) {
+// $ syntax highlighting
+whichchar = String.fromCodePoint(parseInt(whichchar));
+}
+const resultnextchar = parser.GetArgument(name);
+const resultnotnextchar = parser.GetArgument(name);
+const gotchar = (parser.GetNext() === whichchar);
+useArgument(parser, gotchar ? resultnextchar : resultnotnextchar);
+},
+// This function implements an ifblank macro.
+IfblankFunction(parser, name) {
+const blankarg = parser.GetArgument(name);
+const resultblank = parser.GetArgument(name);
+const resultnotblank = parser.GetArgument(name);
+const isblank = (blankarg.trim() == "");
+useArgument(parser, isblank ? resultblank : resultnotblank);
+},
+// This function implements an ifstrequal macro.
+IfstrequalFunction(parser, name) {
+const strequalfirst = parser.GetArgument(name);
+const strequalsecond = parser.GetArgument(name);
+const resultequal = parser.GetArgument(name);
+const resultnotequal = parser.GetArgument(name);
+const isequal = (strequalfirst == strequalsecond);
+useArgument(parser, isequal ? resultequal : resultnotequal);
+},
+// This function implements a gsub macro.
+GsubstituteFunction(parser, name) {
+const gsubfirst = parser.GetArgument(name);
+const gsubsecond = parser.GetArgument(name);
+const gsubthird = parser.GetArgument(name);
+let gsubresult=gsubfirst.replace(gsubsecond, gsubthird);
+useArgument(parser, gsubresult);
+},
+// This function modifies the equation numbers.
+SeteqnumberFunction(parser, name) {
+// Get the macro parameters
+const star = parser.GetStar(); // true if there is a *
+const optBrackets = parser.GetBrackets(name); // contents of optional brackets
+const newsubequations = parser.GetArgument(name); // the subequations argument
+const neweqsection = parser.GetArgument(name); // the eq section argument
+const neweqnumber = parser.GetArgument(name); // the eq number argument
+MathJax.config.subequations=newsubequations ; // a string with boolean meaning
+MathJax.config.section=neweqsection ; // a string with numeric meaning
+parser.tags.counter = parser.tags.allCounter = neweqnumber ;
+}
+});
+// Create the Lwarp-macros package
+Configuration.create('Lwarp-macros', {
+handler: {macro: ['Lwarp-macros']}
+});
+MathJax.startup.defaultReady();
+// For forward references:
+MathJax.startup.input[0].preFilters.add(({math}) => {
+if (math.inputData.recompile){
+MathJax.config.subequations = math.inputData.recompile.subequations;
+MathJax.config.section = math.inputData.recompile.section;
+}
+});
+MathJax.startup.input[0].postFilters.add(({math}) => {
+if (math.inputData.recompile){
+math.inputData.recompile.subequations = MathJax.config.subequations;
+math.inputData.recompile.section = MathJax.config.section;
+}
+});
+// For \left, \right with unicode-math:
+const {DelimiterMap} = MathJax._.input.tex.SymbolMap;
+const {Symbol} = MathJax._.input.tex.Symbol;
+const {MapHandler} = MathJax._.input.tex.MapHandler;
+const delimiter = MapHandler.getMap('delimiter');
+delimiter.add('\\lBrack', new Symbol('\\lBrack', '\u27E6'));
+delimiter.add('\\rBrack', new Symbol('\\rBrack', '\u27E7'));
+delimiter.add('\\lAngle', new Symbol('\\lAngle', '\u27EA'));
+delimiter.add('\\rAngle', new Symbol('\\rAngle', '\u27EB'));
+delimiter.add('\\lbrbrak', new Symbol('\\lbrbrak', '\u2772'));
+delimiter.add('\\rbrbrak', new Symbol('\\rbrbrak', '\u2773'));
+delimiter.add('\\lbag', new Symbol('\\lbag', '\u27C5'));
+delimiter.add('\\rbag', new Symbol('\\rbag', '\u27C6'));
+delimiter.add('\\llparenthesis', new Symbol('\\llparenthesis', '\u2987'));
+delimiter.add('\\rrparenthesis', new Symbol('\\rrparenthesis', '\u2988'));
+delimiter.add('\\llangle', new Symbol('\\llangle', '\u2989'));
+delimiter.add('\\rrangle', new Symbol('\\rrangle', '\u298A'));
+delimiter.add('\\Lbrbrak', new Symbol('\\Lbrbrak', '\u27EC'));
+delimiter.add('\\Rbrbrak', new Symbol('\\Rbrbrak', '\u27ED'));
+delimiter.add('\\lBrace', new Symbol('\\lBrace', '\u2983'));
+delimiter.add('\\rBrace', new Symbol('\\rBrace', '\u2984'));
+delimiter.add('\\lParen', new Symbol('\\lParen', '\u2985'));
+delimiter.add('\\rParen', new Symbol('\\rParen', '\u2986'));
+delimiter.add('\\lbrackubar', new Symbol('\\lbrackubar', '\u298B'));
+delimiter.add('\\rbrackubar', new Symbol('\\rbrackubar', '\u298C'));
+delimiter.add('\\lbrackultick', new Symbol('\\lbrackultick', '\u298D'));
+delimiter.add('\\rbracklrtick', new Symbol('\\rbracklrtick', '\u298E'));
+delimiter.add('\\lbracklltick', new Symbol('\\lbracklltick', '\u298F'));
+delimiter.add('\\rbrackurtick', new Symbol('\\rbrackurtick', '\u2990'));
+delimiter.add('\\langledot', new Symbol('\\langledot', '\u2991'));
+delimiter.add('\\rangledot', new Symbol('\\rangledot', '\u2992'));
+delimiter.add('\\lparenless', new Symbol('\\lparenless', '\u2993'));
+delimiter.add('\\rparengtr', new Symbol('\\rparengtr', '\u2994'));
+delimiter.add('\\Lparengtr', new Symbol('\\Lparengtr', '\u2995'));
+delimiter.add('\\Rparenless', new Symbol('\\Rparenless', '\u2996'));
+delimiter.add('\\lblkbrbrak', new Symbol('\\lblkbrbrak', '\u2997'));
+delimiter.add('\\rblkbrbrak', new Symbol('\\rblkbrbrak', '\u2998'));
+delimiter.add('\\lvzigzag', new Symbol('\\lvzigzag', '\u29D8'));
+delimiter.add('\\rvzigzag', new Symbol('\\rvzigzag', '\u29D9'));
+delimiter.add('\\Lvzigzag', new Symbol('\\Lvzigzag', '\u29DA'));
+delimiter.add('\\Rvzigzag', new Symbol('\\Rvzigzag', '\u29DB'));
+delimiter.add('\\lcurvyangle', new Symbol('\\lcurvyangle', '\u29FC'));
+delimiter.add('\\rcurvyangle', new Symbol('\\rcurvyangle', '\u29FD'));
+delimiter.add('\\Vvert', new Symbol('\\Vvert', '\u2980'));
+} // ready
+}, // startup
+tex: {
+packages: {'[+]': ['tagformat', 'Lwarp-macros', 'textmacros']},
+tags: "ams",
+tagformat: {
+number: function (n) {
+if(MathJax.config.subequations==0)
+return(MathJax.config.section + n);
+else
+return(MathJax.config.section + String.fromCharCode(96+n));
+},
+},
+}
+}
+</script>
+<script
+id="MathJax-script"
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
+></script>
+</head>
+<body>
+<a id="main-html-autopage-849"></a>
+<div class="pagegrid">
+<nav class="topnavigation"><a href="main-html.html" class="linkhome" >
+Головна</a></nav>
+<div class="sidetoccontainer">
+<nav class="sidetoc">
+<div class="sidetoctitle">
+<p>
+<span class="sidetocthetitle">Квантово-механічні методи обчислення</span>
+</p>
+<p class="sidetoc-meta"><a href="../PyscfBook/index.html">Про посібник</a><span aria-hidden="true">·</span><a href="../PyscfBook/pyscfBook.pdf">PDF</a></p>
+</div>
+<div class="sidetoccontents">
+<p>
+<a href="main-html.html" class="linkhome" >
+Головна</a>
+</p>
+<p>
+<a href="preface.html#autosec-7" class="tocchapter" >
+Передмова</a>
+</p>
+<p>
+<a href="preface.html#autosec-8" class="tocsection" >
+Актуальність квантово-механічних обчислень</a>
+</p>
+<p>
+<a href="preface.html#autosec-9" class="tocsection" >
+Передумови</a>
+</p>
+<p>
+<a href="preface.html#autosec-13" class="tocsection" >
+Організація навчальних матеріалів</a>
+</p>
+<p>
+<a href="preface.html#autosec-19" class="tocsection" >
+Як користуватися посібником</a>
+</p>
+<p>
+<a href="preface.html#autosec-20" class="tocsection" >
+Зворотний зв’язок</a>
+</p>
+<p>
+<a href="preface.html#autosec-21" class="tocsection" >
+Ліцензія та використання</a>
+</p>
+<p>
+<a href="welcome.html#autosec-25" class="tocpart" >
+<span class="sectionnumber">I</span><span class="toctitle">&#x2003;Вступ до PySCF: основи та перші кроки</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-26" class="tocchapter" >
+<span class="sectionnumber">1</span><span class="toctitle">&#x2003;Знайомство з PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-27" class="tocsection" >
+<span class="sectionnumber">1.1</span><span class="toctitle">&#x2003;PySCF: концепція та філософія</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-28" class="tocsection" >
+<span class="sectionnumber">1.2</span><span class="toctitle">&#x2003;Основні можливості PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-29" class="tocsection" >
+<span class="sectionnumber">1.3</span><span class="toctitle">&#x2003;Архітектура і дизайн PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-36" class="tocsection" >
+<span class="sectionnumber">1.4</span><span class="toctitle">&#x2003;Порівняння з іншими програмами</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-40" class="tocsection" >
+<span class="sectionnumber">1.5</span><span class="toctitle">&#x2003;Встановлення PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-58" class="tocsection" >
+<span class="sectionnumber">1.6</span><span class="toctitle">&#x2003;Базова структура програми на PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-62" class="tocsection" >
+<span class="sectionnumber">1.7</span><span class="toctitle">&#x2003;Система одиниць та конвенції</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-71" class="tocsection" >
+<span class="sectionnumber">1.8</span><span class="toctitle">&#x2003;Документація та ресурси</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-76" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="welcome.html#autosec-77" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="mole.html#autosec-84" class="tocchapter" >
+<span class="sectionnumber">2</span><span class="toctitle">&#x2003;Базові об’єкти <kbd>PySCF</kbd></span></a>
+</p>
+<p>
+<a href="mole.html#autosec-85" class="tocsection" >
+<span class="sectionnumber">2.1</span><span class="toctitle">&#x2003;Молекулярний об’єкт (Mole)</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-109" class="tocsection" >
+<span class="sectionnumber">2.2</span><span class="toctitle">&#x2003;Періодичний об’єкт (Cell)</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-117" class="tocsection" >
+<span class="sectionnumber">2.3</span><span class="toctitle">&#x2003;Базисні набори в <kbd>PySCF</kbd></span></a>
+</p>
+<p>
+<a href="mole.html#autosec-128" class="tocsection" >
+<span class="sectionnumber">2.4</span><span class="toctitle">&#x2003;Симетрія в атомних розрахунках</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-134" class="tocsection" >
+<span class="sectionnumber">2.5</span><span class="toctitle">&#x2003;Спін та мультиплетність</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-138" class="tocsection" >
+<span class="sectionnumber">2.6</span><span class="toctitle">&#x2003;Типова схема розрахунків у <kbd>PySCF</kbd></span></a>
+</p>
+<p>
+<a href="mole.html#autosec-139" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="mole.html#autosec-140" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-147" class="tocpart" >
+<span class="sectionnumber">II</span><span class="toctitle">&#x2003;Ab Initio методи: від Хартрі-Фока до пост-HF і DFT</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-148" class="tocchapter" >
+<span class="sectionnumber">3</span><span class="toctitle">&#x2003;Метод Хартрі-Фока</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-149" class="tocsection" >
+<span class="sectionnumber">3.1</span><span class="toctitle">&#x2003;Теоретичні основи методу Хартрі–Фока</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-155" class="tocsection" >
+<span class="sectionnumber">3.2</span><span class="toctitle">&#x2003;SFC-процедура</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-160" class="tocsection" >
+<span class="sectionnumber">3.3</span><span class="toctitle">&#x2003;Які бувають базиси</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-169" class="tocsection" >
+<span class="sectionnumber">3.4</span><span class="toctitle">&#x2003;Варіанти методу Хартрі–Фока</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-195" class="tocsection" >
+<span class="sectionnumber">3.5</span><span class="toctitle">&#x2003;Метод UHF та спінове забруднення</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-205" class="tocsection" >
+<span class="sectionnumber">3.6</span><span class="toctitle">&#x2003;Прості атомні системи</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-212" class="tocsection" >
+<span class="sectionnumber">3.7</span><span class="toctitle">&#x2003;Атоми другого періоду (Li–Ne)</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-248" class="tocsection" >
+<span class="sectionnumber">3.8</span><span class="toctitle">&#x2003;Енергія, орбіталі та електронна густина</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-278" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-279" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="diatomic.html#autosec-314" class="tocchapter" >
+<span class="sectionnumber">4</span><span class="toctitle">&#x2003;Метод Хартрі–Фока для простих молекул</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-319" class="tocsection" >
+<span class="sectionnumber">4.1</span><span class="toctitle">&#x2003;Наближення Борна–Опенгеймера</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-320" class="tocsection" >
+<span class="sectionnumber">4.2</span><span class="toctitle">&#x2003;Орбіталі і електронні стани молекул</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-332" class="tocsection" >
+<span class="sectionnumber">4.3</span><span class="toctitle">&#x2003;Модельні молекули: \(\mathrm {H_{2}^{+}}\) та \(\mathrm {H_{2}}\)</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-345" class="tocsection" >
+<span class="sectionnumber">4.4</span><span class="toctitle">&#x2003;Іон молекули водню \(\mathrm {H_{2}^{+}}\)</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-382" class="tocsection" >
+<span class="sectionnumber">4.5</span><span class="toctitle">&#x2003;Крива потенціальної енергії</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-402" class="tocsection" >
+<span class="sectionnumber">4.6</span><span class="toctitle">&#x2003;Молекула водню \(\mathrm {H_{2}}\)</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-435" class="tocsection" >
+<span class="sectionnumber">4.7</span><span class="toctitle">&#x2003;Дипольний момент молекул</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-463" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="diatomic.html#autosec-464" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="post-hf.html#autosec-519" class="tocchapter" >
+<span class="sectionnumber">5</span><span class="toctitle">&#x2003;Пост-Хартрі-Фоківські методи</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-520" class="tocsection" >
+<span class="sectionnumber">5.1</span><span class="toctitle">&#x2003;Вступ до електронної кореляції</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-531" class="tocsection" >
+<span class="sectionnumber">5.2</span><span class="toctitle">&#x2003;Теорія збурень Møller–Plesset (MP2)</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-548" class="tocsection" >
+<span class="sectionnumber">5.3</span><span class="toctitle">&#x2003;Основи методу конфігураційної взаємодії</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-565" class="tocsection" >
+<span class="sectionnumber">5.4</span><span class="toctitle">&#x2003;Метод зв’язаних кластерів</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-586" class="tocsection" >
+<span class="sectionnumber">5.5</span><span class="toctitle">&#x2003;Метод повного активного простору конфігурацій</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-608" class="tocsection" >
+<span class="sectionnumber">5.6</span><span class="toctitle">&#x2003;Функціонал енергії та натуральні орбіталі</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-616" class="tocsection" >
+<span class="sectionnumber">5.7</span><span class="toctitle">&#x2003;Межі наближень і рівняння Шредінґера</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-623" class="tocsection" >
+<span class="sectionnumber">5.8</span><span class="toctitle">&#x2003;Корисні посилання</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-624" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="post-hf.html#autosec-626" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="dft.html#autosec-663" class="tocchapter" >
+<span class="sectionnumber">6</span><span class="toctitle">&#x2003;Теорія функціоналу густини (DFT)</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-664" class="tocsection" >
+<span class="sectionnumber">6.1</span><span class="toctitle">&#x2003;Основи теорії функціоналу густини</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-675" class="tocsection" >
+<span class="sectionnumber">6.2</span><span class="toctitle">&#x2003;Базова структура DFT розрахунку</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-683" class="tocsection" >
+<span class="sectionnumber">6.3</span><span class="toctitle">&#x2003;Функціонали обміну-кореляції</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-714" class="tocsection" >
+<span class="sectionnumber">6.4</span><span class="toctitle">&#x2003;Практичні рекомендації</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-716" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="dft.html#autosec-717" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="response.html#autosec-764" class="tocpart" >
+<span class="sectionnumber">III</span><span class="toctitle">&#x2003;Властивості молекул</span></a>
+</p>
+<p>
+<a href="response.html#autosec-765" class="tocchapter" >
+<span class="sectionnumber">7</span><span class="toctitle">&#x2003;Молекулярні властивості як похідні енергії</span></a>
+</p>
+<p>
+<a href="response.html#autosec-766" class="tocsection" >
+<span class="sectionnumber">7.1</span><span class="toctitle">&#x2003;Молекулярні властивості як похідні енергії</span></a>
+</p>
+<p>
+<a href="response.html#autosec-773" class="tocsection" >
+<span class="sectionnumber">7.2</span><span class="toctitle">&#x2003;Чисельні та аналітичні похідні</span></a>
+</p>
+<p>
+<a href="response.html#autosec-777" class="tocsection" >
+<span class="sectionnumber">7.3</span><span class="toctitle">&#x2003;Варіаційні методи та залежність енергії від параметрів</span></a>
+</p>
+<p>
+<a href="response.html#autosec-778" class="tocsection" >
+<span class="sectionnumber">7.4</span><span class="toctitle">&#x2003;Аналітичні похідні в методі Хартрі-Фока</span></a>
+</p>
+<p>
+<a href="response.html#autosec-800" class="tocsection" >
+<span class="sectionnumber">7.5</span><span class="toctitle">&#x2003;Поляризовність у методі HF</span></a>
+</p>
+<p>
+<a href="response.html#autosec-812" class="tocsection" >
+<span class="sectionnumber">7.6</span><span class="toctitle">&#x2003;Ядерний гесіан у методі HF</span></a>
+</p>
+<p>
+<a href="response.html#autosec-816" class="tocsection" >
+<span class="sectionnumber">7.7</span><span class="toctitle">&#x2003;Оптимізація геометрії</span></a>
+</p>
+<p>
+<a href="response.html#autosec-824" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="vibrations.html#autosec-851" class="tocchapter" >
+<span class="sectionnumber">8</span><span class="toctitle">&#x2003;Коливальні властивості молекул</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-854" class="tocsection" >
+<span class="sectionnumber">8.1</span><span class="toctitle">&#x2003;Гессіан та нормальні моди</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-876" class="tocsection" >
+<span class="sectionnumber">8.2</span><span class="toctitle">&#x2003;Інфрачервоні (ІЧ) спектри</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-907" class="tocsection" >
+<span class="sectionnumber">8.3</span><span class="toctitle">&#x2003;Термохімія та нульова енергія</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-919" class="tocsection" >
+<span class="sectionnumber">8.4</span><span class="toctitle">&#x2003;Перехідні стани та уявні частоти</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-927" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="vibrations.html#autosec-928" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="excited-states.html#autosec-941" class="tocchapter" >
+<span class="sectionnumber">9</span><span class="toctitle">&#x2003;Збуджені стани та UV/VIS спектроскопія</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-942" class="tocsection" >
+<span class="sectionnumber">9.1</span><span class="toctitle">&#x2003;Спектроскопічні властивості: перехідні дипольні моменти і сили осцилятора</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-948" class="tocsection" >
+<span class="sectionnumber">9.2</span><span class="toctitle">&#x2003;Збуджені стани в рамках методу Хартрі–Фока</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-954" class="tocsection" >
+<span class="sectionnumber">9.3</span><span class="toctitle">&#x2003;Часозалежна теорія функціонала густини (TD-DFT)</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-958" class="tocsection" >
+<span class="sectionnumber">9.4</span><span class="toctitle">&#x2003;Збуджені стани у методах конфігураційної взаємодії</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-959" class="tocsection" >
+<span class="sectionnumber">9.5</span><span class="toctitle">&#x2003;Метод рівнянь руху (EOM)</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-973" class="tocsection" >
+<span class="sectionnumber">9.6</span><span class="toctitle">&#x2003;Збуджені стани у CASSCF / NEVPT2</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-974" class="tocsection" >
+<span class="sectionnumber">9.7</span><span class="toctitle">&#x2003;Рекомендації з вибору методу</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-975" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="excited-states.html#autosec-976" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="appendices.html#autosec-991" class="tocchapter" >
+Додатки</a>
+</p>
+<p>
+<a href="appendices.html#autosec-992" class="tocsection" >
+<span class="sectionnumber">А</span><span class="toctitle">&#x2003;Список абревіатур</span></a>
+</p>
+<p>
+<a href="appendices.html#autosec-993" class="tocsection" >
+<span class="sectionnumber">Б</span><span class="toctitle">&#x2003;Молекулярно-орбітальне (МО) представлення</span></a>
+</p>
+<p>
+<a href="appendices.html#autosec-999" class="tocsection" >
+<span class="sectionnumber">В</span><span class="toctitle">&#x2003;Метод DIIS та прискорення збіжності SCF</span></a>
+</p>
+<p>
+<a href="appendices.html#autosec-1000" class="tocsection" >
+<span class="sectionnumber">Г</span><span class="toctitle">&#x2003;Проблеми збіжності SCF та їх усунення</span></a>
+</p>
+<p>
+<a href="bibliography.html#autosec-1020" class="tocchapter" >
+Література</a>
+</p>
+</div>
+</nav>
+</div>
+<main class="bodycontainer" data-pagefind-body data-pagefind-meta="title[data-title]" data-title="Коливальні властивості молекул">
+<section class="textbody">
+<h1 data-pagefind-ignore>Квантово-механічні методи обчислення</h1>
+<!--MathJax customizations:-->
+<div data-nosnippet
+style="display:none"
+>
+\(\newcommand{\footnotename}{footnote}\)
+\(\def \LWRfootnote {1}\)
+\(\newcommand {\footnote }[2][\LWRfootnote ]{{}^{\mathrm {#1}}}\)
+\(\newcommand {\footnotemark }[1][\LWRfootnote ]{{}^{\mathrm {#1}}}\)
+\(\let \LWRorighspace \hspace \)
+\(\renewcommand {\hspace }{\ifstar \LWRorighspace \LWRorighspace }\)
+\(\newcommand {\TextOrMath }[2]{#2}\)
+\(\newcommand {\mathnormal }[1]{{#1}}\)
+\(\newcommand \ensuremath [1]{#1}\)
+\(\newcommand {\LWRframebox }[2][]{\fbox {#2}} \newcommand {\framebox }[1][]{\LWRframebox } \)
+\(\newcommand {\setlength }[2]{}\)
+\(\newcommand {\addtolength }[2]{}\)
+\(\newcommand {\setcounter }[2]{}\)
+\(\newcommand {\addtocounter }[2]{}\)
+\(\newcommand {\arabic }[1]{}\)
+\(\newcommand {\number }[1]{}\)
+\(\newcommand {\noalign }[1]{\text {#1}\notag \\}\)
+\(\newcommand {\cline }[1]{}\)
+\(\newcommand {\directlua }[1]{\text {(directlua)}}\)
+\(\newcommand {\luatexdirectlua }[1]{\text {(directlua)}}\)
+\(\newcommand {\protect }{}\)
+\(\def \LWRabsorbnumber #1 {}\)
+\(\def \LWRabsorbquotenumber &quot;#1 {}\)
+\(\newcommand {\LWRabsorboption }[1][]{}\)
+\(\newcommand {\LWRabsorbtwooptions }[1][]{\LWRabsorboption }\)
+\(\def \mathchar {\ifnextchar &quot;\LWRabsorbquotenumber \LWRabsorbnumber }\)
+\(\def \mathcode #1={\mathchar }\)
+\(\let \delcode \mathcode \)
+\(\let \delimiter \mathchar \)
+\(\def \oe {\unicode {x0153}}\)
+\(\def \OE {\unicode {x0152}}\)
+\(\def \ae {\unicode {x00E6}}\)
+\(\def \AE {\unicode {x00C6}}\)
+\(\def \aa {\unicode {x00E5}}\)
+\(\def \AA {\unicode {x00C5}}\)
+\(\def \o {\unicode {x00F8}}\)
+\(\def \O {\unicode {x00D8}}\)
+\(\def \l {\unicode {x0142}}\)
+\(\def \L {\unicode {x0141}}\)
+\(\def \ss {\unicode {x00DF}}\)
+\(\def \SS {\unicode {x1E9E}}\)
+\(\def \dag {\unicode {x2020}}\)
+\(\def \ddag {\unicode {x2021}}\)
+\(\def \P {\unicode {x00B6}}\)
+\(\def \copyright {\unicode {x00A9}}\)
+\(\def \pounds {\unicode {x00A3}}\)
+\(\let \LWRref \ref \)
+\(\renewcommand {\ref }{\ifstar \LWRref \LWRref }\)
+\( \newcommand {\multicolumn }[3]{#3}\)
+\(\require {textcomp}\)
+\(\require {colortbl}\)
+\(\let \LWRorigcolumncolor \columncolor \)
+\(\renewcommand {\columncolor }[2][named]{\LWRorigcolumncolor [#1]{#2}\LWRabsorbtwooptions }\)
+\(\let \LWRorigrowcolor \rowcolor \)
+\(\renewcommand {\rowcolor }[2][named]{\LWRorigrowcolor [#1]{#2}\LWRabsorbtwooptions }\)
+\(\let \LWRorigcellcolor \cellcolor \)
+\(\renewcommand {\cellcolor }[2][named]{\LWRorigcellcolor [#1]{#2}\LWRabsorbtwooptions }\)
+\(\newcommand {\intertext }[1]{\text {#1}\notag \\}\)
+\(\let \Hat \hat \)
+\(\let \Check \check \)
+\(\let \Tilde \tilde \)
+\(\let \Acute \acute \)
+\(\let \Grave \grave \)
+\(\let \Dot \dot \)
+\(\let \Ddot \ddot \)
+\(\let \Breve \breve \)
+\(\let \Bar \bar \)
+\(\let \Vec \vec \)
+\(\let \symnormal \mathit \)
+\(\let \symliteral \mathrm \)
+\(\let \symbb \mathbb \)
+\(\let \symbbit \mathbb \)
+\(\let \symcal \mathcal \)
+\(\let \symscr \mathscr \)
+\(\let \symfrak \mathfrak \)
+\(\let \symsfup \mathsf \)
+\(\let \symsfit \mathit \)
+\(\let \symbfsf \mathbf \)
+\(\let \symbfup \mathbf \)
+\(\newcommand {\symbfit }[1]{\boldsymbol {#1}}\)
+\(\let \symbfcal \mathcal \)
+\(\let \symbfscr \mathscr \)
+\(\let \symbffrak \mathfrak \)
+\(\let \symbfsfup \mathbf \)
+\(\newcommand {\symbfsfit }[1]{\boldsymbol {#1}}\)
+\(\let \symup \mathrm \)
+\(\let \symbf \mathbf \)
+\(\let \symit \mathit \)
+\(\let \symtt \mathtt \)
+\(\let \symbffrac \mathbffrac \)
+\(\newcommand {\mathfence }[1]{\mathord {#1}}\)
+\(\newcommand {\mathover }[1]{#1}\)
+\(\newcommand {\mathunder }[1]{#1}\)
+\(\newcommand {\mathaccent }[1]{#1}\)
+\(\newcommand {\mathbotaccent }[1]{#1}\)
+\(\newcommand {\mathalpha }[1]{\mathord {#1}}\)
+\(\def\upAlpha{\unicode{x0391}}\)
+\(\def\upBeta{\unicode{x0392}}\)
+\(\def\upGamma{\unicode{x0393}}\)
+\(\def\upDigamma{\unicode{x03DC}}\)
+\(\def\upDelta{\unicode{x0394}}\)
+\(\def\upEpsilon{\unicode{x0395}}\)
+\(\def\upZeta{\unicode{x0396}}\)
+\(\def\upEta{\unicode{x0397}}\)
+\(\def\upTheta{\unicode{x0398}}\)
+\(\def\upVartheta{\unicode{x03F4}}\)
+\(\def\upIota{\unicode{x0399}}\)
+\(\def\upKappa{\unicode{x039A}}\)
+\(\def\upLambda{\unicode{x039B}}\)
+\(\def\upMu{\unicode{x039C}}\)
+\(\def\upNu{\unicode{x039D}}\)
+\(\def\upXi{\unicode{x039E}}\)
+\(\def\upOmicron{\unicode{x039F}}\)
+\(\def\upPi{\unicode{x03A0}}\)
+\(\def\upVarpi{\unicode{x03D6}}\)
+\(\def\upRho{\unicode{x03A1}}\)
+\(\def\upSigma{\unicode{x03A3}}\)
+\(\def\upTau{\unicode{x03A4}}\)
+\(\def\upUpsilon{\unicode{x03A5}}\)
+\(\def\upPhi{\unicode{x03A6}}\)
+\(\def\upChi{\unicode{x03A7}}\)
+\(\def\upPsi{\unicode{x03A8}}\)
+\(\def\upOmega{\unicode{x03A9}}\)
+\(\def\itAlpha{\unicode{x1D6E2}}\)
+\(\def\itBeta{\unicode{x1D6E3}}\)
+\(\def\itGamma{\unicode{x1D6E4}}\)
+\(\def\itDigamma{\mathit{\unicode{x03DC}}}\)
+\(\def\itDelta{\unicode{x1D6E5}}\)
+\(\def\itEpsilon{\unicode{x1D6E6}}\)
+\(\def\itZeta{\unicode{x1D6E7}}\)
+\(\def\itEta{\unicode{x1D6E8}}\)
+\(\def\itTheta{\unicode{x1D6E9}}\)
+\(\def\itVartheta{\unicode{x1D6F3}}\)
+\(\def\itIota{\unicode{x1D6EA}}\)
+\(\def\itKappa{\unicode{x1D6EB}}\)
+\(\def\itLambda{\unicode{x1D6EC}}\)
+\(\def\itMu{\unicode{x1D6ED}}\)
+\(\def\itNu{\unicode{x1D6EE}}\)
+\(\def\itXi{\unicode{x1D6EF}}\)
+\(\def\itOmicron{\unicode{x1D6F0}}\)
+\(\def\itPi{\unicode{x1D6F1}}\)
+\(\def\itRho{\unicode{x1D6F2}}\)
+\(\def\itSigma{\unicode{x1D6F4}}\)
+\(\def\itTau{\unicode{x1D6F5}}\)
+\(\def\itUpsilon{\unicode{x1D6F6}}\)
+\(\def\itPhi{\unicode{x1D6F7}}\)
+\(\def\itChi{\unicode{x1D6F8}}\)
+\(\def\itPsi{\unicode{x1D6F9}}\)
+\(\def\itOmega{\unicode{x1D6FA}}\)
+\(\def\upalpha{\unicode{x03B1}}\)
+\(\def\upbeta{\unicode{x03B2}}\)
+\(\def\upvarbeta{\unicode{x03D0}}\)
+\(\def\upgamma{\unicode{x03B3}}\)
+\(\def\updigamma{\unicode{x03DD}}\)
+\(\def\updelta{\unicode{x03B4}}\)
+\(\def\upepsilon{\unicode{x03F5}}\)
+\(\def\upvarepsilon{\unicode{x03B5}}\)
+\(\def\upzeta{\unicode{x03B6}}\)
+\(\def\upeta{\unicode{x03B7}}\)
+\(\def\uptheta{\unicode{x03B8}}\)
+\(\def\upvartheta{\unicode{x03D1}}\)
+\(\def\upiota{\unicode{x03B9}}\)
+\(\def\upkappa{\unicode{x03BA}}\)
+\(\def\upvarkappa{\unicode{x03F0}}\)
+\(\def\uplambda{\unicode{x03BB}}\)
+\(\def\upmu{\unicode{x03BC}}\)
+\(\def\upnu{\unicode{x03BD}}\)
+\(\def\upxi{\unicode{x03BE}}\)
+\(\def\upomicron{\unicode{x03BF}}\)
+\(\def\uppi{\unicode{x03C0}}\)
+\(\def\upvarpi{\unicode{x03D6}}\)
+\(\def\uprho{\unicode{x03C1}}\)
+\(\def\upvarrho{\unicode{x03F1}}\)
+\(\def\upsigma{\unicode{x03C3}}\)
+\(\def\upvarsigma{\unicode{x03C2}}\)
+\(\def\uptau{\unicode{x03C4}}\)
+\(\def\upupsilon{\unicode{x03C5}}\)
+\(\def\upphi{\unicode{x03D5}}\)
+\(\def\upvarphi{\unicode{x03C6}}\)
+\(\def\upchi{\unicode{x03C7}}\)
+\(\def\uppsi{\unicode{x03C8}}\)
+\(\def\upomega{\unicode{x03C9}}\)
+\(\def\italpha{\unicode{x1D6FC}}\)
+\(\def\itbeta{\unicode{x1D6FD}}\)
+\(\def\itvarbeta{\unicode{x03D0}}\)
+\(\def\itgamma{\unicode{x1D6FE}}\)
+\(\def\itdigamma{\mathit{\unicode{x03DD}}}\)
+\(\def\itdelta{\unicode{x1D6FF}}\)
+\(\def\itepsilon{\unicode{x1D716}}\)
+\(\def\itvarepsilon{\unicode{x1D700}}\)
+\(\def\itzeta{\unicode{x1D701}}\)
+\(\def\iteta{\unicode{x1D702}}\)
+\(\def\ittheta{\unicode{x1D703}}\)
+\(\def\itvartheta{\unicode{x1D717}}\)
+\(\def\itiota{\unicode{x1D704}}\)
+\(\def\itkappa{\unicode{x1D705}}\)
+\(\def\itvarkappa{\unicode{x1D718}}\)
+\(\def\itlambda{\unicode{x1D706}}\)
+\(\def\itmu{\unicode{x1D707}}\)
+\(\def\itnu{\unicode{x1D708}}\)
+\(\def\itxi{\unicode{x1D709}}\)
+\(\def\itomicron{\unicode{x1D70A}}\)
+\(\def\itpi{\unicode{x1D70B}}\)
+\(\def\itvarpi{\unicode{x1D71B}}\)
+\(\def\itrho{\unicode{x1D70C}}\)
+\(\def\itvarrho{\unicode{x1D71A}}\)
+\(\def\itsigma{\unicode{x1D70E}}\)
+\(\def\itvarsigma{\unicode{x1D70D}}\)
+\(\def\ittau{\unicode{x1D70F}}\)
+\(\def\itupsilon{\unicode{x1D710}}\)
+\(\def\itphi{\unicode{x1D719}}\)
+\(\def\itvarphi{\unicode{x1D711}}\)
+\(\def\itchi{\unicode{x1D712}}\)
+\(\def\itpsi{\unicode{x1D713}}\)
+\(\def\itomega{\unicode{x1D714}}\)
+\(\let \lparen (\)
+\(\let \rparen )\)
+\(\newcommand {\cuberoot }[1]{\,{}^3\!\!\sqrt {#1}}\,\)
+\(\newcommand {\fourthroot }[1]{\,{}^4\!\!\sqrt {#1}}\,\)
+\(\newcommand {\longdivision }[1]{\mathord {\unicode {x027CC}#1}}\)
+\(\newcommand {\mathcomma }{,}\)
+\(\newcommand {\mathcolon }{:}\)
+\(\newcommand {\mathsemicolon }{;}\)
+\(\newcommand {\overbracket }[1]{\mathinner {\overline {\ulcorner {#1}\urcorner }}}\)
+\(\newcommand {\underbracket }[1]{\mathinner {\underline {\llcorner {#1}\lrcorner }}}\)
+\(\newcommand {\overbar }[1]{\mathord {#1\unicode {x00305}}}\)
+\(\newcommand {\ovhook }[1]{\mathord {#1\unicode {x00309}}}\)
+\(\newcommand {\ocirc }[1]{\mathord {#1\unicode {x0030A}}}\)
+\(\newcommand {\candra }[1]{\mathord {#1\unicode {x00310}}}\)
+\(\newcommand {\oturnedcomma }[1]{\mathord {#1\unicode {x00312}}}\)
+\(\newcommand {\ocommatopright }[1]{\mathord {#1\unicode {x00315}}}\)
+\(\newcommand {\droang }[1]{\mathord {#1\unicode {x0031A}}}\)
+\(\newcommand {\leftharpoonaccent }[1]{\mathord {#1\unicode {x020D0}}}\)
+\(\newcommand {\rightharpoonaccent }[1]{\mathord {#1\unicode {x020D1}}}\)
+\(\newcommand {\vertoverlay }[1]{\mathord {#1\unicode {x020D2}}}\)
+\(\newcommand {\leftarrowaccent }[1]{\mathord {#1\unicode {x020D0}}}\)
+\(\newcommand {\annuity }[1]{\mathord {#1\unicode {x020E7}}}\)
+\(\newcommand {\widebridgeabove }[1]{\mathord {#1\unicode {x020E9}}}\)
+\(\newcommand {\asteraccent }[1]{\mathord {#1\unicode {x020F0}}}\)
+\(\newcommand {\threeunderdot }[1]{\mathord {#1\unicode {x020E8}}}\)
+\(\newcommand {\Bbbsum }{\mathop {\unicode {x2140}}\limits }\)
+\(\newcommand {\oiint }{\mathop {\unicode {x222F}}\limits }\)
+\(\newcommand {\oiiint }{\mathop {\unicode {x2230}}\limits }\)
+\(\newcommand {\intclockwise }{\mathop {\unicode {x2231}}\limits }\)
+\(\newcommand {\ointclockwise }{\mathop {\unicode {x2232}}\limits }\)
+\(\newcommand {\ointctrclockwise }{\mathop {\unicode {x2233}}\limits }\)
+\(\newcommand {\varointclockwise }{\mathop {\unicode {x2232}}\limits }\)
+\(\newcommand {\leftouterjoin }{\mathop {\unicode {x27D5}}\limits }\)
+\(\newcommand {\rightouterjoin }{\mathop {\unicode {x27D6}}\limits }\)
+\(\newcommand {\fullouterjoin }{\mathop {\unicode {x27D7}}\limits }\)
+\(\newcommand {\bigbot }{\mathop {\unicode {x27D8}}\limits }\)
+\(\newcommand {\bigtop }{\mathop {\unicode {x27D9}}\limits }\)
+\(\newcommand {\xsol }{\mathop {\unicode {x29F8}}\limits }\)
+\(\newcommand {\xbsol }{\mathop {\unicode {x29F9}}\limits }\)
+\(\newcommand {\bigcupdot }{\mathop {\unicode {x2A03}}\limits }\)
+\(\newcommand {\bigsqcap }{\mathop {\unicode {x2A05}}\limits }\)
+\(\newcommand {\conjquant }{\mathop {\unicode {x2A07}}\limits }\)
+\(\newcommand {\disjquant }{\mathop {\unicode {x2A08}}\limits }\)
+\(\newcommand {\bigtimes }{\mathop {\unicode {x2A09}}\limits }\)
+\(\newcommand {\modtwosum }{\mathop {\unicode {x2A0A}}\limits }\)
+\(\newcommand {\sumint }{\mathop {\unicode {x2A0B}}\limits }\)
+\(\newcommand {\intbar }{\mathop {\unicode {x2A0D}}\limits }\)
+\(\newcommand {\intBar }{\mathop {\unicode {x2A0E}}\limits }\)
+\(\newcommand {\fint }{\mathop {\unicode {x2A0F}}\limits }\)
+\(\newcommand {\cirfnint }{\mathop {\unicode {x2A10}}\limits }\)
+\(\newcommand {\awint }{\mathop {\unicode {x2A11}}\limits }\)
+\(\newcommand {\rppolint }{\mathop {\unicode {x2A12}}\limits }\)
+\(\newcommand {\scpolint }{\mathop {\unicode {x2A13}}\limits }\)
+\(\newcommand {\npolint }{\mathop {\unicode {x2A14}}\limits }\)
+\(\newcommand {\pointint }{\mathop {\unicode {x2A15}}\limits }\)
+\(\newcommand {\sqint }{\mathop {\unicode {x2A16}}\limits }\)
+\(\newcommand {\intlarhk }{\mathop {\unicode {x2A17}}\limits }\)
+\(\newcommand {\intx }{\mathop {\unicode {x2A18}}\limits }\)
+\(\newcommand {\intcap }{\mathop {\unicode {x2A19}}\limits }\)
+\(\newcommand {\intcup }{\mathop {\unicode {x2A1A}}\limits }\)
+\(\newcommand {\upint }{\mathop {\unicode {x2A1B}}\limits }\)
+\(\newcommand {\lowint }{\mathop {\unicode {x2A1C}}\limits }\)
+\(\newcommand {\bigtriangleleft }{\mathop {\unicode {x2A1E}}\limits }\)
+\(\newcommand {\zcmp }{\mathop {\unicode {x2A1F}}\limits }\)
+\(\newcommand {\zpipe }{\mathop {\unicode {x2A20}}\limits }\)
+\(\newcommand {\zproject }{\mathop {\unicode {x2A21}}\limits }\)
+\(\newcommand {\biginterleave }{\mathop {\unicode {x2AFC}}\limits }\)
+\(\newcommand {\bigtalloblong }{\mathop {\unicode {x2AFF}}\limits }\)
+\(\newcommand {\arabicmaj }{\mathop {\unicode {x1EEF0}}\limits }\)
+\(\newcommand {\arabichad }{\mathop {\unicode {x1EEF1}}\limits }\)
+\(\newcommand {\nicefrac }[3][]{\mathinner {{}^{#2}\!/\!_{#3}}}\)
+\(\require {mhchem}\)
+\(\newcommand {\LWRnicearrayarray }[1]{\begin {array}{#1}}\)
+\(\def \LWRnicearrayarrayopt #1[#2] {\begin {array}{#1}}\)
+\(\newenvironment {NiceArray}[2][]{\ifnextchar [{\LWRnicearrayarrayopt {#2}}{\LWRnicearrayarray {#2}}}{\end {array}}\)
+\(\newcommand {\LWRnicearraywithdelimtwo }[2][]{\ifnextchar [{\LWRnicearrayarrayopt {#2}}{\LWRnicearrayarray {#2}}}\)
+\(\newenvironment {NiceArrayWithDelims}[2]{\def \LWRnicearrayrightdelim {\right #2}\left #1\LWRnicearraywithdelimtwo }{\end {array}\LWRnicearrayrightdelim }\)
+\(\newenvironment {pNiceArray} {\begin {NiceArrayWithDelims}{(}{)}} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {bNiceArray} {\begin {NiceArrayWithDelims}{[}{]}} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {BNiceArray} {\begin {NiceArrayWithDelims}{\{}{\}}} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {vNiceArray} {\begin {NiceArrayWithDelims}{\vert }{\vert }} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {VNiceArray} {\begin {NiceArrayWithDelims}{\Vert }{\Vert }} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {NiceMatrix}[1][]{\begin {matrix}}{\end {matrix}}\)
+\(\newenvironment {pNiceMatrix}[1][]{\begin {pmatrix}}{\end {pmatrix}}\)
+\(\newenvironment {bNiceMatrix}[1][]{\begin {bmatrix}}{\end {bmatrix}}\)
+\(\newenvironment {BNiceMatrix}[1][]{\begin {Bmatrix}}{\end {Bmatrix}}\)
+\(\newenvironment {vNiceMatrix}[1][]{\begin {vmatrix}}{\end {vmatrix}}\)
+\(\newenvironment {VNiceMatrix}[1][]{\begin {Vmatrix}}{\end {Vmatrix}}\)
+\(\newcommand {\LWRnicematrixBlock }[1]{#1}\)
+\(\def \LWRnicematrixBlockopt &lt;#1&gt;#2{#2}\)
+\(\newcommand {\Block }[2][]{\ifnextchar &lt;\LWRnicematrixBlockopt \LWRnicematrixBlock }\)
+\(\newcommand {\diagbox }[2]{\begin {array}{l}\hfill \quad #2\\\hline #1\quad \hfill \end {array}}\)
+\(\let \hdottedline \hdashline \)
+\(\newcommand {\Hline }[1][]{\hline }\)
+\(\newcommand {\CodeBefore }{}\)
+\(\newcommand {\Body }{}\)
+\(\newcommand {\CodeAfter }{}\)
+\(\newcommand {\line }[3][]{}\)
+\(\newcommand {\RowStyle }[2][]{}\)
+\(\newcommand {\LWRSubMatrix }[1][]{}\)
+\(\newcommand {\SubMatrix }[4]{\LWRSubMatrix }\)
+\(\newcommand {\OverBrace }[4][]{}\)
+\(\newcommand {\UnderBrace }[4][]{}\)
+\(\newcommand {\HBrace }[3][]{}\)
+\(\newcommand {\VBrace }[3][]{}\)
+\(\newcommand {\ShowCellNames }{}\)
+\(\newcommand {\tabularnote }[2][]{}\)
+\(\newcommand {\cellcolor }[3][]{}\)
+\(\newcommand {\rowcolor }[3][]{}\)
+\(\newcommand {\LWRrowcolors }[1][]{}\)
+\(\newcommand {\rowcolors }[4][]{\LWRrowcolors }\)
+\(\newcommand {\rowlistcolors }[3][]{\LWRrowcolors }\)
+\(\newcommand {\columncolor }[3][]{}\)
+\(\newcommand {\rectanglecolor }[4][]{}\)
+\(\newcommand {\arraycolor }[2][]{}\)
+\(\newcommand {\chessboardcolors }[3][]{}\)
+\(\newcommand {\ldots }[1][]{\dots }\)
+\(\newcommand {\Cdots }[1][]{\cdots }\)
+\(\newcommand {\Vdots }[1][]{\vdots }\)
+\(\newcommand {\Ddots }[1][]{\ddots }\)
+\(\newcommand {\Iddots }[1][]{\mathinner {\unicode {x22F0}}}\)
+\(\newcommand {\Hdotsfor }[1]{\ldots }\)
+\(\newcommand {\Vdotsfor }[1]{\vdots }\)
+\(\newcommand {\AutoNiceMatrix }[2]{\text {(AutoNiceMatrix #1)}}\)
+\(\let \pAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \bAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \BAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \vAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \VAutoNiceMatrix \AutoNiceMatrix \)
+\(\newcommand {\toprule }[1][]{\hline }\)
+\(\let \midrule \toprule \)
+\(\let \bottomrule \toprule \)
+\(\def \LWRbooktabscmidruleparen (#1)#2{}\)
+\(\newcommand {\LWRbooktabscmidrulenoparen }[1]{}\)
+\(\newcommand {\cmidrule }[1][]{\ifnextchar (\LWRbooktabscmidruleparen \LWRbooktabscmidrulenoparen }\)
+\(\newcommand {\morecmidrules }{}\)
+\(\newcommand {\specialrule }[3]{\hline }\)
+\(\newcommand {\addlinespace }[1][]{}\)
+\(\newcommand {\LWRsubmultirow }[2][]{#2}\)
+\(\newcommand {\LWRmultirow }[2][]{\LWRsubmultirow }\)
+\(\newcommand {\multirow }[2][]{\LWRmultirow }\)
+\(\newcommand {\mrowcell }{}\)
+\(\newcommand {\mcolrowcell }{}\)
+\(\newcommand {\STneed }[1]{}\)
+\(\DeclareMathOperator {\const }{const}\)
+\(\DeclareMathOperator {\Div }{div}\)
+\(\DeclareMathOperator {\Rot }{rot}\)
+\(\DeclareMathOperator {\Grad }{grad}\)
+\(\DeclareMathOperator {\inv }{inv}\)
+\(\DeclareMathOperator {\Tr }{Tr}\)
+\(\newcommand {\emf }{ℰ}\)
+\(\newcommand {\tikzmarknode }[2]{#2}\)
+\(\newcommand {\tikzmark }[1]{}\)
+\(\newcommand {\enquote }[1]{«#1»}\)
+\(\newcommand {\allowbreak }{}\)
+\(\newcommand {\mitlambda }{\lambda }\)
+\(\newcommand {\mitomega }{\omega }\)
+\(\newcommand {\mittheta }{\theta }\)
+\(\newcommand {\mitphi }{\varphi }\)
+\(\newcommand {\tcbhighmath }[1]{\boxed {#1}}\)
+\(\newcommand {\Efield }{\mathbf {E}}\)
+\(\newcommand {\Dfield }{\mathbf {D}}\)
+\(\newcommand {\Bfield }{\mathbf {B}}\)
+\(\newcommand {\Hfield }{\mathbf {H}}\)
+\(\newcommand {\ket }[1]{\left | #1 \right \rangle }\)
+\(\newcommand {\bra }[1]{\left \langle #1 \right |}\)
+\(\newcommand {\opbraket }[3]{\left \langle #1 \middle | #2 \middle | #3 \right \rangle }\)
+\(\newcommand {\diff }[2]{\frac {\partial #1}{\partial #2}}\)
+\(\newcommand {\ddiff }[2]{\frac {\partial ^2 #1}{\partial #2^2}}\)
+\(\newcommand {\grad }{\mathbf {\nabla }}\)
+\(\newcommand {\rot }{\mathbf {\nabla }\times }\)
+\(\newcommand {\divg }{\mathbf {\nabla }\cdot }\)
+\(\newcommand {\Laplasian }{\Delta }\)
+\(\newcommand {\EMF }{\mathcal {E}}\)
+\(\newcommand {\vxi }{\vec {\xi }}\)
+\(\newcommand {\vr }{\vec {r}}\)
+\(\newcommand {\vphi }{\varphi }\)
+\(\newcommand {\veps }{\varepsilon }\)
+\(\newcommand {\eff }{\mathrm {eff}}\)
+\(\newcommand {\PySCF }{\texttt {PySCF}}\)
+\(\newcommand {\vect }[1]{\mathbf {#1}}\)
+\(\newcommand {\symbf }[1]{\mathbf {#1}}\)
+\(\DeclareMathOperator {\sh }{sh}\)
+\(\DeclareMathOperator {\ch }{ch}\)
+\(\DeclareMathOperator {\tg }{tg}\)
+\(\DeclareMathOperator {\ctg }{ctg}\)
+\(\DeclareMathOperator {\arctg }{arctg}\)
+\(\DeclareMathOperator {\arcctg }{arcctg}\)
+\(\DeclareMathOperator {\cth }{cth}\)
+\(\DeclareMathOperator {\cosec }{cosec}\)
+\(\let \symsf \symsfup \)
+\(\def\Alpha{\unicode{x0391}}\)
+\(\def\Beta{\unicode{x0392}}\)
+\(\def\Gamma{\unicode{x0393}}\)
+\(\def\Digamma{\unicode{x03DC}}\)
+\(\def\Delta{\unicode{x0394}}\)
+\(\def\Epsilon{\unicode{x0395}}\)
+\(\def\Zeta{\unicode{x0396}}\)
+\(\def\Eta{\unicode{x0397}}\)
+\(\def\Theta{\unicode{x0398}}\)
+\(\def\Vartheta{\unicode{x03F4}}\)
+\(\def\Iota{\unicode{x0399}}\)
+\(\def\Kappa{\unicode{x039A}}\)
+\(\def\Lambda{\unicode{x039B}}\)
+\(\def\Mu{\unicode{x039C}}\)
+\(\def\Nu{\unicode{x039D}}\)
+\(\def\Xi{\unicode{x039E}}\)
+\(\def\Omicron{\unicode{x039F}}\)
+\(\def\Pi{\unicode{x03A0}}\)
+\(\def\Varpi{\unicode{x03D6}}\)
+\(\def\Rho{\unicode{x03A1}}\)
+\(\def\Sigma{\unicode{x03A3}}\)
+\(\def\Tau{\unicode{x03A4}}\)
+\(\def\Upsilon{\unicode{x03A5}}\)
+\(\def\Phi{\unicode{x03A6}}\)
+\(\def\Chi{\unicode{x03A7}}\)
+\(\def\Psi{\unicode{x03A8}}\)
+\(\def\Omega{\unicode{x03A9}}\)
+\(\def\alpha{\unicode{x1D6FC}}\)
+\(\def\beta{\unicode{x1D6FD}}\)
+\(\def\varbeta{\unicode{x03D0}}\)
+\(\def\gamma{\unicode{x1D6FE}}\)
+\(\def\digamma{\mathit{\unicode{x03DD}}}\)
+\(\def\delta{\unicode{x1D6FF}}\)
+\(\def\epsilon{\unicode{x1D716}}\)
+\(\def\varepsilon{\unicode{x1D700}}\)
+\(\def\zeta{\unicode{x1D701}}\)
+\(\def\eta{\unicode{x1D702}}\)
+\(\def\theta{\unicode{x1D703}}\)
+\(\def\vartheta{\unicode{x1D717}}\)
+\(\def\iota{\unicode{x1D704}}\)
+\(\def\kappa{\unicode{x1D705}}\)
+\(\def\varkappa{\unicode{x1D718}}\)
+\(\def\lambda{\unicode{x1D706}}\)
+\(\def\mu{\unicode{x1D707}}\)
+\(\def\nu{\unicode{x1D708}}\)
+\(\def\xi{\unicode{x1D709}}\)
+\(\def\omicron{\unicode{x1D70A}}\)
+\(\def\pi{\unicode{x1D70B}}\)
+\(\def\varpi{\unicode{x1D71B}}\)
+\(\def\rho{\unicode{x1D70C}}\)
+\(\def\varrho{\unicode{x1D71A}}\)
+\(\def\sigma{\unicode{x1D70E}}\)
+\(\def\varsigma{\unicode{x1D70D}}\)
+\(\def\tau{\unicode{x1D70F}}\)
+\(\def\upsilon{\unicode{x1D710}}\)
+\(\def\phi{\unicode{x1D719}}\)
+\(\def\varphi{\unicode{x1D711}}\)
+\(\def\chi{\unicode{x1D712}}\)
+\(\def\psi{\unicode{x1D713}}\)
+\(\def\omega{\unicode{x1D714}}\)
+</div>
+<!--
+...... chapter Коливальні властивості молекул ......
+-->
+<h3 id="autosec-851"><span class="sectionnumber">8&#x2003;</span>Коливальні властивості молекул</h3>
+<a id="main-html-autopage-851"></a>
+<a id="main-html-autofile-9"></a>
+<a id="Oscilations"></a>
+<p>
+Коливальна спектроскопія — один із найпотужніших методів ідентифікації молекул та вивчення їх структури. Інфрачервоні (ІЧ) та Раман спектри надають інформацію про коливальні моди, силові константи зв’язків, симетрію молекули, а також — через гармонійні
+частоти — <em>нульову енергію коливань</em> (ZPE), що необхідна для точного розрахунку ентальпії, ентропії та вільної енергії в термохімії.
+</p>
+<p>
+<b>Частоти в різних одиницях:</b>
+</p>
+<div class="center">
+<table>
+<tr style="display:none"><th>.</th></tr>
+<tr>
+<td colspan="1" class="tdc"><b>Одиниця</b></td>
+<td colspan="1" class="tdc"><b>Множник</b></td>
+<td class="tdp tdcenter">
+<p>
+<b>Використання</b>
+</p>
+</td>
+</tr>
+<tr>
+<td class="tdp tdleft">
+<p>
+см\(^{-1}\)
+</p>
+</td>
+<td class="tdp tdright">
+<p>
+1
+</p>
+</td>
+<td class="tdp tdcenter">
+<p>
+ІЧ спектроскопія
+</p>
+</td>
+</tr>
+<tr>
+<td class="tdp tdleft">
+<p>
+Гц
+</p>
+</td>
+<td class="tdp tdright">
+<p>
+\(2.998 \times 10^{10}\)
+</p>
+</td>
+<td class="tdp tdcenter">
+<p>
+СІ одиниці
+</p>
+</td>
+</tr>
+<tr>
+<td class="tdp tdleft">
+<p>
+еВ
+</p>
+</td>
+<td class="tdp tdright">
+<p>
+\(1.240 \times 10^{-4}\)
+</p>
+</td>
+<td class="tdp tdcenter">
+<p>
+Електронна спектроскопія
+</p>
+</td>
+</tr>
+<tr>
+<td class="tdp tdleft">
+<p>
+Хартрі
+</p>
+</td>
+<td class="tdp tdright">
+<p>
+\(4.556 \times 10^{-6}\)
+</p>
+</td>
+<td class="tdp tdcenter">
+<p>
+Атомні одиниці
+</p>
+</td>
+</tr>
+</table>
+</div>
+<!--
+...... section Гессіан та нормальні моди ......
+-->
+<h4 id="autosec-854"><span class="sectionnumber">&#xA7;&#x202F;8.1&#x2003;</span>Гессіан та нормальні моди</h4>
+<a id="main-html-autopage-854"></a>
+<p>
+Коливання молекули відбуваються поблизу рівноважної геометрії \(\mathbf {R}_0 = (R_{1x}^0, R_{1y}^0, R_{1z}^0, \ldots , R_{Nz}^0)\). Для малих зміщень атомів
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{0}\)</span>
+<!--
+Δ𝑅𝑖𝛼 = 𝑅𝑖𝛼 − 𝑅0
+𝑖𝛼
+,
+-->
+<p>
+\begin{equation*}
+\Delta R_{i\alpha } = R_{i\alpha } - R_{i\alpha }^0,
+\end{equation*}
+</p>
+<p>
+потенційну енергію можна розкласти у ряд Тейлора навколо \(\mathbf {R}_0\):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{0}\)</span>
+<!--
+𝐸(R) = 𝐸(R0) + ∑
+𝑖𝛼
+(
+𝜕𝐸
+𝜕𝑅𝑝𝛼
+)
+R0
+Δ𝑅𝑝𝛼 +
+1
+2
+∑
+𝑖𝛼
+∑
+𝑗𝛽
+(
+𝜕2𝐸
+𝜕𝑅𝑖𝛼 𝜕𝑅𝑗𝛽
+)
+R0
+Δ𝑅𝑖𝛼Δ𝑅𝑗𝛽 + …
+-->
+<p>
+\begin{equation*}
+E(\mathbf {R}) = E(\mathbf {R}_0) + \sum _{i\alpha } \left ( \frac {\partial E}{\partial R_{p\alpha }} \right )_{\mathbf {R}_0} \Delta R_{p\alpha } + \frac {1}{2} \sum _{i\alpha }\sum _{j\beta } \left ( \frac
+{\partial ^2 E} {\partial R_{i\alpha }\, \partial R_{j\beta }} \right )_{\mathbf {R}_0} \Delta R_{i\alpha } \Delta R_{j\beta } + \ldots
+\end{equation*}
+</p>
+<p>
+Оскільки у рівноважному положенні сили на атоми зникають,
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{0}\)</span>
+<!--
+(
+𝜕𝐸
+𝜕𝑅𝑖𝛼
+)
+R0
+= 0,
+-->
+<p>
+\begin{equation*}
+\left ( \frac {\partial E}{\partial R_{i\alpha }} \right )_{\mathbf {R}_0} = 0,
+\end{equation*}
+</p>
+<p>
+перший порядок у розкладі зникає, і отримуємо гармонічне наближення:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{0}\)</span>
+<!--
+𝐸(R) ≈ 𝐸(R0) +
+1
+2
+∑
+𝑖𝛼
+∑
+𝑗𝛽
+𝐻𝑖𝛼,𝑗𝛽Δ𝑅𝑖𝛼 Δ𝑅𝑗𝛽, (8.1) --><a id="eq:E_taylor_second-index"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:E_taylor_second-index} E(\mathbf {R}) \approx E(\mathbf {R}_0) + \frac {1}{2} \sum _{i\alpha }\sum _{j\beta } H_{i\alpha , j\beta } \Delta R_{i\alpha }\, \Delta R_{j\beta },
+\end{equation}
+</p>
+<p>
+де
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{1}\)</span>
+<!--
+𝐻𝑖𝛼,𝑗𝛽 =
+𝜕2𝐸
+𝜕𝑅𝑖𝛼 𝜕𝑅𝑗𝛽
+|
+|
+|
+R0
+--><a id="eq:H-index"></a><!--
+-->
+<p>
+\begin{equation*}
+\label {eq:H-index} H_{i\alpha , j\beta } = \left . \frac {\partial ^2 E} {\partial R_{i\alpha }\, \partial R_{j\beta }} \right |_{\mathbf {R}_0}
+\end{equation*}
+</p>
+<p>
+— елемент матриці Гесіану, \(i\), \(j\) — номери атомів, а \(\alpha , \beta \in \{x, y, z\}\) — номери декартових координат атома.
+</p>
+<p>
+Для системи з \(N\) атомів Гесіан має розмірність \(3N\times 3N\) і повністю описує гармонічні коливання.
+</p>
+<!--
+...... subsection Нормальні коливання ......
+-->
+<h5 id="autosec-855"><span class="sectionnumber">8.1.1&#x2003;</span>Нормальні коливання</h5>
+<a id="main-html-autopage-855"></a>
+<p>
+Для переходу від гесіану \(\mathbf {H}\) у декартових координатах до фізично осмислених частот враховують маси атомів. Вводять <b>мас-зважений гесіан</b>:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{1}\)</span>
+<!--
+̃
+H = M−1/2HM−1/2, (8.2) --><a id="eq:mass-weighted-H"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:mass-weighted-H} \mathbf {\tilde {H}} = \mathbf {M}^{-1/2} \mathbf {H} \mathbf {M}^{-1/2},
+\end{equation}
+</p>
+<p>
+де \(\mathbf {M}\) — діагональна матриця атомних мас:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{2}\)</span>
+<!--
+M = diag(𝑚1, 𝑚1, 𝑚1, 𝑚2, 𝑚2, 𝑚2, … , 𝑚𝑁, 𝑚𝑁, 𝑚𝑁).
+-->
+<p>
+\begin{equation*}
+\mathbf {M} = \mathrm {diag}(m_1, m_1, m_1, m_2, m_2, m_2, \ldots , m_N, m_N, m_N).
+\end{equation*}
+</p>
+<p>
+В індексному вигляді цей вираз має форму:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{2}\)</span>
+<!--
+̃
+𝐻𝑖𝛼,𝑗𝛽 =
+𝐻𝑖𝛼,𝑗𝛽
+√𝑚𝑖𝑚𝑗
+= 𝐻𝑖𝛼,𝑗𝛽 𝑚−1/2
+𝑖
+𝑚−1/2
+𝑗
+, (8.3) --><a id="eq:mass-weighted-H-index"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:mass-weighted-H-index} \tilde {H}_{i\alpha , j\beta } = \frac {H_{i\alpha , j\beta }}{\sqrt {m_i m_j}} = H_{i\alpha , j\beta } \, m_i^{-1/2} \, m_j^{-1/2},
+\end{equation}
+</p>
+<p>
+де \(i, j\) — індекси атомів, а \(\alpha , \beta \in \{x, y, z\}\) — координатні індекси. Таким чином, мас-зважений гесіан також має розмір \((N_\text {атом}, N_\text {атом}, 3, 3)\) і вже враховує інерційні властивості атомів у коливальному русі.
+</p>
+<!--
+...... subsubsection Перехід до мас-зважених координат ......
+-->
+<h6 id="autosec-856">Перехід до мас-зважених координат</h6>
+<a id="main-html-autopage-856"></a>
+<p>
+Визначимо мас-зважені зміщення:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{3}\)</span>
+<!--
+̃
+𝑞𝑖𝛼 = √𝑚𝑖 Δ𝑅𝑖𝛼, ̃
+q = M1/2 R. (8.4) --><a id="eq:mass-weighted-q"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:mass-weighted-q} \tilde {q}_{i\alpha } = \sqrt {m_i}\, \Delta R_{i\alpha }, \qquad \mathbf {\tilde {q}} = \mathbf {M}^{1/2}\, \mathbf {\Delta R}.
+\end{equation}
+</p>
+<p>
+Тоді потенціальна енергія набуває вигляду
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{4}\)</span>
+<!--
+𝐸 = 𝐸0 +
+1
+2
+̃
+qT ̃
+H ̃
+q,
+-->
+<p>
+\begin{equation*}
+E = E_0 + \frac {1}{2}\, \mathbf {\tilde {q}}^\mathrm {T}\, \mathbf {\tilde {H}}\, \mathbf {\tilde {q}},
+\end{equation*}
+</p>
+<p>
+де
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{4}\)</span>
+<!--
+̃
+H = M−1/2 H M−1/2, ̃
+𝐻𝑖𝛼,𝑗𝛽 =
+𝐻𝑖𝛼,𝑗𝛽
+√𝑚𝑖𝑚𝑗
+.
+-->
+<p>
+\begin{equation*}
+\mathbf {\tilde {H}} = \mathbf {M}^{-1/2}\, \mathbf {H}\, \mathbf {M}^{-1/2}, \qquad \tilde {H}_{i\alpha , j\beta } = \frac {H_{i\alpha , j\beta }}{\sqrt {m_i m_j}}.
+\end{equation*}
+</p>
+<!--
+...... subsubsection Рівняння руху і власні значення ......
+-->
+<h6 id="autosec-857">Рівняння руху і власні значення</h6>
+<a id="main-html-autopage-857"></a>
+<p>
+Класичне рівняння гармонічного руху для атома \(i\) поблизу рівноваги:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{4}\)</span>
+<!--
+𝑚𝑖
+̈
+Δ𝑅𝑖𝛼 = − ∑
+𝑗𝛽
+𝐻𝑖𝛼,𝑗𝛽 Δ𝑅𝑗𝛽.
+-->
+<p>
+\begin{equation*}
+m_i\, \ddot {\Delta R}_{i\alpha } = -\sum _{j\beta } H_{i\alpha , j\beta }\, \Delta R_{j\beta }.
+\end{equation*}
+</p>
+<p>
+У мас-зважених координатах:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{4}\)</span>
+<!--
+̈̃
+𝑞
+𝑖𝛼
+= − ∑
+𝑗𝛽
+̃
+𝐻𝑖𝛼,𝑗𝛽
+̃
+𝑞𝑗𝛽.
+-->
+<p>
+\begin{equation*}
+\ddot {\tilde {q}}_{i\alpha } = -\sum _{j\beta } \tilde {H}_{i\alpha , j\beta }\, \tilde {q}_{j\beta }.
+\end{equation*}
+</p>
+<p>
+Шукаємо розв’язок у вигляді гармонічного коливання:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{4}\)</span>
+<!--
+̃
+𝑞𝑖𝛼(𝑡) = ∑
+𝑘
+𝐿(𝑘)
+𝑖𝛼
+𝑄𝑘 𝑒𝑖𝜔𝑘𝑡.
+-->
+<p>
+\begin{equation*}
+\tilde {q}_{i\alpha }(t) = \sum _k L_{i\alpha }^{(k)}\, Q_k\, e^{i\omega _k t}.
+\end{equation*}
+</p>
+<p>
+Підставивши у рівняння руху, маємо:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{4}\)</span>
+<!--
+∑
+𝑗𝛽
+̃
+𝐻𝑖𝛼,𝑗𝛽 𝐿(𝑘)
+𝑗𝛽
+= 𝜔2
+𝑘
+𝐿(𝑘)
+𝑖𝛼
+. (8.5) --><a id="eq:eigen-tilde-H-index"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:eigen-tilde-H-index} \sum _{j\beta } \tilde {H}_{i\alpha , j\beta }\, L_{j\beta }^{(k)} = \omega _k^2\, L_{i\alpha }^{(k)}.
+\end{equation}
+</p>
+<p>
+У матричному записі:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{5}\)</span>
+<!--
+̃
+H L𝑘 = 𝜔2
+𝑘
+L𝑘. (8.6) --><a id="eq:eigen-tilde-H-matrix"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:eigen-tilde-H-matrix} \mathbf {\tilde {H}}\, \mathbf {L}_k = \omega _k^2\, \mathbf {L}_k.
+\end{equation}
+</p>
+<p>
+Це власне рівняння для мас-зваженого гесіану, де власні значення \(\omega _k^2\) визначають квадрати кутових частот коливань, а \(\mathbf {L}_k\) — власні вектори (нормальні моди).
+</p>
+<!--
+...... subsubsection Ортонормованість і нормальні координати ......
+-->
+<h6 id="autosec-858">Ортонормованість і нормальні координати</h6>
+<a id="main-html-autopage-858"></a>
+<p>
+Оскільки \(\mathbf {\tilde {H}}\) — симетрична, власні вектори утворюють ортонормований базис:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{6}\)</span>
+<!--
+LTL = I, ∑
+𝑖𝛼
+𝐿(𝑘)
+𝑖𝛼
+𝐿(𝑘′)
+𝑖𝛼
+= 𝛿𝑘𝑘′.
+-->
+<p>
+\begin{equation*}
+\mathbf {L}^\mathrm {T}\mathbf {L} = \mathbf {I}, \qquad \sum _{i\alpha } L_{i\alpha }^{(k)} L_{i\alpha }^{(k&apos;)} = \delta _{kk&apos;}.
+\end{equation*}
+</p>
+<p>
+Мас-зважені декартові координати можна розкласти за нормальними модами:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{6}\)</span>
+<!--
+̃
+𝑞𝑖𝛼 = ∑
+𝑘
+𝐿(𝑘)
+𝑖𝛼
+𝑄𝑘 = ∑
+𝑘
+𝜕 ̃
+𝑞𝑖𝛼
+𝜕𝑄𝑘
+𝑄𝑘, ̃
+q = L Q. (8.7) --><a id="eq:mass-wighted_q"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:mass-wighted_q} \tilde {q}_{i\alpha } = \sum _k L_{i\alpha }^{(k)}\, Q_k = \sum _k \frac {\partial \tilde q_{i\alpha }}{\partial Q_k} \, Q_k, \qquad \mathbf {\tilde {q}} = \mathbf {L}\, \mathbf {Q}.
+\end{equation}
+</p>
+<p>
+Тоді нормальні координати визначаються як
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{7}\)</span>
+<!--
+𝑄𝑘 = ∑
+𝑖𝛼
+𝐿(𝑘)
+𝑖𝛼
+̃
+𝑞𝑖𝛼 = ∑
+𝑖𝛼
+𝐿(𝑘)
+𝑖𝛼
+√𝑚𝑖 Δ𝑅𝑖𝛼, Q = LT̃
+q.
+-->
+<p>
+\begin{equation*}
+Q_k = \sum _{i\alpha } L_{i\alpha }^{(k)}\, \tilde {q}_{i\alpha } = \sum _{i\alpha } L_{i\alpha }^{(k)}\, \sqrt {m_i}\, \Delta R_{i\alpha }, \qquad \mathbf {Q} = \mathbf {L}^\mathrm {T}\mathbf {\tilde {q}}.
+\end{equation*}
+</p>
+<!--
+...... subsubsection Потенціальна енергія у нормальних координатах ......
+-->
+<h6 id="autosec-859">Потенціальна енергія у нормальних координатах</h6>
+<a id="main-html-autopage-859"></a>
+<p>
+У нових координатах потенціал набуває діагонального вигляду:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{7}\)</span>
+<!--
+𝐸 = 𝐸0 +
+1
+2
+∑
+𝑘
+𝜔2
+𝑘
+𝑄2
+𝑘
+,
+-->
+<p>
+\begin{equation*}
+E = E_0 + \frac {1}{2} \sum _k \omega _k^2\, Q_k^2,
+\end{equation*}
+</p>
+<p>
+тобто рух системи розпадається на незалежні гармонічні осцилятори з власними частотами \(\omega _k\).
+</p>
+<p>
+Фізично вектор \(L_{i\alpha }^{(k)}\) визначає напрямок і відносну амплітуду зміщення атома \(i\) у нормальній моді \(k\), а другі похідні енергії \(H_{i\alpha , j\beta }\) через мас-зважений гесіан визначають частоти цих коливань.
+</p>
+<!--
+...... paragraph Нульові моди. ......
+-->
+<p>
+<span class="paragraph" id="autosec-860">Нульові моди.</span>
+<a id="main-html-autopage-860"></a>
+У вільної молекули існують \(3\) (невироджені) моди трансляції та \(3\) моди обертання (для лінійної — \(2\) обертальних), які дають \(\omega _k^2\approx 0\). Ці моди відокремлюють від внутрішніх вібрацій і не враховуються при побудові внутрішнього спектру.
+</p>
+<!--
+...... subsection Аналітичне обчислення гесіану на прикладі молекули ......
+-->
+<h5 id="autosec-861"><span class="sectionnumber">8.1.2&#x2003;</span>Аналітичне обчислення гесіану на прикладі молекули \(\mathrm {H_{2}O}\)</h5>
+<a id="main-html-autopage-861"></a>
+<p>
+<kbd>PySCF</kbd> може обчислювати гесіан аналітично або чисельно. Спочатку детально розглянемо приклад обчислення гесіану на прикладі молекули <span
+id="lateximage-main-html-190"
+class="lateximagesource"
+><!--
+H2
+O
+--><img
+src="main-html-images/3BD50A5CF48F9588DE1B1A127A250217.svg"
+alt="\ce{H2O}"
+style=""
+class="lateximage"
+></span> використовуючи метод <kbd>RHF</kbd>.
+</p>
+<p>
+Спочатку виконаємо <kbd>RHF</kbd> розрахунок молекули води:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">17 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+<span class="tk-kn">import</span><span class="tk-w"> </span><span class="tk-nn">numpy</span><span class="tk-w"> </span><span class="tk-k">as</span><span class="tk-w"> </span><span class="tk-nn">np</span>
+
+<span class="tk-c1"># -------------------------------------------------------</span>
+<span class="tk-c1"># МОЛЕКУЛА ВОДИ</span>
+<span class="tk-c1"># -------------------------------------------------------</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">Mole</span><span class="tk-p">()</span>
+<span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">atom</span> <span class="tk-o">=</span> <span class="tk-s1">'''</span>
+<span class="tk-s1">O  0.000000   0.000000   0.000000</span>
+<span class="tk-s1">H  0.000000   0.757000   0.587000</span>
+<span class="tk-s1">H  0.000000  -0.757000   0.587000</span>
+<span class="tk-s1">'''</span>
+<span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">basis</span> <span class="tk-o">=</span> <span class="tk-s1">'6-31g(d)'</span>
+<span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">build</span><span class="tk-p">()</span>
+
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">run</span><span class="tk-p">(</span><span class="tk-n">verbose</span><span class="tk-o">=</span><span class="tk-mi">0</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Отримаємо аналітичний тензор Гесіану:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">4 рядки</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.hessian.rhf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">Hessian</span>
+<span class="tk-n">hobj</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">Hessian</span><span class="tk-p">()</span>
+<span class="tk-n">hess_tensor</span> <span class="tk-o">=</span> <span class="tk-n">hobj</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>   <span class="tk-c1"># форма (natm, natm, 3, 3)</span></code></pre>
+</div>
+<p>
+\[ H_{ij}^{\alpha \beta } = \frac {\partial ^2 E}{\partial R_{i\alpha }\, \partial R_{j\beta }}, \]
+</p>
+<p>
+де \(i,j\) — атоми, а \(\alpha ,\beta \in \{x,y,z\}\). У <kbd>PySCF</kbd> результат <span class="inlinecode"><kbd>hobj.kernel()</kbd></span> повертає чотиривимірний тензор:
+</p>
+<p>
+\[ H[i, j, \alpha , \beta ], \]
+</p>
+<p>
+з формою
+</p>
+<p>
+\[ (N_{\text {атом}},\, N_{\text {атом}},\, 3,\, 3), \]
+</p>
+<p>
+Приготуємо основні фізичні параметри молекули, необхідні для побудови масово-зваженого Гесіану:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">4 рядки</span></div>
+<pre class="code"><code><span class="tk-n">mass</span> <span class="tk-o">=</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">atom_mass_list</span><span class="tk-p">(</span><span class="tk-n">isotope_avg</span><span class="tk-o">=</span><span class="tk-kc">True</span><span class="tk-p">)</span>
+<span class="tk-n">atom_coords</span> <span class="tk-o">=</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">atom_coords</span><span class="tk-p">()</span>
+<span class="tk-n">natm</span> <span class="tk-o">=</span> <span class="tk-n">atom_coords</span><span class="tk-o">.</span><span class="tk-n">shape</span><span class="tk-p">[</span><span class="tk-mi">0</span><span class="tk-p">]</span></code></pre>
+</div>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>mol.atom_mass_list(isotope_avg=True)</kbd></span> Повертає маси всіх атомів у молекулі в атомних одиницях маси (\(u\)). Аргумент <span
+class="inlinecode"><kbd>isotope_avg=True</kbd></span> означає, що береться середня маса елементу (з урахуванням природної ізотопної суміші), а не конкретного ізотопу. Отже,
+</p>
+<p>
+\[ \texttt {mass} = [m_1, m_2, \ldots , m_N], \]
+</p>
+<p>
+де \(N = N_\text {атом}\).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>mol.atom_coords()</kbd></span> Повертає масив координат усіх атомів у поточній геометрії:
+</p>
+<p>
+\[ \texttt {atom\_coords} = \begin {bmatrix} x_1 &amp; y_1 &amp; z_1 \\ x_2 &amp; y_2 &amp; z_2 \\ \vdots &amp; \vdots &amp; \vdots \\ x_N &amp; y_N &amp; z_N \end {bmatrix}. \]
+</p>
+<p>
+Це потрібно для визначення центру мас і правильного формування тензора Гесіану.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>natm = atom_coords.shape[0]</kbd></span> Задає кількість атомів у системі \(N_\text {атом}\). Кожен атом має три координати, тому повний розмір матриці Гесіану буде
+\(3N_\text {атом} \times 3N_\text {атом}\).
+</p>
+</li>
+</ul>
+<p>
+Тепер ми повинні перейти до масово-зваженого Гесіану. Для цього застосовують нормування на корені атомних мас:
+</p>
+<p>
+\[ \tilde {H}_{ij}^{\alpha \beta } = \frac {H_{ij}^{\alpha \beta }}{\sqrt {m_i\,m_j}} = H_{ij}^{\alpha \beta } m_i^{-\frac 12} m_j^{-\frac 12}, \]
+</p>
+<p>
+де \(m_i\) і \(m_j\) — маси атомів \(i\) і \(j\) у атомних одиницях.
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">2 рядки</span></div>
+<pre class="code"><code><span class="tk-n">mass_hess</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">einsum</span><span class="tk-p">(</span><span class="tk-s1">'ijxy,i,j-&gt;ijxy'</span><span class="tk-p">,</span> <span class="tk-n">hess_tensor</span><span class="tk-p">,</span> <span class="tk-n">mass</span><span class="tk-o">**-</span><span class="tk-mf">0.5</span><span class="tk-p">,</span> <span class="tk-n">mass</span><span class="tk-o">**-</span><span class="tk-mf">0.5</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Отриманий тензор \(\tilde {H}\) має розмір \((N_\text {атом}, N_\text {атом}, 3, 3)\). Його треба перетворити до вигляду \(\tilde {H}_{i\alpha , j\beta }\), який має форму \(3N \times 3N\), щоб отримати власні значення та власні ветори (див.
+<span class="textup">(<a href="vibrations.html#eq:mass-weighted-H-index">8.3</a>)</span>).
+</p>
+<p>
+У коді це реалізується як:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">2 рядки</span></div>
+<pre class="code"><code><span class="tk-n">h</span> <span class="tk-o">=</span> <span class="tk-n">mass_hess</span><span class="tk-o">.</span><span class="tk-n">transpose</span><span class="tk-p">(</span><span class="tk-mi">0</span><span class="tk-p">,</span><span class="tk-mi">2</span><span class="tk-p">,</span><span class="tk-mi">1</span><span class="tk-p">,</span><span class="tk-mi">3</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">reshape</span><span class="tk-p">(</span><span class="tk-n">natm</span><span class="tk-o">*</span><span class="tk-mi">3</span><span class="tk-p">,</span> <span class="tk-n">natm</span><span class="tk-o">*</span><span class="tk-mi">3</span><span class="tk-p">)</span></code></pre>
+</div>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>transpose(0,2,1,3)</kbd></span> переставляє осі тензора так, щоб порядок індексів був \((i,\alpha ,j,\beta )\);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>reshape(natm*3, natm*3)</kbd></span> об’єднує подвійні індекси \((i,\alpha )\) і \((j,\beta )\) в один суцільний, формуючи матрицю розміром \(3N \times 3N\).
+</p>
+</li>
+</ul>
+<p>
+Після цього ми можемо знайти власні значення й вектори цієї симетричної матриці з рівняння <span class="textup">(<a href="vibrations.html#eq:eigen-tilde-H-matrix">8.6</a>)</span>:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">2 рядки</span></div>
+<pre class="code"><code><span class="tk-n">w</span><span class="tk-p">,</span> <span class="tk-n">L</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">linalg</span><span class="tk-o">.</span><span class="tk-n">eigh</span><span class="tk-p">(</span><span class="tk-n">h</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Кожне власне значення \(\lambda _i\) пов’язане з кутовою частотою коливання:
+</p>
+<p>
+\[ \omega _i = \sqrt {|\lambda _i|}, \]
+</p>
+<p>
+а частота в см\(^{-1}\) визначається як
+</p>
+<p>
+\[ \nu _i = \operatorname {sign}(\lambda _i)\, \sqrt {|\lambda _i|}\, C, \]
+</p>
+<p>
+де \(C = 5140.48\) — коефіцієнт перетворення з атомних одиниць (\(\text {Ha}/(a_0^2 \text {amu})\)) у см\(^{-1}\).
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">3 рядки</span></div>
+<pre class="code"><code><span class="tk-n">conv</span> <span class="tk-o">=</span> <span class="tk-mf">5140.48</span>
+<span class="tk-n">freqs</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">sign</span><span class="tk-p">(</span><span class="tk-n">w</span><span class="tk-p">)</span> <span class="tk-o">*</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">sqrt</span><span class="tk-p">(</span><span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">abs</span><span class="tk-p">(</span><span class="tk-n">w</span><span class="tk-p">))</span> <span class="tk-o">*</span> <span class="tk-n">conv</span></code></pre>
+</div>
+<p>
+Перші \(5\) або \(6\) власних значень (для лінійних або нелінійних молекул) відповідають трансляційним і обертальним рухам, які мають дуже низькі частоти (практично нульові). Щоб залишити лише <b>вібраційні частоти</b>, відкинемо значення, менші за певний
+поріг:
+</p>
+<p>
+\[ |\nu _i| &gt; \nu _\text {поріг}. \]
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">2 рядки</span></div>
+<pre class="code"><code><span class="tk-n">freqs</span><span class="tk-p">[</span><span class="tk-mi">6</span><span class="tk-p">:]</span></code></pre>
+</div>
+<p>
+Таким чином, \(\texttt {vib\_freqs}\) містить набір істинних вібраційних частот молекули води, виражених у см\(^{-1}\).
+</p>
+<p>
+Повний код програми:
+</p>
+<div class="codeblock code-python code-long" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">31 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">import</span><span class="tk-w"> </span><span class="tk-nn">numpy</span><span class="tk-w"> </span><span class="tk-k">as</span><span class="tk-w"> </span><span class="tk-nn">np</span>
+<span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">Mole</span><span class="tk-p">()</span>
+<span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">atom</span> <span class="tk-o">=</span> <span class="tk-s1">'''</span>
+<span class="tk-s1">O  0.000000   0.000000   0.000000</span>
+<span class="tk-s1">H  0.000000   0.757000   0.587000</span>
+<span class="tk-s1">H  0.000000  -0.757000   0.587000</span>
+<span class="tk-s1">'''</span>
+<span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">basis</span> <span class="tk-o">=</span> <span class="tk-s1">'6-31g(d)'</span>
+<span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">build</span><span class="tk-p">()</span>
+
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">run</span><span class="tk-p">(</span><span class="tk-n">verbose</span><span class="tk-o">=</span><span class="tk-mi">0</span><span class="tk-p">)</span>
+
+<span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.hessian.rhf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">Hessian</span>  <span class="tk-c1"># або mf.Hessian</span>
+<span class="tk-n">hobj</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">Hessian</span><span class="tk-p">()</span>      <span class="tk-c1"># створити об’єкт гесіану для даного SCF-методу</span>
+<span class="tk-n">hess_tensor</span> <span class="tk-o">=</span> <span class="tk-n">hobj</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>  <span class="tk-c1"># гесіан повертається як numpy array shape (natm,natm,3,3)</span>
+
+<span class="tk-n">mass</span> <span class="tk-o">=</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">atom_mass_list</span><span class="tk-p">(</span><span class="tk-n">isotope_avg</span><span class="tk-o">=</span><span class="tk-kc">True</span><span class="tk-p">)</span>
+<span class="tk-n">atom_coords</span> <span class="tk-o">=</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">atom_coords</span><span class="tk-p">()</span>
+<span class="tk-n">natm</span> <span class="tk-o">=</span> <span class="tk-n">atom_coords</span><span class="tk-o">.</span><span class="tk-n">shape</span><span class="tk-p">[</span><span class="tk-mi">0</span><span class="tk-p">]</span>
+
+<span class="tk-n">mass_hess</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">einsum</span><span class="tk-p">(</span><span class="tk-s1">'ijxy,i,j-&gt;ijxy'</span><span class="tk-p">,</span> <span class="tk-n">hess_tensor</span><span class="tk-p">,</span> <span class="tk-n">mass</span><span class="tk-o">**-</span><span class="tk-mf">.5</span><span class="tk-p">,</span> <span class="tk-n">mass</span><span class="tk-o">**-</span><span class="tk-mf">.5</span><span class="tk-p">)</span>
+<span class="tk-n">h</span> <span class="tk-o">=</span> <span class="tk-n">mass_hess</span><span class="tk-o">.</span><span class="tk-n">transpose</span><span class="tk-p">(</span><span class="tk-mi">0</span><span class="tk-p">,</span><span class="tk-mi">2</span><span class="tk-p">,</span><span class="tk-mi">1</span><span class="tk-p">,</span><span class="tk-mi">3</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">reshape</span><span class="tk-p">(</span><span class="tk-n">natm</span><span class="tk-o">*</span><span class="tk-mi">3</span><span class="tk-p">,</span><span class="tk-n">natm</span><span class="tk-o">*</span><span class="tk-mi">3</span><span class="tk-p">)</span>
+
+<span class="tk-n">w</span><span class="tk-p">,</span> <span class="tk-n">L</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">linalg</span><span class="tk-o">.</span><span class="tk-n">eigh</span><span class="tk-p">(</span><span class="tk-n">h</span><span class="tk-p">)</span>
+
+<span class="tk-n">conv</span> <span class="tk-o">=</span> <span class="tk-mf">5140.48</span>
+<span class="tk-n">freqs</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">sign</span><span class="tk-p">(</span><span class="tk-n">w</span><span class="tk-p">)</span> <span class="tk-o">*</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">sqrt</span><span class="tk-p">(</span><span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">abs</span><span class="tk-p">(</span><span class="tk-n">w</span><span class="tk-p">))</span> <span class="tk-o">*</span> <span class="tk-n">conv</span>
+<span class="tk-n">freqs</span><span class="tk-p">[</span><span class="tk-mi">6</span><span class="tk-p">:]</span></code></pre>
+</div>
+<!--
+...... subsection Чисельне обчислення гесіану на прикладі молекули ......
+-->
+<h5 id="autosec-864"><span class="sectionnumber">8.1.3&#x2003;</span>Чисельне обчислення гесіану на прикладі молекули \(\mathrm {H_{2}O}\)</h5>
+<a id="main-html-autopage-864"></a>
+<p>
+PySCF дозволяє не лише обчислювати гесіан аналітично, але й чисельно — через <b>центральні різниці</b>. Цей метод заснований на обчисленні градієнтів енергії у зміщених положеннях атомів і визначенні другої похідної як різниці цих градієнтів. Використовується
+<b>метод центральних різниць</b>, який має вигляд:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{7}\)</span>
+<!--
+𝐻𝑖𝑗 =
+𝜕𝐸
+𝜕𝑥𝑗
+|
+|
+𝑥𝑖+ℎ
+− 𝜕𝐸
+𝜕𝑥𝑗
+|
+|
+𝑥𝑖−ℎ
+2ℎ
+. (8.8) --><a id="eq:H-numerical"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:H-numerical} H_{ij} = \frac {\frac {\partial E}{\partial x_j}\big |_{x_i+h} - \frac {\partial E}{\partial x_j}\big |_{x_i-h}}{2h}.
+\end{equation}
+</p>
+<p>
+У цьому підході для кожної координати \(x_i\) кожного атома виконується пара розрахунків енергії та градієнтів у точках \(x_i + h\) і \(x_i - h\).
+</p>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> <b>Зміщення координат:</b> Кожна координата атома \(x_i\) зміщується на \(\pm h\), де \(h = 0.001\)&nbsp;Bohr:
+</p>
+<p>
+\[ x_i^{(\pm )} = x_i \pm h. \]
+</p>
+<p>
+Для кожного зміщення створюється нова геометрія молекули.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> <b>Обчислення градієнтів:</b> Для кожної нової геометрії виконується <kbd>RHF</kbd> розрахунок, після чого обчислюється градієнт енергії \(\nabla E(x_i^{(\pm )}) = \left ( \frac {\partial E}{\partial
+x_1}, \frac {\partial E}{\partial x_2}, \ldots \right )\).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> <b>Обчислення елементів Гесіану:</b> Для кожної координати \(x_i\) і \(x_j\) елемент Гесіану визначається як
+</p>
+<p>
+\[ H_{ij} = \frac {\nabla _j E(x_i^{(+)}) - \nabla _j E(x_i^{(-)})}{2h}. \]
+</p>
+<p>
+</p>
+</li>
+</ul>
+<p>
+Розглянемо реалізацію цього методу для молекули <span
+id="lateximage-main-html-191"
+class="lateximagesource"
+><!--
+H2
+O
+--><img
+src="main-html-images/3BD50A5CF48F9588DE1B1A127A250217.svg"
+alt="\ce{H2O}"
+style=""
+class="lateximage"
+></span>.
+</p>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> Ініціалізація параметрів для чисельного диференціювання
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">4 рядки</span></div>
+<pre class="code"><code><span class="tk-n">h</span> <span class="tk-o">=</span> <span class="tk-mf">0.001</span>  <span class="tk-c1"># крок зміщення в атомних одиницях (Bohr)</span>
+<span class="tk-n">natm</span> <span class="tk-o">=</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">natm</span>
+<span class="tk-n">hess_tensor_numerical</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">zeros</span><span class="tk-p">((</span><span class="tk-n">natm</span><span class="tk-p">,</span> <span class="tk-n">natm</span><span class="tk-p">,</span> <span class="tk-mi">3</span><span class="tk-p">,</span> <span class="tk-mi">3</span><span class="tk-p">))</span></code></pre>
+</div>
+<p>
+Для кожного атома і кожного напрямку (\(x, y, z\)) ми будемо зміщати його положення на \(\pm h\). Масив <span class="inlinecode"><kbd>hess_tensor_numerical</kbd></span> призначено для збереження всіх компонент тензора гесіану.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> Обчислення градієнтів при зміщенні координат Для кожного атома \(i\) і координати \(\alpha \) виконується два розрахунки: при зміщенні на \(+h\) і \(-h\):
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">5 рядків</span></div>
+<pre class="code"><code><span class="tk-k">for</span> <span class="tk-n">atom_i</span> <span class="tk-ow">in</span> <span class="tk-nb">range</span><span class="tk-p">(</span><span class="tk-n">natm</span><span class="tk-p">):</span>
+    <span class="tk-k">for</span> <span class="tk-n">coord_i</span> <span class="tk-ow">in</span> <span class="tk-nb">range</span><span class="tk-p">(</span><span class="tk-mi">3</span><span class="tk-p">):</span>
+        <span class="tk-n">R_pos</span> <span class="tk-o">=</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">atom_coords</span><span class="tk-p">()</span><span class="tk-o">.</span><span class="tk-n">copy</span><span class="tk-p">()</span>
+        <span class="tk-n">R_pos</span><span class="tk-p">[</span><span class="tk-n">atom_i</span><span class="tk-p">,</span> <span class="tk-n">coord_i</span><span class="tk-p">]</span> <span class="tk-o">+=</span> <span class="tk-n">h</span></code></pre>
+</div>
+<p>
+<span class="inlinecode"><kbd>R_pos</kbd></span> — це копія масиву координат, у якій вибрану координату атома \(i\) збільшено на \(h\). Далі будується новий об’єкт молекули з оновленими координатами:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">10 рядків</span></div>
+<pre class="code"><code><span class="tk-n">mol_pos</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span>
+    <span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-p">[[</span><span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">atom_symbol</span><span class="tk-p">(</span><span class="tk-n">i</span><span class="tk-p">),</span> <span class="tk-n">R_pos</span><span class="tk-p">[</span><span class="tk-n">i</span><span class="tk-p">]]</span> <span class="tk-k">for</span> <span class="tk-n">i</span> <span class="tk-ow">in</span> <span class="tk-nb">range</span><span class="tk-p">(</span><span class="tk-n">natm</span><span class="tk-p">)],</span>
+    <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">basis</span><span class="tk-p">,</span>
+    <span class="tk-n">unit</span><span class="tk-o">=</span><span class="tk-s2">"Bohr"</span><span class="tk-p">,</span>
+<span class="tk-p">)</span>
+<span class="tk-n">mf_pos</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol_pos</span><span class="tk-p">)</span>
+<span class="tk-n">mf_pos</span><span class="tk-o">.</span><span class="tk-n">verbose</span> <span class="tk-o">=</span> <span class="tk-mi">0</span>
+<span class="tk-n">mf_pos</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+<span class="tk-n">grad_pos</span> <span class="tk-o">=</span> <span class="tk-n">mf_pos</span><span class="tk-o">.</span><span class="tk-n">Gradients</span><span class="tk-p">()</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span></code></pre>
+</div>
+<p>
+Тут:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>mol_pos</kbd></span> — нова молекула зі зміщеними координатами;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>mf_pos.Gradients().kernel()</kbd></span> — повертає аналітичний градієнт енергії у новій геометрії.
+</p>
+</li>
+</ul>
+<p>
+Аналогічно розглядається зміщення у від’ємному напрямку:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">13 рядків</span></div>
+<pre class="code"><code><span class="tk-n">R_neg</span> <span class="tk-o">=</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">atom_coords</span><span class="tk-p">()</span><span class="tk-o">.</span><span class="tk-n">copy</span><span class="tk-p">()</span>
+<span class="tk-n">R_neg</span><span class="tk-p">[</span><span class="tk-n">atom_i</span><span class="tk-p">,</span> <span class="tk-n">coord_i</span><span class="tk-p">]</span> <span class="tk-o">-=</span> <span class="tk-n">h</span>
+
+<span class="tk-n">mol_neg</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span>
+    <span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-p">[[</span><span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">atom_symbol</span><span class="tk-p">(</span><span class="tk-n">i</span><span class="tk-p">),</span> <span class="tk-n">R_neg</span><span class="tk-p">[</span><span class="tk-n">i</span><span class="tk-p">]]</span> <span class="tk-k">for</span> <span class="tk-n">i</span> <span class="tk-ow">in</span> <span class="tk-nb">range</span><span class="tk-p">(</span><span class="tk-n">natm</span><span class="tk-p">)],</span>
+    <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">basis</span><span class="tk-p">,</span>
+    <span class="tk-n">unit</span><span class="tk-o">=</span><span class="tk-s2">"Bohr"</span><span class="tk-p">,</span>
+<span class="tk-p">)</span>
+<span class="tk-n">mf_neg</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol_neg</span><span class="tk-p">)</span>
+<span class="tk-n">mf_neg</span><span class="tk-o">.</span><span class="tk-n">verbose</span> <span class="tk-o">=</span> <span class="tk-mi">0</span>
+<span class="tk-n">mf_neg</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+<span class="tk-n">grad_neg</span> <span class="tk-o">=</span> <span class="tk-n">mf_neg</span><span class="tk-o">.</span><span class="tk-n">Gradients</span><span class="tk-p">()</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span></code></pre>
+</div>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> Формування елементів чисельного гесіану.
+</p>
+<p>
+Різниця градієнтів для зміщень \(+h\) та \(-h\) ділиться на \(2h\), що відповідає центральній різниці
+</p>
+<p>
+\[ H_{ij}^{\alpha \beta } = \frac {\partial ^2 E}{\partial R_{i\alpha }\, \partial R_{j\beta }}: \]
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">2 рядки</span></div>
+<pre class="code"><code><span class="tk-n">hess_tensor_numerical</span><span class="tk-p">[:,</span> <span class="tk-n">atom_i</span><span class="tk-p">,</span> <span class="tk-p">:,</span> <span class="tk-n">coord_i</span><span class="tk-p">]</span> <span class="tk-o">=</span> <span class="tk-p">(</span><span class="tk-n">grad_pos</span> <span class="tk-o">-</span> <span class="tk-n">grad_neg</span><span class="tk-p">)</span> <span class="tk-o">/</span> <span class="tk-p">(</span><span class="tk-mi">2</span> <span class="tk-o">*</span> <span class="tk-n">h</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Отриманий тензор має форму \((N_\text {атом}, N_\text {атом}, 3, 3)\).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">4.</span> Масово-зважений гесіан і частоти.
+</p>
+<p>
+Як і в аналітичному випадку, проводимо масове зважування:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">4 рядки</span></div>
+<pre class="code"><code><span class="tk-n">mass</span> <span class="tk-o">=</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">atom_mass_list</span><span class="tk-p">(</span><span class="tk-n">isotope_avg</span><span class="tk-o">=</span><span class="tk-kc">True</span><span class="tk-p">)</span>
+<span class="tk-n">mass_hess</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">einsum</span><span class="tk-p">(</span><span class="tk-s1">'ijxy,i,j-&gt;ijxy'</span><span class="tk-p">,</span> <span class="tk-n">hess_tensor_numerical</span><span class="tk-p">,</span> <span class="tk-n">mass</span><span class="tk-o">**-</span><span class="tk-mf">.5</span><span class="tk-p">,</span> <span class="tk-n">mass</span><span class="tk-o">**-</span><span class="tk-mf">.5</span><span class="tk-p">)</span>
+<span class="tk-n">H_mass_weighted_numerical</span> <span class="tk-o">=</span> <span class="tk-n">mass_hess</span><span class="tk-o">.</span><span class="tk-n">transpose</span><span class="tk-p">(</span><span class="tk-mi">0</span><span class="tk-p">,</span><span class="tk-mi">2</span><span class="tk-p">,</span><span class="tk-mi">1</span><span class="tk-p">,</span><span class="tk-mi">3</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">reshape</span><span class="tk-p">(</span><span class="tk-n">natm</span><span class="tk-o">*</span><span class="tk-mi">3</span><span class="tk-p">,</span> <span class="tk-n">natm</span><span class="tk-o">*</span><span class="tk-mi">3</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Далі діагоналізуємо отриману матрицю:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">2 рядки</span></div>
+<pre class="code"><code><span class="tk-n">w</span><span class="tk-p">,</span> <span class="tk-n">L</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">linalg</span><span class="tk-o">.</span><span class="tk-n">eigh</span><span class="tk-p">(</span><span class="tk-n">H_mass_weighted_numerical</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Власні значення \(\lambda _i\) пов’язані з кутовими частотами:
+</p>
+<p>
+\[ \omega _i = \sqrt {|\lambda _i|}, \quad \nu _i = \operatorname {sign}(\lambda _i)\sqrt {|\lambda _i|}\, C, \]
+</p>
+<p>
+де \(C = 5140.48\) — коефіцієнт для переходу в см\(^{-1}\).
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">4 рядки</span></div>
+<pre class="code"><code><span class="tk-n">conv</span> <span class="tk-o">=</span> <span class="tk-mf">5140.48</span>
+<span class="tk-n">freqs</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">sign</span><span class="tk-p">(</span><span class="tk-n">w</span><span class="tk-p">)</span> <span class="tk-o">*</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">sqrt</span><span class="tk-p">(</span><span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">abs</span><span class="tk-p">(</span><span class="tk-n">w</span><span class="tk-p">))</span> <span class="tk-o">*</span> <span class="tk-n">conv</span>
+<span class="tk-n">freqs</span><span class="tk-p">[</span><span class="tk-mi">6</span><span class="tk-p">:]</span></code></pre>
+</div>
+<p>
+Таким чином, <span class="inlinecode"><kbd>freqs[6:]</kbd></span> містить істинні <b>вібраційні частоти</b> молекули води, обчислені чисельним методом через центральні різниці.
+</p>
+<p>
+</p>
+</li>
+</ul>
+<!--
+...... subsection Обчислювальна складність ......
+-->
+<h5 id="autosec-867"><span class="sectionnumber">8.1.4&#x2003;</span>Обчислювальна складність</h5>
+<a id="main-html-autopage-867"></a>
+<p>
+Програма в файлі <span class="codebutton"><a href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/Oscilations/code/h2o_hessian.py" target="_blank" ><kbd>h2o_hessian.py</kbd></a></span> обчислює
+матрицю Гесіану для молекули води (<span
+id="lateximage-main-html-192"
+class="lateximagesource"
+><!--
+H2
+O
+--><img
+src="main-html-images/3BD50A5CF48F9588DE1B1A127A250217.svg"
+alt="\ce{H2O}"
+style=""
+class="lateximage"
+></span>) двома методами: чисельним та аналітичним.
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <b>Чисельний метод:</b> Потребує \(2 \times 3N\) SCF розрахунків, де \(N\) — кількість атомів.
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">–</span> Для H\(_2\)O (\(N=3\)): \(2 \times 3 \times 3 = 18\) SCF розрахунків.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">–</span> Час виконання: \(\sim 10 - 30\) секунд.
+</p>
+</li>
+</ul>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Аналітичний метод:</b> Один розрахунок з аналітичними похідними.
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">–</span> Час виконання: \(\sim 1 - 5\) секунд.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">–</span> <b>Прискорення:</b> у \(5 - 20\) разів швидше.
+</p>
+</li>
+</ul>
+</li>
+</ul>
+<!--
+...... paragraph Точність ......
+-->
+<p>
+<span class="paragraph" id="autosec-870">Точність</span>
+<a id="main-html-autopage-870"></a>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <b>Аналітичний метод:</b> Точніший, оскільки використовує точні похідні без похибок дискретизації
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Чисельний метод:</b> Точність залежить від кроку \(h\):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{8}\)</span>
+<!--
+Похибка ∼ 𝑂(ℎ2) +
+𝜖
+ℎ
+(8.9)
+-->
+<p>
+\begin{equation}
+\text {Похибка} \sim O(h^2) + \frac {\epsilon }{h}
+\end{equation}
+</p>
+<p>
+де \(\epsilon \) — машинна точність
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Типова різниця:</b> Максимальна абсолютна різниця \(\sim 10^{-5}\)–\(10^{-7}\) Ha/Bohr\(^2\).
+</p>
+</li>
+</ul>
+<!--
+...... subsubsection Коливальні частоти ......
+-->
+<h6 id="autosec-871">Коливальні частоти</h6>
+<a id="main-html-autopage-871"></a>
+<p>
+З матриці Гесіану можна отримати коливальні частоти молекули:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{9}\)</span>
+<!--
+𝜔𝑖 = √𝜆𝑖 × 5140.48, (8.10)
+-->
+<p>
+\begin{equation}
+\omega _i = \sqrt {\lambda _i} \times 5140.48,
+\end{equation}
+</p>
+<p>
+де \(5140.48\)&nbsp;— це числовий множник, який переводить частоти з атомних одиниць у&nbsp;см\(^{-1}\), а \(\lambda _i\) — власні значення масово-зваженого Гесіану:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{10}\)</span>
+<!--
+̃
+𝐻𝑖𝑗 =
+𝐻𝑖𝑗
+√𝑚𝑖𝑚𝑗
+(8.11)
+-->
+<p>
+\begin{equation}
+\tilde {H}_{ij} = \frac {H_{ij}}{\sqrt {m_i m_j}}
+\end{equation}
+</p>
+<p>
+<b>Очікувані частоти для H\(_2\)O:</b>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Перші 6 мод: \(\approx 0\) см\(^{-1}\) (трансляції та обертання)
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Симетричне валентне коливання: \(\approx 3600\) см\(^{-1}\)
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Деформаційне коливання: \(\approx 1600\) см\(^{-1}\)
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Асиметричне валентне коливання: \(\approx 3800\) см\(^{-1}\)
+</p>
+</li>
+</ul>
+<!--
+...... subsection Резюме ......
+-->
+<h5 id="autosec-872"><span class="sectionnumber">8.1.5&#x2003;</span>Резюме</h5>
+<a id="main-html-autopage-872"></a>
+<p>
+Для практичних розрахунків <b>аналітичний метод є кращим вибором</b>, оскільки він значно швидший і точніший, ніж чисельне диференціювання енергії. У програмному пакеті <kbd>PySCF</kbd> аналітичні градієнти реалізовані для таких типів розрахунків:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>RHF</kbd>, <kbd>ROHF</kbd>, <kbd>UHF</kbd> — стандартні градієнти енергії Хартрі–Фока;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>DFT</kbd> (зокрема, LDA, GGA, мета-GGA, гібридні функціонали) — аналітичні похідні з урахуванням обмінно-кореляційного потенціалу;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>MP2</kbd> — реалізовано аналітичні перші похідні енергії (градієнти);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>CASSCF</kbd> — аналітичні градієнти для оптимізації активного простору;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>TDHF</kbd>/<kbd>TDDFT</kbd> — аналітичні похідні збуджених станів.
+</p>
+</li>
+</ul>
+<p>
+Чисельні градієнти використовуються лише у випадках, коли аналітичні формули недоступні (наприклад, для складних пост-HF методів типу <kbd>CCSD(T)</kbd>).
+</p>
+<!--
+...... subsection Масштабування гармонічних частот ......
+-->
+<h5 id="autosec-873"><span class="sectionnumber">8.1.6&#x2003;</span>Масштабування гармонічних частот</h5>
+<a id="main-html-autopage-873"></a>
+<p>
+Розраховані гармонічні частоти \(\nu _{\text {гарм}}\) зазвичай <b>завищені</b> порівняно з експериментальними \(\nu _{\text {експ}}\) через наближення моделі потенціальної поверхні та обмеження електронної структури:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <b>Гармонічне наближення:</b> реальний потенціал є ангармонічним, тому справжні частоти нижчі.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Нестача електронної кореляції:</b> метод Хартрі–Фока переоцінює жорсткість зв’язків.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Обмежений базис:</b> малий базис завищує градієнти енергії.
+</p>
+</li>
+</ul>
+<p>
+Для корекції цих ефектів застосовують <b>масштабувальний коефіцієнт</b>&nbsp;\(\lambda \), що емпірично компенсує ангармонічність і методичні похибки:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{11}\)</span>
+<!--
+𝜈корект
+= 𝜆 ⋅ 𝜈гарм
+-->
+<p>
+\begin{equation*}
+\nu _{\text {корект}} = \lambda \cdot \nu _{\text {гарм}}
+\end{equation*}
+</p>
+<p>
+<b>Типові масштабувальні фактори:</b>
+</p>
+<div class="center">
+<table>
+<tr style="display:none"><th>.</th></tr>
+<tr>
+<td colspan="1" class="tdc" style="background:#F9F9F9"><b>Метод/базис</b></td>
+<td colspan="1" class="tdc" style="background:#F9F9F9"><b>\(\lambda \)</b></td>
+<td colspan="1" class="tdc" style="background:#F9F9F9"><b>Коментар</b></td>
+</tr>
+<tr>
+<td class="tdp tdleft">
+<p>
+HF/6-31G*
+</p>
+</td>
+<td class="tdp tdright">
+<p>
+0.8929
+</p>
+</td>
+<td class="tdp tdleft">
+<p>
+Сильно завищує
+</p>
+</td>
+</tr>
+<tr>
+<td class="tdp tdleft" style="background:#F9F9F9">
+<p>
+B3LYP/6-31G*
+</p>
+</td>
+<td class="tdp tdright" style="background:#F9F9F9">
+<p>
+0.9613
+</p>
+</td>
+<td class="tdp tdleft" style="background:#F9F9F9">
+<p>
+Універсальний
+</p>
+</td>
+</tr>
+<tr>
+<td class="tdp tdleft">
+<p>
+B3LYP/6-311+G(2d,p)
+</p>
+</td>
+<td class="tdp tdright">
+<p>
+0.9679
+</p>
+</td>
+<td class="tdp tdleft">
+<p>
+Кращий базис
+</p>
+</td>
+</tr>
+<tr>
+<td class="tdp tdleft" style="background:#F9F9F9">
+<p>
+MP2/6-31G*
+</p>
+</td>
+<td class="tdp tdright" style="background:#F9F9F9">
+<p>
+0.9434
+</p>
+</td>
+<td class="tdp tdleft" style="background:#F9F9F9">
+<p>
+Для точних розрахунків
+</p>
+</td>
+</tr>
+</table>
+</div>
+<p>
+<i>Джерело: NIST Computational Chemistry Comparison and Benchmark Database.</i>
+</p>
+<!--
+...... section Інфрачервоні (ІЧ) спектри ......
+-->
+<h4 id="autosec-876"><span class="sectionnumber">&#xA7;&#x202F;8.2&#x2003;</span>Інфрачервоні (ІЧ) спектри</h4>
+<a id="main-html-autopage-876"></a>
+<p>
+<b>ІЧ-спектроскопія</b> досліджує взаємодію молекул з інфрачервоним випромінюванням. Поглинання відбувається тоді, коли частота випромінювання збігається з частотою внутрішнього коливання молекули, тобто виконується умова резонансу:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{11}\)</span>
+<!--
+ℎ𝜈 = Δ𝐸колив.
+-->
+<p>
+\begin{equation*}
+h\nu = \Delta E_{\text {колив.}}
+\end{equation*}
+</p>
+<p>
+Ці переходи відповідають змінам <em>коливальних</em> рівнів енергії. Типові частоти для молекулярних коливань лежать у межах
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{11}\)</span>
+<!--
+400 − 4000 см−1,
+-->
+<p>
+\begin{equation*}
+400 - 4000~\text {см}^{-1},
+\end{equation*}
+</p>
+<p>
+що відповідає довжинам хвиль у мікрометровому діапазоні (\(2.5 - 25~\mu \)m).
+</p>
+<p>
+ІЧ-спектр відображає лише ті <i>коливальні моди молекули</i>, які супроводжуються <em>зміною її дипольного моменту</em>.
+</p>
+<!--
+...... subsection Інтенсивності ІЧ-поглинання ......
+-->
+<h5 id="autosec-877"><span class="sectionnumber">8.2.1&#x2003;</span>Інтенсивності ІЧ-поглинання</h5>
+<a id="main-html-autopage-877"></a>
+<p>
+У спектроскопії інтенсивність смуги — це <b>інтегральна поглинальна здатність</b>, тобто площа під піком у спектрі. Її фізичний зміст — це міра того, <em>наскільки сильно молекула поглинає ІЧ-випромінювання</em> при переході \(v=0 \to 1\).
+</p>
+<p>
+Із теорії взаємодії електромагнітного поля з речовиною відомо, що інтенсивність \(A_i\) для \(i\)-го коливального переходу визначається як:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{11}\)</span>
+<!--
+𝐴𝑖 =
+𝑁𝐴𝜋
+3𝑐2
+|
+|
+|
+𝜕𝜇
+𝜕𝑄𝑖
+|
+|
+|
+2
+,
+-->
+<p>
+\begin{equation*}
+A_i = \frac {N_A \pi }{3 c^2} \left | \frac {\partial \boldsymbol {\mu }}{\partial Q_i} \right |^2,
+\end{equation*}
+</p>
+<p>
+де \(\tfrac {\partial \boldsymbol {\mu }}{\partial Q_i}\) — похідна дипольного моменту за нормальною координатою \(Q_i\) у рівноважному положенні, \(N_A\) — число Авогадро, а \(c\) — швидкість світла.
+</p>
+<!--
+...... paragraph Фізичний зміст. ......
+-->
+<p>
+<span class="paragraph" id="autosec-878">Фізичний зміст.</span>
+<a id="main-html-autopage-878"></a>
+Величина \(A_i\) має розмірність площі на моль:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{11}\)</span>
+<!--
+[𝐴𝑖] = см2/моль,
+-->
+<p>
+\begin{equation*}
+[A_i] = \text {см}^2 \text {/моль},
+\end{equation*}
+</p>
+<p>
+тобто її можна трактувати як <b>ефективну площу поглинання на один моль молекул</b> речовини. Чим більша ця площа — тим інтенсивніше смуга в спектрі.
+</p>
+<!--
+...... paragraph Зв’язок з експериментом. ......
+-->
+<p>
+<span class="paragraph" id="autosec-879">Зв’язок з експериментом.</span>
+<a id="main-html-autopage-879"></a>
+В експериментальній ІЧ-спектроскопії вимірюють <em>оптичну густину</em> \(A\) (безрозмірну величину), яка пов’язана із концентрацією \(c\) та довжиною кювети \(l\) законом Бугера–Ламберта–Бера:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{11}\)</span>
+<!--
+𝐴 = 𝜀 𝑐 𝑙,
+-->
+<p>
+\begin{equation*}
+A = \varepsilon \, c\, l,
+\end{equation*}
+</p>
+<p>
+де \(\varepsilon \) — молярний коефіцієнт поглинання. Інтеграл від \(\varepsilon (\tilde {\nu })\) за частотою \(\tilde {\nu }\) визначає <b>молярну інтегральну інтенсивність смуги</b>:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{11}\)</span>
+<!--
+𝐼 =
+ˆ
+𝜀( ̃
+𝜈) 𝑑 ̃
+𝜈,
+-->
+<p>
+\begin{equation*}
+I = \int \varepsilon (\tilde {\nu })\, d\tilde {\nu },
+\end{equation*}
+</p>
+<p>
+яка має ті ж самі одиниці, що й \(A_i\), тобто см\(^2\)/моль.
+</p>
+<!--
+...... paragraph Одиниці км/моль. ......
+-->
+<p>
+<span class="paragraph" id="autosec-880">Одиниці км/моль.</span>
+<a id="main-html-autopage-880"></a>
+Щоб уникнути дуже малих чисел, цю площу традиційно виражають у <b>кілометрах на моль</b>:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{11}\)</span>
+<!--
+1 км/моль = 105 см2/моль.
+-->
+<p>
+\begin{equation*}
+1~\text {км/моль} = 10^5~\text {см}^2/\text {моль}.
+\end{equation*}
+</p>
+<p>
+Тоді типові значення інтенсивностей для фундаментальних коливань молекул лежать у межах 10–1000&nbsp;км/моль, що зручно для порівняння та таблиць.
+</p>
+<!--
+...... paragraph Числова форма. ......
+-->
+<p>
+<span class="paragraph" id="autosec-881">Числова форма.</span>
+<a id="main-html-autopage-881"></a>
+Після підстановки числових значень констант:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{11}\)</span>
+<!--
+𝑁𝐴 = 6.022 × 1023 моль−1, 𝑐 = 2.998 × 1010 см/с,
+-->
+<p>
+\begin{equation*}
+N_A = 6.022 \times 10^{23}~\text {моль}^{-1}, \quad c = 2.998 \times 10^{10}~\text {см/с},
+\end{equation*}
+</p>
+<p>
+отримуємо:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{11}\)</span>
+<!--
+𝐼 = 974.8638 ×
+|
+|
+|
+𝜕𝜇
+𝜕𝑄
+|
+|
+|
+2
+a.u.
+км/моль.
+-->
+<p>
+\begin{equation*}
+\boxed {I = 974.8638 \times \left | \frac {\partial \boldsymbol {\mu }}{\partial Q} \right |^2_{\text {a.u.}} \text { км/моль}.}
+\end{equation*}
+</p>
+<!--
+...... paragraph Зв’язок між , і коефіцієнтом . ......
+-->
+<p>
+<span class="paragraph" id="autosec-882">Зв’язок між \(A_i\), \(I\) і коефіцієнтом \(K\).</span>
+<a id="main-html-autopage-882"></a>
+Формально експериментальна інтегральна інтенсивність \(I_i\) і теоретичне вираження \(A_i\) описують одну й ту саму фізичну величину, записану в різних одиницях:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{11}\)</span>
+<!--
+𝐼𝑖 = 𝐾 𝐴𝑖.
+-->
+<p>
+\begin{equation*}
+I_i = K\,A_i.
+\end{equation*}
+</p>
+<p>
+Коефіцієнт \(K\) враховує перехід від атомних одиниць, у яких обчислюється похідна \(\tfrac {\partial \boldsymbol {\mu }}{\partial Q_i}\), до лабораторних одиниць (км/моль). Підставивши фізичні сталі,
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{11}\)</span>
+<!--
+𝐾 =
+𝑁𝐴𝜋
+3𝑐2
+(𝑒𝑎0)2 × 105,
+-->
+<p>
+\begin{equation*}
+K = \frac {N_A \pi }{3 c^2} (e a_0)^2 \times 10^5,
+\end{equation*}
+</p>
+<p>
+отримуємо числове значення
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{11}\)</span>
+<!--
+𝐾 = 974.8638,
+-->
+<p>
+\begin{equation*}
+\boxed {K = 974.8638,}
+\end{equation*}
+</p>
+<p>
+тому остаточний вираз для інтегральної інтенсивності має вигляд:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{11}\)</span>
+<!--
+𝐼𝑖 = 974.8638
+|
+|
+|
+𝜕𝜇
+𝜕𝑄𝑖
+|
+|
+|
+2
+a.u.
+[км/моль].
+-->
+<p>
+\begin{equation*}
+\boxed {I_i = 974.8638 \left | \frac {\partial \boldsymbol {\mu }}{\partial Q_i} \right |^2_{\text {a.u.}}~ [\text {км/моль}].}
+\end{equation*}
+</p>
+<!--
+...... subsubsection Класифікація за інтенсивністю ......
+-->
+<h6 id="autosec-883">Класифікація за інтенсивністю</h6>
+<a id="main-html-autopage-883"></a>
+<div class="center">
+<table>
+<tr style="display:none"><th>.</th></tr>
+<tr class="hline">
+<td colspan="1" class="tdc" style="background:#F9F9F9"><b><b>Інтенсивність (км/моль)</b></b></td>
+<td colspan="1" class="tdc" style="background:#F9F9F9"><b><b>Класифікація</b></b></td>
+</tr>
+<tr class="hline">
+<td class="tdl">\(I &gt; 100\)</td>
+<td class="tdl">Сильна смуга</td>
+</tr>
+<tr>
+<td class="tdl" style="background:#F9F9F9">\(10 &lt; I \leq 100\)</td>
+<td class="tdl" style="background:#F9F9F9">Середня смуга</td>
+</tr>
+<tr>
+<td class="tdl">\(I \leq 10\)</td>
+<td class="tdl">Слабка смуга</td>
+</tr>
+<tr class="hline" aria-hidden="true">
+<td class="tdl"></td>
+<td class="tdl"></td>
+</tr>
+</table>
+</div>
+<!--
+...... subsection Розрахунок ІЧ-інтенсивностей ......
+-->
+<h5 id="autosec-886"><span class="sectionnumber">8.2.2&#x2003;</span>Розрахунок ІЧ-інтенсивностей</h5>
+<a id="main-html-autopage-886"></a>
+<p>
+ІЧ-інтенсивність нормальної моди пропорційна квадрату похідної дипольного моменту за координатою цієї моди:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{11}\)</span>
+<!--
+𝐼𝑖 ∼
+|
+|
+|
+𝑑𝜇
+𝑑𝑄𝑖
+|
+|
+|
+2
+.
+-->
+<p>
+\begin{equation*}
+I_i \sim \left | \frac {d\boldsymbol {\mu }}{dQ_i} \right |^2.
+\end{equation*}
+</p>
+<p>
+На практиці цю похідну можна отримати двома різними шляхами: чисельним та аналітичним диференціюванням.
+</p>
+<!--
+...... subsubsection Чисельне диференціювання ......
+-->
+<h6 id="autosec-887">Чисельне диференціювання</h6>
+<a id="main-html-autopage-887"></a>
+<p>
+У цьому підході координати атомів зсуваються вздовж \(i\)-ї нормальної моди на малу величину&nbsp;\(\delta \), після чого обчислюються дипольні моменти у двох геометріях — <em>«плюс»</em> і <em>«мінус»</em>. Похідна апроксимується центральною різницею:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{11}\)</span>
+<!--
+(
+𝑑𝜇
+𝑑𝑄𝑖
+)
+0
+≈
+𝜇(𝑄𝑖 + 𝛿) − 𝜇(𝑄𝑖 − 𝛿)
+2𝛿
+.
+-->
+<p>
+\begin{equation*}
+\left ( \frac {d\boldsymbol {\mu }}{dQ_i} \right )_0 \approx \frac {\boldsymbol {\mu }(Q_i+\delta ) - \boldsymbol {\mu }(Q_i-\delta )}{2\delta }.
+\end{equation*}
+</p>
+<p>
+В файлі <span class="codebutton"><a href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/Oscilations/code/h2o_ir_spectrum.py" target="_blank" ><kbd>h2o_ir_spectrum.py</kbd></a></span> наведено
+програму, яка використовує <b>метод центральних різниць</b> для чисельного обчислення \(\frac {d\boldsymbol {\mu }}{dQ_i}\):
+</p>
+<!--
+...... subsubsection Алгоритм обчислення ......
+-->
+<h6 id="autosec-888">Алгоритм обчислення</h6>
+<a id="main-html-autopage-888"></a>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> <b>Отримання нормальної моди:</b>
+</p>
+<p>
+З діагоналізації масово-зваженого Гесіану отримуємо власний вектор \(\mathbf {L}_k\) (нормальну моду):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{11}\)</span>
+<!--
+L𝑘 = (𝑙1𝑥, 𝑙1𝑦, 𝑙1𝑧, 𝑙2𝑥, 𝑙2𝑦, 𝑙2𝑧, … , 𝑙𝑁𝑥, 𝑙𝑁𝑦, 𝑙𝑁𝑧)𝑇 (8.12)
+-->
+<p>
+\begin{equation}
+\mathbf {L}_k = (l_{1x}, l_{1y}, l_{1z}, l_{2x}, l_{2y}, l_{2z}, \ldots , l_{Nx}, l_{Ny}, l_{Nz})^T
+\end{equation}
+</p>
+<p>
+де \(N\) — кількість атомів.
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">5 рядків</span></div>
+<pre class="code"><code><span class="tk-n">freq_info</span> <span class="tk-o">=</span> <span class="tk-n">thermo</span><span class="tk-o">.</span><span class="tk-n">harmonic_analysis</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">,</span> <span class="tk-n">hess</span><span class="tk-p">)</span>
+<span class="tk-n">normal_modes</span> <span class="tk-o">=</span> <span class="tk-n">freq_info</span><span class="tk-p">[</span><span class="tk-s1">'norm_mode'</span><span class="tk-p">]</span>       <span class="tk-c1"># власні вектори</span>
+
+<span class="tk-n">L_k</span> <span class="tk-o">=</span> <span class="tk-n">normal_modes</span><span class="tk-p">[:,</span> <span class="tk-n">k</span><span class="tk-p">]</span><span class="tk-o">.</span><span class="tk-n">reshape</span><span class="tk-p">(</span><span class="tk-n">natm</span><span class="tk-p">,</span> <span class="tk-mi">3</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Код <span class="inlinecode"><kbd>L_k = normal_modes[:, k].reshape(natm, 3)</kbd></span> відповідає \(\mathbf {L}_k\) у формулі.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> <b>Зміщення координат:</b>
+</p>
+<p>
+Для чисельного диференціювання вибираємо крок \(h\) та зміщуємо атоми вздовж нормальної моди:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{12}\)</span>
+<!--
+R(+) = R0 + ℎ ⋅ L𝑘 (8.13)
+R(−) = R0 − ℎ ⋅ L𝑘 (8.14)
+-->
+<p>
+\begin{align}
+\mathbf {R}^{(+)} &amp; = \mathbf {R}_0 + h \cdot \mathbf {L}_k \\ \mathbf {R}^{(-)} &amp; = \mathbf {R}_0 - h \cdot \mathbf {L}_k
+\end{align}
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">5 рядків</span></div>
+<pre class="code"><code><span class="tk-n">h</span> <span class="tk-o">=</span> <span class="tk-mf">0.001</span>  <span class="tk-c1"># Bohr</span>
+<span class="tk-n">R_0</span> <span class="tk-o">=</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">atom_coords</span><span class="tk-p">()</span>
+<span class="tk-n">R_pos</span> <span class="tk-o">=</span> <span class="tk-n">R_0</span> <span class="tk-o">+</span> <span class="tk-n">h</span> <span class="tk-o">*</span> <span class="tk-n">L_k</span>
+<span class="tk-n">R_neg</span> <span class="tk-o">=</span> <span class="tk-n">R_0</span> <span class="tk-o">-</span> <span class="tk-n">h</span> <span class="tk-o">*</span> <span class="tk-n">L_k</span></code></pre>
+</div>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> <b>SCF-розрахунки:</b>
+</p>
+<p>
+Для кожної зміщеної геометрії виконуємо SCF-розрахунок, отримуємо енергію \(E\) та дипольний момент \(\boldsymbol {\mu }\):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{14}\)</span>
+<!--
+𝐸(+), 𝜇(+) = SCF(R(+)) (8.15)
+𝐸(−), 𝜇(−) = SCF(R(−)) (8.16)
+-->
+<p>
+\begin{align}
+E^{(+)}, \boldsymbol {\mu }^{(+)} &amp; = \text {SCF}(\mathbf {R}^{(+)}) \\ E^{(-)}, \boldsymbol {\mu }^{(-)} &amp; = \text {SCF}(\mathbf {R}^{(-)})
+\end{align}
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">6 рядків</span></div>
+<pre class="code"><code><span class="tk-n">mf_pos</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol_pos</span><span class="tk-p">);</span> <span class="tk-n">mf_pos</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+<span class="tk-n">dip_pos</span> <span class="tk-o">=</span> <span class="tk-n">mf_pos</span><span class="tk-o">.</span><span class="tk-n">dip_moment</span><span class="tk-p">(</span><span class="tk-n">unit</span><span class="tk-o">=</span><span class="tk-s1">'Bohr'</span><span class="tk-p">)</span>
+
+<span class="tk-n">mf_neg</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol_neg</span><span class="tk-p">);</span> <span class="tk-n">mf_neg</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+<span class="tk-n">dip_neg</span> <span class="tk-o">=</span> <span class="tk-n">mf_neg</span><span class="tk-o">.</span><span class="tk-n">dip_moment</span><span class="tk-p">(</span><span class="tk-n">unit</span><span class="tk-o">=</span><span class="tk-s1">'Bohr'</span><span class="tk-p">)</span></code></pre>
+</div>
+</li>
+<li>
+<p>
+<span class="listmarker">4.</span> <b>Обчислення похідної дипольного моменту:</b>
+</p>
+<p>
+Чисельна похідна за нормальною координатою \(Q_k\):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{16}\)</span>
+<!--
+𝜕𝜇
+𝜕𝑄𝑘
+=
+𝜇(+) − 𝜇(−)
+2ℎ
+(8.17)
+-->
+<p>
+\begin{equation}
+\frac {\partial \boldsymbol {\mu }}{\partial Q_k} = \frac {\boldsymbol {\mu }^{(+)} - \boldsymbol {\mu }^{(-)}}{2h}
+\end{equation}
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">2 рядки</span></div>
+<pre class="code"><code><span class="tk-n">dip_derivative</span> <span class="tk-o">=</span> <span class="tk-p">(</span><span class="tk-n">dip_pos</span> <span class="tk-o">-</span> <span class="tk-n">dip_neg</span><span class="tk-p">)</span> <span class="tk-o">/</span> <span class="tk-p">(</span><span class="tk-mi">2</span> <span class="tk-o">*</span> <span class="tk-n">h</span><span class="tk-p">)</span></code></pre>
+</div>
+</li>
+<li>
+<p>
+<span class="listmarker">5.</span> <b>Обчислення інтегральної інтенсивності:</b>
+</p>
+<p>
+Інтенсивність ІЧ-переходу пропорційна квадрату норми похідної дипольного моменту:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{17}\)</span>
+<!--
+𝐼𝑘 = 974.8638 ×
+|
+|
+|
+𝜕𝜇
+𝜕𝑄𝑘
+|
+|
+|
+2
+a.u.
+[км/моль] (8.18)
+-->
+<p>
+\begin{equation}
+I_k = 974.8638 \times \left |\frac {\partial \boldsymbol {\mu }}{\partial Q_k}\right |^2_{\text {a.u.}} \quad \text {[км/моль]}
+\end{equation}
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">3 рядки</span></div>
+<pre class="code"><code><span class="tk-n">intensity</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">linalg</span><span class="tk-o">.</span><span class="tk-n">norm</span><span class="tk-p">(</span><span class="tk-n">dip_derivative</span><span class="tk-p">)</span><span class="tk-o">**</span><span class="tk-mi">2</span> <span class="tk-o">*</span> <span class="tk-mf">974.8638</span>
+<span class="tk-n">intensities</span><span class="tk-o">.</span><span class="tk-n">append</span><span class="tk-p">(</span><span class="tk-n">intensity</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+</p>
+</li>
+</ul>
+<p>
+Хоча метод простий, він вимагає виконання двох <kbd>SCF</kbd>-розрахунків на кожну моду і може бути чутливим до вибору&nbsp;\(\delta \).
+</p>
+<!--
+...... subsubsection Аналітичний підхід у PySCF ......
+-->
+<h6 id="autosec-889">Аналітичний підхід у <kbd>PySCF</kbd></h6>
+<a id="main-html-autopage-889"></a>
+<p>
+Модуль <span class="inlinecode"><kbd>pyscf.prop.freq</kbd></span> реалізує аналітичний обрахунок похідних дипольного моменту по атомних координатах \(\partial \boldsymbol {\mu }/\partial \mathbf {R}\).
+</p>
+<!--
+...... paragraph Перехід до нормальних координат. ......
+-->
+<p>
+<span class="paragraph" id="autosec-890">Перехід до нормальних координат.</span>
+<a id="main-html-autopage-890"></a>
+Похідна дипольного моменту за нормальною координатою \(Q_i\) виражається через матрицю нормальних мод \(\mathbf {L}\):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{18}\)</span>
+<!--
+𝜕𝝁
+𝜕𝑄𝑖
+=
+𝑁атм
+∑
+𝐴=1
+𝜕𝝁
+𝜕𝐑𝐴
+⋅
+𝜕𝐑𝐴
+𝜕𝑄𝑖
+=
+𝑁атм
+∑
+𝐴=1
+𝜕𝝁
+𝜕𝐑𝐴
+⋅
+𝐋𝑖
+𝐴
+√𝑚𝐴
+,
+-->
+<p>
+\begin{equation*}
+\frac {\partial \vect {\mu }}{\partial Q_i} = \sum _{A=1}^{N_{\text {атм}}} \frac {\partial \vect {\mu }}{\partial \vect {R}_{A}} \cdot \frac {\partial \vect {R}_A}{\partial Q_i} = \sum _{A=1}^{N_{\text {атм}}}
+\frac {\partial \vect {\mu }}{\partial \vect {R}_{A}} \cdot \frac {\vect {L}_A^i}{\sqrt {m_A}},
+\end{equation*}
+</p>
+<p>
+де \(\vect L_A^i = (L_{Ax}^i, L_{Ay}^i, L_{Az}^i)\) — вектор нормальної моди для атома \(A\), а множник \(1/\sqrt {m_A}\) враховує мас-зважування.
+</p>
+<!--
+...... paragraph Структура тензора похідних. ......
+-->
+<p>
+<span class="paragraph" id="autosec-891">Структура тензора похідних.</span>
+<a id="main-html-autopage-891"></a>
+У <kbd>PySCF</kbd> тензор похідних <span class="inlinecode"><kbd>vib.de</kbd></span> має розмірність \((N_{\text {атм}}, N_{\text {атм}}, 3, 3)\) і зберігає похідні компонент дипольного моменту за координатами атомів:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{18}\)</span>
+<!--
+(vib.de)𝐴𝐵𝑎𝑗 =
+𝜕𝜇(𝐴)
+𝑗
+𝜕𝑅𝐵𝑎
+,
+-->
+<p>
+\begin{equation*}
+(\texttt {vib.de})_{ABaj} = \frac {\partial \mu _j^{(A)}}{\partial R_{Ba}},
+\end{equation*}
+</p>
+<p>
+Діагональні елементи (\(A=B\)) відповідають похідній внеску атома в дипольний момент по його власних координатах:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{18}\)</span>
+<!--
+𝐷𝐴𝑎𝑗 = (vib.de)𝐴𝐴𝑎𝑗 =
+𝜕𝜇𝑗
+𝜕𝑅𝐴𝑎
+.
+-->
+<p>
+\begin{equation*}
+D_{Aaj} = (\texttt {vib.de})_{AAaj} = \frac {\partial \mu _j}{\partial R_{Aa}}.
+\end{equation*}
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">3 рядки</span></div>
+<pre class="code"><code><span class="tk-c1"># Діагональний тензор: (N_atm, 3, 3)</span>
+<span class="tk-n">de_diag</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">einsum</span><span class="tk-p">(</span><span class="tk-s1">'AAaj-&gt;Aaj'</span><span class="tk-p">,</span> <span class="tk-n">vib</span><span class="tk-o">.</span><span class="tk-n">de</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Для кожного атома \(A\) отримуємо матрицю Якобі дипольного моменту:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{18}\)</span>
+<!--
+D𝐴 = (
+𝜕𝜇𝑥/𝜕𝑥𝐴 𝜕𝜇𝑦/𝜕𝑥𝐴 𝜕𝜇𝑧/𝜕𝑥𝐴
+𝜕𝜇𝑥/𝜕𝑦𝐴 𝜕𝜇𝑦/𝜕𝑦𝐴 𝜕𝜇𝑧/𝜕𝑦𝐴
+𝜕𝜇𝑥/𝜕𝑧𝐴 𝜕𝜇𝑦/𝜕𝑧𝐴 𝜕𝜇𝑧/𝜕𝑧𝐴
+) .
+-->
+<p>
+\begin{equation*}
+\mathbf {D}_A = \begin{pmatrix} \partial \mu _x/\partial x_A &amp; \partial \mu _y/\partial x_A &amp; \partial \mu _z/\partial x_A \\ \partial \mu _x/\partial y_A &amp; \partial \mu _y/\partial y_A &amp;
+\partial \mu _z/\partial y_A \\ \partial \mu _x/\partial z_A &amp; \partial \mu _y/\partial z_A &amp; \partial \mu _z/\partial z_A \end {pmatrix}.
+\end{equation*}
+</p>
+<!--
+...... paragraph Похідні за нормальними координатами. ......
+-->
+<p>
+<span class="paragraph" id="autosec-892">Похідні за нормальними координатами.</span>
+<a id="main-html-autopage-892"></a>
+Матриця похідних дипольного моменту за всіма нормальними модами:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{18}\)</span>
+<!--
+𝜕𝜇𝑗
+𝜕𝑄𝑖
+=
+𝑁атм
+∑
+𝐴=1
+∑
+𝑎=𝑥,𝑦,𝑧
+𝐿𝑖
+𝐴𝑎
+√𝑚𝐴
+𝐷𝐴𝑎𝑗.
+-->
+<p>
+\begin{equation*}
+\frac {\partial \mu _j}{\partial Q_i} = \sum _{A=1}^{N_{\text {атм}}} \sum _{a=x,y,z} \frac {L_{Aa}^i}{\sqrt {m_A}} \, D_{Aaj}.
+\end{equation*}
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">6 рядків</span></div>
+<pre class="code"><code><span class="tk-c1"># Роззважування векторів нормальних мод</span>
+<span class="tk-n">modes_unweighted</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">einsum</span><span class="tk-p">(</span><span class="tk-s1">'iAa,A-&gt;iAa'</span><span class="tk-p">,</span> <span class="tk-n">modes</span><span class="tk-p">,</span> <span class="tk-mi">1</span><span class="tk-o">/</span><span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">sqrt</span><span class="tk-p">(</span><span class="tk-n">masses</span><span class="tk-p">))</span>
+
+<span class="tk-c1"># Тензорна згортка: (N_modes, 3)</span>
+<span class="tk-n">dipole_derivs</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">einsum</span><span class="tk-p">(</span><span class="tk-s1">'iAa,Aaj-&gt;ij'</span><span class="tk-p">,</span> <span class="tk-n">modes_unweighted</span><span class="tk-p">,</span> <span class="tk-n">de_diag</span><span class="tk-p">)</span></code></pre>
+</div>
+<!--
+...... paragraph Інтенсивності ІЧ-переходів. ......
+-->
+<p>
+<span class="paragraph" id="autosec-893">Інтенсивності ІЧ-переходів.</span>
+<a id="main-html-autopage-893"></a>
+Інтенсивність \(i\)-го коливального переходу:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{18}\)</span>
+<!--
+𝐼𝑖 = 974.8638 ∑
+𝑗=𝑥,𝑦,𝑧
+(
+𝜕𝜇𝑗
+𝜕𝑄𝑖
+)
+2
+= 974.8638
+‖
+‖
+‖
+𝜕𝜇
+𝜕𝑄𝑖
+‖
+‖
+‖
+2
+-->
+<p>
+\begin{equation*}
+I_i = 974.8638 \sum _{j=x,y,z} \left ( \frac {\partial \mu _j}{\partial Q_i} \right )^2 = 974.8638 \, \left \| \frac {\partial \boldsymbol {\mu }}{\partial Q_i} \right \|^2
+\end{equation*}
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">3 рядки</span></div>
+<pre class="code"><code><span class="tk-c1"># Інтенсивності для всіх мод</span>
+<span class="tk-n">ir_intensities</span> <span class="tk-o">=</span> <span class="tk-mf">974.8638</span> <span class="tk-o">*</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">sum</span><span class="tk-p">(</span><span class="tk-n">dipole_derivs</span><span class="tk-o">**</span><span class="tk-mi">2</span><span class="tk-p">,</span> <span class="tk-n">axis</span><span class="tk-o">=</span><span class="tk-mi">1</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+І весь код разом:
+</p>
+<div class="codeblock code-python code-long" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">37 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">import</span><span class="tk-w"> </span><span class="tk-nn">numpy</span><span class="tk-w"> </span><span class="tk-k">as</span><span class="tk-w"> </span><span class="tk-nn">np</span>
+<span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+<span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.prop</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">freq</span>
+
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'O 0 0 0; H 0 -0.757 0.587; H 0 0.757 0.587'</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'6-31g'</span><span class="tk-p">)</span>
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">run</span><span class="tk-p">()</span>
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">verbose</span><span class="tk-o">=</span><span class="tk-mi">0</span>
+
+<span class="tk-n">vib</span> <span class="tk-o">=</span> <span class="tk-n">freq</span><span class="tk-o">.</span><span class="tk-n">rhf</span><span class="tk-o">.</span><span class="tk-n">Frequency</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">)</span>
+<span class="tk-n">vib</span><span class="tk-o">.</span><span class="tk-n">verbose</span><span class="tk-o">=</span><span class="tk-mi">0</span>
+<span class="tk-n">freqs</span><span class="tk-p">,</span> <span class="tk-n">modes</span> <span class="tk-o">=</span> <span class="tk-n">vib</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+<span class="tk-n">natm</span> <span class="tk-o">=</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">natm</span>
+
+<span class="tk-n">masses</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">array</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">atom_mass_list</span><span class="tk-p">())</span>
+<span class="tk-n">sqrt_m</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">sqrt</span><span class="tk-p">(</span><span class="tk-n">masses</span><span class="tk-p">)</span>
+<span class="tk-n">modes_unweighted</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">einsum</span><span class="tk-p">(</span><span class="tk-s1">'iAa,A-&gt;iAa'</span><span class="tk-p">,</span> <span class="tk-n">modes</span><span class="tk-p">,</span> <span class="tk-mi">1</span><span class="tk-o">/</span><span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">sqrt</span><span class="tk-p">(</span><span class="tk-n">masses</span><span class="tk-p">))</span>
+
+<span class="tk-c1"># Діагональні елементи</span>
+<span class="tk-n">de_diag</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">einsum</span><span class="tk-p">(</span><span class="tk-s1">'AAaj-&gt;Aaj'</span><span class="tk-p">,</span> <span class="tk-n">vib</span><span class="tk-o">.</span><span class="tk-n">de</span> <span class="tk-p">)</span>   <span class="tk-c1"># (natm, 3, 3)</span>
+
+
+<span class="tk-c1"># Всі дипольні похідні одразу</span>
+<span class="tk-n">dipole_derivs</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">einsum</span><span class="tk-p">(</span><span class="tk-s1">'iAa,Aaj-&gt;ij'</span><span class="tk-p">,</span> <span class="tk-n">modes_unweighted</span><span class="tk-p">,</span> <span class="tk-n">de_diag</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># Всі інтенсивності одразу</span>
+<span class="tk-n">ir_intensities</span> <span class="tk-o">=</span> <span class="tk-mf">974.8638</span> <span class="tk-o">*</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">sum</span><span class="tk-p">(</span><span class="tk-n">dipole_derivs</span><span class="tk-o">**</span><span class="tk-mi">2</span><span class="tk-p">,</span> <span class="tk-n">axis</span><span class="tk-o">=</span><span class="tk-mi">1</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># Вивід</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-s2">"</span><span class="tk-se">\n</span><span class="tk-s2">"</span> <span class="tk-o">+</span> <span class="tk-s2">"="</span><span class="tk-o">*</span><span class="tk-mi">70</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-s2">"  ІЧ СПЕКТР H₂O (PySCF, оптимізовано)"</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-s2">"="</span><span class="tk-o">*</span><span class="tk-mi">70</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"</span><span class="tk-si">{</span><span class="tk-s1">'Мода'</span><span class="tk-si">:</span><span class="tk-s2">&lt;8</span><span class="tk-si">}{</span><span class="tk-s1">'Частота (см⁻¹)'</span><span class="tk-si">:</span><span class="tk-s2">&gt;18</span><span class="tk-si">}{</span><span class="tk-s1">'Інтенсивність (km/mol)'</span><span class="tk-si">:</span><span class="tk-s2">&gt;28</span><span class="tk-si">}</span><span class="tk-s2">"</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-s2">"-"</span><span class="tk-o">*</span><span class="tk-mi">70</span><span class="tk-p">)</span>
+<span class="tk-k">for</span> <span class="tk-n">i</span> <span class="tk-ow">in</span> <span class="tk-nb">range</span><span class="tk-p">(</span><span class="tk-mi">6</span><span class="tk-p">,</span> <span class="tk-nb">len</span><span class="tk-p">(</span><span class="tk-n">freqs</span><span class="tk-p">)):</span>
+    <span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"</span><span class="tk-si">{</span><span class="tk-n">i</span><span class="tk-o">-</span><span class="tk-mi">5</span><span class="tk-si">:</span><span class="tk-s2">&lt;8d</span><span class="tk-si">}{</span><span class="tk-n">freqs</span><span class="tk-p">[</span><span class="tk-n">i</span><span class="tk-p">]</span><span class="tk-si">:</span><span class="tk-s2">&gt;18.2f</span><span class="tk-si">}{</span><span class="tk-n">ir_intensities</span><span class="tk-p">[</span><span class="tk-n">i</span><span class="tk-p">]</span><span class="tk-si">:</span><span class="tk-s2">&gt;28.2f</span><span class="tk-si">}</span><span class="tk-s2">"</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-s2">"="</span><span class="tk-o">*</span><span class="tk-mi">70</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+На відміну від чисельного підходу, цей метод:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> не потребує перерахунку енергії при зсуві атомів;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> базується на аналітичних градієнтах і похідних;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> забезпечує вищу точність і швидкість.
+</p>
+</li>
+</ul>
+<!--
+...... subsubsection Результати для ......
+-->
+<h6 id="autosec-894">Результати для \(\mathrm {H_{2}O}\)</h6>
+<a id="main-html-autopage-894"></a>
+<!--
+...... paragraph Нормальні моди води. ......
+-->
+<p>
+<span class="paragraph" id="autosec-895">Нормальні моди води.</span>
+<a id="main-html-autopage-895"></a>
+</p>
+<p>
+Експериментальні дані
+</p>
+<figure id="autoid-34" class="table ">
+<div class="center">
+<div class="figurecaption">
+Таблиця&nbsp;8.1. Експериментальні дані коливань молекули H\(_2\)O (джерела: <a href="https://cccbdb.nist.gov/expvibs2x.asp" target="_blank" >https://cccbdb.nist.gov/expvibs2x.asp</a>).
+</div>
+<a id="tab:exp_vib_H2O"></a>
+<table>
+<tr style="display:none"><th>.</th></tr>
+<tr>
+<td class="tdp tdcenter" style="background:#F9F9F9">
+<p>
+<b>Мода</b>
+</p>
+</td>
+<td colspan="1" class="tdc" style="background:#F9F9F9"><b>Симетрія</b></td>
+<td class="tdp tdcenter" style="background:#F9F9F9">
+<p>
+<b>Частота гармонічна (см\(^{-1}\))</b>
+</p>
+</td>
+<td class="tdp tdcenter" style="background:#F9F9F9">
+<p>
+<b>Інтенсивність (км моль\(^{-1}\))</b>
+</p>
+</td>
+<td class="tdp tdcenter" style="background:#F9F9F9">
+</td>
+<td colspan="1" class="tdc" style="background:#F9F9F9"></td>
+</tr>
+<tr>
+<td class="tdp tdcenter">
+<p>
+1
+</p>
+</td>
+<td class="tdp tdleft">
+<p>
+\(\mathrm {H-O-H}\) вигин
+</p>
+</td>
+<td class="tdp tdcenter">
+<p>
+1648.5
+</p>
+</td>
+<td class="tdp tdcenter">
+<p>
+62.5
+</p>
+</td>
+<td class="tdp tdcenter">
+</td>
+<td class="tdp tdleft">
+</td>
+</tr>
+<tr>
+<td class="tdp tdcenter" style="background:#F9F9F9">
+<p>
+2
+</p>
+</td>
+<td class="tdp tdleft" style="background:#F9F9F9">
+<p>
+\(\mathrm {O-H}\) сим. розтяг
+</p>
+</td>
+<td class="tdp tdcenter" style="background:#F9F9F9">
+<p>
+3832.2
+</p>
+</td>
+<td class="tdp tdcenter" style="background:#F9F9F9">
+<p>
+2.93
+</p>
+</td>
+<td class="tdp tdcenter" style="background:#F9F9F9">
+</td>
+<td class="tdp tdleft" style="background:#F9F9F9">
+</td>
+</tr>
+<tr>
+<td class="tdp tdcenter">
+<p>
+3
+</p>
+</td>
+<td class="tdp tdleft">
+<p>
+\(\mathrm {O-H}\) антисим. розтяг
+</p>
+</td>
+<td class="tdp tdcenter">
+<p>
+3942.5
+</p>
+</td>
+<td class="tdp tdcenter">
+<p>
+41.7
+</p>
+</td>
+<td class="tdp tdcenter">
+</td>
+<td class="tdp tdleft">
+</td>
+</tr>
+</table>
+</div>
+</figure>
+<p>
+Молекула H\(_2\)O має \(3N - 6 = 3\) коливальні моди:
+</p>
+<div class="center">
+<table>
+<tr style="display:none"><th>.</th></tr>
+<tr>
+<td class="tdp tdcenter" style="background:#F9F9F9">
+<p>
+<b>Мода</b>
+</p>
+</td>
+<td class="tdp tdcenter" style="background:#F9F9F9">
+<p>
+<b>\(\nu \) (см\(^{-1}\))</b>
+</p>
+</td>
+<td class="tdp tdcenter" style="background:#F9F9F9">
+<p>
+<b>\(I\) (км/моль)</b>
+</p>
+</td>
+<td class="tdp tdcenter" style="background:#F9F9F9">
+<p>
+<b>Тип</b>
+</p>
+</td>
+</tr>
+<tr>
+<td class="tdp tdcenter">
+<p>
+1
+</p>
+</td>
+<td class="tdp tdcenter">
+<p>
+1828.9
+</p>
+</td>
+<td class="tdp tdcenter">
+<p>
+1.4
+</p>
+</td>
+<td class="tdp tdcenter">
+<p>
+Слабка (деформаційна)
+</p>
+</td>
+</tr>
+<tr>
+<td class="tdp tdcenter" style="background:#F9F9F9">
+<p>
+2
+</p>
+</td>
+<td class="tdp tdcenter" style="background:#F9F9F9">
+<p>
+3906.0
+</p>
+</td>
+<td class="tdp tdcenter" style="background:#F9F9F9">
+<p>
+102.3
+</p>
+</td>
+<td class="tdp tdcenter" style="background:#F9F9F9">
+<p>
+Сильна (симетричне валентне)
+</p>
+</td>
+</tr>
+<tr>
+<td class="tdp tdcenter">
+<p>
+3
+</p>
+</td>
+<td class="tdp tdcenter">
+<p>
+4001.1
+</p>
+</td>
+<td class="tdp tdcenter">
+<p>
+138.6
+</p>
+</td>
+<td class="tdp tdcenter">
+<p>
+Сильна (асиметричне валентне)
+</p>
+</td>
+</tr>
+</table>
+</div>
+<p>
+<i>Примітка.</i> Усі три моди молекули <span
+id="lateximage-main-html-193"
+class="lateximagesource"
+><!--
+H2
+O
+--><img
+src="main-html-images/3BD50A5CF48F9588DE1B1A127A250217.svg"
+alt="\ce{H2O}"
+style=""
+class="lateximage"
+></span> є ІЧ-активними (група симетрії \(C_{2v}\)). Найсильніше поглинання відповідає валентним коливанням, що зумовлюють інтенсивну ІЧ-смугу пари води в атмосфері (важливий внесок у парниковий ефект).
+</p>
+<!--
+...... subsection Резюме ......
+-->
+<h5 id="autosec-902">Резюме</h5>
+<a id="main-html-autopage-902"></a>
+<p>
+У цьому розділі розглянуто теоретичні основи та практичні методи розрахунку інфрачервоних спектрів молекул.
+</p>
+<!--
+...... paragraph Ключові положення: ......
+-->
+<p>
+<span class="paragraph" id="autosec-903">Ключові положення:</span>
+<a id="main-html-autopage-903"></a>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> ІЧ-інтенсивність коливальної моди визначається квадратом похідної дипольного моменту за нормальною координатою: \(I_i = 974.8638 \left |\frac {\partial \boldsymbol {\mu }}{\partial Q_i}\right |^2\)
+[км/моль].
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Інтенсивність відображає <em>силу взаємодії</em> молекули з ІЧ-випромінюванням: чим більша зміна дипольного моменту при коливанні, тим інтенсивніша смуга поглинання. Класифікація: сильні смуги (\(I &gt;
+100\)&nbsp;км/моль), середні (\(10 &lt; I \leq 100\)), слабкі (\(I \leq 10\)&nbsp;км/моль).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Два методи обчислення похідних:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">–</span> <i>Чисельний</i> — простий, але вимагає додаткових SCF-розрахунків для зміщених геометрій та чутливий до вибору кроку \(h\);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">–</span> <i>Аналітичний</i> — ефективніший і точніший, базується на аналітичних градієнтах густини заряду. Реалізований у <kbd>PySCF</kbd> як для HF, так і для DFT-методів.
+</p>
+</li>
+</ul>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Для молекули H\(_2\)O розраховані частоти (\(\sim 1829\), \(3906\), \(4001\)&nbsp;см\(^{-1}\)) якісно узгоджуються з експериментом (\(1648\), \(3832\), \(3943\)&nbsp;см\(^{-1}\)), а систематичне завищення
+пояснюється гармонічним наближенням і вибором базису.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Інтенсивності (\(I_1 = 1.4\), \(I_2 = 102.3\), \(I_3 = 138.6\)&nbsp;км/моль) демонструють, що найінтенсивніші смуги відповідають валентним коливанням <span
+id="lateximage-main-html-194"
+class="lateximagesource"
+><!--
+O–H
+--><img
+src="main-html-images/2DD1CD242CF0EA93AA3E2507782102EE.svg"
+alt="\ce{O-H}"
+style=""
+class="lateximage"
+></span> зв’язків, тоді як деформаційна мода має слабку інтенсивність. Експериментальні значення (\(62.5\), \(2.93\), \(41.7\)&nbsp;км/моль) показують іншу картину через ангармонічні ефекти та обмеження гармонічного наближення.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Висока інтенсивність валентних коливань робить пару води потужним поглиначем ІЧ-випромінювання в атмосфері, що має значення для клімату та парникового ефекту.
+</p>
+</li>
+</ul>
+<!--
+...... paragraph Практичне значення: ......
+-->
+<p>
+<span class="paragraph" id="autosec-906">Практичне значення:</span>
+<a id="main-html-autopage-906"></a>
+Розрахунки ІЧ-спектрів є важливим інструментом для:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> ідентифікації функціональних груп та структури молекул;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> інтерпретації експериментальних спектрів та передбачення відносних інтенсивностей;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> передбачення спектральних характеристик нових сполук;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> дослідження міжмолекулярних взаємодій та динаміки;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> кількісного аналізу концентрацій речовин за допомогою закону Бугера-Ламберта-Бера.
+</p>
+</li>
+</ul>
+<!--
+...... section Термохімія та нульова енергія ......
+-->
+<h4 id="autosec-907"><span class="sectionnumber">&#xA7;&#x202F;8.3&#x2003;</span>Термохімія та нульова енергія</h4>
+<a id="main-html-autopage-907"></a>
+<p>
+Розглянемо, як із результатів квантово-хімічного розрахунку (зокрема з гесіана) отримують термохімічні параметри: нульову коливальну енергію, термічні поправки, ентропію та вільну енергію. Ці параметри <em>відносяться до газової фази</em> та розраховуються в
+рамках <em>моделі ідеального газу</em>.
+</p>
+<p>
+У квантово-хімічних програмах, таких як <kbd>PySCF</kbd>, припускається, що молекула є ізольованою частинкою у газовій фазі, а її внутрішня енергія складається з кількох незалежних внесків:
+</p>
+<p>
+\[ E_{\text {total}} = E_{\text {elec}} + E_{\text {vib}} + E_{\text {rot}} + E_{\text {trans}}. \]
+</p>
+<p>
+Тут \(E_{\text {elec}}\) — <em>електронна енергія системи</em>, отримана з розв’язку електронного рівняння Шредінґера при фіксованих положеннях ядер (наближення Борна–Оппенгеймера). Залежно від рівня теорії, цей внесок може бути визначений у межах
+методу Хартрі–Фока (HF), теорії функціонала густини (DFT) або більш точних пост-ХФ підходів
+</p>
+<p>
+Для оцінки цих ядерних внесків використовується <em>наближення жорсткого ротатора</em> (для обертання молекули) та <em>гармонічного осцилятора</em> (для коливань атомів). Відповідно, термохімічні функції молекул — енергія, ентальпія, ентропія та вільна
+енергія Гіббса — залежать не лише від електронної будови, але й від термічних ефектів, пов’язаних із поступальним, обертальним і коливальним рухом ядер.
+</p>
+<!--
+...... subsection Нульова коливальна енергія (ZPE) ......
+-->
+<h5 id="autosec-908"><span class="sectionnumber">8.3.1&#x2003;</span>Нульова коливальна енергія (ZPE)</h5>
+<a id="main-html-autopage-908"></a>
+<p>
+Навіть при абсолютному нулі температури (\(T=0\)&nbsp;K) молекула не є нерухомою. Згідно з принципом невизначеності Гайзенберґа, ядра не можуть одночасно мати точно визначені координати й імпульси, тому вони завжди здійснюють квантові коливання навколо
+рівноважного положення.
+</p>
+<p>
+Для гармонічного осцилятора енергії рівнів задаються:
+</p>
+<p>
+\[ E_v = \left (n + \frac {1}{2}\right )\hbar \omega , \qquad n = 0, 1, 2, \ldots \]
+</p>
+<p>
+Тобто навіть у найнижчому стані (\(n=0\)) коливальна енергія дорівнює \(\tfrac {1}{2}\hbar \omega \). Для багатомодової молекули (з \(3N-6\) нормальних мод) нульова коливальна енергія (Zero Point Energy, ZPE) становить:
+</p>
+<p>
+\[ E_{\text {ZPE}} = \sum _{i=1}^{3N-6} \frac {1}{2}\hbar \omega _i. \]
+</p>
+<p>
+Знання ZPE необхідне для точних термохімічних розрахунків (зокрема енергій реакцій), також вона изначає <em>ізотопні ефекти</em>, впливає на швидкість <em>тунелювання</em> через потенційні бар’єри. Для невеликих органічних молекул становить зазвичай
+\(5\)–\(15\)&nbsp;ккал/моль .
+</p>
+<!--
+...... subsection Термохімічні поправки ......
+-->
+<h5 id="autosec-909"><span class="sectionnumber">8.3.2&#x2003;</span>Термохімічні поправки</h5>
+<a id="main-html-autopage-909"></a>
+<p>
+При підвищенні температури ядра можуть займати збуджені коливальні, обертальні й поступальні стани. Це змінює середню енергію системи, її ентальпію, ентропію та вільну енергію Гіббса.
+</p>
+<p>
+Для кожного ступеня вільності маємо:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{18}\)</span>
+<!--
+𝐸vib
+(𝑇) = ∑
+𝑖
+ℏ𝜔𝑖
+exp(ℏ𝜔𝑖/𝑘𝐵𝑇) − 1
+,
+-->
+<p>
+\begin{equation*}
+E_{\text {vib}}(T) = \sum _i \frac {\hbar \omega _i}{\exp (\hbar \omega _i/k_BT) - 1},
+\end{equation*}
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{18}\)</span>
+<!--
+𝐸rot
+(𝑇) = {
+𝑘𝐵𝑇, для лінійної молекули;
+3
+2
+𝑘𝐵𝑇, для нелінійної.
+-->
+<p>
+\begin{equation*}
+E_{\text {rot}}(T) = \begin{cases} k_BT, &amp; \text {для лінійної молекули;} \\ \frac {3}{2}k_BT, &amp; \text {для нелінійної.} \end {cases}
+\end{equation*}
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{18}\)</span>
+<!--
+𝐸trans
+(𝑇) =
+3
+2
+𝑘𝐵𝑇.
+-->
+<p>
+\begin{equation*}
+E_{\text {trans}}(T) = \frac {3}{2}k_BT.
+\end{equation*}
+</p>
+<p>
+Тоді повна енергія системи:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{18}\)</span>
+<!--
+𝐸total
+(𝑇) = 𝐸elec
++ 𝐸ZPE
++ 𝐸vib
+(𝑇) + 𝐸rot
+(𝑇) + 𝐸trans
+(𝑇).
+-->
+<p>
+\begin{equation*}
+E_{\text {total}}(T) = E_{\text {elec}} + E_{\text {ZPE}} + E_{\text {vib}}(T) + E_{\text {rot}}(T) + E_{\text {trans}}(T).
+\end{equation*}
+</p>
+<p>
+Ентальпія визначається як:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{18}\)</span>
+<!--
+𝐻(𝑇) = 𝐸total
+(𝑇) + 𝑅𝑇.
+-->
+<p>
+\begin{equation*}
+H(T) = E_{\text {total}}(T) + RT.
+\end{equation*}
+</p>
+<!--
+...... subsection Ентропія молекули ......
+-->
+<h5 id="autosec-910"><span class="sectionnumber">8.3.3&#x2003;</span>Ентропія молекули</h5>
+<a id="main-html-autopage-910"></a>
+<p>
+Ентропія — це міра невпорядкованості системи або кількості доступних мікростанів. Для ідеального газу вона має такі складові:
+</p>
+<p>
+\[ S(T) = S_{\text {trans}} + S_{\text {rot}} + S_{\text {vib}} + S_{\text {elec}}. \]
+</p>
+<!--
+...... paragraph 1. Поступальна ентропія: ......
+-->
+<p>
+<span class="paragraph" id="autosec-911">1. Поступальна ентропія:</span>
+<a id="main-html-autopage-911"></a>
+</p>
+<p>
+\[ S_{\text {trans}} = R\left [ \ln \!\left (\frac {(2\pi m k_BT)^{3/2}k_BT}{h^3 P}\right ) + \frac {5}{2} \right ], \]
+</p>
+<p>
+де \(m\) — маса молекули, \(P\) — тиск.
+</p>
+<!--
+...... paragraph 2. Обертальна ентропія: ......
+-->
+<p>
+<span class="paragraph" id="autosec-912">2. Обертальна ентропія:</span>
+<a id="main-html-autopage-912"></a>
+</p>
+<p>
+\[ S_{\text {rot}} = R\left [ \ln \!\left ( \frac {\sqrt {\pi }T^{3/2}}{\sigma } \left (\frac {8\pi ^2k_B}{h^2}\right )^{3/2} \sqrt {I_A I_B I_C} \right ) + \frac {3}{2} \right ], \]
+</p>
+<p>
+де \(\sigma \) — число симетрійних перестановок, \(I_A,I_B,I_C\) — головні моменти інерції.
+</p>
+<!--
+...... paragraph 3. Коливальна ентропія: ......
+-->
+<p>
+<span class="paragraph" id="autosec-913">3. Коливальна ентропія:</span>
+<a id="main-html-autopage-913"></a>
+</p>
+<p>
+\[ S_{\text {vib}} = R \sum _i \left [ \frac {\theta _i/T}{\exp (\theta _i/T) - 1} - \ln \!\left (1 - e^{-\theta _i/T}\right ) \right ], \]
+</p>
+<p>
+де \(\theta _i = h\nu _i/k_B\) — характеристична температура моди.
+</p>
+<!--
+...... paragraph 4. Електронна ентропія: ......
+-->
+<p>
+<span class="paragraph" id="autosec-914">4. Електронна ентропія:</span>
+<a id="main-html-autopage-914"></a>
+Зазвичай нехтують, бо основний стан є єдиним при кімнатних температурах.
+</p>
+<!--
+...... subsubsection Вільна енергія Гіббса ......
+-->
+<h6 id="autosec-915">Вільна енергія Гіббса</h6>
+<a id="main-html-autopage-915"></a>
+<p>
+\[ G(T) = H(T) - TS(T) \]
+</p>
+<p>
+Вона визначає термодинамічну стабільність сполук і напрямок хімічних реакцій.
+</p>
+<!--
+...... subsection Як це реалізовано в PySCF ......
+-->
+<h5 id="autosec-916"><span class="sectionnumber">8.3.4&#x2003;</span>Як це реалізовано в <kbd>PySCF</kbd></h5>
+<a id="main-html-autopage-916"></a>
+<p>
+У пакеті <kbd>PySCF</kbd> повний термохімічний аналіз молекули базується на енергії електронів \(E_{\text {elec}}\), до якої послідовно додаються внески нульових коливань, теплові поправки та ентропійні терміни. Термохімічні величини обчислюються на основі
+гармонічних частот, отриманих із гессіана (матриці других похідних енергії за координатами атомів), і додаються до електронної енергії \(E_{\text {elec}}\), отриманої з розв’язку рівнянь Хартрі–Фока або DFT.
+</p>
+<!--
+...... subsection Термохімічний приклад: ......
+-->
+<h5 id="autosec-917"><span class="sectionnumber">8.3.5&#x2003;</span>Термохімічний приклад: \(\mathrm {H_{2}O}\)</h5>
+<a id="main-html-autopage-917"></a>
+<p>
+У програмі <span class="codebutton"><a href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/Oscilations/code/h2o_thermochemistry.py" target="_blank"
+><kbd>h2o_thermochemistry.py</kbd></a></span> основна робота термохімічного аналізу була зведена до двох ключових функцій з модуля <a href="https://pyscf.org/_modules/pyscf/hessian/thermo.html" target="_blank"
+><kbd>pysch.hessian.thermo</kbd></a>:
+</p>
+<!--
+...... subsubsection Алгоритм термохімічного аналізу в PySCF ......
+-->
+<h6 id="autosec-918">Алгоритм термохімічного аналізу в PySCF</h6>
+<a id="main-html-autopage-918"></a>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> <b>Обчислення Гессіану.</b>
+</p>
+<p>
+Матриця Гессіану (друга похідна енергії за атомними координатами) визначається як:
+</p>
+<p>
+\[ H_{ij} = \frac {\partial ^2 E}{\partial x_i \partial x_j}. \]
+</p>
+<p>
+Вона містить інформацію про кривизну поверхні потенціальної енергії та використовується для визначення нормальних коливань і частот:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">3 рядки</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">hessian</span>
+<span class="tk-n">hess</span> <span class="tk-o">=</span> <span class="tk-n">hessian</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span></code></pre>
+</div>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> <b>Гармонічний аналіз коливань.</b>
+</p>
+<p>
+Діагоналізація масово-зваженого Гессіану дає власні частоти \(\nu _k\) (в см\({}^{-1}\)) та нормальні моди \(\mathbf {L}_k\). Поступальні та обертальні ступені свободи автоматично відкидаються (для нелінійних молекул — 6, для лінійних — 5).
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">3 рядки</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.hessian.thermo</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">harmonic_analysis</span>
+<span class="tk-n">results</span> <span class="tk-o">=</span> <span class="tk-n">harmonic_analysis</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">,</span> <span class="tk-n">hess</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+У результаті отримуємо структуру <span class="inlinecode"><kbd>results</kbd></span>, що містить:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>results['freq_cm']</kbd></span>: коливальні частоти в см\(^{-1}\);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>results['freq_au']</kbd></span>: ті ж частоти в атомних одиницях;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>results['norm_mode']</kbd></span>: нормальні моди \(\mathbf {L}_k\).
+</p>
+</li>
+</ul>
+<p>
+Ці дані необхідні для розрахунку вібраційного внеску в термодинамічні функції.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> <b>Розрахунок термохімічних величин.</b>
+</p>
+<p>
+Функція <span class="inlinecode"><kbd>thermo()</kbd></span> комбінує результати електронного розрахунку, коливальні частоти та статистичні формули для різних видів руху:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{18}\)</span>
+<!--
+𝑄 = 𝑄trans
+⋅ 𝑄rot
+⋅ 𝑄vib
+⋅ 𝑄el
+. (8.19)
+-->
+<p>
+\begin{equation}
+Q = Q_\text {trans} \cdot Q_\text {rot} \cdot Q_\text {vib} \cdot Q_\text {el}.
+\end{equation}
+</p>
+<p>
+З цього загального статистичного інтеграла виводяться термодинамічні параметри:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{19}\)</span>
+<!--
+𝐸tot
+= 𝐸el
++ 𝐸trans
++ 𝐸rot
++ 𝐸vib
+, (8.20)
+𝐻 = 𝐸tot
++ 𝑅𝑇, (8.21)
+𝑆 = 𝑆trans
++ 𝑆rot
++ 𝑆vib
++ 𝑆el
+, (8.22)
+𝐺 = 𝐻 − 𝑇𝑆. (8.23)
+-->
+<p>
+\begin{align}
+E_\text {tot} &amp;= E_\text {el} + E_\text {trans} + E_\text {rot} + E_\text {vib},\\ H &amp;= E_\text {tot} + RT, \\ S &amp;= S_\text {trans} + S_\text {rot} + S_\text {vib} + S_\text {el},\\ G &amp;= H - TS.
+\end{align}
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">3 рядки</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.hessian.thermo</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">thermo</span>
+<span class="tk-n">results</span> <span class="tk-o">=</span> <span class="tk-n">thermo</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">,</span> <span class="tk-n">results</span><span class="tk-p">[</span><span class="tk-s1">'freq_au'</span><span class="tk-p">],</span> <span class="tk-mf">298.15</span><span class="tk-p">,</span> <span class="tk-mi">101325</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Функція автоматично враховує:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> нульову коливальну енергію (ZPE);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> термічні поправки до енергії, ентальпії, ентропії;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> теплоємності \(C_v\), \(C_p\);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> вільну енергію Гіббса \(G\).
+</p>
+</li>
+</ul>
+</li>
+<li>
+<p>
+<span class="listmarker">4.</span> <b>Вивід термохімічних параметрів.</b>
+</p>
+<p>
+Для зручності результати форматуються в таблиці, де кожна функція (\(E\), \(H\), \(G\), \(S\), \(C_v\), \(C_p\)) розкладається на внески: електронний, поступальний, обертальний, вібраційний та повний (tot).
+</p>
+<p>
+Наприклад:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">5 рядків</span></div>
+<pre class="code"><code><span class="tk-n">keys</span> <span class="tk-o">=</span> <span class="tk-p">(</span><span class="tk-s1">'tot'</span><span class="tk-p">,</span> <span class="tk-s1">'elec'</span><span class="tk-p">,</span> <span class="tk-s1">'trans'</span><span class="tk-p">,</span> <span class="tk-s1">'rot'</span><span class="tk-p">,</span> <span class="tk-s1">'vib'</span><span class="tk-p">)</span>
+<span class="tk-n">write_table_row</span><span class="tk-p">(</span><span class="tk-s2">"Ентропія S"</span><span class="tk-p">,</span> <span class="tk-s2">"S"</span><span class="tk-p">)</span>
+<span class="tk-n">write_table_row</span><span class="tk-p">(</span><span class="tk-s2">"Cv"</span><span class="tk-p">,</span> <span class="tk-s2">"Cv"</span><span class="tk-p">)</span>
+<span class="tk-n">write_table_row</span><span class="tk-p">(</span><span class="tk-s2">"Cp"</span><span class="tk-p">,</span> <span class="tk-s2">"Cp"</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Для енергій додатково здійснюється перетворення одиниць <kbd>1 Eh → kJ/mol</kbd>:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">2 рядки</span></div>
+<pre class="code"><code><span class="tk-n">Ha2kJ</span> <span class="tk-o">=</span> <span class="tk-n">nist</span><span class="tk-o">.</span><span class="tk-n">HARTREE2J</span> <span class="tk-o">*</span> <span class="tk-n">nist</span><span class="tk-o">.</span><span class="tk-n">AVOGADRO</span> <span class="tk-o">/</span> <span class="tk-mi">1000</span></code></pre>
+</div>
+<p>
+Таким чином, формується таблиця енергій:
+</p>
+<p>
+\[ \begin {array}{llcccc} \text {Функція} &amp; \text {Одиниці} &amp; \text {TOT} &amp; \text {ELEC} &amp; \text {ROT} &amp; \text {VIB} \\ \hline E &amp; \text {kJ/mol} &amp; \dots &amp; \dots &amp; \dots &amp;
+\dots \\ H &amp; \text {kJ/mol} &amp; \dots &amp; \dots &amp; \dots &amp; \dots \\ G &amp; \text {kJ/mol} &amp; \dots &amp; \dots &amp; \dots &amp; \dots \\ \end {array} \]
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">5.</span> <b>Нульова коливальна енергія (ZPE).</b>
+</p>
+<p>
+ZPE є сумою \(\tfrac {1}{2} h\nu _k\) для всіх нормальних мод:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{23}\)</span>
+<!--
+𝐸ZPE
+=
+1
+2
+∑
+𝑘
+ℎ𝜈𝑘. (8.24)
+-->
+<p>
+\begin{equation}
+E_\text {ZPE} = \frac {1}{2} \sum _k h \nu _k.
+\end{equation}
+</p>
+<p>
+У коді:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">2 рядки</span></div>
+<pre class="code"><code><span class="tk-n">ZPE_kJ</span> <span class="tk-o">=</span> <span class="tk-n">results</span><span class="tk-p">[</span><span class="tk-s1">'ZPE'</span><span class="tk-p">][</span><span class="tk-mi">0</span><span class="tk-p">]</span> <span class="tk-o">*</span> <span class="tk-n">Ha2kJ</span></code></pre>
+</div>
+<p>
+Це відповідає квантовій поправці до енергії основного стану молекули, яка відсутня в чисто електронному розрахунку Хартрі–Фока.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">6.</span> <b>Фінальний звіт.</b>
+</p>
+<p>
+У результаті формується повний набір термодинамічних параметрів при заданій температурі \(T\) і тиску \(P\):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{8.}{24}\)</span>
+<!--
+𝐸tot
+, 𝐻, 𝐺, 𝑆, 𝐶𝑣, 𝐶𝑝, 𝐸ZPE
+.
+-->
+<p>
+\begin{align*}
+E_\text {tot}, \quad H, \quad G, \quad S, \quad C_v, \quad C_p, \quad E_\text {ZPE}.
+\end{align*}
+Вони можуть бути використані для порівняння з експериментальними даними або для подальших кінетичних і термодинамічних розрахунків.
+</p>
+</li>
+</ul>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> <span class="inlinecode"><kbd>harmonic_analysis(mol, hess)</kbd></span> — виконує гармонічний аналіз молекули на основі гесіану. Вона обчислює частоти нормальних коливань, нормалізовані моди,
+редуковані маси та нульову коливальну енергію (ZPE). Ця функція також враховує трансляційні та обертальні ступені свободи та дозволяє виключати їх при необхідності.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> <span class="inlinecode"><kbd>thermo(model, freq, temperature, pressure)</kbd></span> — використовує результати гармонічного аналізу для обчислення термодинамічних величин: ентропії, теплоємності
+(\(C_V\), \(C_P\)), внутрішньої енергії, ентальпії та вільної енергії Гіббса. Вона враховує внески електронної, поступальної, обертальної та коливальної частин.
+</p>
+</li>
+</ul>
+<p>
+Таким чином, за рахунок цих двох функцій програма зводить складні квантово-хімічні розрахунки та гармонічну апроксимацію в зручний формат для термохімічного аналізу. Вся «магія» полягає в тому, що <span
+class="inlinecode"><kbd>harmonic_analysis</kbd></span> формує основні фізичні параметри, а <span class="inlinecode"><kbd>thermo</kbd></span> перетворює їх у термодинамічні величини, готові для подальшого виводу у таблиці.
+</p>
+<!--
+...... section Перехідні стани та уявні частоти ......
+-->
+<h4 id="autosec-919"><span class="sectionnumber">&#xA7;&#x202F;8.4&#x2003;</span>Перехідні стани та уявні частоти</h4>
+<a id="main-html-autopage-919"></a>
+<!--
+...... subsection Класифікація стаціонарних точок ......
+-->
+<h5 id="autosec-920"><span class="sectionnumber">8.4.1&#x2003;</span>Класифікація стаціонарних точок</h5>
+<a id="main-html-autopage-920"></a>
+<p>
+Гессіан дає змогу класифікувати стаціонарні точки потенціальної поверхні енергії (ППЕ) за знаками власних значень:
+</p>
+<p>
+\[ \lambda _i = \frac {\partial ^2 E}{\partial q_i^2}. \]
+</p>
+<div class="center">
+<table>
+<tr style="display:none"><th>.</th></tr>
+<tr>
+<td class="tdp tdleft" style="background:#F9F9F9">
+<p>
+<b>Тип</b>
+</p>
+</td>
+<td class="tdp tdcenter" style="background:#F9F9F9">
+<p>
+<b>Уявних частот</b>
+</p>
+</td>
+<td class="tdp tdleft" style="background:#F9F9F9">
+<p>
+<b>Характеристика</b>
+</p>
+</td>
+</tr>
+<tr>
+<td class="tdp tdleft">
+<p>
+Мінімум
+</p>
+</td>
+<td class="tdp tdcenter">
+<p>
+0
+</p>
+</td>
+<td class="tdp tdleft">
+<p>
+Локальний мінімум
+</p>
+</td>
+</tr>
+<tr>
+<td class="tdp tdleft" style="background:#F9F9F9">
+<p>
+Перехідний стан
+</p>
+</td>
+<td class="tdp tdcenter" style="background:#F9F9F9">
+<p>
+1
+</p>
+</td>
+<td class="tdp tdleft" style="background:#F9F9F9">
+<p>
+Сідлова точка 1-го порядку
+</p>
+</td>
+</tr>
+<tr>
+<td class="tdp tdleft">
+<p>
+Сідло 2-го порядку
+</p>
+</td>
+<td class="tdp tdcenter">
+<p>
+2
+</p>
+</td>
+<td class="tdp tdleft">
+<p>
+Нестабільна структура
+</p>
+</td>
+</tr>
+</table>
+</div>
+<p>
+<b>Уявна частота:</b> якщо \(\omega ^2 &lt; 0\), то \(\omega = i|\omega |\), і відповідний напрямок руху описує нестійку моду.
+</p>
+<!--
+...... subsection Інверсія аміаку () як приклад ......
+-->
+<h5 id="autosec-923"><span class="sectionnumber">8.4.2&#x2003;</span>Інверсія аміаку (\(\mathrm {NH_{3}}\)) як приклад</h5>
+<a id="main-html-autopage-923"></a>
+<p>
+Молекула аміаку має тригранно-пірамідальну структуру симетрії \(C_{3v}\): атом Нітрогену розташований над площиною трьох атомів Гідрогену. Дзеркально-еквівалентна конфігурація виникає, коли атом N переходить на протилежний бік площини — процес, відомий
+як <em>парасолькова інверсія</em>.
+</p>
+<p>
+Якщо ввести координату \(h\), що задає відстань атома N від площини H\(_3\), то потенціальна енергія має форму подвійного мінімуму:
+</p>
+<p>
+\[ E(h) \approx E_0 + \tfrac {1}{2} k h^2 + \tfrac {1}{4}\lambda h^4, \qquad \lambda &gt;0. \]
+</p>
+<p>
+Пірамідальні структури відповідають точкам \(h=\pm h_0\) (локальні мінімуми), а планарна структура (\(h=0\)) є <b>перехідним станом</b>.
+</p>
+<p>
+У рівноважній геометрії (\(h = h_0\)) усі власні значення гесіану додатні, що відповідає стабільному мінімуму:
+</p>
+<p>
+\[ \lambda _i &gt; 0 \quad \Rightarrow \quad \omega _i = \sqrt {\lambda _i/\mu _i} &gt; 0. \]
+</p>
+<p>
+Для планарної конфігурації (\(h = 0\)) одне власне значення стає від’ємним, і відповідна частота набуває уявного значення:
+</p>
+<p>
+\[ \omega = i|\omega |, \qquad \omega ^2 &lt; 0. \]
+</p>
+<p>
+Це свідчить про сідлову точку першого порядку — перехідний стан інверсії аміаку.
+</p>
+<p>
+У класичному наближенні атом <span
+id="lateximage-main-html-195"
+class="lateximagesource"
+><!--
+N
+--><img
+src="main-html-images/269C5AFDD84458309C08234B8C98343A.svg"
+alt="\ce{N}"
+style=""
+class="lateximage"
+></span> мав би подолати потенціальний бар’єр, однак квантова механіка допускає <em>тунелювання</em>. Енергетичне розщеплення між ними (\(\Delta E \approx 0.79~\text {см}^{-1}\)) відповідає частоті мікрохвильового переходу, що спостерігається
+експериментально в <em>амонійному мазері</em>.
+</p>
+<!--
+...... paragraph Обчислення в PySCF ......
+-->
+<p>
+<span class="paragraph" id="autosec-926">Обчислення в <kbd>PySCF</kbd></span>
+<a id="main-html-autopage-926"></a>
+</p>
+<p>
+У файлі <span class="codebutton"><a href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/Oscilations/code/nh3_inversion.py" target="_blank" ><kbd>nh3_inversion.py</kbd></a></span> наведено
+повний приклад дослідження інверсії молекули аміаку. Розрахунок демонструє, як із допомогою <kbd>PySCF</kbd> можна чисельно побудувати профіль потенціальної енергії \(E(h)\) та проаналізувати коливальні частоти у мінімумі й у перехідному стані.
+</p>
+<p>
+Основні етапи скрипта:
+</p>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> <b>Функція <span class="inlinecode"><kbd>energy_func(h)</kbd></span></b> Обчислює енергію системи при фіксованій висоті атома N над площиною трьох атомів H. Для кожного значення \(h\) створюється
+новий об’єкт <span class="inlinecode"><kbd>gto.M</kbd></span>, виконується <kbd>RHF</kbd>-розрахунок, і повертається значення енергії.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> <b>Функція <span class="inlinecode"><kbd>analyze_point(h)</kbd></span></b> Для заданої конфігурації обчислює:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> енергію \(E(h)\);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> аналітичний градієнт <span class="inlinecode"><kbd>mf.Gradients().kernel()</kbd></span>;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> гессіан <span class="inlinecode"><kbd>mf.Hessian().kernel()</kbd></span> та відповідні гармонічні частоти;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> кількість уявних частот (як ознаку перехідного стану).
+</p>
+</li>
+</ul>
+<p>
+Аналіз частот здійснюється через функцію <span class="inlinecode"><kbd>thermo.harmonic_analysis()</kbd></span>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> <b>Основний цикл аналізу</b> Задається набір висот \(h\) (груба та уточнена сітка) і для кожної точки виконується <span class="inlinecode"><kbd>analyze_point(h)</kbd></span>. Енергії переводяться у
+ккал/моль, градієнти контролюють локальність мінімуму. Для точок із малим градієнтом виводяться частоти коливань.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">4.</span> <b>Пошук перехідного стану</b> Після проходу всіх точок програма вибирає:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> мінімум енергії \(E_{\min }\) (стійкі геометрії);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> максимум енергії \(E_{\text {TS}}\) поблизу \(h = 0\);
+</p>
+</li>
+</ul>
+<p>
+Перевіряється, чи в кандидата на TS лише одна уявна частота, і якщо так, визначається бар’єр інверсії:
+</p>
+<p>
+\[ \Delta E_{\text {бар}} = (E_{\text {TS}} - E_{\min }) \times 627.51 \text { ккал/моль}. \]
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">5.</span> <b>Візуалізація профілю потенціальної поверхні</b> Побудова графіка \(E(h)\) виконується за допомогою <kbd>matplotlib</kbd>, результат зберігається у файл <kbd>nh3_inversion.pdf</kbd>.
+</p>
+</li>
+</ul>
+<p>
+Таким чином, програма дозволяє послідовно отримати:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> рівноважні геометрії двох еквівалентних мінімумів (пірамідальних форм NH\(_3\));
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> перехідний стан із планарною структурою (\(h = 0\));
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> уявну частоту інверсії, що відповідає русі атома N через площину H\(_3\);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> бар’єр інверсії, який кількісно характеризує тунельне розщеплення рівнів.
+</p>
+</li>
+</ul>
+<!--
+...... section Резюме ......
+-->
+<h4 id="autosec-927">Резюме</h4>
+<a id="main-html-autopage-927"></a>
+<p>
+У цьому розділі розглянуто фундаментальні аспекти коливальних властивостей молекул, їхній зв’язок із потенціальною поверхнею енергії та методи обчислення частот і мод коливань у межах гармонічного наближення. Показано, як з інформації про коливання можна
+отримати термохімічні, спектроскопічні та кінетичні характеристики молекулярних систем.
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Коливання атомів розглядаються як відхилення від рівноважної геометрії, а потенційну енергію системи апроксимують квадратичною формою за координатами:
+</p>
+<p>
+\[ E(\mathbf {R}) \approx E_0 + \tfrac {1}{2} \sum _{ij} H_{ij} q_i q_j, \]
+</p>
+<p>
+де \(H_{ij}\) — елементи матриці Гессіана.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Діагоналізація гесіану дає власні значення (квадрати коливальних частот) і власні вектори (нормальні моди), які описують незалежні рухи атомів.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Власні значення, що дорівнюють нулю, відповідають поступальному та обертальному руху, тоді як наявність <i>уявної частоти</i> свідчить про нестабільність геометрії або про перехідний стан.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> У PySCF коливальні частоти можуть бути отримані як аналітично (через градієнти), так і чисельно — методом скінченних різниць. Для малих систем реалізовано обчислення повного гесіану та візуалізацію нормальних мод.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Нульова коливальна енергія (<kbd>ZPE</kbd>) додається до електронної енергії, покращуючи точність порівняння з експериментом. Вона визначається як:
+</p>
+<p>
+\[ E_\mathrm {ZPE} = \tfrac {1}{2} \sum _i h\nu _i. \]
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> ІЧ-активність коливань визначається зміною дипольного моменту під час руху атомів: моди з ненульовим \(\partial \mu / \partial q_i\) дають інтенсивності у спектрі поглинання.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Гармонічні частоти, отримані квантово-хімічними методами, зазвичай завищені; для узгодження з експериментом використовують емпіричні масштабувальні коефіцієнти.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Коливальні частоти дозволяють обчислювати термохімічні властивості — ентальпію, ентропію, теплоємність — за допомогою статистичної термодинаміки.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Аналіз частот є необхідним етапом після оптимізації геометрії: він підтверджує наявність мінімуму потенціальної поверхні (усі частоти додатні) або перехідного стану (одна уявна частота).
+</p>
+</li>
+</ul>
+<p>
+Розділ показує, що вивчення коливань не лише описує внутрішню динаміку молекул, а й є ключем до інтерпретації спектрів, визначення термохімічних параметрів та ідентифікації перехідних станів реакцій.
+</p>
+<!--
+...... section Контрольні запитання та завдання ......
+-->
+<h4 id="autosec-928">Контрольні запитання та завдання</h4>
+<a id="main-html-autopage-928"></a>
+<!--
+...... subsection Контрольні запитання ......
+-->
+<h5 id="autosec-929">Контрольні запитання</h5>
+<a id="main-html-autopage-929"></a>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> Що таке матриця Гессіана і як вона пов’язана з кривизною потенціальної поверхні енергії?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> Як визначаються нормальні координати та нормальні моди молекули?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> Яку фізичну інформацію несуть власні значення та власні вектори гесіану?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">4.</span> Яке значення мають нульові частоти в спектрі коливань і які типи рухів їм відповідають?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">5.</span> У чому полягає відмінність між аналітичним і чисельним обчисленням гесіану? Наведіть приклади їх реалізації в PySCF.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">6.</span> Які основні кроки алгоритму чисельного диференціювання при обчисленні гесіану?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">7.</span> Як масштабується обчислювальна складність розрахунку гесіану залежно від кількості атомів?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">8.</span> Для чого застосовують масштабувальні коефіцієнти до гармонічних частот? Як вони вибираються?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">9.</span> Які фізичні процеси лежать в основі інфрачервоної (ІЧ) спектроскопії?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">10.</span> За якої умови коливальна мода є ІЧ-активною?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">11.</span> Як визначається інтегральна інтенсивність ІЧ-поглинання? Який фізичний зміст має похідна дипольного моменту за нормальною координатою?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">12.</span> Яким чином у PySCF реалізовано чисельний та аналітичний розрахунок ІЧ-інтенсивностей?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">13.</span> Що таке нульова коливальна енергія (ZPE) і як вона розраховується?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">14.</span> Які термохімічні поправки враховують у молекулярних розрахунках? Які фізичні процеси вони описують?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">15.</span> Які основні термодинамічні функції можна отримати на основі коливальних частот? Як це реалізується в PySCF?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">16.</span> Яку роль відіграє аналіз коливань у перевірці стабільності структури молекули?
+</p>
+</li>
+</ul>
+<!--
+...... subsection Практичні завдання ......
+-->
+<h5 id="autosec-930">Практичні завдання</h5>
+<a id="main-html-autopage-930"></a>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker"><b>Задача 1:</b></span> <b>Розрахунок вібраційних частот</b>
+</p>
+<p>
+Для молекули <span
+id="lateximage-main-html-196"
+class="lateximagesource"
+><!--
+CO2
+--><img
+src="main-html-images/FAC188068524E4DDF140E14E338F3177.svg"
+alt="\ce{CO2}"
+style=""
+class="lateximage"
+></span> обчисліть вібраційні частоти та ІЧ-інтенсивності методом DFT. Побудуйте спектр та ідентифікуйте симетричні/асиметричні моди. Порівняйте з HF-результатами.
+</p>
+<p>
+<b>Метод:</b> DFT з <span class="inlinecode"><kbd>xc='pbe'</kbd></span>, базис <kbd>def2-svp</kbd>. <b>Підказка:</b> Використовуйте
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">2 рядки</span></div>
+<pre class="code"><code>\<span class="tk-n">inlinecode</span><span class="tk-p">{</span><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.hessian</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">Hessian</span><span class="tk-p">;</span> <span class="tk-n">hess</span> <span class="tk-o">=</span> <span class="tk-n">Hessian</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()}</span></code></pre>
+</div>
+<p>
+після оптимізації.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 2:</b></span> <b>Термохімічні властивості</b>
+</p>
+<p>
+Обчисліть стандартну ентальпію утворення (\(\Delta H_f\)) для молекули <span
+id="lateximage-main-html-197"
+class="lateximagesource"
+><!--
+CH4
+--><img
+src="main-html-images/41F19D92C998B76C74348C182644EE2C.svg"
+alt="\ce{CH4}"
+style=""
+class="lateximage"
+></span> методом DFT при 298 K. Використовуйте ZPE-корекцію та термічні внески. Порівняйте з експериментом.
+</p>
+<p>
+<b>Метод:</b> DFT з <span class="inlinecode"><kbd>xc='b3lyp'</kbd></span>, базис <kbd>cc-pvdz</kbd>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 3:</b></span> <b>Аналіз PES та перехідних станів</b>
+</p>
+<p>
+Для реакції \(\mathrm {H + H_{2} \to H_{2} + H}\) знайдіть перехідний стан методом HF. Обчисліть бар’єр активації та перевірте уявну частоту. Порівняйте з DFT.
+</p>
+<p>
+<b>Базис:</b> <kbd>sto-3g</kbd>. <b>Підказка:</b> Використовуйте
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">2 рядки</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.geomopt.berny_solver</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">optimize</span></code></pre>
+</div>
+<p>
+з опцією для TS та початковою геометрією лінійної <span
+id="lateximage-main-html-198"
+class="lateximagesource"
+><!--
+H–H–H
+--><img
+src="main-html-images/C4C159C47723C0E969EAB965CEA8EF23.svg"
+alt="\ce{H-H-H}"
+style=""
+class="lateximage"
+></span>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 4:</b></span> <b>Розрахунок властивостей: диполь та поляризованість</b>
+</p>
+<p>
+Для молекули <span
+id="lateximage-main-html-199"
+class="lateximagesource"
+><!--
+HF
+--><img
+src="main-html-images/90A31286A8C9FAF08942CCEB2AE3CB92.svg"
+alt="\ce{HF}"
+style=""
+class="lateximage"
+></span> обчисліть дипольний момент, поляризованість та гіперполяризованість методом DFT. Порівняйте з HF та оцініть кореляційний ефект.
+</p>
+<p>
+<b>Метод:</b> DFT з <span class="inlinecode"><kbd>xc='blyp'</kbd></span>, базис <kbd>aug-cc-pvdz</kbd>.
+</p>
+</li>
+</ul>
+</section>
+</main>
+<nav class="botnavigation"><a href="main-html.html" class="linkhome" >
+Головна</a></nav>
+</div><!-- grid -->
+<script src="assets/book.js" defer></script>
+</body>
+</html>

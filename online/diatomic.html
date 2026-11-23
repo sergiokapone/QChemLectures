@@ -1,0 +1,3969 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="generator" content="LaTeX Lwarp package" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Квантово-механічні методи обчислення — Метод Хартрі-Фока для простих молекул</title>
+<link rel="stylesheet" type="text/css" href="assets/conspect.css" />
+<script>
+// Lwarp MathJax emulation code
+//
+// Based on code by Davide P. Cervone.
+// Equation numbering: https://github.com/mathjax/MathJax/issues/2427
+// Starred and ifnextchar macros: https://github.com/mathjax/MathJax/issues/2428
+// \left, \right delimiters: https://github.com/mathjax/MathJax/issues/2535
+//
+// Modified by Brian Dunn to adjust equation numbering and add subequations.
+//
+// LaTeX can use \seteqnumber{subequations?}{section}{number} before each equation.
+// subequations? is 0 usually, 1 if inside subequations.
+// section is a string printed as-is, or empty.
+// number is auto-incremented by MathJax between equations.
+//
+MathJax = {
+subequations: "0",
+section: "",
+loader: {
+load: ['[tex]/tagformat', '[tex]/textmacros'],
+},
+startup: {
+ready() {
+// These would be replaced by import commands if you wanted to make
+// a proper extension.
+const Configuration = MathJax._.input.tex.Configuration.Configuration;
+const CommandMap = MathJax._.input.tex.SymbolMap.CommandMap;
+const Macro = MathJax._.input.tex.Symbol.Macro;
+const TexError = MathJax._.input.tex.TexError.default;
+const ParseUtil = MathJax._.input.tex.ParseUtil.default;
+const expandable = MathJax._.util.Options.expandable;
+// Insert the replacement string into the TeX string, and check
+// that there haven't been too many maxro substitutions (prevents
+// infinite loops).
+const useArgument = (parser, text) => {
+parser.string = ParseUtil.addArgs(parser, text, parser.string.slice(parser.i));
+parser.i = 0;
+if (++parser.macroCount > parser.configuration.options.maxMacros) {
+throw new TexError('MaxMacroSub1',
+'MathJax maximum macro substitution count exceeded; ' +
+'is there a recursive macro call?');
+}
+}
+// Create the command map for:
+// \ifstar, \ifnextchar, \ifblank, \ifstrequal, \gsub, \seteqnumber
+new CommandMap('Lwarp-macros', {
+ifstar: 'IfstarFunction',
+ifnextchar: 'IfnextcharFunction',
+ifblank: 'IfblankFunction',
+ifstrequal: 'IfstrequalFunction',
+gsubstitute: 'GsubstituteFunction',
+seteqnumber: 'SeteqnumberFunction'
+}, {
+// This function implements an ifstar macro.
+IfstarFunction(parser, name) {
+const resultstar = parser.GetArgument(name);
+const resultnostar = parser.GetArgument(name);
+const star = parser.GetStar(); // true if there is a *
+useArgument(parser, star ? resultstar : resultnostar);
+},
+// This function implements an ifnextchar macro.
+IfnextcharFunction(parser, name) {
+let whichchar = parser.GetArgument(name);
+if (whichchar.match(/^(?:0x[0-9A-F]+|[0-9]+)$/i)) {
+// $ syntax highlighting
+whichchar = String.fromCodePoint(parseInt(whichchar));
+}
+const resultnextchar = parser.GetArgument(name);
+const resultnotnextchar = parser.GetArgument(name);
+const gotchar = (parser.GetNext() === whichchar);
+useArgument(parser, gotchar ? resultnextchar : resultnotnextchar);
+},
+// This function implements an ifblank macro.
+IfblankFunction(parser, name) {
+const blankarg = parser.GetArgument(name);
+const resultblank = parser.GetArgument(name);
+const resultnotblank = parser.GetArgument(name);
+const isblank = (blankarg.trim() == "");
+useArgument(parser, isblank ? resultblank : resultnotblank);
+},
+// This function implements an ifstrequal macro.
+IfstrequalFunction(parser, name) {
+const strequalfirst = parser.GetArgument(name);
+const strequalsecond = parser.GetArgument(name);
+const resultequal = parser.GetArgument(name);
+const resultnotequal = parser.GetArgument(name);
+const isequal = (strequalfirst == strequalsecond);
+useArgument(parser, isequal ? resultequal : resultnotequal);
+},
+// This function implements a gsub macro.
+GsubstituteFunction(parser, name) {
+const gsubfirst = parser.GetArgument(name);
+const gsubsecond = parser.GetArgument(name);
+const gsubthird = parser.GetArgument(name);
+let gsubresult=gsubfirst.replace(gsubsecond, gsubthird);
+useArgument(parser, gsubresult);
+},
+// This function modifies the equation numbers.
+SeteqnumberFunction(parser, name) {
+// Get the macro parameters
+const star = parser.GetStar(); // true if there is a *
+const optBrackets = parser.GetBrackets(name); // contents of optional brackets
+const newsubequations = parser.GetArgument(name); // the subequations argument
+const neweqsection = parser.GetArgument(name); // the eq section argument
+const neweqnumber = parser.GetArgument(name); // the eq number argument
+MathJax.config.subequations=newsubequations ; // a string with boolean meaning
+MathJax.config.section=neweqsection ; // a string with numeric meaning
+parser.tags.counter = parser.tags.allCounter = neweqnumber ;
+}
+});
+// Create the Lwarp-macros package
+Configuration.create('Lwarp-macros', {
+handler: {macro: ['Lwarp-macros']}
+});
+MathJax.startup.defaultReady();
+// For forward references:
+MathJax.startup.input[0].preFilters.add(({math}) => {
+if (math.inputData.recompile){
+MathJax.config.subequations = math.inputData.recompile.subequations;
+MathJax.config.section = math.inputData.recompile.section;
+}
+});
+MathJax.startup.input[0].postFilters.add(({math}) => {
+if (math.inputData.recompile){
+math.inputData.recompile.subequations = MathJax.config.subequations;
+math.inputData.recompile.section = MathJax.config.section;
+}
+});
+// For \left, \right with unicode-math:
+const {DelimiterMap} = MathJax._.input.tex.SymbolMap;
+const {Symbol} = MathJax._.input.tex.Symbol;
+const {MapHandler} = MathJax._.input.tex.MapHandler;
+const delimiter = MapHandler.getMap('delimiter');
+delimiter.add('\\lBrack', new Symbol('\\lBrack', '\u27E6'));
+delimiter.add('\\rBrack', new Symbol('\\rBrack', '\u27E7'));
+delimiter.add('\\lAngle', new Symbol('\\lAngle', '\u27EA'));
+delimiter.add('\\rAngle', new Symbol('\\rAngle', '\u27EB'));
+delimiter.add('\\lbrbrak', new Symbol('\\lbrbrak', '\u2772'));
+delimiter.add('\\rbrbrak', new Symbol('\\rbrbrak', '\u2773'));
+delimiter.add('\\lbag', new Symbol('\\lbag', '\u27C5'));
+delimiter.add('\\rbag', new Symbol('\\rbag', '\u27C6'));
+delimiter.add('\\llparenthesis', new Symbol('\\llparenthesis', '\u2987'));
+delimiter.add('\\rrparenthesis', new Symbol('\\rrparenthesis', '\u2988'));
+delimiter.add('\\llangle', new Symbol('\\llangle', '\u2989'));
+delimiter.add('\\rrangle', new Symbol('\\rrangle', '\u298A'));
+delimiter.add('\\Lbrbrak', new Symbol('\\Lbrbrak', '\u27EC'));
+delimiter.add('\\Rbrbrak', new Symbol('\\Rbrbrak', '\u27ED'));
+delimiter.add('\\lBrace', new Symbol('\\lBrace', '\u2983'));
+delimiter.add('\\rBrace', new Symbol('\\rBrace', '\u2984'));
+delimiter.add('\\lParen', new Symbol('\\lParen', '\u2985'));
+delimiter.add('\\rParen', new Symbol('\\rParen', '\u2986'));
+delimiter.add('\\lbrackubar', new Symbol('\\lbrackubar', '\u298B'));
+delimiter.add('\\rbrackubar', new Symbol('\\rbrackubar', '\u298C'));
+delimiter.add('\\lbrackultick', new Symbol('\\lbrackultick', '\u298D'));
+delimiter.add('\\rbracklrtick', new Symbol('\\rbracklrtick', '\u298E'));
+delimiter.add('\\lbracklltick', new Symbol('\\lbracklltick', '\u298F'));
+delimiter.add('\\rbrackurtick', new Symbol('\\rbrackurtick', '\u2990'));
+delimiter.add('\\langledot', new Symbol('\\langledot', '\u2991'));
+delimiter.add('\\rangledot', new Symbol('\\rangledot', '\u2992'));
+delimiter.add('\\lparenless', new Symbol('\\lparenless', '\u2993'));
+delimiter.add('\\rparengtr', new Symbol('\\rparengtr', '\u2994'));
+delimiter.add('\\Lparengtr', new Symbol('\\Lparengtr', '\u2995'));
+delimiter.add('\\Rparenless', new Symbol('\\Rparenless', '\u2996'));
+delimiter.add('\\lblkbrbrak', new Symbol('\\lblkbrbrak', '\u2997'));
+delimiter.add('\\rblkbrbrak', new Symbol('\\rblkbrbrak', '\u2998'));
+delimiter.add('\\lvzigzag', new Symbol('\\lvzigzag', '\u29D8'));
+delimiter.add('\\rvzigzag', new Symbol('\\rvzigzag', '\u29D9'));
+delimiter.add('\\Lvzigzag', new Symbol('\\Lvzigzag', '\u29DA'));
+delimiter.add('\\Rvzigzag', new Symbol('\\Rvzigzag', '\u29DB'));
+delimiter.add('\\lcurvyangle', new Symbol('\\lcurvyangle', '\u29FC'));
+delimiter.add('\\rcurvyangle', new Symbol('\\rcurvyangle', '\u29FD'));
+delimiter.add('\\Vvert', new Symbol('\\Vvert', '\u2980'));
+} // ready
+}, // startup
+tex: {
+packages: {'[+]': ['tagformat', 'Lwarp-macros', 'textmacros']},
+tags: "ams",
+tagformat: {
+number: function (n) {
+if(MathJax.config.subequations==0)
+return(MathJax.config.section + n);
+else
+return(MathJax.config.section + String.fromCharCode(96+n));
+},
+},
+}
+}
+</script>
+<script
+id="MathJax-script"
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
+></script>
+</head>
+<body>
+<a id="main-html-autopage-312"></a>
+<div class="pagegrid">
+<nav class="topnavigation"><a href="main-html.html" class="linkhome" >
+Головна</a></nav>
+<div class="sidetoccontainer">
+<nav class="sidetoc">
+<div class="sidetoctitle">
+<p>
+<span class="sidetocthetitle">Квантово-механічні методи обчислення</span>
+</p>
+<p class="sidetoc-meta"><a href="../PyscfBook/index.html">Про посібник</a><span aria-hidden="true">·</span><a href="../PyscfBook/pyscfBook.pdf">PDF</a></p>
+</div>
+<div class="sidetoccontents">
+<p>
+<a href="main-html.html" class="linkhome" >
+Головна</a>
+</p>
+<p>
+<a href="preface.html#autosec-7" class="tocchapter" >
+Передмова</a>
+</p>
+<p>
+<a href="preface.html#autosec-8" class="tocsection" >
+Актуальність квантово-механічних обчислень</a>
+</p>
+<p>
+<a href="preface.html#autosec-9" class="tocsection" >
+Передумови</a>
+</p>
+<p>
+<a href="preface.html#autosec-13" class="tocsection" >
+Організація навчальних матеріалів</a>
+</p>
+<p>
+<a href="preface.html#autosec-19" class="tocsection" >
+Як користуватися посібником</a>
+</p>
+<p>
+<a href="preface.html#autosec-20" class="tocsection" >
+Зворотний зв’язок</a>
+</p>
+<p>
+<a href="preface.html#autosec-21" class="tocsection" >
+Ліцензія та використання</a>
+</p>
+<p>
+<a href="welcome.html#autosec-25" class="tocpart" >
+<span class="sectionnumber">I</span><span class="toctitle">&#x2003;Вступ до PySCF: основи та перші кроки</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-26" class="tocchapter" >
+<span class="sectionnumber">1</span><span class="toctitle">&#x2003;Знайомство з PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-27" class="tocsection" >
+<span class="sectionnumber">1.1</span><span class="toctitle">&#x2003;PySCF: концепція та філософія</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-28" class="tocsection" >
+<span class="sectionnumber">1.2</span><span class="toctitle">&#x2003;Основні можливості PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-29" class="tocsection" >
+<span class="sectionnumber">1.3</span><span class="toctitle">&#x2003;Архітектура і дизайн PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-36" class="tocsection" >
+<span class="sectionnumber">1.4</span><span class="toctitle">&#x2003;Порівняння з іншими програмами</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-40" class="tocsection" >
+<span class="sectionnumber">1.5</span><span class="toctitle">&#x2003;Встановлення PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-58" class="tocsection" >
+<span class="sectionnumber">1.6</span><span class="toctitle">&#x2003;Базова структура програми на PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-62" class="tocsection" >
+<span class="sectionnumber">1.7</span><span class="toctitle">&#x2003;Система одиниць та конвенції</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-71" class="tocsection" >
+<span class="sectionnumber">1.8</span><span class="toctitle">&#x2003;Документація та ресурси</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-76" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="welcome.html#autosec-77" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="mole.html#autosec-84" class="tocchapter" >
+<span class="sectionnumber">2</span><span class="toctitle">&#x2003;Базові об’єкти <kbd>PySCF</kbd></span></a>
+</p>
+<p>
+<a href="mole.html#autosec-85" class="tocsection" >
+<span class="sectionnumber">2.1</span><span class="toctitle">&#x2003;Молекулярний об’єкт (Mole)</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-109" class="tocsection" >
+<span class="sectionnumber">2.2</span><span class="toctitle">&#x2003;Періодичний об’єкт (Cell)</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-117" class="tocsection" >
+<span class="sectionnumber">2.3</span><span class="toctitle">&#x2003;Базисні набори в <kbd>PySCF</kbd></span></a>
+</p>
+<p>
+<a href="mole.html#autosec-128" class="tocsection" >
+<span class="sectionnumber">2.4</span><span class="toctitle">&#x2003;Симетрія в атомних розрахунках</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-134" class="tocsection" >
+<span class="sectionnumber">2.5</span><span class="toctitle">&#x2003;Спін та мультиплетність</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-138" class="tocsection" >
+<span class="sectionnumber">2.6</span><span class="toctitle">&#x2003;Типова схема розрахунків у <kbd>PySCF</kbd></span></a>
+</p>
+<p>
+<a href="mole.html#autosec-139" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="mole.html#autosec-140" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-147" class="tocpart" >
+<span class="sectionnumber">II</span><span class="toctitle">&#x2003;Ab Initio методи: від Хартрі-Фока до пост-HF і DFT</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-148" class="tocchapter" >
+<span class="sectionnumber">3</span><span class="toctitle">&#x2003;Метод Хартрі-Фока</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-149" class="tocsection" >
+<span class="sectionnumber">3.1</span><span class="toctitle">&#x2003;Теоретичні основи методу Хартрі–Фока</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-155" class="tocsection" >
+<span class="sectionnumber">3.2</span><span class="toctitle">&#x2003;SFC-процедура</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-160" class="tocsection" >
+<span class="sectionnumber">3.3</span><span class="toctitle">&#x2003;Які бувають базиси</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-169" class="tocsection" >
+<span class="sectionnumber">3.4</span><span class="toctitle">&#x2003;Варіанти методу Хартрі–Фока</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-195" class="tocsection" >
+<span class="sectionnumber">3.5</span><span class="toctitle">&#x2003;Метод UHF та спінове забруднення</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-205" class="tocsection" >
+<span class="sectionnumber">3.6</span><span class="toctitle">&#x2003;Прості атомні системи</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-212" class="tocsection" >
+<span class="sectionnumber">3.7</span><span class="toctitle">&#x2003;Атоми другого періоду (Li–Ne)</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-248" class="tocsection" >
+<span class="sectionnumber">3.8</span><span class="toctitle">&#x2003;Енергія, орбіталі та електронна густина</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-278" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-279" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="diatomic.html#autosec-314" class="tocchapter" >
+<span class="sectionnumber">4</span><span class="toctitle">&#x2003;Метод Хартрі–Фока для простих молекул</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-319" class="tocsection" >
+<span class="sectionnumber">4.1</span><span class="toctitle">&#x2003;Наближення Борна–Опенгеймера</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-320" class="tocsection" >
+<span class="sectionnumber">4.2</span><span class="toctitle">&#x2003;Орбіталі і електронні стани молекул</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-332" class="tocsection" >
+<span class="sectionnumber">4.3</span><span class="toctitle">&#x2003;Модельні молекули: \(\mathrm {H_{2}^{+}}\) та \(\mathrm {H_{2}}\)</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-345" class="tocsection" >
+<span class="sectionnumber">4.4</span><span class="toctitle">&#x2003;Іон молекули водню \(\mathrm {H_{2}^{+}}\)</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-382" class="tocsection" >
+<span class="sectionnumber">4.5</span><span class="toctitle">&#x2003;Крива потенціальної енергії</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-402" class="tocsection" >
+<span class="sectionnumber">4.6</span><span class="toctitle">&#x2003;Молекула водню \(\mathrm {H_{2}}\)</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-435" class="tocsection" >
+<span class="sectionnumber">4.7</span><span class="toctitle">&#x2003;Дипольний момент молекул</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-463" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="diatomic.html#autosec-464" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="post-hf.html#autosec-519" class="tocchapter" >
+<span class="sectionnumber">5</span><span class="toctitle">&#x2003;Пост-Хартрі-Фоківські методи</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-520" class="tocsection" >
+<span class="sectionnumber">5.1</span><span class="toctitle">&#x2003;Вступ до електронної кореляції</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-531" class="tocsection" >
+<span class="sectionnumber">5.2</span><span class="toctitle">&#x2003;Теорія збурень Møller–Plesset (MP2)</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-548" class="tocsection" >
+<span class="sectionnumber">5.3</span><span class="toctitle">&#x2003;Основи методу конфігураційної взаємодії</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-565" class="tocsection" >
+<span class="sectionnumber">5.4</span><span class="toctitle">&#x2003;Метод зв’язаних кластерів</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-586" class="tocsection" >
+<span class="sectionnumber">5.5</span><span class="toctitle">&#x2003;Метод повного активного простору конфігурацій</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-608" class="tocsection" >
+<span class="sectionnumber">5.6</span><span class="toctitle">&#x2003;Функціонал енергії та натуральні орбіталі</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-616" class="tocsection" >
+<span class="sectionnumber">5.7</span><span class="toctitle">&#x2003;Межі наближень і рівняння Шредінґера</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-623" class="tocsection" >
+<span class="sectionnumber">5.8</span><span class="toctitle">&#x2003;Корисні посилання</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-624" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="post-hf.html#autosec-626" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="dft.html#autosec-663" class="tocchapter" >
+<span class="sectionnumber">6</span><span class="toctitle">&#x2003;Теорія функціоналу густини (DFT)</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-664" class="tocsection" >
+<span class="sectionnumber">6.1</span><span class="toctitle">&#x2003;Основи теорії функціоналу густини</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-675" class="tocsection" >
+<span class="sectionnumber">6.2</span><span class="toctitle">&#x2003;Базова структура DFT розрахунку</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-683" class="tocsection" >
+<span class="sectionnumber">6.3</span><span class="toctitle">&#x2003;Функціонали обміну-кореляції</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-714" class="tocsection" >
+<span class="sectionnumber">6.4</span><span class="toctitle">&#x2003;Практичні рекомендації</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-716" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="dft.html#autosec-717" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="response.html#autosec-764" class="tocpart" >
+<span class="sectionnumber">III</span><span class="toctitle">&#x2003;Властивості молекул</span></a>
+</p>
+<p>
+<a href="response.html#autosec-765" class="tocchapter" >
+<span class="sectionnumber">7</span><span class="toctitle">&#x2003;Молекулярні властивості як похідні енергії</span></a>
+</p>
+<p>
+<a href="response.html#autosec-766" class="tocsection" >
+<span class="sectionnumber">7.1</span><span class="toctitle">&#x2003;Молекулярні властивості як похідні енергії</span></a>
+</p>
+<p>
+<a href="response.html#autosec-773" class="tocsection" >
+<span class="sectionnumber">7.2</span><span class="toctitle">&#x2003;Чисельні та аналітичні похідні</span></a>
+</p>
+<p>
+<a href="response.html#autosec-777" class="tocsection" >
+<span class="sectionnumber">7.3</span><span class="toctitle">&#x2003;Варіаційні методи та залежність енергії від параметрів</span></a>
+</p>
+<p>
+<a href="response.html#autosec-778" class="tocsection" >
+<span class="sectionnumber">7.4</span><span class="toctitle">&#x2003;Аналітичні похідні в методі Хартрі-Фока</span></a>
+</p>
+<p>
+<a href="response.html#autosec-800" class="tocsection" >
+<span class="sectionnumber">7.5</span><span class="toctitle">&#x2003;Поляризовність у методі HF</span></a>
+</p>
+<p>
+<a href="response.html#autosec-812" class="tocsection" >
+<span class="sectionnumber">7.6</span><span class="toctitle">&#x2003;Ядерний гесіан у методі HF</span></a>
+</p>
+<p>
+<a href="response.html#autosec-816" class="tocsection" >
+<span class="sectionnumber">7.7</span><span class="toctitle">&#x2003;Оптимізація геометрії</span></a>
+</p>
+<p>
+<a href="response.html#autosec-824" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="vibrations.html#autosec-851" class="tocchapter" >
+<span class="sectionnumber">8</span><span class="toctitle">&#x2003;Коливальні властивості молекул</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-854" class="tocsection" >
+<span class="sectionnumber">8.1</span><span class="toctitle">&#x2003;Гессіан та нормальні моди</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-876" class="tocsection" >
+<span class="sectionnumber">8.2</span><span class="toctitle">&#x2003;Інфрачервоні (ІЧ) спектри</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-907" class="tocsection" >
+<span class="sectionnumber">8.3</span><span class="toctitle">&#x2003;Термохімія та нульова енергія</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-919" class="tocsection" >
+<span class="sectionnumber">8.4</span><span class="toctitle">&#x2003;Перехідні стани та уявні частоти</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-927" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="vibrations.html#autosec-928" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="excited-states.html#autosec-941" class="tocchapter" >
+<span class="sectionnumber">9</span><span class="toctitle">&#x2003;Збуджені стани та UV/VIS спектроскопія</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-942" class="tocsection" >
+<span class="sectionnumber">9.1</span><span class="toctitle">&#x2003;Спектроскопічні властивості: перехідні дипольні моменти і сили осцилятора</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-948" class="tocsection" >
+<span class="sectionnumber">9.2</span><span class="toctitle">&#x2003;Збуджені стани в рамках методу Хартрі–Фока</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-954" class="tocsection" >
+<span class="sectionnumber">9.3</span><span class="toctitle">&#x2003;Часозалежна теорія функціонала густини (TD-DFT)</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-958" class="tocsection" >
+<span class="sectionnumber">9.4</span><span class="toctitle">&#x2003;Збуджені стани у методах конфігураційної взаємодії</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-959" class="tocsection" >
+<span class="sectionnumber">9.5</span><span class="toctitle">&#x2003;Метод рівнянь руху (EOM)</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-973" class="tocsection" >
+<span class="sectionnumber">9.6</span><span class="toctitle">&#x2003;Збуджені стани у CASSCF / NEVPT2</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-974" class="tocsection" >
+<span class="sectionnumber">9.7</span><span class="toctitle">&#x2003;Рекомендації з вибору методу</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-975" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="excited-states.html#autosec-976" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="appendices.html#autosec-991" class="tocchapter" >
+Додатки</a>
+</p>
+<p>
+<a href="appendices.html#autosec-992" class="tocsection" >
+<span class="sectionnumber">А</span><span class="toctitle">&#x2003;Список абревіатур</span></a>
+</p>
+<p>
+<a href="appendices.html#autosec-993" class="tocsection" >
+<span class="sectionnumber">Б</span><span class="toctitle">&#x2003;Молекулярно-орбітальне (МО) представлення</span></a>
+</p>
+<p>
+<a href="appendices.html#autosec-999" class="tocsection" >
+<span class="sectionnumber">В</span><span class="toctitle">&#x2003;Метод DIIS та прискорення збіжності SCF</span></a>
+</p>
+<p>
+<a href="appendices.html#autosec-1000" class="tocsection" >
+<span class="sectionnumber">Г</span><span class="toctitle">&#x2003;Проблеми збіжності SCF та їх усунення</span></a>
+</p>
+<p>
+<a href="bibliography.html#autosec-1020" class="tocchapter" >
+Література</a>
+</p>
+</div>
+</nav>
+</div>
+<main class="bodycontainer" data-pagefind-body data-pagefind-meta="title[data-title]" data-title="Метод Хартрі-Фока для простих молекул">
+<section class="textbody">
+<h1 data-pagefind-ignore>Квантово-механічні методи обчислення</h1>
+<!--MathJax customizations:-->
+<div data-nosnippet
+style="display:none"
+>
+\(\newcommand{\footnotename}{footnote}\)
+\(\def \LWRfootnote {1}\)
+\(\newcommand {\footnote }[2][\LWRfootnote ]{{}^{\mathrm {#1}}}\)
+\(\newcommand {\footnotemark }[1][\LWRfootnote ]{{}^{\mathrm {#1}}}\)
+\(\let \LWRorighspace \hspace \)
+\(\renewcommand {\hspace }{\ifstar \LWRorighspace \LWRorighspace }\)
+\(\newcommand {\TextOrMath }[2]{#2}\)
+\(\newcommand {\mathnormal }[1]{{#1}}\)
+\(\newcommand \ensuremath [1]{#1}\)
+\(\newcommand {\LWRframebox }[2][]{\fbox {#2}} \newcommand {\framebox }[1][]{\LWRframebox } \)
+\(\newcommand {\setlength }[2]{}\)
+\(\newcommand {\addtolength }[2]{}\)
+\(\newcommand {\setcounter }[2]{}\)
+\(\newcommand {\addtocounter }[2]{}\)
+\(\newcommand {\arabic }[1]{}\)
+\(\newcommand {\number }[1]{}\)
+\(\newcommand {\noalign }[1]{\text {#1}\notag \\}\)
+\(\newcommand {\cline }[1]{}\)
+\(\newcommand {\directlua }[1]{\text {(directlua)}}\)
+\(\newcommand {\luatexdirectlua }[1]{\text {(directlua)}}\)
+\(\newcommand {\protect }{}\)
+\(\def \LWRabsorbnumber #1 {}\)
+\(\def \LWRabsorbquotenumber &quot;#1 {}\)
+\(\newcommand {\LWRabsorboption }[1][]{}\)
+\(\newcommand {\LWRabsorbtwooptions }[1][]{\LWRabsorboption }\)
+\(\def \mathchar {\ifnextchar &quot;\LWRabsorbquotenumber \LWRabsorbnumber }\)
+\(\def \mathcode #1={\mathchar }\)
+\(\let \delcode \mathcode \)
+\(\let \delimiter \mathchar \)
+\(\def \oe {\unicode {x0153}}\)
+\(\def \OE {\unicode {x0152}}\)
+\(\def \ae {\unicode {x00E6}}\)
+\(\def \AE {\unicode {x00C6}}\)
+\(\def \aa {\unicode {x00E5}}\)
+\(\def \AA {\unicode {x00C5}}\)
+\(\def \o {\unicode {x00F8}}\)
+\(\def \O {\unicode {x00D8}}\)
+\(\def \l {\unicode {x0142}}\)
+\(\def \L {\unicode {x0141}}\)
+\(\def \ss {\unicode {x00DF}}\)
+\(\def \SS {\unicode {x1E9E}}\)
+\(\def \dag {\unicode {x2020}}\)
+\(\def \ddag {\unicode {x2021}}\)
+\(\def \P {\unicode {x00B6}}\)
+\(\def \copyright {\unicode {x00A9}}\)
+\(\def \pounds {\unicode {x00A3}}\)
+\(\let \LWRref \ref \)
+\(\renewcommand {\ref }{\ifstar \LWRref \LWRref }\)
+\( \newcommand {\multicolumn }[3]{#3}\)
+\(\require {textcomp}\)
+\(\require {colortbl}\)
+\(\let \LWRorigcolumncolor \columncolor \)
+\(\renewcommand {\columncolor }[2][named]{\LWRorigcolumncolor [#1]{#2}\LWRabsorbtwooptions }\)
+\(\let \LWRorigrowcolor \rowcolor \)
+\(\renewcommand {\rowcolor }[2][named]{\LWRorigrowcolor [#1]{#2}\LWRabsorbtwooptions }\)
+\(\let \LWRorigcellcolor \cellcolor \)
+\(\renewcommand {\cellcolor }[2][named]{\LWRorigcellcolor [#1]{#2}\LWRabsorbtwooptions }\)
+\(\newcommand {\intertext }[1]{\text {#1}\notag \\}\)
+\(\let \Hat \hat \)
+\(\let \Check \check \)
+\(\let \Tilde \tilde \)
+\(\let \Acute \acute \)
+\(\let \Grave \grave \)
+\(\let \Dot \dot \)
+\(\let \Ddot \ddot \)
+\(\let \Breve \breve \)
+\(\let \Bar \bar \)
+\(\let \Vec \vec \)
+\(\let \symnormal \mathit \)
+\(\let \symliteral \mathrm \)
+\(\let \symbb \mathbb \)
+\(\let \symbbit \mathbb \)
+\(\let \symcal \mathcal \)
+\(\let \symscr \mathscr \)
+\(\let \symfrak \mathfrak \)
+\(\let \symsfup \mathsf \)
+\(\let \symsfit \mathit \)
+\(\let \symbfsf \mathbf \)
+\(\let \symbfup \mathbf \)
+\(\newcommand {\symbfit }[1]{\boldsymbol {#1}}\)
+\(\let \symbfcal \mathcal \)
+\(\let \symbfscr \mathscr \)
+\(\let \symbffrak \mathfrak \)
+\(\let \symbfsfup \mathbf \)
+\(\newcommand {\symbfsfit }[1]{\boldsymbol {#1}}\)
+\(\let \symup \mathrm \)
+\(\let \symbf \mathbf \)
+\(\let \symit \mathit \)
+\(\let \symtt \mathtt \)
+\(\let \symbffrac \mathbffrac \)
+\(\newcommand {\mathfence }[1]{\mathord {#1}}\)
+\(\newcommand {\mathover }[1]{#1}\)
+\(\newcommand {\mathunder }[1]{#1}\)
+\(\newcommand {\mathaccent }[1]{#1}\)
+\(\newcommand {\mathbotaccent }[1]{#1}\)
+\(\newcommand {\mathalpha }[1]{\mathord {#1}}\)
+\(\def\upAlpha{\unicode{x0391}}\)
+\(\def\upBeta{\unicode{x0392}}\)
+\(\def\upGamma{\unicode{x0393}}\)
+\(\def\upDigamma{\unicode{x03DC}}\)
+\(\def\upDelta{\unicode{x0394}}\)
+\(\def\upEpsilon{\unicode{x0395}}\)
+\(\def\upZeta{\unicode{x0396}}\)
+\(\def\upEta{\unicode{x0397}}\)
+\(\def\upTheta{\unicode{x0398}}\)
+\(\def\upVartheta{\unicode{x03F4}}\)
+\(\def\upIota{\unicode{x0399}}\)
+\(\def\upKappa{\unicode{x039A}}\)
+\(\def\upLambda{\unicode{x039B}}\)
+\(\def\upMu{\unicode{x039C}}\)
+\(\def\upNu{\unicode{x039D}}\)
+\(\def\upXi{\unicode{x039E}}\)
+\(\def\upOmicron{\unicode{x039F}}\)
+\(\def\upPi{\unicode{x03A0}}\)
+\(\def\upVarpi{\unicode{x03D6}}\)
+\(\def\upRho{\unicode{x03A1}}\)
+\(\def\upSigma{\unicode{x03A3}}\)
+\(\def\upTau{\unicode{x03A4}}\)
+\(\def\upUpsilon{\unicode{x03A5}}\)
+\(\def\upPhi{\unicode{x03A6}}\)
+\(\def\upChi{\unicode{x03A7}}\)
+\(\def\upPsi{\unicode{x03A8}}\)
+\(\def\upOmega{\unicode{x03A9}}\)
+\(\def\itAlpha{\unicode{x1D6E2}}\)
+\(\def\itBeta{\unicode{x1D6E3}}\)
+\(\def\itGamma{\unicode{x1D6E4}}\)
+\(\def\itDigamma{\mathit{\unicode{x03DC}}}\)
+\(\def\itDelta{\unicode{x1D6E5}}\)
+\(\def\itEpsilon{\unicode{x1D6E6}}\)
+\(\def\itZeta{\unicode{x1D6E7}}\)
+\(\def\itEta{\unicode{x1D6E8}}\)
+\(\def\itTheta{\unicode{x1D6E9}}\)
+\(\def\itVartheta{\unicode{x1D6F3}}\)
+\(\def\itIota{\unicode{x1D6EA}}\)
+\(\def\itKappa{\unicode{x1D6EB}}\)
+\(\def\itLambda{\unicode{x1D6EC}}\)
+\(\def\itMu{\unicode{x1D6ED}}\)
+\(\def\itNu{\unicode{x1D6EE}}\)
+\(\def\itXi{\unicode{x1D6EF}}\)
+\(\def\itOmicron{\unicode{x1D6F0}}\)
+\(\def\itPi{\unicode{x1D6F1}}\)
+\(\def\itRho{\unicode{x1D6F2}}\)
+\(\def\itSigma{\unicode{x1D6F4}}\)
+\(\def\itTau{\unicode{x1D6F5}}\)
+\(\def\itUpsilon{\unicode{x1D6F6}}\)
+\(\def\itPhi{\unicode{x1D6F7}}\)
+\(\def\itChi{\unicode{x1D6F8}}\)
+\(\def\itPsi{\unicode{x1D6F9}}\)
+\(\def\itOmega{\unicode{x1D6FA}}\)
+\(\def\upalpha{\unicode{x03B1}}\)
+\(\def\upbeta{\unicode{x03B2}}\)
+\(\def\upvarbeta{\unicode{x03D0}}\)
+\(\def\upgamma{\unicode{x03B3}}\)
+\(\def\updigamma{\unicode{x03DD}}\)
+\(\def\updelta{\unicode{x03B4}}\)
+\(\def\upepsilon{\unicode{x03F5}}\)
+\(\def\upvarepsilon{\unicode{x03B5}}\)
+\(\def\upzeta{\unicode{x03B6}}\)
+\(\def\upeta{\unicode{x03B7}}\)
+\(\def\uptheta{\unicode{x03B8}}\)
+\(\def\upvartheta{\unicode{x03D1}}\)
+\(\def\upiota{\unicode{x03B9}}\)
+\(\def\upkappa{\unicode{x03BA}}\)
+\(\def\upvarkappa{\unicode{x03F0}}\)
+\(\def\uplambda{\unicode{x03BB}}\)
+\(\def\upmu{\unicode{x03BC}}\)
+\(\def\upnu{\unicode{x03BD}}\)
+\(\def\upxi{\unicode{x03BE}}\)
+\(\def\upomicron{\unicode{x03BF}}\)
+\(\def\uppi{\unicode{x03C0}}\)
+\(\def\upvarpi{\unicode{x03D6}}\)
+\(\def\uprho{\unicode{x03C1}}\)
+\(\def\upvarrho{\unicode{x03F1}}\)
+\(\def\upsigma{\unicode{x03C3}}\)
+\(\def\upvarsigma{\unicode{x03C2}}\)
+\(\def\uptau{\unicode{x03C4}}\)
+\(\def\upupsilon{\unicode{x03C5}}\)
+\(\def\upphi{\unicode{x03D5}}\)
+\(\def\upvarphi{\unicode{x03C6}}\)
+\(\def\upchi{\unicode{x03C7}}\)
+\(\def\uppsi{\unicode{x03C8}}\)
+\(\def\upomega{\unicode{x03C9}}\)
+\(\def\italpha{\unicode{x1D6FC}}\)
+\(\def\itbeta{\unicode{x1D6FD}}\)
+\(\def\itvarbeta{\unicode{x03D0}}\)
+\(\def\itgamma{\unicode{x1D6FE}}\)
+\(\def\itdigamma{\mathit{\unicode{x03DD}}}\)
+\(\def\itdelta{\unicode{x1D6FF}}\)
+\(\def\itepsilon{\unicode{x1D716}}\)
+\(\def\itvarepsilon{\unicode{x1D700}}\)
+\(\def\itzeta{\unicode{x1D701}}\)
+\(\def\iteta{\unicode{x1D702}}\)
+\(\def\ittheta{\unicode{x1D703}}\)
+\(\def\itvartheta{\unicode{x1D717}}\)
+\(\def\itiota{\unicode{x1D704}}\)
+\(\def\itkappa{\unicode{x1D705}}\)
+\(\def\itvarkappa{\unicode{x1D718}}\)
+\(\def\itlambda{\unicode{x1D706}}\)
+\(\def\itmu{\unicode{x1D707}}\)
+\(\def\itnu{\unicode{x1D708}}\)
+\(\def\itxi{\unicode{x1D709}}\)
+\(\def\itomicron{\unicode{x1D70A}}\)
+\(\def\itpi{\unicode{x1D70B}}\)
+\(\def\itvarpi{\unicode{x1D71B}}\)
+\(\def\itrho{\unicode{x1D70C}}\)
+\(\def\itvarrho{\unicode{x1D71A}}\)
+\(\def\itsigma{\unicode{x1D70E}}\)
+\(\def\itvarsigma{\unicode{x1D70D}}\)
+\(\def\ittau{\unicode{x1D70F}}\)
+\(\def\itupsilon{\unicode{x1D710}}\)
+\(\def\itphi{\unicode{x1D719}}\)
+\(\def\itvarphi{\unicode{x1D711}}\)
+\(\def\itchi{\unicode{x1D712}}\)
+\(\def\itpsi{\unicode{x1D713}}\)
+\(\def\itomega{\unicode{x1D714}}\)
+\(\let \lparen (\)
+\(\let \rparen )\)
+\(\newcommand {\cuberoot }[1]{\,{}^3\!\!\sqrt {#1}}\,\)
+\(\newcommand {\fourthroot }[1]{\,{}^4\!\!\sqrt {#1}}\,\)
+\(\newcommand {\longdivision }[1]{\mathord {\unicode {x027CC}#1}}\)
+\(\newcommand {\mathcomma }{,}\)
+\(\newcommand {\mathcolon }{:}\)
+\(\newcommand {\mathsemicolon }{;}\)
+\(\newcommand {\overbracket }[1]{\mathinner {\overline {\ulcorner {#1}\urcorner }}}\)
+\(\newcommand {\underbracket }[1]{\mathinner {\underline {\llcorner {#1}\lrcorner }}}\)
+\(\newcommand {\overbar }[1]{\mathord {#1\unicode {x00305}}}\)
+\(\newcommand {\ovhook }[1]{\mathord {#1\unicode {x00309}}}\)
+\(\newcommand {\ocirc }[1]{\mathord {#1\unicode {x0030A}}}\)
+\(\newcommand {\candra }[1]{\mathord {#1\unicode {x00310}}}\)
+\(\newcommand {\oturnedcomma }[1]{\mathord {#1\unicode {x00312}}}\)
+\(\newcommand {\ocommatopright }[1]{\mathord {#1\unicode {x00315}}}\)
+\(\newcommand {\droang }[1]{\mathord {#1\unicode {x0031A}}}\)
+\(\newcommand {\leftharpoonaccent }[1]{\mathord {#1\unicode {x020D0}}}\)
+\(\newcommand {\rightharpoonaccent }[1]{\mathord {#1\unicode {x020D1}}}\)
+\(\newcommand {\vertoverlay }[1]{\mathord {#1\unicode {x020D2}}}\)
+\(\newcommand {\leftarrowaccent }[1]{\mathord {#1\unicode {x020D0}}}\)
+\(\newcommand {\annuity }[1]{\mathord {#1\unicode {x020E7}}}\)
+\(\newcommand {\widebridgeabove }[1]{\mathord {#1\unicode {x020E9}}}\)
+\(\newcommand {\asteraccent }[1]{\mathord {#1\unicode {x020F0}}}\)
+\(\newcommand {\threeunderdot }[1]{\mathord {#1\unicode {x020E8}}}\)
+\(\newcommand {\Bbbsum }{\mathop {\unicode {x2140}}\limits }\)
+\(\newcommand {\oiint }{\mathop {\unicode {x222F}}\limits }\)
+\(\newcommand {\oiiint }{\mathop {\unicode {x2230}}\limits }\)
+\(\newcommand {\intclockwise }{\mathop {\unicode {x2231}}\limits }\)
+\(\newcommand {\ointclockwise }{\mathop {\unicode {x2232}}\limits }\)
+\(\newcommand {\ointctrclockwise }{\mathop {\unicode {x2233}}\limits }\)
+\(\newcommand {\varointclockwise }{\mathop {\unicode {x2232}}\limits }\)
+\(\newcommand {\leftouterjoin }{\mathop {\unicode {x27D5}}\limits }\)
+\(\newcommand {\rightouterjoin }{\mathop {\unicode {x27D6}}\limits }\)
+\(\newcommand {\fullouterjoin }{\mathop {\unicode {x27D7}}\limits }\)
+\(\newcommand {\bigbot }{\mathop {\unicode {x27D8}}\limits }\)
+\(\newcommand {\bigtop }{\mathop {\unicode {x27D9}}\limits }\)
+\(\newcommand {\xsol }{\mathop {\unicode {x29F8}}\limits }\)
+\(\newcommand {\xbsol }{\mathop {\unicode {x29F9}}\limits }\)
+\(\newcommand {\bigcupdot }{\mathop {\unicode {x2A03}}\limits }\)
+\(\newcommand {\bigsqcap }{\mathop {\unicode {x2A05}}\limits }\)
+\(\newcommand {\conjquant }{\mathop {\unicode {x2A07}}\limits }\)
+\(\newcommand {\disjquant }{\mathop {\unicode {x2A08}}\limits }\)
+\(\newcommand {\bigtimes }{\mathop {\unicode {x2A09}}\limits }\)
+\(\newcommand {\modtwosum }{\mathop {\unicode {x2A0A}}\limits }\)
+\(\newcommand {\sumint }{\mathop {\unicode {x2A0B}}\limits }\)
+\(\newcommand {\intbar }{\mathop {\unicode {x2A0D}}\limits }\)
+\(\newcommand {\intBar }{\mathop {\unicode {x2A0E}}\limits }\)
+\(\newcommand {\fint }{\mathop {\unicode {x2A0F}}\limits }\)
+\(\newcommand {\cirfnint }{\mathop {\unicode {x2A10}}\limits }\)
+\(\newcommand {\awint }{\mathop {\unicode {x2A11}}\limits }\)
+\(\newcommand {\rppolint }{\mathop {\unicode {x2A12}}\limits }\)
+\(\newcommand {\scpolint }{\mathop {\unicode {x2A13}}\limits }\)
+\(\newcommand {\npolint }{\mathop {\unicode {x2A14}}\limits }\)
+\(\newcommand {\pointint }{\mathop {\unicode {x2A15}}\limits }\)
+\(\newcommand {\sqint }{\mathop {\unicode {x2A16}}\limits }\)
+\(\newcommand {\intlarhk }{\mathop {\unicode {x2A17}}\limits }\)
+\(\newcommand {\intx }{\mathop {\unicode {x2A18}}\limits }\)
+\(\newcommand {\intcap }{\mathop {\unicode {x2A19}}\limits }\)
+\(\newcommand {\intcup }{\mathop {\unicode {x2A1A}}\limits }\)
+\(\newcommand {\upint }{\mathop {\unicode {x2A1B}}\limits }\)
+\(\newcommand {\lowint }{\mathop {\unicode {x2A1C}}\limits }\)
+\(\newcommand {\bigtriangleleft }{\mathop {\unicode {x2A1E}}\limits }\)
+\(\newcommand {\zcmp }{\mathop {\unicode {x2A1F}}\limits }\)
+\(\newcommand {\zpipe }{\mathop {\unicode {x2A20}}\limits }\)
+\(\newcommand {\zproject }{\mathop {\unicode {x2A21}}\limits }\)
+\(\newcommand {\biginterleave }{\mathop {\unicode {x2AFC}}\limits }\)
+\(\newcommand {\bigtalloblong }{\mathop {\unicode {x2AFF}}\limits }\)
+\(\newcommand {\arabicmaj }{\mathop {\unicode {x1EEF0}}\limits }\)
+\(\newcommand {\arabichad }{\mathop {\unicode {x1EEF1}}\limits }\)
+\(\newcommand {\nicefrac }[3][]{\mathinner {{}^{#2}\!/\!_{#3}}}\)
+\(\require {mhchem}\)
+\(\newcommand {\LWRnicearrayarray }[1]{\begin {array}{#1}}\)
+\(\def \LWRnicearrayarrayopt #1[#2] {\begin {array}{#1}}\)
+\(\newenvironment {NiceArray}[2][]{\ifnextchar [{\LWRnicearrayarrayopt {#2}}{\LWRnicearrayarray {#2}}}{\end {array}}\)
+\(\newcommand {\LWRnicearraywithdelimtwo }[2][]{\ifnextchar [{\LWRnicearrayarrayopt {#2}}{\LWRnicearrayarray {#2}}}\)
+\(\newenvironment {NiceArrayWithDelims}[2]{\def \LWRnicearrayrightdelim {\right #2}\left #1\LWRnicearraywithdelimtwo }{\end {array}\LWRnicearrayrightdelim }\)
+\(\newenvironment {pNiceArray} {\begin {NiceArrayWithDelims}{(}{)}} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {bNiceArray} {\begin {NiceArrayWithDelims}{[}{]}} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {BNiceArray} {\begin {NiceArrayWithDelims}{\{}{\}}} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {vNiceArray} {\begin {NiceArrayWithDelims}{\vert }{\vert }} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {VNiceArray} {\begin {NiceArrayWithDelims}{\Vert }{\Vert }} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {NiceMatrix}[1][]{\begin {matrix}}{\end {matrix}}\)
+\(\newenvironment {pNiceMatrix}[1][]{\begin {pmatrix}}{\end {pmatrix}}\)
+\(\newenvironment {bNiceMatrix}[1][]{\begin {bmatrix}}{\end {bmatrix}}\)
+\(\newenvironment {BNiceMatrix}[1][]{\begin {Bmatrix}}{\end {Bmatrix}}\)
+\(\newenvironment {vNiceMatrix}[1][]{\begin {vmatrix}}{\end {vmatrix}}\)
+\(\newenvironment {VNiceMatrix}[1][]{\begin {Vmatrix}}{\end {Vmatrix}}\)
+\(\newcommand {\LWRnicematrixBlock }[1]{#1}\)
+\(\def \LWRnicematrixBlockopt &lt;#1&gt;#2{#2}\)
+\(\newcommand {\Block }[2][]{\ifnextchar &lt;\LWRnicematrixBlockopt \LWRnicematrixBlock }\)
+\(\newcommand {\diagbox }[2]{\begin {array}{l}\hfill \quad #2\\\hline #1\quad \hfill \end {array}}\)
+\(\let \hdottedline \hdashline \)
+\(\newcommand {\Hline }[1][]{\hline }\)
+\(\newcommand {\CodeBefore }{}\)
+\(\newcommand {\Body }{}\)
+\(\newcommand {\CodeAfter }{}\)
+\(\newcommand {\line }[3][]{}\)
+\(\newcommand {\RowStyle }[2][]{}\)
+\(\newcommand {\LWRSubMatrix }[1][]{}\)
+\(\newcommand {\SubMatrix }[4]{\LWRSubMatrix }\)
+\(\newcommand {\OverBrace }[4][]{}\)
+\(\newcommand {\UnderBrace }[4][]{}\)
+\(\newcommand {\HBrace }[3][]{}\)
+\(\newcommand {\VBrace }[3][]{}\)
+\(\newcommand {\ShowCellNames }{}\)
+\(\newcommand {\tabularnote }[2][]{}\)
+\(\newcommand {\cellcolor }[3][]{}\)
+\(\newcommand {\rowcolor }[3][]{}\)
+\(\newcommand {\LWRrowcolors }[1][]{}\)
+\(\newcommand {\rowcolors }[4][]{\LWRrowcolors }\)
+\(\newcommand {\rowlistcolors }[3][]{\LWRrowcolors }\)
+\(\newcommand {\columncolor }[3][]{}\)
+\(\newcommand {\rectanglecolor }[4][]{}\)
+\(\newcommand {\arraycolor }[2][]{}\)
+\(\newcommand {\chessboardcolors }[3][]{}\)
+\(\newcommand {\ldots }[1][]{\dots }\)
+\(\newcommand {\Cdots }[1][]{\cdots }\)
+\(\newcommand {\Vdots }[1][]{\vdots }\)
+\(\newcommand {\Ddots }[1][]{\ddots }\)
+\(\newcommand {\Iddots }[1][]{\mathinner {\unicode {x22F0}}}\)
+\(\newcommand {\Hdotsfor }[1]{\ldots }\)
+\(\newcommand {\Vdotsfor }[1]{\vdots }\)
+\(\newcommand {\AutoNiceMatrix }[2]{\text {(AutoNiceMatrix #1)}}\)
+\(\let \pAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \bAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \BAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \vAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \VAutoNiceMatrix \AutoNiceMatrix \)
+\(\newcommand {\toprule }[1][]{\hline }\)
+\(\let \midrule \toprule \)
+\(\let \bottomrule \toprule \)
+\(\def \LWRbooktabscmidruleparen (#1)#2{}\)
+\(\newcommand {\LWRbooktabscmidrulenoparen }[1]{}\)
+\(\newcommand {\cmidrule }[1][]{\ifnextchar (\LWRbooktabscmidruleparen \LWRbooktabscmidrulenoparen }\)
+\(\newcommand {\morecmidrules }{}\)
+\(\newcommand {\specialrule }[3]{\hline }\)
+\(\newcommand {\addlinespace }[1][]{}\)
+\(\newcommand {\LWRsubmultirow }[2][]{#2}\)
+\(\newcommand {\LWRmultirow }[2][]{\LWRsubmultirow }\)
+\(\newcommand {\multirow }[2][]{\LWRmultirow }\)
+\(\newcommand {\mrowcell }{}\)
+\(\newcommand {\mcolrowcell }{}\)
+\(\newcommand {\STneed }[1]{}\)
+\(\DeclareMathOperator {\const }{const}\)
+\(\DeclareMathOperator {\Div }{div}\)
+\(\DeclareMathOperator {\Rot }{rot}\)
+\(\DeclareMathOperator {\Grad }{grad}\)
+\(\DeclareMathOperator {\inv }{inv}\)
+\(\DeclareMathOperator {\Tr }{Tr}\)
+\(\newcommand {\emf }{ℰ}\)
+\(\newcommand {\tikzmarknode }[2]{#2}\)
+\(\newcommand {\tikzmark }[1]{}\)
+\(\newcommand {\enquote }[1]{«#1»}\)
+\(\newcommand {\allowbreak }{}\)
+\(\newcommand {\mitlambda }{\lambda }\)
+\(\newcommand {\mitomega }{\omega }\)
+\(\newcommand {\mittheta }{\theta }\)
+\(\newcommand {\mitphi }{\varphi }\)
+\(\newcommand {\tcbhighmath }[1]{\boxed {#1}}\)
+\(\newcommand {\Efield }{\mathbf {E}}\)
+\(\newcommand {\Dfield }{\mathbf {D}}\)
+\(\newcommand {\Bfield }{\mathbf {B}}\)
+\(\newcommand {\Hfield }{\mathbf {H}}\)
+\(\newcommand {\ket }[1]{\left | #1 \right \rangle }\)
+\(\newcommand {\bra }[1]{\left \langle #1 \right |}\)
+\(\newcommand {\opbraket }[3]{\left \langle #1 \middle | #2 \middle | #3 \right \rangle }\)
+\(\newcommand {\diff }[2]{\frac {\partial #1}{\partial #2}}\)
+\(\newcommand {\ddiff }[2]{\frac {\partial ^2 #1}{\partial #2^2}}\)
+\(\newcommand {\grad }{\mathbf {\nabla }}\)
+\(\newcommand {\rot }{\mathbf {\nabla }\times }\)
+\(\newcommand {\divg }{\mathbf {\nabla }\cdot }\)
+\(\newcommand {\Laplasian }{\Delta }\)
+\(\newcommand {\EMF }{\mathcal {E}}\)
+\(\newcommand {\vxi }{\vec {\xi }}\)
+\(\newcommand {\vr }{\vec {r}}\)
+\(\newcommand {\vphi }{\varphi }\)
+\(\newcommand {\veps }{\varepsilon }\)
+\(\newcommand {\eff }{\mathrm {eff}}\)
+\(\newcommand {\PySCF }{\texttt {PySCF}}\)
+\(\newcommand {\vect }[1]{\mathbf {#1}}\)
+\(\newcommand {\symbf }[1]{\mathbf {#1}}\)
+\(\DeclareMathOperator {\sh }{sh}\)
+\(\DeclareMathOperator {\ch }{ch}\)
+\(\DeclareMathOperator {\tg }{tg}\)
+\(\DeclareMathOperator {\ctg }{ctg}\)
+\(\DeclareMathOperator {\arctg }{arctg}\)
+\(\DeclareMathOperator {\arcctg }{arcctg}\)
+\(\DeclareMathOperator {\cth }{cth}\)
+\(\DeclareMathOperator {\cosec }{cosec}\)
+\(\let \symsf \symsfup \)
+\(\def\Alpha{\unicode{x0391}}\)
+\(\def\Beta{\unicode{x0392}}\)
+\(\def\Gamma{\unicode{x0393}}\)
+\(\def\Digamma{\unicode{x03DC}}\)
+\(\def\Delta{\unicode{x0394}}\)
+\(\def\Epsilon{\unicode{x0395}}\)
+\(\def\Zeta{\unicode{x0396}}\)
+\(\def\Eta{\unicode{x0397}}\)
+\(\def\Theta{\unicode{x0398}}\)
+\(\def\Vartheta{\unicode{x03F4}}\)
+\(\def\Iota{\unicode{x0399}}\)
+\(\def\Kappa{\unicode{x039A}}\)
+\(\def\Lambda{\unicode{x039B}}\)
+\(\def\Mu{\unicode{x039C}}\)
+\(\def\Nu{\unicode{x039D}}\)
+\(\def\Xi{\unicode{x039E}}\)
+\(\def\Omicron{\unicode{x039F}}\)
+\(\def\Pi{\unicode{x03A0}}\)
+\(\def\Varpi{\unicode{x03D6}}\)
+\(\def\Rho{\unicode{x03A1}}\)
+\(\def\Sigma{\unicode{x03A3}}\)
+\(\def\Tau{\unicode{x03A4}}\)
+\(\def\Upsilon{\unicode{x03A5}}\)
+\(\def\Phi{\unicode{x03A6}}\)
+\(\def\Chi{\unicode{x03A7}}\)
+\(\def\Psi{\unicode{x03A8}}\)
+\(\def\Omega{\unicode{x03A9}}\)
+\(\def\alpha{\unicode{x1D6FC}}\)
+\(\def\beta{\unicode{x1D6FD}}\)
+\(\def\varbeta{\unicode{x03D0}}\)
+\(\def\gamma{\unicode{x1D6FE}}\)
+\(\def\digamma{\mathit{\unicode{x03DD}}}\)
+\(\def\delta{\unicode{x1D6FF}}\)
+\(\def\epsilon{\unicode{x1D716}}\)
+\(\def\varepsilon{\unicode{x1D700}}\)
+\(\def\zeta{\unicode{x1D701}}\)
+\(\def\eta{\unicode{x1D702}}\)
+\(\def\theta{\unicode{x1D703}}\)
+\(\def\vartheta{\unicode{x1D717}}\)
+\(\def\iota{\unicode{x1D704}}\)
+\(\def\kappa{\unicode{x1D705}}\)
+\(\def\varkappa{\unicode{x1D718}}\)
+\(\def\lambda{\unicode{x1D706}}\)
+\(\def\mu{\unicode{x1D707}}\)
+\(\def\nu{\unicode{x1D708}}\)
+\(\def\xi{\unicode{x1D709}}\)
+\(\def\omicron{\unicode{x1D70A}}\)
+\(\def\pi{\unicode{x1D70B}}\)
+\(\def\varpi{\unicode{x1D71B}}\)
+\(\def\rho{\unicode{x1D70C}}\)
+\(\def\varrho{\unicode{x1D71A}}\)
+\(\def\sigma{\unicode{x1D70E}}\)
+\(\def\varsigma{\unicode{x1D70D}}\)
+\(\def\tau{\unicode{x1D70F}}\)
+\(\def\upsilon{\unicode{x1D710}}\)
+\(\def\phi{\unicode{x1D719}}\)
+\(\def\varphi{\unicode{x1D711}}\)
+\(\def\chi{\unicode{x1D712}}\)
+\(\def\psi{\unicode{x1D713}}\)
+\(\def\omega{\unicode{x1D714}}\)
+</div>
+<!--
+...... chapter Метод Хартрі--Фока для простих молекул ......
+-->
+<h3 id="autosec-314"><span class="sectionnumber">4&#x2003;</span>Метод Хартрі–Фока для простих молекул</h3>
+<a id="main-html-autopage-314"></a>
+<a id="main-html-autofile-5"></a>
+<a id="HFMethodDiatomic"></a>
+<p>
+Після вивчення атомних систем природним кроком є перехід до молекул. Найпростіші системи — іон молекули водню <span
+id="lateximage-main-html-51"
+class="lateximagesource"
+><!--
+H2
++
+--><img
+src="main-html-images/90C4B0F6F1D5FBDC33BEA206FA0153E4.svg"
+alt="\ce{H2+}"
+style=""
+class="lateximage"
+></span> та двоатомна молекула водню <span
+id="lateximage-main-html-52"
+class="lateximagesource"
+><!--
+H2
+--><img
+src="main-html-images/B210D6A401BAC692FAB8840283B0CE59.svg"
+alt="\ce{H2}"
+style=""
+class="lateximage"
+></span> — є ідеальними об’єктами для демонстрації можливостей та обмежень методу Хартрі–Фока. Попри простоту, навіть для цих молекул розв’язати точне рівняння Шредінґера неможливо через одночасний рух електронів і ядер. Щоб зробити задачу обчислювально
+доступною, використовують одне з найважливіших наближень у квантовій хімії — <b>наближення Борна–Опенгеймера</b>.
+</p>
+<!--
+...... section Наближення Борна--Опенгеймера ......
+-->
+<h4 id="autosec-319"><span class="sectionnumber">&#xA7;&#x202F;4.1&#x2003;</span>Наближення Борна–Опенгеймера</h4>
+<a id="main-html-autopage-319"></a>
+<p>
+Повний гамільтоніан молекули описує одночасний рух усіх частинок — електронів і ядер:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{4.}{0}\)</span>
+<!--
+̂
+𝐻 = − ∑
+𝐴
+ℏ2
+2𝑀𝐴
+∇2
+𝐴
+− ∑
+𝑖
+ℏ2
+2𝑚𝑒
+∇2
+𝑖
+− ∑
+𝑖,𝐴
+𝑍𝐴𝑒2
+𝑟𝑖𝐴
++ ∑
+𝑖<𝑗
+𝑒2
+𝑟𝑖𝑗
+(4.1)
+-->
+<p>
+\begin{equation}
+\hat {H} = - \sum _A \frac {\hbar ^2}{2 M_A} \nabla _A^2 - \sum _i \frac {\hbar ^2}{2 m_e} \nabla _i^2 - \sum _{i,A} \frac {Z_A e^2}{r_{iA}} + \sum _{i&lt;j} \frac {e^2}{r_{ij}}
+\end{equation}
+</p>
+<p>
+Перші два члени описують кінетичну енергію ядер і електронів, а решта — кулонівську взаємодію між усіма частинками.
+</p>
+<p>
+Оскільки маси ядер набагато більші за масу електрона (\(M_A \gg m_e\)), їхній рух набагато повільніший. Це дозволяє вважати, що електрони миттєво адаптуються до положення ядер. Хвильову функцію можна наближено подати у вигляді добутку:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{4.}{1}\)</span>
+<!--
+Ψ(r, R) ≈ Ψел
+(r; R) Χ(R), (4.2)
+-->
+<p>
+\begin{equation}
+\Psi (\mathbf {r}, \mathbf {R}) \approx \Psi _\text {ел}(\mathbf {r}; \mathbf {R}) \, \Chi (\mathbf {R}),
+\end{equation}
+</p>
+<p>
+де \(\mathbf {r}\) — координати електронів, а \(\mathbf {R}\) — координати ядер.
+</p>
+<p>
+Підставивши цей вираз у повне рівняння Шредінґера та знехтувавши змішаними похідними, отримуємо два незалежні рівняння:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{4.}{2}\)</span>
+<!--
+̂
+𝐻ел
+(r; R)Ψел
+(r; R) = 𝐸ел
+(R) Ψел
+(r; R), (4.3)
+̂
+𝐻ядер
+Χ(R) = 𝐸повн
+Χ(R), (4.4)
+-->
+<p>
+\begin{align}
+\hat {H}_\text {ел}(\mathbf {r}; \mathbf {R}) \Psi _\text {ел}(\mathbf {r}; \mathbf {R}) &amp; = E_\text {ел}(\mathbf {R}) \, \Psi _\text {ел}(\mathbf {r}; \mathbf {R}), \\ \hat {H}_\text {ядер} \, \Chi
+(\mathbf {R}) &amp; = E_\text {повн} \, \Chi (\mathbf {R}),
+\end{align}
+де \(E_\text {ел}(\mathbf {R})\) виступає як потенціальна енергія для руху ядер.
+</p>
+<p>
+Таким чином, електронна задача розв’язується для фіксованої геометрії ядер, а отримана енергія \(E_\text {ел}(\mathbf {R})\) визначає потенціальну поверхню молекули. Цей підхід є фундаментальною основою методу Хартрі–Фока та більшості сучасних
+квантово-хімічних методів.
+</p>
+<p>
+Надалі ми розв’язуватимемо <b>електронну задачу</b> — знаходитимемо хвильову функцію \(\Psi _\text {ел}(\mathbf {r}; \mathbf {R})\) та електронну енергію \(E_\text {ел}(\mathbf {R})\) для фіксованого розташування ядер. Отримана
+залежність \(E_\text {ел}(\mathbf {R})\) задає поверхню потенціальної енергії (Potential Surface Energey, або PES) молекули, на якій потім розглядають рух ядер — їхні коливання й обертання. Саме ці рухи зумовлюють положення ліній у інфрачервоних та
+комбінаційних спектрах.
+</p>
+<p>
+<em>Метод Хартрі–Фока та всі його похідні розв’язують електронне рівняння, розглядаючи ядра як нерухомі точкові заряди</em>. Це дозволяє зосередитись на електронній структурі — головному об’єкті молекулярної квантової хімії.
+</p>
+<!--
+...... section Орбіталі і електронні стани молекул ......
+-->
+<h4 id="autosec-320"><span class="sectionnumber">&#xA7;&#x202F;4.2&#x2003;</span>Орбіталі і електронні стани молекул</h4>
+<a id="main-html-autopage-320"></a>
+<p>
+Перш ніж застосовувати метод Хартрі–Фока до молекулярних систем, необхідно з’ясувати, як класифікувати електронні стани молекул і які квантові числа їх характеризують. На відміну від атомів, де симетрія є сферичною, у двоатомних молекулах симетрія понижується
+до циліндричної — з’являється виділена вісь (міжядерна). Це призводить до нової класифікації орбіталей та станів.
+</p>
+<p>
+Електронна структура двоатомних молекул описується двома рівнями:
+</p>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> класифікацією <b>молекулярних орбіталей (МО)</b>;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> класифікацією <b>електронних станів молекули</b>, які утворюються внаслідок заповнення цих МО електронами.
+</p>
+</li>
+</ul>
+<!--
+...... subsection Класифікація молекулярних орбіталей ......
+-->
+<h5 id="autosec-321"><span class="sectionnumber">4.2.1&#x2003;</span>Класифікація молекулярних орбіталей</h5>
+<a id="main-html-autopage-321"></a>
+<p>
+Молекулярні орбіталі позначаються символами \(\sigma \), \(\pi \), \(\delta \), \(\varphi \), &#x2026;, що відповідають проєкції орбітального моменту \(\Lambda \) на між’ядерну вісь:
+</p>
+<p>
+\[ \Lambda = 0,1,2,3,\ldots \quad \Rightarrow \quad \sigma ,\, \pi ,\, \delta ,\, \varphi , \ldots \]
+</p>
+<p>
+Кожна орбіталь може бути:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <b>зв’язувальною</b> або <b>антизв’язувальною</b> (позначається зірочкою \({}^*\));
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>симетричною (gerade, \(g\))</b> або <b>антисиметричною (ungerade, \(u\))</b> відносно інверсії в центрі молекули.
+</p>
+</li>
+</ul>
+<p>
+Таким чином, типовий запис молекулярної орбіталі має вигляд:
+</p>
+<p>
+\[ \sigma _g, \quad \pi _u, \quad \sigma _u^*, \quad \pi _g^*, \ldots \]
+</p>
+<p>
+<b>Зв’язок із симетрією:</b> Парність \(g/u\) визначається поведінкою хвильової функції при інверсії координат:
+</p>
+<p>
+\[ \psi _g(\mathbf {r}) = +\psi _g(-\mathbf {r}), \qquad \psi _u(\mathbf {r}) = -\psi _u(-\mathbf {r}). \]
+</p>
+<!--
+...... subsection Класифікація електронних станів молекули ......
+-->
+<h5 id="autosec-322"><span class="sectionnumber">4.2.2&#x2003;</span>Класифікація електронних станів молекули</h5>
+<a id="main-html-autopage-322"></a>
+<p>
+<b>Електронний терм</b> — це позначення квантового стану молекули, який характеризується певними значеннями повного спіну \(S\), проєкції орбітального моменту на між’ядерну вісь \(\Lambda \), та симетріями відносно інверсії (\(g/u\)) і відбиття (\(+/-\)).
+Він має вигляд:
+</p>
+<p>
+\[ ^{2S+1}\Lambda _{g/u}^{\pm }. \]
+</p>
+<p>
+де:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> \(S\) — повний спін системи;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(2S+1\) — <b>мультиплетність</b> (синглет, дублет, триплет тощо);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(\Lambda \) — <b>сумарна проєкція орбітального моменту</b> на між’ядерну вісь:
+</p>
+<p>
+\[ \Sigma ~(\Lambda =0), \quad \Pi ~(\Lambda =1), \quad \Delta ~(\Lambda =2), \quad \Phi ~(\Lambda =3), \ldots \]
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> верхній індекс \(+\) або \(-\) — <b>симетрія відносно площини, що містить вісь молекули</b> (лише для станів типу \(\Sigma \));
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> нижній індекс \(g\) та \(u\) (від <em>gerade</em> та <em>ungerade</em>) — <b>парність орбіталі</b> відносно інверсії в центрі молекули.
+</p>
+</li>
+</ul>
+<!--
+...... subsection Типові терми двоатомних молекул ......
+-->
+<h5 id="autosec-323">Типові терми двоатомних молекул</h5>
+<a id="main-html-autopage-323"></a>
+<p>
+</p>
+<table>
+<tr style="display:none"><th>.</th></tr>
+<tr class="hline">
+<td colspan="1" class="tdc tvertbarl tvertbarr" style="background:#F2F2F2; border-left: 1px solid black; border-right: 1px solid black"><b>Терм</b></td>
+<td colspan="1" class="tdc tvertbarr" style="background:#F2F2F2; border-right: 1px solid black"><b>Мультиплетність</b></td>
+<td colspan="1" class="tdc tvertbarr" style="background:#F2F2F2; border-right: 1px solid black"><b>Симетрія</b></td>
+<td colspan="1" class="tdc tvertbarr" style="background:#F2F2F2; border-right: 1px solid black"><b>Фізичний зміст</b></td>
+</tr>
+<tr class="hline">
+<td colspan="1" class="tdl tvertbarl tvertbarr" style="border-left: 1px solid black; border-right: 1px solid black">\({}^1\Sigma _g^+\)</td>
+<td colspan="1" class="tdl tvertbarr" style="border-right: 1px solid black">Синглет</td>
+<td colspan="1" class="tdl tvertbarr" style="border-right: 1px solid black">\(g\), \(+\)</td>
+<td class="tdp tvertbarr tdleft" style="border-right: 1px solid black">
+<p>
+Основний стан молекули H\(_2\); усі електрони спарені, повна симетрія
+</p>
+</td>
+</tr>
+<tr class="hline">
+<td colspan="1" class="tdl tvertbarl tvertbarr" style="background:#F9F9F9; border-left: 1px solid black; border-right: 1px solid black">\({}^3\Sigma _u^+\)</td>
+<td colspan="1" class="tdl tvertbarr" style="background:#F9F9F9; border-right: 1px solid black">Триплет</td>
+<td colspan="1" class="tdl tvertbarr" style="background:#F9F9F9; border-right: 1px solid black">\(u\), \(+\)</td>
+<td class="tdp tvertbarr tdleft" style="background:#F9F9F9; border-right: 1px solid black">
+<p>
+Збуджений стан з паралельними спінами (наприклад, у \(\mathrm {O_{2}}\))
+</p>
+</td>
+</tr>
+<tr class="hline">
+<td colspan="1" class="tdl tvertbarl tvertbarr" style="border-left: 1px solid black; border-right: 1px solid black">\({}^1\Pi _u\)</td>
+<td colspan="1" class="tdl tvertbarr" style="border-right: 1px solid black">Синглет</td>
+<td colspan="1" class="tdl tvertbarr" style="border-right: 1px solid black">\(u\)</td>
+<td class="tdp tvertbarr tdleft" style="border-right: 1px solid black">
+<p>
+Орбітальний момент \(\Lambda =1\), без інверсійної симетрії
+</p>
+</td>
+</tr>
+<tr class="hline">
+<td colspan="1" class="tdl tvertbarl tvertbarr" style="background:#F9F9F9; border-left: 1px solid black; border-right: 1px solid black">\({}^3\Pi _g\)</td>
+<td colspan="1" class="tdl tvertbarr" style="background:#F9F9F9; border-right: 1px solid black">Триплет</td>
+<td colspan="1" class="tdl tvertbarr" style="background:#F9F9F9; border-right: 1px solid black">\(g\)</td>
+<td class="tdp tvertbarr tdleft" style="background:#F9F9F9; border-right: 1px solid black">
+<p>
+Орбітальний момент \(\Lambda =1\), паралельні спіни
+</p>
+</td>
+</tr>
+<tr class="hline">
+<td colspan="1" class="tdl tvertbarl tvertbarr" style="border-left: 1px solid black; border-right: 1px solid black">\({}^1\Delta _g\)</td>
+<td colspan="1" class="tdl tvertbarr" style="border-right: 1px solid black">Синглет</td>
+<td colspan="1" class="tdl tvertbarr" style="border-right: 1px solid black">\(g\)</td>
+<td class="tdp tvertbarr tdleft" style="border-right: 1px solid black">
+<p>
+Орбітальний момент \(\Lambda =2\), спарені електрони
+</p>
+</td>
+</tr>
+<tr class="hline">
+<td colspan="1" class="tdl tvertbarl tvertbarr" style="background:#F9F9F9; border-left: 1px solid black; border-right: 1px solid black">\({}^2\Sigma _u^+\)</td>
+<td colspan="1" class="tdl tvertbarr" style="background:#F9F9F9; border-right: 1px solid black">Дублет</td>
+<td colspan="1" class="tdl tvertbarr" style="background:#F9F9F9; border-right: 1px solid black">\(u\), \(+\)</td>
+<td class="tdp tvertbarr tdleft" style="background:#F9F9F9; border-right: 1px solid black">
+<p>
+Один неспарений електрон, як у радикалах типу \(\mathrm {NO}\)
+</p>
+</td>
+</tr>
+<tr class="hline" aria-hidden="true">
+<td class="tdc"></td>
+<td class="tdc"></td>
+<td class="tdc"></td>
+<td class="tdp tdleft">
+</td>
+</tr>
+</table>
+<p>
+Нижче наведено покроковий алгоритм визначення терму для заданої електронної конфігурації.
+</p>
+<!--
+...... subsection Алгоритм ......
+-->
+<h5 id="autosec-325">Алгоритм</h5>
+<a id="main-html-autopage-325"></a>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> <b>Записати електронну конфігурацію.</b> Визначити, які орбіталі заповнені, частково заповнені чи вакантні:
+</p>
+<p>
+\[ (\sigma _g)^2(\sigma _u^*)^2(\pi _u)^4(\pi _g^*)^2, \ldots \]
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> <b>Визначити тип орбіталей і відповідні проєкції орбітального моменту.</b> Для кожної орбіталі встановити:
+</p>
+<p>
+\[ \sigma \rightarrow \Lambda _i = 0, \quad \pi \rightarrow \Lambda _i = 1, \quad \delta \rightarrow \Lambda _i = 2, \quad \text {тощо.} \]
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> <b>Знайти можливі комбінації орбітальних моментів.</b> Для активних (частково заповнених) орбіталей обчислити всі можливі значення:
+</p>
+<p>
+\[ \Lambda = |\Lambda _1 + \Lambda _2|,\, |\Lambda _1 - \Lambda _2|, \ldots \]
+</p>
+<p>
+Це дає можливі типи станів: \(\Sigma , \Pi , \Delta , \ldots \)
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">4.</span> <b>Комбінувати спіни електронів.</b> Для кожного електрона \(S_i = \tfrac {1}{2}\). Обчислити всі можливі значення повного спіну:
+</p>
+<p>
+\[ S = |S_1 + S_2|,\, |S_1 - S_2|, \ldots \]
+</p>
+<p>
+Відповідно визначається мультиплетність \(2S+1\) (синглет, дублет, триплет тощо).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">5.</span> <b>Перевірити принцип Паулі.</b> Загальна хвильова функція має бути антисиметричною при перестановці двох електронів:
+</p>
+<p>
+\[ \Psi _{\text {заг}} = \Psi _{\text {просторова}} \, \Psi _{\text {спінова}} \, \Psi _{\text {симетрії}}. \]
+</p>
+<p>
+Якщо просторова частина симетрична \(\Rightarrow S=0\) (синглет), якщо антисиметрична \(\Rightarrow S=1\) (триплет).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">6.</span> <b>Визначити симетрії \(g/u\) і \(+/-\).</b>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Індекс \(g/u\) показує парність хвильової функції при інверсії в центрі молекули.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Для станів \(\Sigma \) додається верхній індекс \(+/-\), що вказує на симетрію при відбитті у площині, яка містить між’ядерну вісь.
+</p>
+</li>
+</ul>
+</li>
+<li>
+<p>
+<span class="listmarker">7.</span> <b>Записати всі можливі терми.</b> Комбінуючи знайдені \(S\), \(\Lambda \), \(g/u\) та \(+/-\), записуємо:
+</p>
+<p>
+\[ {}^{2S+1}\Lambda _{g/u}^{\pm }. \]
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">8.</span> <b>Визначити основний терм за правилами Гунда.</b>
+</p>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">8.1.</span> Найнижчу енергію має стан з <b>максимальним спіном</b> \(S\).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">8.2.</span> Для однакового \(S\) — стан з <b>найбільшим</b> \(\Lambda \).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">8.3.</span> Для даних \(S, \Lambda \) — визначається парність (\(g/u\)) і знак (\(+/-)\) з урахуванням симетрії конфігурації.
+</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>
+<b>Приклад.</b> Для молекули водню \(\mathrm {H_2}\) основний електронний стан має конфігурацію \(\sigma _g^2\). Оскільки обидва електрони спарені (\(S=0\)), повний терм записується як:
+</p>
+<p>
+\[ ^{2S+1}\Lambda _g^+ = {}^1\Sigma _g^+. \]
+</p>
+<p>
+Це <b>синглетний стан</b> (\(S=0\)), симетричний відносно інверсії (індекс \(g\)) і з позитивною симетрією відносно площини, що містить між’ядерну вісь (\(+\)).
+</p>
+<!--
+...... subsection Від атомів до молекул: базисні функції та МО ЛКАО ......
+-->
+<h5 id="autosec-326"><span class="sectionnumber">4.2.3&#x2003;</span>Від атомів до молекул: базисні функції та МО ЛКАО</h5>
+<a id="main-html-autopage-326"></a>
+<!--
+...... subsubsection Що ми вже знаємо з атомних розрахунків? ......
+-->
+<h6 id="autosec-327">Що ми вже знаємо з атомних розрахунків?</h6>
+<a id="main-html-autopage-327"></a>
+<p>
+При розрахунку атомів ми використовували <b>базисні набори</b> — набори математичних функцій (зазвичай гаусіани), які описують форму електронної хмари навколо ядра. Наприклад, для атома H у базисі STO-3G ми мали:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <b>Базисні функції:</b> \(\chi _\mu \) (гаусіани, центровані на ядрі)
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Орбіталі атома:</b> \(\psi _i = \sum _\mu C_{\mu i} \chi _\mu \) (результат HF)
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Енергії орбіталей:</b> \(\varepsilon _i\) (власні значення оператора Фока)
+</p>
+</li>
+</ul>
+<p>
+Іншими словами, метод Хартрі-Фока знаходить коефіцієнти \(C_{\mu i}\), які визначають, як базисні функції комбінуються у атомні орбіталі.
+</p>
+<!--
+...... subsubsection Що змінюється для молекул? ......
+-->
+<h6 id="autosec-328">Що змінюється для молекул?</h6>
+<a id="main-html-autopage-328"></a>
+<p>
+Для молекул ми використовуємо <em>той самий підхід</em>, але базисні функції тепер центровані на <em>різних ядрах</em>:
+</p>
+<div class="center">
+<table>
+<tr style="display:none"><th>.</th></tr>
+<tr class="tbrule">
+<td class="tdl"></td>
+<td class="tdc"><b>Атом H</b></td>
+<td class="tdc"><b>Молекула H\(_2\)</b></td>
+</tr>
+<tr class="hline">
+<td class="tdl">Базисні функції</td>
+<td class="tdc">\(\chi _1, \chi _2, \ldots \)</td>
+<td class="tdc">\(\chi _A^{(1)}, \chi _A^{(2)}, \ldots , \chi _B^{(1)}, \chi _B^{(2)}, \ldots \)</td>
+</tr>
+<tr>
+<td class="tdl"></td>
+<td class="tdc">(центр: атом H)</td>
+<td class="tdc">(центри: атом A і атом B)</td>
+</tr>
+<tr class="hline">
+<td class="tdl">Орбіталі</td>
+<td class="tdc">\(\psi _i = \sum _\mu C_{\mu i} \chi _\mu \)</td>
+<td class="tdc">\(\psi _i = \sum _\mu C_{\mu i} \chi _\mu \)</td>
+</tr>
+<tr>
+<td class="tdl"></td>
+<td class="tdc">(атомні орбіталі)</td>
+<td class="tdc">(молекулярні орбіталі)</td>
+</tr>
+<tr class="hline">
+<td class="tdl">Метод</td>
+<td class="tdc">Hartree-Fock</td>
+<td class="tdc">Hartree-Fock</td>
+</tr>
+<tr class="tbrule" aria-hidden="true">
+<td class="tdl"></td>
+<td class="tdc"></td>
+<td class="tdc"></td>
+</tr>
+</table>
+</div>
+<p>
+<b>Ключовий момент:</b> Математично — це одна й та сама процедура! Різниця лише в тому, що базисні функції розташовані на різних атомах.
+</p>
+<!--
+...... subsubsection Принцип МО ЛКАО ......
+-->
+<h6 id="autosec-331">Принцип МО ЛКАО</h6>
+<a id="main-html-autopage-331"></a>
+<p>
+Оскільки базисні функції в молекулі природно групуються за атомами (функції на атомі A, функції на атомі B), молекулярну орбіталь можна записати як:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{4.}{4}\)</span>
+<!--
+𝜓(МО)
+𝑖
+= ∑
+𝜇∈𝐴
+𝐶𝜇𝑖𝜒(𝐴)
+𝜇 + ∑
+𝜈∈𝐵
+𝐶𝜈𝑖𝜒(𝐵)
+𝜈 + … (4.5)
+-->
+<p>
+\begin{equation}
+\psi _i^{\text {(МО)}} = \sum _{\mu \in A} C_{\mu i} \chi _\mu ^{(A)} + \sum _{\nu \in B} C_{\nu i} \chi _\nu ^{(B)} + \ldots
+\end{equation}
+</p>
+<p>
+Це і є <em>принцип лінійної комбінації атомних орбіталей (ЛКАО)</em>: молекулярна орбіталь (МО) складається з внесків базисних функцій, центрованих на різних атомах.
+</p>
+<div class="cb-comment">
+<p>
+<b>Термінологічне уточнення</b>
+</p>
+<p>
+У контексті молекул термін «атомна орбіталь» (АО) часто означає <em>базисну функцію, центровану на атомі</em>, а не результат HF-розрахунку проведеного на атомі.
+</p>
+<p>
+Щоб уникнути плутанини, ми будемо використовувати:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <b>Базисні функції</b> \(\chi _\mu \) — математичні функції (гаусіани).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Атомні орбіталі (АО)</b> — базисні функції у контексті ЛКАО.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Молекулярні орбіталі (МО)</b> — результат HF для молекули.
+</p>
+</li>
+</ul>
+</div>
+<!--
+...... section Модельні молекули: та ......
+-->
+<h4 id="autosec-332"><span class="sectionnumber">&#xA7;&#x202F;4.3&#x2003;</span>Модельні молекули: \(\mathrm {H_{2}^{+}}\) та \(\mathrm {H_{2}}\)</h4>
+<a id="main-html-autopage-332"></a>
+<p>
+Першим кроком у квантово-хімічному описі молекул є вивчення найпростіших систем, для яких можна чітко простежити природу хімічного зв’язку. Молекули <span
+id="lateximage-main-html-53"
+class="lateximagesource"
+><!--
+H2
++
+--><img
+src="main-html-images/90C4B0F6F1D5FBDC33BEA206FA0153E4.svg"
+alt="\ce{H2+}"
+style=""
+class="lateximage"
+></span> та <span
+id="lateximage-main-html-54"
+class="lateximagesource"
+><!--
+H2
+--><img
+src="main-html-images/B210D6A401BAC692FAB8840283B0CE59.svg"
+alt="\ce{H2}"
+style=""
+class="lateximage"
+></span> є <b>модельними</b> у тому сенсі, що вони:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> мають найменшу можливу кількість електронів (один і два відповідно);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> дозволяють побудувати хвильові функції, що безпосередньо демонструють утворення зв’язувальних і розривних (антизв’язувальних) орбіталей;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> відтворюють основні риси електронної структури складніших молекул, але без зайвих ускладнень багаточастинкової взаємодії;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> зручні для порівняння точних, наближених і експериментальних результатів;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> використовуються як тестові системи для перевірки методів квантової хімії.
+</p>
+</li>
+</ul>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <span
+id="lateximage-main-html-55"
+class="lateximagesource"
+><!--
+H2
++
+--><img
+src="main-html-images/90C4B0F6F1D5FBDC33BEA206FA0153E4.svg"
+alt="\ce{H2+}"
+style=""
+class="lateximage"
+></span> — найпростіша двоатомна молекула, що містить один електрон. Її можна розв’язати аналітично в еліптичних координатах, тому вона є класичним прикладом формування зв’язувальної орбіталі \(\sigma _g\);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span
+id="lateximage-main-html-56"
+class="lateximagesource"
+><!--
+H2
+--><img
+src="main-html-images/B210D6A401BAC692FAB8840283B0CE59.svg"
+alt="\ce{H2}"
+style=""
+class="lateximage"
+></span> — найпростіша двоелектронна молекула, у якій вперше проявляється електронна кореляція та обмеження методу Хартрі–Фока.
+</p>
+</li>
+</ul>
+<p>
+Таким чином, системи <span
+id="lateximage-main-html-57"
+class="lateximagesource"
+><!--
+H2
++
+--><img
+src="main-html-images/90C4B0F6F1D5FBDC33BEA206FA0153E4.svg"
+alt="\ce{H2+}"
+style=""
+class="lateximage"
+></span> і <span
+id="lateximage-main-html-58"
+class="lateximagesource"
+><!--
+H2
+--><img
+src="main-html-images/B210D6A401BAC692FAB8840283B0CE59.svg"
+alt="\ce{H2}"
+style=""
+class="lateximage"
+></span> є <b>відправною точкою</b> для розуміння природи хімічного зв’язку, ролі симетрії, утворення молекулярних орбіталей і спінових станів.
+</p>
+<!--
+...... section Іон молекули водню ......
+-->
+<h4 id="autosec-345"><span class="sectionnumber">&#xA7;&#x202F;4.4&#x2003;</span>Іон молекули водню \(\mathrm {H_{2}^{+}}\)</h4>
+<a id="main-html-autopage-345"></a>
+<p>
+Іон <span
+id="lateximage-main-html-59"
+class="lateximagesource"
+><!--
+H2
++
+--><img
+src="main-html-images/90C4B0F6F1D5FBDC33BEA206FA0153E4.svg"
+alt="\ce{H2+}"
+style=""
+class="lateximage"
+></span> — це найпростіша молекулярна система, яка складається з двох протонів та одного електрона. Незважаючи на її простоту, саме на прикладі <span
+id="lateximage-main-html-60"
+class="lateximagesource"
+><!--
+H2
++
+--><img
+src="main-html-images/90C4B0F6F1D5FBDC33BEA206FA0153E4.svg"
+alt="\ce{H2+}"
+style=""
+class="lateximage"
+></span> вперше стає очевидною суть хімічного зв’язку як результату квантового перекривання хвильових функцій.
+</p>
+<!--
+...... subsection Теоретичні основи ......
+-->
+<h5 id="autosec-350"><span class="sectionnumber">4.4.1&#x2003;</span>Теоретичні основи</h5>
+<a id="main-html-autopage-350"></a>
+<p>
+У нерелятивістському наближенні (та з використанням атомних одиниць) електронний гамільтоніан системи має вигляд:
+</p>
+<p>
+\[ \hat {H} = -\frac {1}{2}\nabla ^2 - \frac {1}{r_A} - \frac {1}{r_B} + \frac {1}{R}, \]
+</p>
+<p>
+де \(r_A\), \(r_B\) — відстані електрона до ядер \(A\) і \(B\), а \(R\) — між’ядерна відстань (рис.&nbsp;<a href="diatomic.html#tikz:H2Ion">4.1</a>).
+</p>
+<figure id="autoid-12" class="figure ">
+<div class="center">
+<p>
+<span
+id="lateximage-main-html-61"
+class="lateximagesource"
+><!--
+𝑅
+𝑟𝐴
+𝑟𝐵
+𝐴
+𝐵
+𝑒
+--><img
+src="main-html-images/image-61.svg"
+alt="Рис. 4.1. Конфігурація молекулярного іону водню H_2^+."
+style=""
+class="lateximage"
+></span>
+</p>
+<div class="figurecaption">
+Рис.&nbsp;4.1. Конфігурація молекулярного іону водню \(\mathrm {H_2^+}\).
+</div>
+<a id="tikz:H2Ion"></a>
+</div>
+</figure>
+<p>
+Перші три члени описують кінетичну енергію електрона та його притягання до двох ядер, а останній доданок — кулонівське відштовхування між ядрами.
+</p>
+<p>
+Оскільки у системі лише один електрон, тут <em>відсутні електрон-електронні взаємодії</em>. Тому метод Хартрі–Фока не містить ніяких додаткових апроксимацій (крім обмежень базису), і його результат збігається з точною розв’язною енергією при нескінченному
+базисі. Таким чином, <span
+id="lateximage-main-html-62"
+class="lateximagesource"
+><!--
+H2
++
+--><img
+src="main-html-images/90C4B0F6F1D5FBDC33BEA206FA0153E4.svg"
+alt="\ce{H2+}"
+style=""
+class="lateximage"
+></span> — це ідеальний тест для перевірки коректності реалізації ХФ-методу в програмних пакетах.
+</p>
+<!--
+...... subsection Визначення молекули в PySCF та запуск розрахунку ......
+-->
+<h5 id="autosec-356"><span class="sectionnumber">4.4.2&#x2003;</span>Визначення молекули в PySCF та запуск розрахунку</h5>
+<a id="main-html-autopage-356"></a>
+<p>
+Для визначення молекули в PySCF використовується рядкова нотація
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">26 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+
+<span class="tk-c1"># ------------------------------------------------------------</span>
+<span class="tk-c1"># Визначення молекули</span>
+<span class="tk-c1"># ------------------------------------------------------------</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span>
+    <span class="tk-n">atom</span> <span class="tk-o">=</span> <span class="tk-s2">"""</span>
+<span class="tk-s2">        H  0.0  0.0  0.0</span>
+<span class="tk-s2">        H  0.0  0.0  0.74</span>
+<span class="tk-s2">    """</span><span class="tk-p">,</span>
+    <span class="tk-n">unit</span> <span class="tk-o">=</span> <span class="tk-s2">"Angstrom"</span><span class="tk-p">,</span>
+    <span class="tk-n">charge</span> <span class="tk-o">=</span> <span class="tk-mi">1</span><span class="tk-p">,</span>      <span class="tk-c1"># заряд +1 (один електрон)</span>
+    <span class="tk-n">spin</span> <span class="tk-o">=</span> <span class="tk-mi">1</span><span class="tk-p">,</span>        <span class="tk-c1"># 2S a= 1 (дублет)</span>
+    <span class="tk-n">basis</span> <span class="tk-o">=</span> <span class="tk-s2">"sto-3g"</span><span class="tk-p">,</span>
+<span class="tk-p">)</span>
+<span class="tk-c1"># ------------------------------------------------------------</span>
+<span class="tk-c1"># UHF-розрахунок</span>
+<span class="tk-c1"># ------------------------------------------------------------</span>
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">UHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span>
+<span class="tk-n">energy</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+
+<span class="tk-c1"># ------------------------------------------------------------</span>
+<span class="tk-c1"># Спіновий стан</span>
+<span class="tk-c1"># ------------------------------------------------------------</span>
+<span class="tk-n">s2</span><span class="tk-p">,</span> <span class="tk-n">mult</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">spin_square</span><span class="tk-p">()</span></code></pre>
+</div>
+<p>
+Пояснення коду:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Задана відстань між атомами \(0.74\)&nbsp;Å.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>basis = 'sto-3g'</kbd></span> — мінімальний базис
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>charge = 1</kbd></span> — заряд системи (+1 для <span
+id="lateximage-main-html-63"
+class="lateximagesource"
+><!--
+H2
++
+--><img
+src="main-html-images/90C4B0F6F1D5FBDC33BEA206FA0153E4.svg"
+alt="\ce{H2+}"
+style=""
+class="lateximage"
+></span>)
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>spin = 1</kbd></span> — \(2S = N_\alpha - N_\beta = 1\)
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>scf.UHF</kbd></span> — необмежений ХФ (один непарний електрон),
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>s2, mult = mf.spinsquare()</kbd></span> — спіновий стан:
+</p>
+<p>
+\[ \langle S^2 \rangle = 0.75 \quad \Rightarrow \quad S = \frac {1}{2}, \quad 2S+1 = 2. \]
+</p>
+<p>
+</p>
+</li>
+</ul>
+<!--
+...... subsection Причини хімічного зв’язку в молекулі ......
+-->
+<h5 id="autosec-359"><span class="sectionnumber">4.4.3&#x2003;</span>Причини хімічного зв’язку в молекулі \(\mathrm {H_{2}^{+}}\)</h5>
+<a id="main-html-autopage-359"></a>
+<p>
+Іон <span
+id="lateximage-main-html-64"
+class="lateximagesource"
+><!--
+H2
++
+--><img
+src="main-html-images/90C4B0F6F1D5FBDC33BEA206FA0153E4.svg"
+alt="\ce{H2+}"
+style=""
+class="lateximage"
+></span> — це найпростіший приклад системи, де виникає <b>хімічний зв’язок</b> унаслідок <em>квантового перекривання хвильових функцій</em>.
+</p>
+<p>
+У найпростішому випадку, коли на кожному атомі використовується лише одна базисна функція (мінімальний базис), структура молекулярних орбіталей стає максимально прозорою. В такому базисі на ядрах \(A\) і \(B\) розташовані по одній \(1s\)-функції:
+</p>
+<p>
+\[ \chi _A(\mathbf r) = 1s\text {-функція на ядрі}\ A, \qquad \chi _B(\mathbf r) = 1s\text {-функція на ядрі}\ B. \]
+</p>
+<p>
+У цьому базисі хвильова функція молекулярної орбіталі є лінійною комбінацією цих двох функцій. Завдяки симетрії задачі існують лише дві незалежні комбінації: симетрична (зв’язувальна) та антисиметрична (розпушувальна). Їхній нормований вигляд має стандартну
+форму:
+</p>
+<p>
+\[ \phi _\pm (\mathbf {r}) = \frac {1}{\sqrt {2(1 \pm S)}} \bigl [\chi _A(\mathbf {r}) \pm \chi _B(\mathbf {r})\bigr ], \]
+</p>
+<p>
+де \(S = \langle \chi _A | \chi _B \rangle \) — інтеграл перекривання.
+</p>
+<p>
+Ці дві функції завжди з’являються у результаті <kbd>HF</kbd>-розрахунку як перші два власні вектори фоківської матриці. Демонстрація такого розрахунку наведена в файлі <span class="codebutton"><a
+href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/HFMethodDiatomic/code/MO_h2_plus.py" target="_blank" ><kbd>MO_h2_plus.py</kbd></a></span> у мінімальному базисі (<kbd>STO-3G</kbd>). Скрипт
+виводить отримані орбіталі у розкладi за атомними функціями. Результат роботи програми має вигляд:
+</p>
+<div class="codeblock code-text" data-lang="text" data-nosnippet>
+<div class="code-head"><span class="code-lang">Вивід</span><span class="code-lines">6 рядків</span></div>
+<pre class="code"><code>(occ, bonding) φ1 = 0.585(1s_(a) + 1s_(b))
+     (ΔE = -0.082695 Ha)
+
+(virt, antibonding) φ2 = -0.965(1s_(a) - 1s_(b))
+     (ΔE = 0.395052 Ha)</code></pre>
+</div>
+<p>
+Цей вивід демонструє всі ключові риси мінімального двоатомного <kbd>HF</kbd>-розрахунку:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> перша орбіталь (зі знаком «\(+\)») є <b>зв’язувальною</b> і складається з симетричної комбінації :
+</p>
+<span class="hidden"> \(\seteqnumber{0}{4.}{5}\)</span>
+<!--
+𝜙𝜍𝑔
+=
+1
+√2(1 + 𝑆)
+(𝜒𝐴 + 𝜒𝐵) (зв’язувальна)
+-->
+<p>
+\begin{equation*}
+\phi _{\sigma _g} = \frac {1}{\sqrt {2(1+S)}} \bigl (\chi _A + \chi _B\bigr ) \quad \text {(зв&apos;язувальна)}
+\end{equation*}
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> друга орбіталь (зі знаком «\(-\)») є <b>розпушувальною</b> і має антисиметричну структуру:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{4.}{5}\)</span>
+<!--
+𝜙𝜍∗
+𝑢
+=
+1
+√2(1 − 𝑆)
+(𝜒𝐴 − 𝜒𝐵) (антизв’язувальна);
+-->
+<p>
+\begin{equation*}
+\phi _{\sigma _u^*} = \frac {1}{\sqrt {2(1-S)}} \bigl (\chi _A - \chi _B\bigr ) \quad \text {(антизв&apos;язувальна)};
+\end{equation*}
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> знак енергетичних зрушень \(\Delta E\) відповідає очікуваному: зв’язувальна орбіталь знижує енергію системи, тоді як розпушувальна її підвищує.
+</p>
+</li>
+</ul>
+<p>
+На більших базисах цей базовий каркас зберігається: перші дві орбіталі залишаються комбінаціями \(1s_A \pm 1s_B\), однак з’являються додаткові \(s\)-, \(p\)-типи та їхні змішані комбінації. Незважаючи на ці ускладнення, мінімальний базис дає найпрозорішу
+ілюстрацію механізму виникнення зв’язувальної та розпушувальної МО.
+</p>
+<p>
+Енергiї молекулярних орбiталей можна зобразити енергетичнiй дiаграмi (рис.&nbsp;<a href="diatomic.html#pic:E_diarramm">4.2</a>).
+</p>
+<figure id="autoid-13" class="figure ">
+<div class="center">
+<div class="minipage" style="vertical-align:bottom ; justify-content:flex-start ; ">
+<a id="main-html-autopage-363"></a>
+<p>
+<span
+id="lateximage-main-html-65"
+class="lateximagesource"
+><!--
+1s 1s
+1σ𝑠
+1σ∗
+𝑠
+E
+H H
+--><img
+src="main-html-images/image-65.svg"
+alt="(а) Зв’язуюча орбіталь (_g1s)^1"
+style=""
+class="lateximage"
+></span>
+</p>
+<div class="figurecaption">
+(а) Зв’язуюча орбіталь \((\sigma _g1s)^1\)
+</div>
+<a id="pic:E_diarramm_bond"></a>
+<a id="sub@pic:E_diarramm_bond"></a>
+</div>
+<div class="minipage" style="vertical-align:bottom ; justify-content:flex-start ; ">
+<a id="main-html-autopage-366"></a>
+<p>
+<span
+id="lateximage-main-html-66"
+class="lateximagesource"
+><!--
+1s 1s
+1σ𝑠
+1σ∗
+𝑠
+E
+H H
+--><img
+src="main-html-images/image-66.svg"
+alt="(б) Розпушвальна орбіталь (^*_u1s)^1"
+style=""
+class="lateximage"
+></span>
+</p>
+<div class="figurecaption">
+(б) Розпушвальна орбіталь \((\sigma ^*_u1s)^1\)
+</div>
+<a id="pic:E_diarramm_antibond"></a>
+<a id="sub@pic:E_diarramm_antibond"></a>
+</div>
+<div class="figurecaption">
+Рис.&nbsp;4.2. Енергетична діаграма
+</div>
+<a id="pic:E_diarramm"></a>
+</div>
+</figure>
+<p>
+Оскільки в молекулі <span
+id="lateximage-main-html-67"
+class="lateximagesource"
+><!--
+H2
++
+--><img
+src="main-html-images/90C4B0F6F1D5FBDC33BEA206FA0153E4.svg"
+alt="\ce{H2+}"
+style=""
+class="lateximage"
+></span> лише один електрон, його густина збігається з квадратом модуля молекулярної орбіталі:
+</p>
+<p>
+\[ \rho (\mathbf {r}) = |\phi (\mathbf {r})|^2 = |\psi _\pm (\mathbf {r})|^2 = \frac {1}{2(1 \pm S)} \bigl (|\chi _A|^2 + |\chi _B|^2 \pm 2\chi _A\chi _B \bigr ), \]
+</p>
+<p>
+де інтеграл перекривання \(S=\langle \chi _A|\chi _B\rangle \) характеризує ступінь взаємодії між двома атомними функціями. Останній член у формулі, \(\pm 2\chi _A\chi _B\), описує <b>інтерференцію хвильових функцій</b>: для знака «\(+\)»
+маємо конструктивне перекривання та підвищену густину між ядрами (зв’язувальна орбіталь&nbsp;\(\sigma _g\)); для знака «\(-\)» — деструктивне, що спричиняє вузол і зменшення густини в між’ядерній області (антизв’язувальна орбіталь&nbsp;\(\sigma
+_u^\ast \)).
+</p>
+<p>
+Поведінку густини можна проілюструвати кількісно, побудувавши <b>одновимірний профіль</b> \(\rho (z)\) вздовж осі, що з’єднує ядра (ось&nbsp;\(z\)). У пакеті <kbd>PySCF</kbd> це реалізується програмою <span class="codebutton"><a
+href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/HFMethodDiatomic/code/h2plus_density_1d.py" target="_blank" ><kbd>h2plus_density_1d.py</kbd></a></span>, яка обчислює значення густини на сітці та
+дозволяє наочно порівняти профілі для орбіталей \(\sigma _g\) та \(\sigma _u^\ast \).
+</p>
+<figure id="autoid-14" class="figure ">
+<div class="center">
+<p>
+<a href="HFMethodDiatomic/pictures/h2plus_density_1d.svg" target="_blank" ><img
+src="HFMethodDiatomic/pictures/h2plus_density_1d.svg"
+style="
+width:412pt;
+"
+class="inlineimage"
+alt="Рис. 4.3. Одновимірний розподіл електронної густини вздовж осі молекули z для іона H_2^+. Показано профілі для зв’язувальної орбіталі _g (суцільна крива) та антизв’язувальної _u^* (пунктирна крива). Максимум густини в центрі між ядрами для…"
+></a>
+</p>
+<div class="figurecaption">
+Рис.&nbsp;4.3. Одновимірний розподіл електронної густини вздовж осі молекули&nbsp;\(z\) для іона&nbsp;\(\mathrm {H_{2}^{+}}\). Показано профілі для зв’язувальної орбіталі&nbsp;\(\sigma _g\) (суцільна крива) та антизв’язувальної&nbsp;\(\sigma _u^*\)
+(пунктирна крива). Максимум густини в центрі між ядрами для&nbsp;\(\sigma _g\) відповідає конструктивному перекриванню атомних орбіталей, що стабілізує систему, тоді як вузол у&nbsp;\(\sigma _u^*\) демонструє деструктивне перекривання та втрату зв’язку.
+</div>
+<a id="pic:h2plus_density_1d"></a>
+</div>
+</figure>
+<p>
+Результат розрахунку (рис.&nbsp;<a href="diatomic.html#pic:h2plus_density_1d">4.3</a>) показує, що:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> у зв’язувальній орбіталі&nbsp;\(\sigma _g\) електронна густина має максимум у центрі між ядрами — електрон «склеює» протони, знижуючи потенційну енергію системи;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> в антизв’язувальній орбіталі&nbsp;\(\sigma _u^*\) спостерігається вузол у середині молекули, густина зникає між ядрами, і енергія орбіталі стає вищою через відсутність стабілізуючого перекривання.
+</p>
+</li>
+</ul>
+<p>
+Таким чином, саме <b>конструктивне квантове перекривання</b> є причиною виникнення хімічного зв’язку в найпростішій молекулярній системі&nbsp;<span
+id="lateximage-main-html-68"
+class="lateximagesource"
+><!--
+H2
++
+--><img
+src="main-html-images/90C4B0F6F1D5FBDC33BEA206FA0153E4.svg"
+alt="\ce{H2+}"
+style=""
+class="lateximage"
+></span>.
+</p>
+<!--
+...... paragraph Візуалізація орбіталей. ......
+-->
+<p>
+<span class="paragraph" id="autosec-374">Візуалізація орбіталей.</span>
+<a id="main-html-autopage-374"></a>
+</p>
+<p>
+Після виконання <kbd>SCF</kbd>-розрахунку молекулярні орбіталі можна експортувати у формат <kbd>.cube</kbd> за допомогою модуля <span class="inlinecode"><kbd>pyscf.tools.cubegen</kbd></span>. Стандартний виклик має вигляд:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">23 рядки</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+<span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.tools</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">cubegen</span>
+
+<span class="tk-c1"># Молекулаярний іон H2</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span>
+    <span class="tk-n">atom</span> <span class="tk-o">=</span> <span class="tk-s2">"H 0 0 0; H 0 0 2"</span><span class="tk-p">,</span>
+    <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">1</span><span class="tk-p">,</span>
+    <span class="tk-n">charge</span> <span class="tk-o">=</span> <span class="tk-mi">1</span><span class="tk-p">,</span>
+    <span class="tk-n">basis</span> <span class="tk-o">=</span> <span class="tk-s2">"sto-3g"</span><span class="tk-p">,</span>
+<span class="tk-p">)</span>
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">run</span><span class="tk-p">()</span>
+
+<span class="tk-c1"># HOMO (це остання зайнята орбіталь)</span>
+<span class="tk-n">homo_idx</span> <span class="tk-o">=</span> <span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">mo_occ</span> <span class="tk-o">&gt;</span> <span class="tk-mi">0</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">nonzero</span><span class="tk-p">()[</span><span class="tk-mi">0</span><span class="tk-p">][</span><span class="tk-o">-</span><span class="tk-mi">1</span><span class="tk-p">]</span>
+
+<span class="tk-c1"># LUMO (перша незайнята)</span>
+<span class="tk-n">lumo_idx</span> <span class="tk-o">=</span> <span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">mo_occ</span> <span class="tk-o">==</span> <span class="tk-mi">0</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">nonzero</span><span class="tk-p">()[</span><span class="tk-mi">0</span><span class="tk-p">][</span><span class="tk-mi">0</span><span class="tk-p">]</span>
+
+<span class="tk-c1"># Генерація .cube файлів</span>
+<span class="tk-n">cubegen</span><span class="tk-o">.</span><span class="tk-n">orbital</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">,</span> <span class="tk-s2">"H2_HOMO.cube"</span><span class="tk-p">,</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">mo_coeff</span><span class="tk-p">[:,</span> <span class="tk-n">homo_idx</span><span class="tk-p">])</span>
+<span class="tk-n">cubegen</span><span class="tk-o">.</span><span class="tk-n">orbital</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">,</span> <span class="tk-s2">"H2_LUMO.cube"</span><span class="tk-p">,</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">mo_coeff</span><span class="tk-p">[:,</span> <span class="tk-n">lumo_idx</span><span class="tk-p">])</span>
+<span class="tk-n">cubegen</span><span class="tk-o">.</span><span class="tk-n">density</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">,</span> <span class="tk-s2">"density.cube"</span><span class="tk-p">,</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">make_rdm1</span><span class="tk-p">())</span></code></pre>
+</div>
+<p>
+Отримані <kbd>.cube</kbd>-файли можна переглянути будь-яким візуалізатором, який підтримує тривимірні поля густини: <kbd>Multiwfn</kbd>, <kbd>Avogadro</kbd> тощо. Орбіталі відображаються як ізоповерхні, де знак хвильової функції позначається
+різними кольорами. На рис.&nbsp;<a href="diatomic.html#pic:orbitals">4.4</a> показано просторовий вигляд орбіталей <span
+id="lateximage-main-html-69"
+class="lateximagesource"
+><!--
+H2
++
+--><img
+src="main-html-images/3737CE3A063F8787EA523E96FF67254B.svg"
+alt="\ce{H2^+}"
+style=""
+class="lateximage"
+></span>.
+</p>
+<figure id="autoid-15" class="figure ">
+<div class="center">
+<div class="minipage" style="vertical-align:bottom ; justify-content:flex-start ; ">
+<a id="main-html-autopage-378"></a>
+<p>
+<a href="HFMethodDiatomic/pictures/HOMO.png" target="_blank" ><img
+src="HFMethodDiatomic/pictures/HOMO.png"
+style="
+width:195pt;
+"
+class="inlineimage"
+alt="(а) Зв’язувальна орбіталь"
+></a>
+</p>
+<div class="figurecaption">
+(а) Зв’язувальна орбіталь
+</div>
+</div>
+<div class="minipage" style="vertical-align:bottom ; justify-content:flex-start ; ">
+<a id="main-html-autopage-379"></a>
+<p>
+<a href="HFMethodDiatomic/pictures/LUMO.png" target="_blank" ><img
+src="HFMethodDiatomic/pictures/LUMO.png"
+style="
+width:195pt;
+"
+class="inlineimage"
+alt="(б) Розпушувальна орбіталь"
+></a>
+</p>
+<div class="figurecaption">
+(б) Розпушувальна орбіталь
+</div>
+</div>
+<div class="figurecaption">
+Рис.&nbsp;4.4. Просторовий вигляд орбіталей
+</div>
+<a id="pic:orbitals"></a>
+</div>
+</figure>
+<!--
+...... subsection Матриця електронної густини та хімічний зв'язок ......
+-->
+<h5 id="autosec-380"><span class="sectionnumber">4.4.4&#x2003;</span>Матриця електронної густини та хімічний зв’язок</h5>
+<a id="main-html-autopage-380"></a>
+<p>
+Повернемось до розгляду матриці густини&nbsp;\(\mathbf {D}\) <span class="textup">(<a href="hartree-fock.html#eq:D">3.11</a>)</span>. Фізично елемент \(D_{\mu \nu }\) показує, <em>наскільки сильно електронна густина розподілена між двома базисними
+функціями</em> \(\chi _\mu \) та&nbsp;\(\chi _\nu \). Діагональні елементи \(D_{\mu \mu }\) відповідають «чистим» заселеностям орбіталей на атомі, а недіагональні (\(\mu \ne \nu \)) відображають перекривання та взаємодію між орбіталями різних атомів.
+Таким чином, матриця густини містить у&nbsp;згорнутому вигляді інформацію про хімічний зв’язок і розподіл електронів між атомами.
+</p>
+<p>
+Крім того, матриця густини безпосередньо пов’язана з&nbsp;повним числом електронів у&nbsp;системі. Це випливає з&nbsp;умови нормування електронної густини <span class="textup">(<a href="hartree-fock.html#eq:int-rho=N">3.24</a>)</span>.
+У&nbsp;базисному (орбітальному) представленні ця умова набуває вигляду:
+</p>
+<p>
+\[ N = \mathrm {Tr}(\mathbf {D}\mathbf {S}), \]
+</p>
+<p>
+де \(\mathbf {S}\)&nbsp;— матриця перекриття, а \(N\)&nbsp;— загальна кількість електронів у&nbsp;молекулі. Це співвідношення виконується для будь-якої самоузгодженої хвильової функції.
+</p>
+<p>
+Заселеності перекривання характеризують по суті те, що в&nbsp;класичній теорії хімічної будови називають <b>хімічними зв’язками</b> між атомами. На підставі цих заселеностей можна виділити внески, що належать певним парам атомів, і таким чином отримати
+<b>атомні заселеності</b> — електронне населення, асоційоване з&nbsp;кожним атомом у&nbsp;молекулі. Такі розклади лежать в&nbsp;основі методів аналізу <kbd>Mulliken</kbd>, <kbd>Löwdin</kbd> тощо.
+</p>
+<!--
+...... paragraph Програмна реалізація. ......
+-->
+<p>
+<span class="paragraph" id="autosec-381">Програмна реалізація.</span>
+<a id="main-html-autopage-381"></a>
+У&nbsp;пакеті&nbsp;<kbd>PySCF</kbd> матрицю густини можна отримати безпосередньо після <kbd>SCF</kbd>-розрахунку.
+</p>
+<p>
+Далі за допомогою <span class="inlinecode"><kbd>mf.mulliken_pop(mol, D)</kbd></span> або <span class="inlinecode"><kbd>mf.analyze()</kbd></span> можна обчислити заселеності атомів, загальну електронну густину, а також внески у
+зв’язки між атомами. Це дає змогу перейти від чисто математичного об’єкта&nbsp;\(\mathbf {D}\) до хімічно наочного опису будови молекули.
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">13 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span><span class="tk-p">,</span> <span class="tk-n">mcscf</span><span class="tk-p">,</span> <span class="tk-n">mrpt</span>
+
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'''H 0 0 0;  H 0.74 0 0'''</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'cc-pvdz'</span><span class="tk-p">,</span> <span class="tk-n">verbose</span><span class="tk-o">=</span><span class="tk-mi">0</span><span class="tk-p">)</span>
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">run</span><span class="tk-p">()</span>
+
+<span class="tk-n">D</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">make_rdm1</span><span class="tk-p">()</span>
+<span class="tk-n">S</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">get_ovlp</span><span class="tk-p">()</span>
+
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-n">D</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"Повне число електронів в системі: </span><span class="tk-si">{</span><span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">trace</span><span class="tk-p">(</span><span class="tk-n">D</span><span class="tk-w"> </span><span class="tk-o">@</span><span class="tk-w"> </span><span class="tk-n">S</span><span class="tk-p">)</span><span class="tk-si">:</span><span class="tk-s2">.1f</span><span class="tk-si">}</span><span class="tk-s2">"</span><span class="tk-p">)</span>
+
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">mulliken_pop</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span></code></pre>
+</div>
+<!--
+...... section Крива потенціальної енергії ......
+-->
+<h4 id="autosec-382"><span class="sectionnumber">&#xA7;&#x202F;4.5&#x2003;</span>Крива потенціальної енергії</h4>
+<a id="main-html-autopage-382"></a>
+<p>
+<b>Поверхня потенційної енергії</b> (Potential Energy Surface, PES) — це залежність повної електронної енергії системи \(E(\mathbf {R})\) від положень ядер \(\mathbf {R} = (R_1, R_2, \dots , R_N)\). Для двоатомної молекули, де геометрія
+визначається єдиною координатою&nbsp;\(R\) (між’ядерною відстанню), ця поверхня вироджується в одновимірну криву \(E(R)\).
+</p>
+<p>
+Для \(N\)-атомної молекули PES є багатовимірною поверхнею у \(3N - 6\) внутрішніх координатах. Для двоатомної молекули (наприклад, <span
+id="lateximage-main-html-70"
+class="lateximagesource"
+><!--
+H2
++
+--><img
+src="main-html-images/90C4B0F6F1D5FBDC33BEA206FA0153E4.svg"
+alt="\ce{H2+}"
+style=""
+class="lateximage"
+></span>) поверхня редукується до одновимірної залежності \(E(R)\):
+</p>
+<p>
+\[ E(R) = \text {мінімальна електронна енергія системи при фіксованому } R. \]
+</p>
+<p>
+<b>Фізичний зміст:</b>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> мінімум \(E(R)\) визначає рівноважну відстань \(R_\text {eq}\);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> глибина ями потенціалу задає енергію зв’язку;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> кривизна поблизу мінімуму визначає частоту коливань;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> при \(R \to \infty \) енергія прямує до \(E(\mathrm H) + E(\mathrm H^+)\).
+</p>
+</li>
+</ul>
+<!--
+...... subsection Сканування по відстанях ......
+-->
+<h5 id="autosec-385"><span class="sectionnumber">4.5.1&#x2003;</span>Сканування по відстанях</h5>
+<a id="main-html-autopage-385"></a>
+<p>
+Побудова <b>кривої \(E(R)\)</b> для молекули&nbsp;<span
+id="lateximage-main-html-71"
+class="lateximagesource"
+><!--
+H2
++
+--><img
+src="main-html-images/90C4B0F6F1D5FBDC33BEA206FA0153E4.svg"
+alt="\ce{H2+}"
+style=""
+class="lateximage"
+></span> виконується шляхом послідовних <kbd>SCF</kbd>-розрахунків при різних фіксованих значеннях відстані \(R\). На кожному кроці обчислюється повна енергія, після чого отримані точки формують дискретну криву потенціалу.
+</p>
+<p>
+Приклад реалізації наведено у файлі&nbsp;<span class="codebutton"><a href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/HFMethodDiatomic/code/h2plus_pes.py" target="_blank"
+><kbd>h2plus_pes.py</kbd></a></span>. У ньому розрахунки виконуються для набору значень \(R\), а результати зберігаються для подальшої побудови графіка.
+</p>
+<p>
+<b>Практичні деталі:</b>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> відстані подаються в борах (1&nbsp;bohr \(\approx \) 0.529&nbsp;Å);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> діапазон \(R \in [0.5, 8.0]\)&nbsp;bohr охоплює від сильно стисненого стану до дисоціації;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> кожна точка — незалежний <kbd>SCF</kbd>-розрахунок.
+</p>
+</li>
+</ul>
+<figure id="autoid-16" class="figure ">
+<div class="center">
+<p>
+<span
+id="lateximage-main-html-72"
+class="lateximagesource"
+><!--
+1 2 3 4 5 6 7 8
+−0.7
+−0.6
+−0.5
+−0.4
+−0.3
+−0.2
+−0.1
+𝑅min
+= 2.02, 𝐸 = −0.6002
+Міжядерна відстань 𝑅 (Bohr)
+Енергія 𝐸 (Ha)
+--><img
+src="main-html-images/image-72.svg"
+alt="Рис. 4.5. Крива потенційної енергії (PES) для H_2^+."
+style=""
+class="lateximage"
+></span>
+</p>
+<div class="figurecaption">
+Рис.&nbsp;4.5. Крива потенційної енергії (PES) для \(\mathrm {H_{2}^{+}}\).
+</div>
+<a id="pic:h2plus_pes"></a>
+</div>
+</figure>
+<p>
+На графіку (рис.&nbsp;<a href="diatomic.html#pic:h2plus_pes">4.5</a>) виділяють три характерні області:
+</p>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> <b>Стиснення</b> (\(R &lt; R_e\)): енергія зростає через кулонівське відштовхування ядер;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> <b>Мінімум</b> (\(R = R_e\)): рівноважний стан, де \(\partial E / \partial R = 0\);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> <b>Дисоціація</b> (\(R \to \infty \)): \(E(R) \to -0.5\)&nbsp;Ha.
+</p>
+</li>
+</ul>
+<p>
+<b>Порівняння з точним розв’язком:</b>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> \(R_e = 2.00\) bohr (експеримент: 2.00 bohr);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(D_e = 0.102\)&nbsp;Ha = 2.79&nbsp;eV (експеримент: 2.79&nbsp;eV);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> різниця між <kbd>HF</kbd> та точним результатом \(&lt; 0.001\)&nbsp;Ha при великих базисах.
+</p>
+</li>
+</ul>
+<!--
+...... subsection Оптимізація геометрії ......
+-->
+<h5 id="autosec-391"><span class="sectionnumber">4.5.2&#x2003;</span>Оптимізація геометрії</h5>
+<a id="main-html-autopage-391"></a>
+<p>
+Замість «ручного» пошуку мінімуму енергії на кривій потенційної енергії (PES) можна скористатися автоматичною процедурою, яка сама визначає оптимальне взаємне розташування атомів. Така задача називається <b>оптимізацією геометрії</b>, оскільки метою є
+знайти такі координати ядер, при яких система має найменшу можливу енергію. Інакше кажучи, <b>оптимізація геометрії</b> — це процедура пошуку просторової конфігурації атомів, що відповідає мінімуму потенційної енергії. Ми шукаємо <em>рівноважну
+геометрію</em> \(\mathbf {R}_\text {eq}\), у якій сили, що діють на ядра, взаємно компенсуються:
+</p>
+<p>
+\[ \nabla _{\mathbf {R}} E(\mathbf {R}_\text {eq}) = 0. \]
+</p>
+<p>
+На практиці алгоритм оптимізації виконує:
+</p>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> обчислення енергії \(E(\mathbf {R})\) та її градієнтів \(\nabla E\);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> зміну координат ядер у напрямку зменшення енергії;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> повторення кроків до досягнення умови \(|\nabla E| &lt; 10^{-4}\)&nbsp;Ha/bohr.
+</p>
+</li>
+</ul>
+<p>
+У PySCF ця процедура реалізована через зовнішній модуль <kbd>geomeTRIC</kbd>, який викликається функцією:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">2 рядки</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.geomopt.geometric_solver</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">optimize</span></code></pre>
+</div>
+<p>
+Щоб цей модуль працював, потрібно мати встановлений <kbd>geometric</kbd>:
+</p>
+<div class="codeblock code-bash" data-lang="bash" data-nosnippet>
+<div class="code-head"><span class="code-lang">Термінал</span><span class="code-lines">2 рядки</span></div>
+<pre class="code"><code>pip<span class="tk-w"> </span>install<span class="tk-w"> </span>geometric</code></pre>
+</div>
+<p>
+Процедура оптимізації автоматично виконує SCF-розрахунки на кожному кроці зміни геометрії та знаходить положення мінімуму енергії. Мінімальний приклад оптимізації геометрії наведений за посиланням <a href="https://pyscf.org/user/geomopt.html"
+target="_blank" >Geometry optimization</a>. В файлі <span class="codebutton"><a href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/HFMethodDiatomic/code/h2plus_optimization.py" target="_blank"
+><kbd>h2plus_optimization.py</kbd></a></span> демонструється реалізація алгоритму оптимізації геометрії.
+</p>
+<!--
+...... paragraph Алгоритм оптимізації (PySCF + <a href=https://geometric.readthedocs.io target=-blank >geomeTRIC</a>): ......
+-->
+<p>
+<span class="paragraph" id="autosec-392">Алгоритм оптимізації (PySCF + <a href="https://geometric.readthedocs.io" target="_blank" >geomeTRIC</a>):</span>
+<a id="main-html-autopage-392"></a>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Використовується метод quasi-Newton (BFGS);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Для оцінки напрямку руху застосовуються градієнти енергії \(\nabla E\);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Критерій збіжності: \(|\nabla E| &lt; 10^{-4}\)&nbsp;Ha/bohr;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Зазвичай потрібно 5–10 ітерацій для простої двоатомної системи.
+</p>
+</li>
+</ul>
+<p>
+Повний приклад оптимізації геометрії молекули <span
+id="lateximage-main-html-73"
+class="lateximagesource"
+><!--
+H2
+O
+--><img
+src="main-html-images/3BD50A5CF48F9588DE1B1A127A250217.svg"
+alt="\ce{H2O}"
+style=""
+class="lateximage"
+></span> наведено у файлі <span class="codebutton"><a href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/HFMethodDiatomic/code/h2o_optimization.py" target="_blank"
+><kbd>h2o_optimization.py</kbd></a></span>. Детальну документацію див. <a href="https://pyscf.org/user/geomopt.html" target="_blank" >PySCF Geometry Optimization</a>.
+</p>
+<p>
+Більш детально про оптимізацію геометрію буде описано в секції&nbsp;<a href="response.html#sec:GeometryOptimization">7.7</a>.
+</p>
+<!--
+...... subsection Вплив базисного набору ......
+-->
+<h5 id="autosec-395"><span class="sectionnumber">4.5.3&#x2003;</span>Вплив базисного набору</h5>
+<a id="main-html-autopage-395"></a>
+<p>
+Оскільки <span
+id="lateximage-main-html-74"
+class="lateximagesource"
+><!--
+H2
++
+--><img
+src="main-html-images/90C4B0F6F1D5FBDC33BEA206FA0153E4.svg"
+alt="\ce{H2+}"
+style=""
+class="lateximage"
+></span> має аналітичний розв’язок, це ідеальна система для тестування базисів (див файл <span class="codebutton"><a
+href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/HFMethodDiatomic/code/h2plus_basis_convergence.py" target="_blank" ><kbd>h2plus_basis_convergence.py</kbd></a></span>).
+</p>
+<p>
+Результати виконання коду наведені в таблиці:
+</p>
+<div class="center">
+<table>
+<tr style="display:none"><th>.</th></tr>
+<tr class="hline">
+<td class="tdl" style="background:#F9F9F9"><b>Базис</b></td>
+<td colspan="1" class="tdl" style="background:#F9F9F9"><b>\(R_e\) (bohr)</b></td>
+<td colspan="1" class="tdl" style="background:#F9F9F9"><b>\(E_e\) (Ha)</b></td>
+<td colspan="1" class="tdl" style="background:#F9F9F9"><b>Похибка (mHa)</b></td>
+</tr>
+<tr class="hline">
+<td class="tdl">STO-3G</td>
+<td colspan="1" class="tdl">2.05</td>
+<td colspan="1" class="tdl">\(-0.564\)</td>
+<td colspan="1" class="tdl">4.5</td>
+</tr>
+<tr>
+<td class="tdl" style="background:#F9F9F9">6-31G</td>
+<td colspan="1" class="tdl" style="background:#F9F9F9">2.02</td>
+<td colspan="1" class="tdl" style="background:#F9F9F9">\(-0.566\)</td>
+<td colspan="1" class="tdl" style="background:#F9F9F9">2.1</td>
+</tr>
+<tr>
+<td class="tdl">cc-pVDZ</td>
+<td colspan="1" class="tdl">2.01</td>
+<td colspan="1" class="tdl">\(-0.567\)</td>
+<td colspan="1" class="tdl">1.2</td>
+</tr>
+<tr>
+<td class="tdl" style="background:#F9F9F9">cc-pVTZ</td>
+<td colspan="1" class="tdl" style="background:#F9F9F9">2.00</td>
+<td colspan="1" class="tdl" style="background:#F9F9F9">\(-0.5686\)</td>
+<td colspan="1" class="tdl" style="background:#F9F9F9">0.3</td>
+</tr>
+<tr>
+<td class="tdl">cc-pVQZ</td>
+<td colspan="1" class="tdl">2.00</td>
+<td colspan="1" class="tdl">\(-0.5688\)</td>
+<td colspan="1" class="tdl">0.1</td>
+</tr>
+<tr class="hline">
+<td class="tdl" style="background:#F9F9F9">Точне</td>
+<td colspan="1" class="tdl" style="background:#F9F9F9">2.00</td>
+<td colspan="1" class="tdl" style="background:#F9F9F9">\(-0.5689\)</td>
+<td colspan="1" class="tdl" style="background:#F9F9F9">—</td>
+</tr>
+<tr class="hline" aria-hidden="true">
+<td class="tdl"></td>
+<td class="tdc"></td>
+<td class="tdc"></td>
+<td class="tdc"></td>
+</tr>
+</table>
+</div>
+<p>
+<b>Висновки:</b>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Навіть STO-3G дає якісно правильну картину
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Для кількісної точності потрібен cc-pVTZ або більший
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Збіжність монотонна: \(E_{\text {basis}} \to E_{\text {CBS}}\)
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Для <span
+id="lateximage-main-html-75"
+class="lateximagesource"
+><!--
+H2
++
+--><img
+src="main-html-images/90C4B0F6F1D5FBDC33BEA206FA0153E4.svg"
+alt="\ce{H2+}"
+style=""
+class="lateximage"
+></span> CBS limit досягається при cc-pV5Z
+</p>
+</li>
+</ul>
+<!--
+...... section Молекула водню ......
+-->
+<h4 id="autosec-402"><span class="sectionnumber">&#xA7;&#x202F;4.6&#x2003;</span>Молекула водню \(\mathrm {H_{2}}\)</h4>
+<a id="main-html-autopage-402"></a>
+<p>
+Після аналізу одноелектронної системи&nbsp;<span
+id="lateximage-main-html-76"
+class="lateximagesource"
+><!--
+H2
++
+--><img
+src="main-html-images/90C4B0F6F1D5FBDC33BEA206FA0153E4.svg"
+alt="\ce{H2+}"
+style=""
+class="lateximage"
+></span> природно перейти до нейтральної молекули&nbsp;<span
+id="lateximage-main-html-77"
+class="lateximagesource"
+><!--
+H2
+--><img
+src="main-html-images/B210D6A401BAC692FAB8840283B0CE59.svg"
+alt="\ce{H2}"
+style=""
+class="lateximage"
+></span>, де взаємодіють <em>два</em> електрони (рис.&nbsp;<a href="diatomic.html#tikz:H2Mol">4.6</a>).
+</p>
+<figure id="autoid-17" class="figure ">
+<div class="center">
+<p>
+<span
+id="lateximage-main-html-78"
+class="lateximagesource"
+><!--
+𝑅
+𝑟𝐴1
+𝑟𝐵1
+𝑟𝐴2 𝑟𝐵2
+𝑟12
+𝐴
+𝐵
+𝑒𝑎
+𝑒𝑏
+--><img
+src="main-html-images/image-78.svg"
+alt="Рис. 4.6. Конфігурація молекули H_2."
+style=""
+class="lateximage"
+></span>
+</p>
+<div class="figurecaption">
+Рис.&nbsp;4.6. Конфігурація молекули \(\mathrm {H_{2}}\).
+</div>
+<a id="tikz:H2Mol"></a>
+</div>
+</figure>
+<p>
+Гамільтоніан молекули має вигляд:
+</p>
+<p>
+\[ \hat {H} = \hat {h}_1 + \hat {h}_2 + \frac {1}{r_{12}} + \frac {1}{R}, \]
+</p>
+<p>
+де \(\frac {1}{r_{12}}\) — електрон-електронне відштовхування, яке метод ХФ апроксимує середнім полем.
+</p>
+<!--
+...... subsection RHF розрахунок ......
+-->
+<h5 id="autosec-410"><span class="sectionnumber">4.6.1&#x2003;</span>RHF розрахунок</h5>
+<a id="main-html-autopage-410"></a>
+<p>
+Для опису її основного синглетного стану застосовується <b>метод обмеженого Хартрі–Фока (RHF)</b>. У цьому наближенні електрони зі спінами \(\alpha \) і \(\beta \) рухаються в однаковому середньому полі, що відповідає замкненій оболонці.
+</p>
+<p>
+RHF є базовим наближенням, яке:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> враховує кулонівське відштовхування електронів лише усереднено;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> нехтує миттєвою кореляцією їхнього руху;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> та добре відтворює рівноважну геометрію й основну якісну картину зв’язку.
+</p>
+</li>
+</ul>
+<p>
+Приклад RHF-розрахунку для молекули&nbsp;<span
+id="lateximage-main-html-79"
+class="lateximagesource"
+><!--
+H2
+--><img
+src="main-html-images/B210D6A401BAC692FAB8840283B0CE59.svg"
+alt="\ce{H2}"
+style=""
+class="lateximage"
+></span> наведено у файлі<br />
+<span class="codebutton"><a href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/HFMethodDiatomic/code/h2_rhf_single.py" target="_blank" ><kbd>h2_rhf_single.py</kbd></a></span>. Тут виконується
+самоузгоджене обчислення при фіксованій відстані \(R = 1.4\)&nbsp;Bohr.
+</p>
+<p>
+<b>Отримані результати:</b>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> \(E_{\text {RHF}} \approx -1.133\)&nbsp;Ha;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(E_{\text {exp}} \approx -1.174\)&nbsp;Ha;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(E_{\text {corr}} = 0.041\)&nbsp;Ha&nbsp;\(\approx 1.1\)&nbsp;eV.
+</p>
+</li>
+</ul>
+<p>
+Отримане значення \(E_{\mathrm {RHF}}\approx -1.133\)&nbsp;Ha є типовим для однодетермінантного опису: метод добре передає загальний порядок енергії, але систематично її завищує, бо не враховує електронну кореляцію. Різниця \(E_{\mathrm
+{corr}}\approx 0.041\)&nbsp;Ha демонструє, яка частина енергії припадає на кореляцію в русі електронів. Такі результати очікувані й підтверджують межі застосовності <kbd>RHF</kbd>.
+</p>
+<!--
+...... subsection Проблема дисоціації в методі Хартрі–Фока ......
+-->
+<h5 id="autosec-413"><span class="sectionnumber">4.6.2&#x2003;</span>Проблема дисоціації в методі Хартрі–Фока</h5>
+<a id="main-html-autopage-413"></a>
+<p>
+Після отримання основного стану молекули&nbsp;<span
+id="lateximage-main-html-80"
+class="lateximagesource"
+><!--
+H2
+--><img
+src="main-html-images/B210D6A401BAC692FAB8840283B0CE59.svg"
+alt="\ce{H2}"
+style=""
+class="lateximage"
+></span> методом&nbsp;RHF логічно дослідити, як змінюється енергія системи при поступовому збільшенні між’ядерної відстані&nbsp;\(R\). Таку залежність називають <b>поверхнею потенційної енергії (PES)</b>.
+</p>
+<p>
+У файлі&nbsp;<span class="codebutton"><a href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/HFMethodDiatomic/code/h2_pes_RHF.py" target="_blank" ><kbd>h2_pes_RHF.py</kbd></a></span>
+реалізовано серію самоузгоджених RHF-розрахунків для значень \(R \in [0.5, 8.0]\)&nbsp;Bohr. Отримані енергії \(E(R)\) утворюють криву, зображену на рис.&nbsp;<a href="diatomic.html#pic:h2_rhf">4.7</a>.
+</p>
+<figure id="autoid-18" class="figure ">
+<div class="center">
+<p>
+<span
+id="lateximage-main-html-81"
+class="lateximagesource"
+><!--
+1 2 3 4 5 6 7 8
+−1.2
+−1
+−0.8
+−0.6
+−0.4
+𝑅min
+= 1.46, 𝐸 = −1.1283
+Міжядерна відстань 𝑅 (Bohr)
+Енергія 𝐸 (Ha)
+--><img
+src="main-html-images/image-81.svg"
+alt="Рис. 4.7. Поверхня потенційної енергії молекули H_2 методом RHF."
+style=""
+class="lateximage"
+></span>
+</p>
+<div class="figurecaption">
+Рис.&nbsp;4.7. Поверхня потенційної енергії молекули \(\mathrm {H_{2}}\) методом RHF.
+</div>
+<a id="pic:h2_rhf"></a>
+</div>
+</figure>
+<p>
+Як видно з графіка, у короткому діапазоні \(R\) метод&nbsp;RHF досить точно відтворює рівноважну структуру та мінімум енергії. Однак при збільшенні відстані між ядрами спостерігається суттєве відхилення від очікуваної фізічної поведінки: енергія не прямує до суми
+енергій двох ізольованих атомів&nbsp;<span
+id="lateximage-main-html-82"
+class="lateximagesource"
+><!--
+H
+--><img
+src="main-html-images/787EBCFB2440171F8A4A098726F24748.svg"
+alt="\ce{H}"
+style=""
+class="lateximage"
+></span>.
+</p>
+<p>
+Очікуване значення при повній дисоціації:
+</p>
+<p>
+\[ \lim _{R \to \infty } E(\text {H}_2) = 2 \times E(\text {H}) = 2 \times (-0.5) = -1.0~\text {Ha}, \]
+</p>
+<p>
+натомість RHF-розрахунок дає \(E_{\text {RHF}} \approx -0.7\)&nbsp;Ha.
+</p>
+<p>
+Це класична <b>проблема дисоціації в методі Хартрі–Фока</b>. Її фізична причина полягає у структурі однодетермінантної хвильової функції. Розглянемо це детальніше. RHF-функція має вигляд:
+</p>
+<p>
+\[ \Phi _{\text {RHF}}(1,2) = \frac {1}{\sqrt {2}} \Big [ \psi _{\sigma _g}(1)\alpha (1)\psi _{\sigma _g}(2)\beta (2) - \psi _{\sigma _g}(1)\beta (1)\psi _{\sigma _g}(2)\alpha (2) \Big ], \]
+</p>
+<p>
+де молекулярна орбіталь
+</p>
+<p>
+\[ \psi _{\sigma _g} = \frac {1}{\sqrt {2(1+S)}}\big (1s_A + 1s_B\big ), \]
+</p>
+<p>
+а \(S = \langle 1s_A | 1s_B \rangle \) — інтеграл перекриття. На великих між’ядерних відстанях \(S \to 0\), тому:
+</p>
+<p>
+\[ \psi _{\sigma _g} \approx \frac {1}{\sqrt {2}}\big (1s_A + 1s_B\big ). \]
+</p>
+<p>
+Підставивши це у просторову частину хвильової функції, отримуємо:
+</p>
+<p>
+\[ \psi _{\sigma _g}(1)\psi _{\sigma _g}(2) = \frac {1}{2} \Big [ \underbrace { 1s_A(1)1s_B(2) + 1s_B(1)1s_A(2) }_{\text {ковалентні внески}} + \underbrace { 1s_A(1)1s_A(2) + 1s_B(1)1s_B(2) }_{\text {іонні
+внески}} \Big ]. \]
+</p>
+<p>
+Отже, повну хвильову функцію можна записати як
+</p>
+<p>
+\[ \Phi _{\text {RHF}} = \Phi _{\mathrm {cov}} + \lambda \,\Phi _{\mathrm {ion}}, \]
+</p>
+<p>
+де \(\Phi _{\mathrm {cov}}\) відповідає фізично правильному стану \(\ce {H - H}\) з локалізованими електронами, а \(\Phi _{\mathrm {ion}}\) описує нереалістичні для великих \(R\) конфігурації&nbsp;\(\ce {H^+H^-} + \ce {H^-H^+}\).
+</p>
+<p>
+Ключовим параметром тут є коефіцієнт&nbsp;\(\lambda \), який визначає внесок іонної компоненти. Для малих між’ядерних відстаней оптимальне значення \(\lambda \) є ненульовим, що відповідає частковому переносу заряду в молекулі. Натомість при \(R\to
+\infty \) фізично коректний опис вимагає \(\lambda \to 0\), оскільки ізольовані атоми не обмінюються електронами.
+</p>
+<p>
+Однодетермінантний метод&nbsp;<kbd>RHF</kbd> фактично фіксує значення&nbsp;\(\lambda \) ненульовим для будь-якого&nbsp;\(R\), використовуючи лише одну симетричну орбіталь&nbsp;\(\psi _{\sigma _g}\). Іонні конфігурації залишаються невід’ємною
+частиною хвильової функції навіть у межі нескінченного між’ядерного віддалення, що суперечить фізичній картині дисоціації на два незалежні атоми.
+</p>
+<p>
+Це порушення пов’язане з фундаментальною вимогою <em>розмірної узгодженості</em> (<em>size-consistency</em>). Метод є розмірно узгодженим, якщо енергія двох далеких підсистем дорівнює сумі їхніх енергій:
+</p>
+<p>
+\[ E(\text {H}_2, R\!\to \!\infty ) \;=\; E(\text {H}) + E(\text {H}). \]
+</p>
+<p>
+Метод&nbsp;<kbd>RHF</kbd> <b>не є розмірно узгодженим</b>, оскільки продовжує штучно змішувати ковалентну та іонну компоненти навіть при \(R\to \infty \). Саме це і становить суть проблеми дисоціації в методі Хартрі-Фока.
+</p>
+<p>
+Багатоконфігураційні методи (див.&nbsp;розділ&nbsp;<a href="post-hf.html#PostHFMethods">5</a>) усувають цю проблему, дозволяючи&nbsp;\(\lambda \) варіюватися та автоматично зменшуватися до нуля на дисоціаційній межі. Для демонстрації цього нижче
+наведено кількісне порівняння <kbd>RHF</kbd> і повної конфігураційної взаємодії (<kbd>FCI</kbd>). Обчислення виконано за допомогою коду з файлу <span class="codebutton"><a
+href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/HFMethodDiatomic/code/h2_dissociation_comparison.py" target="_blank" ><kbd>h2_dissociation_comparison.py</kbd></a></span>. Результати
+наведено на рис.&nbsp;<a href="diatomic.html#pic:h2_complete_comparison">4.8</a>.
+</p>
+<figure id="autoid-19" class="figure ">
+<div class="center">
+<p>
+<span
+id="lateximage-main-html-83"
+class="lateximagesource"
+><!--
+1 2 3 4 5 6 7 8
+−1.2
+−1.1
+−1
+−0.9
+−0.8
+−0.7
+−0.6
+−0.5
+−0.4
+Міжядерна відстань 𝑅 (Bohr)
+Енергія 𝐸 (Ha)
+RHF: 𝑅min
+= 1.418, 𝐸min
+= −1.128741
+FCI: 𝑅min
+= 1.418, 𝐸min
+= −1.163602
+HL: 𝑅min
+= 1.6219, 𝐸min
+= −1.115870
+Experiment: 𝑅min
+= 1.401, 𝐸min
+= −1.1745
+--><img
+src="main-html-images/image-83.svg"
+alt="Рис. 4.8. Порівняння потенціальних енергетичних кривих молекули H_2, отриманих методами RHF та FCI у базисному наборі cc-pVDZ. Для ілюстрації також наведено криву, обчислену за теорією Гайтлера–Лондона."
+style=""
+class="lateximage"
+></span>
+</p>
+<div class="figurecaption">
+Рис.&nbsp;4.8. Порівняння потенціальних енергетичних кривих молекули \(\mathrm {H_{2}}\), отриманих методами <kbd>RHF</kbd> та <kbd>FCI</kbd> у базисному наборі <kbd>cc-pVDZ</kbd>. Для ілюстрації також наведено криву, обчислену за теорією
+Гайтлера–Лондона.
+</div>
+<a id="pic:h2_complete_comparison"></a>
+</div>
+</figure>
+<p>
+Порівняння обох методів дає змогу безпосередньо оцінити вплив електронної кореляції та визначити відхилення однодетермінантного опису від фізично правильної потенціальної поверхні:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>RHF</kbd> суттєво завищує енергію при \(R &gt; 2.5\)&nbsp;Bohr, оскільки однодетермінантний опис не здатний коректно врахувати зростаючу статичну кореляцію під час розриву хімічного зв’язку.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>FCI</kbd> (повна конфігураційна взаємодія) дає монотонну, фізично правильну залежність \(E(R)\), яка плавно прямує до енергії дисоційованих фрагментів при \(R \to \infty \) і коректно відтворює як мінімум, так
+і асимптотику<sup>1</sup><a id="main-html-autopage-423"></a>.
+</p>
+</li>
+</ul>
+<div role="note" class="footnotes">
+<a id="main-html-autopage-424"></a>
+<p>
+<sup>1</sup>&nbsp;Як буде показано в розділі&nbsp;<a href="post-hf.html#PostHFMethods">5</a>, метод&nbsp;<kbd>FCI</kbd> є еталонним, оскільки охоплює повний набір детермінантів у вибраному базисі й тому забезпечує найнижчу можливу енергію для
+заданої системи згідно з варіаційним принципом.
+</p>
+</div>
+<!--
+...... subsection Ковалентний опис Гайтлера-Лондона ......
+-->
+<h5 id="autosec-425"><span class="sectionnumber">4.6.3&#x2003;</span>Ковалентний опис Гайтлера-Лондона</h5>
+<a id="main-html-autopage-425"></a>
+<p>
+Історично першою квантовомеханічною моделлю хімічного зв’язку в молекулі <span
+id="lateximage-main-html-84"
+class="lateximagesource"
+><!--
+H2
+--><img
+src="main-html-images/B210D6A401BAC692FAB8840283B0CE59.svg"
+alt="\ce{H2}"
+style=""
+class="lateximage"
+></span> була теорія запропонована В.&nbsp;Гайтлером і Ф.&nbsp;Лондоном у 1927&nbsp;році&nbsp;<a id="main-html-autopage-427"></a><sup>2</sup> (HL-підхід). Однак у сучасній квантовій хімії саме метод Хартрі-Фока став базовим через його
+систематичність та можливість узагальнення на складніші системи. Тепер, побачивши проблему дисоціації в <kbd>RHF</kbd>, доцільно повернутися до HL-підходу, щоб зрозуміти альтернативний спосіб опису зв’язку. У цьому методі хвильову функцію будують як
+симетризовану суперпозицію двох конфігурацій, що відповідають розміщенню електронів на різних ядрах, без іонних компонент.
+</p>
+<!--
+...... paragraph Основна ідея HL-підходу. ......
+-->
+<p>
+<span class="paragraph" id="autosec-428">Основна ідея HL-підходу.</span>
+<a id="main-html-autopage-428"></a>
+</p>
+<p>
+Хвильова функція Гайтлера-Лондона описує два еквівалентні сценарії: електрон&nbsp;\(1\) на атомі&nbsp;\(A\) з електроном&nbsp;\(2\) на&nbsp;\(B\), та навпаки. Обидві можливості симетризуються і супроводжуються синглетною спіновою функцією \(\gamma
+_{S=0}\):
+</p>
+<p>
+\[ \Phi _{\text {HL}} = \frac { 1s_A(1)1s_B(2) + 1s_B(1)1s_A(2) }{ \sqrt {2(1+S^2)} } \cdot \gamma _{S=0}. \]
+</p>
+<p>
+Це чисто <b>ковалентна</b> хвильова функція, яка відповідає раніше введеній компоненті \(\Phi _{\mathrm {cov}}\). На відміну від <kbd>RHF</kbd>, вона <em>забороняє</em> електронам одночасно опинятися на одному атомі, тобто \(\lambda =0\) для
+всіх&nbsp;\(R\).
+</p>
+<!--
+...... paragraph Фізичний зміст: обмін як джерело зв'язку. ......
+-->
+<p>
+<span class="paragraph" id="autosec-429">Фізичний зміст: обмін як джерело зв’язку.</span>
+<a id="main-html-autopage-429"></a>
+</p>
+<p>
+У моделі Гайтлера-Лондона хімічний зв’язок виникає не від делокалізації заряду, як у <kbd>RHF</kbd>, а від <em>квантового обміну</em> — незмінності хвильової функції при перестановці електронів. Саме обмін створює зниження енергії синглетного стану відносно
+триплетного.
+</p>
+<p>
+Для синглетної просторової функції енергія має вигляд
+</p>
+<p>
+\[ E_{\mathrm {singlet}} = 2E_{\text {atom}} + \frac {Q + A}{1 + S^2}, \]
+</p>
+<p>
+де \(S\) — інтеграл перекриття орбіталей, \(Q\) — класичне відштовхування електронних хмар, \(A\) — сумарний додатковий внесок до енергії від обміну, притягання до другого ядра та резонансного змішування орбіталей, а \(E_{\text {atom}}\) — енергія електрона
+на атомі водню<sup>3</sup>.
+</p>
+<p>
+Поява величини \(A\), у якій зосереджено квантовий обмінний внесок, стала першою чіткою демонстрацією механізму ковалентного хімічного зв’язку і важливим кроком у формуванні сучасної квантової теорії.
+</p>
+<!--
+...... paragraph Межа дисоціації. ......
+-->
+<p>
+<span class="paragraph" id="autosec-430">Межа дисоціації.</span>
+<a id="main-html-autopage-430"></a>
+</p>
+<p>
+При \(R\to \infty \) перекриття \(S\to 0\), усі міжатомні інтеграли (\(Q\) та \(A\)) зникають, і модель Гайтлера-Лондона точно відтворює правильну дисоціаційну межу \(E(\infty )=2E(\ce {H})=-1.0\)&nbsp;Ha (див. рис.&nbsp;<a
+href="diatomic.html#pic:h2_complete_comparison">4.8</a>). Відсутність іонних конфігурацій забезпечує фізично коректну асимптотику, на відміну від <kbd>RHF</kbd>, де фіксоване \(\lambda \neq 0\) призводить до завищеної межі&nbsp;\(-0.7\)&nbsp;Ha.
+</p>
+<!--
+...... paragraph Недоліки HL-підходу. ......
+-->
+<p>
+<span class="paragraph" id="autosec-431">Недоліки HL-підходу.</span>
+<a id="main-html-autopage-431"></a>
+</p>
+<p>
+Попри правильний опис дисоціації, теорія Гайтлера-Лондона має обмеження:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> орбіталі не оптимізуються; використовується фіксований набір \(1s_A\), \(1s_B\);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> відсутня іонна конфігурація, яка на малих \(R\) дійсно робить внесок у зв’язок;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> енергія рівноважного стану виходить занадто високою (зв’язок занадто слабкий).
+</p>
+</li>
+</ul>
+<p>
+Підхід Гайтлера-Лондона демонструє, що коректний опис навіть найпростішого двоелектронного зв’язку в <span
+id="lateximage-main-html-85"
+class="lateximagesource"
+><!--
+H2
+--><img
+src="main-html-images/B210D6A401BAC692FAB8840283B0CE59.svg"
+alt="\ce{H2}"
+style=""
+class="lateximage"
+></span> вимагає багатоконфігураційної структури хвильової функції: його симетризована комбінація локалізованих конфігурацій принципово <em>не може бути записана у вигляді одного детермінанта Слейтера</em>. Це підтверджує раніше встановлений висновок
+про те, що делокалізована однодетермінантна функція <kbd>RHF</kbd> з фіксованим \(\lambda \neq 0\) призводить до розмірної неузгодженості. Порівняння з точною еталонною енергією <kbd>FCI</kbd>, наведене на рис.&nbsp;<a
+href="diatomic.html#pic:h2_complete_comparison">4.8</a>, ілюструє масштаб цієї різниці.
+</p>
+<div class="cb-comment">
+<p>
+<b>Теорія валентних зв’язків у квантовій хімії</b>
+</p>
+<p>
+Історично ідеї Гайтлера і Лондона стали відправною точкою для подальшого розвитку теорії хімічного зв’язку. На їх основі Лайнус Полінг сформулював узагальнену теорію валентних зв’язків (ВЗ) <a id="main-html-autopage-433"></a><sup>4</sup>, яка надала
+строгий формалізм для опису ковалентної взаємодії у вигляді суперпозиції локалізованих резонансних структур. Такий підхід природно є багатоконфігураційним: хвильова функція формується з декількох структур ВЗ, що відображають різні топології розподілу
+електронної густини та забезпечують коректний опис локалізації зв’язуючої електронної пари.
+</p>
+<p>
+У класичній теорії Полінга ключовими елементами стали гібридизація атомних орбіталей, резонансний змішувальний механізм та чітка інтерпретація хімічної структури в термінах валентних форм. У другій половині XX століття цей підхід був розширений до сучасних
+методів ВЗ — <kbd>VBSCF</kbd>, <kbd>BOVB</kbd>, <kbd>GVB</kbd> та їх багатоконфігураційних узагальнень, які дозволяють варіаційно оптимізувати як коефіцієнти змішування, так і локалізовані орбіталі.
+</p>
+<p>
+Попри розвиток формалізму, теорія ВЗ поступово втратила домінуюче положення в обчислювальній хімії через складність масштабування на багатоелектронні системи та обмежену інтеграцію з методами кореляції. У сучасній практиці провідну роль відіграють методи
+<kbd>MCSCF</kbd>/<kbd>CASSCF</kbd> та інші пост-Хартрі–Фоківські схеми, що поєднують детермінантну базу Гілбертового простору з контрольованим урахуванням статичної й динамічної кореляції. Їх обговорення буде наведене у розділі&nbsp;<a
+href="post-hf.html#PostHFMethods">5</a>.
+</p>
+</div>
+<div role="note" class="footnotes">
+<a id="main-html-autopage-434"></a>
+<p>
+<sup>2</sup>&nbsp;W. Heitler та F. London. «Wechselwirkung neutraler Atome und homöpolare Bindung nach der Quantenmechanik». Взаємодія нейтральних атомів і гомеополярний зв’язок у квантовій механіці. В: <em>Zeitschrift für Physik</em> 44 (1927), с. 455—472.
+<span class="textsc">DOI</span>: <a href="https://doi.org/10.1007/BF01397386" target="_blank" >10.1007/BF01397386</a>.
+</p>
+<p>
+<sup>3</sup>&nbsp;Вирази цих величин як функцій \(R\) наведено в&nbsp;Y. Sugiura. «Über die Eigenschaften des Wasserstoffmoleküls im Grundzustande». Про властивості молекули водню в основному стані. В: <em>Zeitschrift für Physik</em> 45 (1927), с. 484—492.
+<span class="textsc">DOI</span>: <a href="https://doi.org/10.1007/BF01329207" target="_blank" >10.1007/BF01329207</a>
+</p>
+<p>
+<sup>4</sup>&nbsp;Linus Pauling. <b>The Nature of the Chemical Bond and the Structure of Molecules and Crystals: An Introduction to Modern Structural Chemistry</b>. English. 1st&nbsp;ed. Ithaca, New York: Cornell University Press, 1939.
+</p>
+</div>
+<!--
+...... section Дипольний момент молекул ......
+-->
+<h4 id="autosec-435"><span class="sectionnumber">&#xA7;&#x202F;4.7&#x2003;</span>Дипольний момент молекул</h4>
+<a id="main-html-autopage-435"></a>
+<p>
+Електричний дипольний момент системи визначається як
+</p>
+<span class="hidden"> \(\seteqnumber{0}{4.}{5}\)</span>
+<!--
+𝜇 = ∑
+𝐴
+𝑍𝐴R𝐴 −
+ˆ
+r 𝜌(r) 𝑑r, (4.6)
+-->
+<p>
+\begin{equation}
+\boldsymbol {\mu } = \sum _A Z_A \mathbf {R}_A - \int \mathbf {r}\,\rho (\mathbf {r})\,d\mathbf {r},
+\end{equation}
+</p>
+<p>
+де перша сума відповідає внеску позитивно заряджених ядер (\(Z_A\)&nbsp;— заряд ядра, \(\mathbf {R}_A\)&nbsp;— його координати), а другий доданок&nbsp;— електронному розподілу.
+</p>
+<p>
+У базисному представленні компоненту дипольного моменту вздовж координати&nbsp;\(\alpha = x, y, z\) можна записати як
+</p>
+<span class="hidden"> \(\seteqnumber{0}{4.}{6}\)</span>
+<!--
+𝜇𝛼 = ∑
+𝐴
+𝑍𝐴𝑅𝐴,𝛼 − ∑
+𝜇𝜈
+𝐷𝜇𝜈
+ˆ
+𝜒𝜇(r) 𝑟𝛼 𝜒𝜈(r) 𝑑r, (4.7) --><a id="eq:dipole"></a><!--
+-->
+<p>
+\begin{equation}
+\mu _\alpha = \sum _A Z_A R_{A,\alpha } - \sum _{\mu \nu } D_{\mu \nu }\, \int \chi _\mu (\mathbf {r})\, r_\alpha \, \chi _\nu (\mathbf {r})\, d\mathbf {r}, \label {eq:dipole}
+\end{equation}
+</p>
+<p>
+Для ізольованих атомів дипольний момент відсутній. Це безпосередньо випливає із симетрії атомної електронної густини:
+</p>
+<p>
+\[ \rho (\mathbf {r}) = \rho (r), \]
+</p>
+<p>
+тобто густина є сферично симетричною відносно ядра. У такому разі інтеграл
+</p>
+<p>
+\[ \int \mathbf {r}\,\rho (\mathbf {r})\,d\mathbf {r} = 0, \]
+</p>
+<p>
+оскільки при інтегруванні по всіх напрямках простору додатні й від’ємні внески компенсують один одного.
+</p>
+<p>
+Однак, деякі молекули мають <em>постійний дипольний момент</em>, який є однією з ключових характеристик молекули, що визначає її полярність, взаємодію з електричним полем та інтенсивність ІЧ-переходів.
+</p>
+<p>
+Молекула <span
+id="lateximage-main-html-86"
+class="lateximagesource"
+><!--
+H2
+--><img
+src="main-html-images/B210D6A401BAC692FAB8840283B0CE59.svg"
+alt="\ce{H2}"
+style=""
+class="lateximage"
+></span> є гомоядерною (обидва атоми однакові), тому електронна густина симетрична відносно центру молекули:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{4.}{7}\)</span>
+<!--
+𝜇 = ∑
+𝐴
+𝑍𝐴R𝐴 −
+ˆ
+r𝜌(r)𝑑r = 0
+-->
+<p>
+\begin{equation*}
+\mu = \sum _A Z_A \mathbf {R}_A - \int \mathbf {r} \rho (\mathbf {r}) d\mathbf {r} = 0
+\end{equation*}
+</p>
+<p>
+Це справедливо для всіх гомоядерних двоатомних молекул: <span
+id="lateximage-main-html-87"
+class="lateximagesource"
+><!--
+H2
+--><img
+src="main-html-images/B210D6A401BAC692FAB8840283B0CE59.svg"
+alt="\ce{H2}"
+style=""
+class="lateximage"
+></span>, <span
+id="lateximage-main-html-88"
+class="lateximagesource"
+><!--
+N2
+--><img
+src="main-html-images/320403B2D8B7F4EAD45738B5A49BE91A.svg"
+alt="\ce{N2}"
+style=""
+class="lateximage"
+></span>, <span
+id="lateximage-main-html-89"
+class="lateximagesource"
+><!--
+O2
+--><img
+src="main-html-images/29404E849785FA970A0C17CC1758E215.svg"
+alt="\ce{O2}"
+style=""
+class="lateximage"
+></span>, <span
+id="lateximage-main-html-90"
+class="lateximagesource"
+><!--
+F2
+--><img
+src="main-html-images/E4116A4BF803C103B71D194288E38AB1.svg"
+alt="\ce{F2}"
+style=""
+class="lateximage"
+></span>. Гетероядерні молекули, наприклад <span
+id="lateximage-main-html-91"
+class="lateximagesource"
+><!--
+LiH
+--><img
+src="main-html-images/F508F6A19CEDCA3000E3D5BF4270CF49.svg"
+alt="\ce{LiH}"
+style=""
+class="lateximage"
+></span> (гідрид літію) — мають дипольним моментом. PySCF дозволяє розрахувати його компоненти та величину:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">15 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+
+<span class="tk-c1"># Молекула LiH</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span>
+    <span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'Li 0 0 0; H 0 0 1.6'</span><span class="tk-p">,</span>  <span class="tk-c1"># 1.6 Å ≈ рівноважна відстань</span>
+    <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'cc-pvdz'</span>
+<span class="tk-p">)</span>
+
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">run</span><span class="tk-p">()</span>
+
+<span class="tk-c1"># Дипольний момент</span>
+<span class="tk-n">dip</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">dip_moment</span><span class="tk-p">(</span><span class="tk-n">unit</span><span class="tk-o">=</span><span class="tk-s1">'Debye'</span><span class="tk-p">)</span>  <span class="tk-c1"># в Дебаях (D)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"Дипольний момент: </span><span class="tk-si">{</span><span class="tk-n">dip</span><span class="tk-si">}</span><span class="tk-s2">"</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"Модуль: </span><span class="tk-si">{</span><span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">linalg</span><span class="tk-o">.</span><span class="tk-n">norm</span><span class="tk-p">(</span><span class="tk-n">dip</span><span class="tk-p">)</span><span class="tk-si">:</span><span class="tk-s2">.3f</span><span class="tk-si">}</span><span class="tk-s2"> D"</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+<b>Результат:</b>
+</p>
+<div class="codeblock code-text" data-lang="text" data-nosnippet>
+<div class="code-head"><span class="code-lang">Вивід</span><span class="code-lines">3 рядки</span></div>
+<pre class="code"><code>Дипольний момент: [0.0, 0.0, 5.88]
+Модуль: 5.88 D</code></pre>
+</div>
+<p>
+<b>Інтерпретація:</b>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Літій менш електронегативний \(\rightarrow \) частково позитивний (<span
+id="lateximage-main-html-92"
+class="lateximagesource"
+><!--
+Li
+--><img
+src="main-html-images/4B4951EA8854FCA1B3BC14828CE7A553.svg"
+alt="\ce{Li}"
+style=""
+class="lateximage"
+></span>\(^{\delta +}\)).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Гідроген більш електронегативний \(\rightarrow \) частково негативний (<span
+id="lateximage-main-html-93"
+class="lateximagesource"
+><!--
+H
+--><img
+src="main-html-images/787EBCFB2440171F8A4A098726F24748.svg"
+alt="\ce{H}"
+style=""
+class="lateximage"
+></span>\(^{\delta -}\)).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Диполь спрямований від <span
+id="lateximage-main-html-94"
+class="lateximagesource"
+><!--
+Li
+--><img
+src="main-html-images/4B4951EA8854FCA1B3BC14828CE7A553.svg"
+alt="\ce{Li}"
+style=""
+class="lateximage"
+></span> до <span
+id="lateximage-main-html-95"
+class="lateximagesource"
+><!--
+H
+--><img
+src="main-html-images/787EBCFB2440171F8A4A098726F24748.svg"
+alt="\ce{H}"
+style=""
+class="lateximage"
+></span><sup>5</sup><a id="main-html-autopage-455"></a>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Величина \(\sim 6\) D — типова для йонних молекул.
+</p>
+</li>
+</ul>
+<div role="note" class="footnotes">
+<a id="main-html-autopage-456"></a>
+<p>
+<sup>5</sup>&nbsp;У хімії дипольний момент прийнято вважати спрямованим від позитивного заряду до негативного, тобто від менш електронегативного атома до більш електронегативного.
+</p>
+</div>
+<!--
+...... subsubsection Залежність від базису ......
+-->
+<h6 id="autosec-457">Залежність від базису</h6>
+<a id="main-html-autopage-457"></a>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">7 рядків</span></div>
+<pre class="code"><code><span class="tk-n">bases</span> <span class="tk-o">=</span> <span class="tk-p">[</span><span class="tk-s1">'sto-3g'</span><span class="tk-p">,</span> <span class="tk-s1">'6-31g'</span><span class="tk-p">,</span> <span class="tk-s1">'cc-pvdz'</span><span class="tk-p">,</span> <span class="tk-s1">'cc-pvtz'</span><span class="tk-p">]</span>
+<span class="tk-k">for</span> <span class="tk-n">basis</span> <span class="tk-ow">in</span> <span class="tk-n">bases</span><span class="tk-p">:</span>
+    <span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'Li 0 0 0; H 0 0 1.6'</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-n">basis</span><span class="tk-p">)</span>
+    <span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">run</span><span class="tk-p">(</span><span class="tk-n">verbose</span><span class="tk-o">=</span><span class="tk-mi">0</span><span class="tk-p">)</span>
+    <span class="tk-n">mu</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">linalg</span><span class="tk-o">.</span><span class="tk-n">norm</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">dip_moment</span><span class="tk-p">())</span>
+    <span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"</span><span class="tk-si">{</span><span class="tk-n">basis</span><span class="tk-si">:</span><span class="tk-s2">10s</span><span class="tk-si">}</span><span class="tk-s2">: μ = </span><span class="tk-si">{</span><span class="tk-n">mu</span><span class="tk-si">:</span><span class="tk-s2">.3f</span><span class="tk-si">}</span><span class="tk-s2"> D"</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Дипольний момент сильно залежить від якості базису, особливо від наявності дифузних функцій (aug-cc-pVDZ).
+</p>
+<!--
+...... subsubsection Практичне значення ......
+-->
+<h6 id="autosec-458">Практичне значення</h6>
+<a id="main-html-autopage-458"></a>
+<p>
+Дипольний момент:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Характеризує полярність молекули.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Пов’язаний з ІЧ-активністю (чим більший \(\partial \mu /\partial R\), тим інтенсивніше поглинання).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Визначає взаємодію з електричним полем.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Критичний для розуміння міжмолекулярних взаємодій.
+</p>
+</li>
+</ul>
+<p>
+<b>Експериментальні значення (в Дебаях):</b>
+</p>
+<figure id="autoid-20" class="table ">
+<div class="center">
+<table>
+<tr style="display:none"><th>.</th></tr>
+<tr class="hline">
+<td class="tdl" style="background:#F9F9F9"><b>Молекула</b></td>
+<td colspan="1" class="tdl" style="background:#F9F9F9"><b>HF (cc-pVTZ)</b></td>
+<td colspan="1" class="tdl" style="background:#F9F9F9"><b>Експеримент</b></td>
+</tr>
+<tr class="hline">
+<td class="tdl">\(\mathrm {LiH}\)</td>
+<td colspan="1" class="tdl">5.88</td>
+<td colspan="1" class="tdl">5.88</td>
+</tr>
+<tr>
+<td class="tdl" style="background:#F9F9F9">\(\mathrm {HF}\)</td>
+<td colspan="1" class="tdl" style="background:#F9F9F9">1.82</td>
+<td colspan="1" class="tdl" style="background:#F9F9F9">1.83</td>
+</tr>
+<tr>
+<td class="tdl">\(\mathrm {HCl}\)</td>
+<td colspan="1" class="tdl">1.11</td>
+<td colspan="1" class="tdl">1.08</td>
+</tr>
+<tr>
+<td class="tdl" style="background:#F9F9F9">\(\mathrm {H_{2}O}\)</td>
+<td colspan="1" class="tdl" style="background:#F9F9F9">1.85</td>
+<td colspan="1" class="tdl" style="background:#F9F9F9">1.85</td>
+</tr>
+<tr class="hline" aria-hidden="true">
+<td class="tdl"></td>
+<td class="tdc"></td>
+<td class="tdc"></td>
+</tr>
+</table>
+</div>
+</figure>
+<p>
+Для полярних молекул <span
+id="lateximage-main-html-96"
+class="lateximagesource"
+><!--
+HF
+--><img
+src="main-html-images/90A31286A8C9FAF08942CCEB2AE3CB92.svg"
+alt="\ce{HF}"
+style=""
+class="lateximage"
+></span> дає досить точні дипольні моменти (похибка \(\sim 5\%\)).
+</p>
+<!--
+...... section Резюме ......
+-->
+<h4 id="autosec-463">Резюме</h4>
+<a id="main-html-autopage-463"></a>
+<p>
+У двох попередніх розділах ми детально розглянули метод Хартрі–Фока — фундаментальний підхід квантової хімії, який є відправною точкою для більшості сучасних методів розрахунку електронної структури.
+</p>
+<p>
+Уже в межах самого методу Хартрі–Фока можна дати чітке й послідовне пояснення виникненню хімічного зв’язку. Побудова молекулярних орбіталей призводить до перерозподілу електронної густини таким чином, що одна з лінійних комбінацій атомних орбіталей
+концентрує електрони між ядрами. Це знижує електростатичну енергію системи, а обмінна взаємодія, властива детермінанту Слейтера, додатково стабілізує отриману орбіталь. У результаті вже HF-рівень коректно відтворює сам факт появи ковалентного зв’язку та
+існування енергетично вигідної зв’язуючої орбіталі.
+</p>
+<p>
+Однак метод Хартрі–Фока є лише відправною точкою в <kbd>ab initio</kbd> квантовій хімії. Як було показано, цей підхід має низку принципових недоліків:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> систематично завищує енергії дисоціації;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> погано описує системи зі сильною кореляцією (біорадикали, перехідні стани);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> не забезпечує коректного опису розриву хімічних зв’язків.
+</p>
+</li>
+</ul>
+<p>
+Головною причиною цих обмежень є повна відсутність електронної кореляції — ключового внеску в точний розв’язок електронної задачі, без якого неможливо адекватно відтворити ні енергетику хімічних зв’язків, ні поведінку молекул при дисоціації, ні спектри збуджених
+станів, ані навіть базові атомно-молекулярні властивості. Саме тому на основі однодетермінантної HF-хвильової функції було розроблено широкий спектр <i>post-<kbd>HF</kbd> методів</i>, які систематично враховують кореляційні ефекти.
+</p>
+<p>
+У наступному розділі ми розглянемо найбільш поширені кореляційні підходи — від конфігураційної взаємодії до теорії збуджень та багатоконфігураційних схем. Кожен із них розширює <kbd>HF</kbd>-модель у свій спосіб, дозволяючи контрольовано наближатися до
+повної конфігураційної взаємодії (<kbd>FCI</kbd>) — формально точного, але обчислювально непідйомного розв’язку рівняння Шредінґера.
+</p>
+<!--
+...... section Контрольні запитання та завдання ......
+-->
+<h4 id="autosec-464">Контрольні запитання та завдання</h4>
+<a id="main-html-autopage-464"></a>
+<!--
+...... subsection Контрольні запитання ......
+-->
+<h5 id="autosec-465">Контрольні запитання</h5>
+<a id="main-html-autopage-465"></a>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> Як застосовується метод Хартрі-Фока до простих молекул, таких як <span
+id="lateximage-main-html-97"
+class="lateximagesource"
+><!--
+H2
+--><img
+src="main-html-images/B210D6A401BAC692FAB8840283B0CE59.svg"
+alt="\ce{H2}"
+style=""
+class="lateximage"
+></span> чи <span
+id="lateximage-main-html-98"
+class="lateximagesource"
+><!--
+HF
+--><img
+src="main-html-images/90A31286A8C9FAF08942CCEB2AE3CB92.svg"
+alt="\ce{HF}"
+style=""
+class="lateximage"
+></span>? Опишіть основні кроки розрахунку.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> Чим відрізняється розрахунок для молекули <span
+id="lateximage-main-html-99"
+class="lateximagesource"
+><!--
+H2
+O
+--><img
+src="main-html-images/3BD50A5CF48F9588DE1B1A127A250217.svg"
+alt="\ce{H2O}"
+style=""
+class="lateximage"
+></span> методом <kbd>RHF</kbd> від атомного випадку? Як враховується геометрія молекули?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> Поясніть роль матриці густини в розрахунках для молекул на зразок <span
+id="lateximage-main-html-100"
+class="lateximagesource"
+><!--
+NH3
+--><img
+src="main-html-images/A791D6354580741B8B75049726A59D24.svg"
+alt="\ce{NH3}"
+style=""
+class="lateximage"
+></span>. Як вона пов’язана з електронною густиною?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">4.</span> Як впливає вибір базисного набору на точність енергії для молекули <span
+id="lateximage-main-html-101"
+class="lateximagesource"
+><!--
+CH4
+--><img
+src="main-html-images/41F19D92C998B76C74348C182644EE2C.svg"
+alt="\ce{CH4}"
+style=""
+class="lateximage"
+></span>? Наведіть приклади базисів, таких як <kbd>STO-3G</kbd> та <kbd>cc-pVTZ</kbd>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">5.</span> Опишіть процедуру <kbd>SCF</kbd> для молекули <span
+id="lateximage-main-html-102"
+class="lateximagesource"
+><!--
+LiH
+--><img
+src="main-html-images/F508F6A19CEDCA3000E3D5BF4270CF49.svg"
+alt="\ce{LiH}"
+style=""
+class="lateximage"
+></span>. Як перевірити конвергенцію ітерацій?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">6.</span> Для якої молекули, наприклад <span
+id="lateximage-main-html-103"
+class="lateximagesource"
+><!--
+OH
+--><img
+src="main-html-images/8C326CF685B544F5297A2D3591256232.svg"
+alt="\ce{OH}"
+style=""
+class="lateximage"
+></span>, доцільно використовувати <kbd>UHF</kbd> замість <kbd>RHF</kbd>? Поясніть спінове забруднення.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">7.</span> Як обчислити енергію дисоціації молекули <span
+id="lateximage-main-html-104"
+class="lateximagesource"
+><!--
+H2
+--><img
+src="main-html-images/B210D6A401BAC692FAB8840283B0CE59.svg"
+alt="\ce{H2}"
+style=""
+class="lateximage"
+></span> методом Хартрі–Фока? Які проблеми виникають при великих відстанях?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">8.</span> Поясніть, чому для молекули <span
+id="lateximage-main-html-105"
+class="lateximagesource"
+><!--
+O2
+--><img
+src="main-html-images/29404E849785FA970A0C17CC1758E215.svg"
+alt="\ce{O2}"
+style=""
+class="lateximage"
+></span> потрібен <kbd>ROHF</kbd> або <kbd>UHF</kbd>. Як встановити спін у PySCF?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">9.</span> Як візуалізувати молекулярні орбіталі для <span
+id="lateximage-main-html-106"
+class="lateximagesource"
+><!--
+CO
+--><img
+src="main-html-images/1751E01A9C69DE0F6606C49642C8CD6D.svg"
+alt="\ce{CO}"
+style=""
+class="lateximage"
+></span> після <kbd>HF</kbd>-розрахунку? Наведіть приклад коду з <span class="inlinecode"><kbd>cubegen.orbital()</kbd></span>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">10.</span> Які властивості молекули <span
+id="lateximage-main-html-107"
+class="lateximagesource"
+><!--
+HF
+--><img
+src="main-html-images/90A31286A8C9FAF08942CCEB2AE3CB92.svg"
+alt="\ce{HF}"
+style=""
+class="lateximage"
+></span>, такі як дипольний момент, можна обчислити після <kbd>SCF</kbd>? Як це зробити в <kbd>PySCF</kbd>?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">11.</span> Опишіть відмінності в розрахунках для закритих (<span
+id="lateximage-main-html-108"
+class="lateximagesource"
+><!--
+H2
+O
+--><img
+src="main-html-images/3BD50A5CF48F9588DE1B1A127A250217.svg"
+alt="\ce{H2O}"
+style=""
+class="lateximage"
+></span>) та відкритих (<span
+id="lateximage-main-html-109"
+class="lateximagesource"
+><!--
+NO
+--><img
+src="main-html-images/768982111A58B1E623F797911ACCB35F.svg"
+alt="\ce{NO}"
+style=""
+class="lateximage"
+></span>) оболонок у молекулах.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">12.</span> Як оптимізувати геометрію простої молекули, наприклад <span
+id="lateximage-main-html-110"
+class="lateximagesource"
+><!--
+NH3
+--><img
+src="main-html-images/A791D6354580741B8B75049726A59D24.svg"
+alt="\ce{NH3}"
+style=""
+class="lateximage"
+></span>, методом Хартрі–Фока в <kbd>PySCF</kbd>?
+</p>
+</li>
+</ul>
+<!--
+...... subsection Практичні завдання ......
+-->
+<h5 id="autosec-494">Практичні завдання</h5>
+<a id="main-html-autopage-494"></a>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker"><b>Задача 1:</b></span> <b>Систематичне дослідження базисної залежності</b>
+</p>
+<p>
+Обчисліть HF-енергії для молекул <span
+id="lateximage-main-html-111"
+class="lateximagesource"
+><!--
+H2
+--><img
+src="main-html-images/B210D6A401BAC692FAB8840283B0CE59.svg"
+alt="\ce{H2}"
+style=""
+class="lateximage"
+></span>, <span
+id="lateximage-main-html-112"
+class="lateximagesource"
+><!--
+LiH
+--><img
+src="main-html-images/F508F6A19CEDCA3000E3D5BF4270CF49.svg"
+alt="\ce{LiH}"
+style=""
+class="lateximage"
+></span>, <span
+id="lateximage-main-html-113"
+class="lateximagesource"
+><!--
+HF
+--><img
+src="main-html-images/90A31286A8C9FAF08942CCEB2AE3CB92.svg"
+alt="\ce{HF}"
+style=""
+class="lateximage"
+></span>, <span
+id="lateximage-main-html-114"
+class="lateximagesource"
+><!--
+CH4
+--><img
+src="main-html-images/41F19D92C998B76C74348C182644EE2C.svg"
+alt="\ce{CH4}"
+style=""
+class="lateximage"
+></span> з різними базисами. Побудуйте графіки енергії як функції розміру базису та оцініть наближення до HF-межі. Порівняйте з експериментальними енергіями зв’язку, враховуючи ядерне відштовхування.
+</p>
+<p>
+<b>Базиси:</b> <kbd>sto-3g</kbd>, <kbd>6-31g</kbd>, <kbd>cc-pvdz</kbd>, <kbd>cc-pvtz</kbd>. <b>Підказка:</b> Використовуйте <span class="inlinecode"><kbd>scf.RHF(mol).run()</kbd></span> для розрахунків та фіксовані геометрії
+(наприклад, R(<span
+id="lateximage-main-html-115"
+class="lateximagesource"
+><!--
+H2
+--><img
+src="main-html-images/B210D6A401BAC692FAB8840283B0CE59.svg"
+alt="\ce{H2}"
+style=""
+class="lateximage"
+></span>)=0.74 Å).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 2:</b></span> <b>Криві дисоціації та спінове забруднення</b>
+</p>
+<p>
+Для молекули <span
+id="lateximage-main-html-116"
+class="lateximagesource"
+><!--
+F2
+--><img
+src="main-html-images/E4116A4BF803C103B71D194288E38AB1.svg"
+alt="\ce{F2}"
+style=""
+class="lateximage"
+></span> обчисліть криву потенціальної енергії методом RHF та UHF, варіюючи відстань від \(1.0\) до \(3.0\) Å. Побудуйте графіки \(E(r)\) та проаналізуйте \(\langle \hat {S}^2 \rangle \) для UHF. Обговоріть, чому UHF краще описує дисоціацію.
+</p>
+<p>
+<b>Базис:</b> <kbd>def2-svp</kbd>. <b>Підказка:</b> Використовуйте цикл для зміни геометрії та <span class="inlinecode"><kbd>mf.spin_square()</kbd></span> для спіну.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 3:</b></span> <b>Порівняння HF-варіантів для відкритих оболонок</b>
+</p>
+<p>
+Для молекули <span
+id="lateximage-main-html-117"
+class="lateximagesource"
+><!--
+NO
+--><img
+src="main-html-images/768982111A58B1E623F797911ACCB35F.svg"
+alt="\ce{NO}"
+style=""
+class="lateximage"
+></span> (дублет) обчисліть енергію методами UHF, ROHF та GHF. Порівняйте енергії, спінові значення та орбітальні енергії. Оцініть вплив спінового забруднення на точність.
+</p>
+<p>
+<b>Базис:</b> <kbd>cc-pvdz</kbd>.
+</p>
+<p>
+<b>Підказка:</b> Встановіть <span class="inlinecode"><kbd>spin=1</kbd></span> та перевірте \(\langle \hat {S}^2 \rangle = S(S+1)\).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 4:</b></span> <b>Оптимізація геометрії та вібраційний аналіз</b>
+</p>
+<p>
+Оптимізуйте геометрію молекули <span
+id="lateximage-main-html-118"
+class="lateximagesource"
+><!--
+NH3
+--><img
+src="main-html-images/A791D6354580741B8B75049726A59D24.svg"
+alt="\ce{NH3}"
+style=""
+class="lateximage"
+></span> методом HF з різними базисами.
+</p>
+<p>
+<b>Підказка:</b> Використовуйте <span class="inlinecode"><kbd>geomopt.optimize(mf)</kbd></span>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 5:</b></span> <b>Аналіз електронної структури</b>
+</p>
+<p>
+Для молекули <span
+id="lateximage-main-html-119"
+class="lateximagesource"
+><!--
+CO
+--><img
+src="main-html-images/1751E01A9C69DE0F6606C49642C8CD6D.svg"
+alt="\ce{CO}"
+style=""
+class="lateximage"
+></span> обчисліть HF-енергію, візуалізуйте MO (HOMO, LUMO) та обчисліть дипольний момент. Порівняйте з атомними розрахунками для <span
+id="lateximage-main-html-120"
+class="lateximagesource"
+><!--
+C
+--><img
+src="main-html-images/2142055F95CB18660D0342AA8AE970D1.svg"
+alt="\ce{C}"
+style=""
+class="lateximage"
+></span> та <span
+id="lateximage-main-html-121"
+class="lateximagesource"
+><!--
+O
+--><img
+src="main-html-images/F76C638AC3ADAD95DE199E2BA2F9EE18.svg"
+alt="\ce{O}"
+style=""
+class="lateximage"
+></span>, оцініть внесок в енергію зв’язку.
+</p>
+<p>
+<b>Базис:</b> <kbd>aug-cc-pvdz</kbd>. <b>Підказка:</b> Використовуйте <span class="inlinecode"><kbd>mf.dip_moment()</kbd></span> та <span class="inlinecode"><kbd>cubegen.orbital(mol, 'mo.cub',
+mf.mo_coeff[:,i])</kbd></span> для візуалізації.
+</p>
+</li>
+</ul>
+</section>
+</main>
+<nav class="botnavigation"><a href="main-html.html" class="linkhome" >
+Головна</a></nav>
+</div><!-- grid -->
+<script src="assets/book.js" defer></script>
+</body>
+</html>

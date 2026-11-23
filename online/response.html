@@ -1,0 +1,4210 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="generator" content="LaTeX Lwarp package" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Квантово-механічні методи обчислення — Властивості молекул</title>
+<link rel="stylesheet" type="text/css" href="assets/conspect.css" />
+<script>
+// Lwarp MathJax emulation code
+//
+// Based on code by Davide P. Cervone.
+// Equation numbering: https://github.com/mathjax/MathJax/issues/2427
+// Starred and ifnextchar macros: https://github.com/mathjax/MathJax/issues/2428
+// \left, \right delimiters: https://github.com/mathjax/MathJax/issues/2535
+//
+// Modified by Brian Dunn to adjust equation numbering and add subequations.
+//
+// LaTeX can use \seteqnumber{subequations?}{section}{number} before each equation.
+// subequations? is 0 usually, 1 if inside subequations.
+// section is a string printed as-is, or empty.
+// number is auto-incremented by MathJax between equations.
+//
+MathJax = {
+subequations: "0",
+section: "",
+loader: {
+load: ['[tex]/tagformat', '[tex]/textmacros'],
+},
+startup: {
+ready() {
+// These would be replaced by import commands if you wanted to make
+// a proper extension.
+const Configuration = MathJax._.input.tex.Configuration.Configuration;
+const CommandMap = MathJax._.input.tex.SymbolMap.CommandMap;
+const Macro = MathJax._.input.tex.Symbol.Macro;
+const TexError = MathJax._.input.tex.TexError.default;
+const ParseUtil = MathJax._.input.tex.ParseUtil.default;
+const expandable = MathJax._.util.Options.expandable;
+// Insert the replacement string into the TeX string, and check
+// that there haven't been too many maxro substitutions (prevents
+// infinite loops).
+const useArgument = (parser, text) => {
+parser.string = ParseUtil.addArgs(parser, text, parser.string.slice(parser.i));
+parser.i = 0;
+if (++parser.macroCount > parser.configuration.options.maxMacros) {
+throw new TexError('MaxMacroSub1',
+'MathJax maximum macro substitution count exceeded; ' +
+'is there a recursive macro call?');
+}
+}
+// Create the command map for:
+// \ifstar, \ifnextchar, \ifblank, \ifstrequal, \gsub, \seteqnumber
+new CommandMap('Lwarp-macros', {
+ifstar: 'IfstarFunction',
+ifnextchar: 'IfnextcharFunction',
+ifblank: 'IfblankFunction',
+ifstrequal: 'IfstrequalFunction',
+gsubstitute: 'GsubstituteFunction',
+seteqnumber: 'SeteqnumberFunction'
+}, {
+// This function implements an ifstar macro.
+IfstarFunction(parser, name) {
+const resultstar = parser.GetArgument(name);
+const resultnostar = parser.GetArgument(name);
+const star = parser.GetStar(); // true if there is a *
+useArgument(parser, star ? resultstar : resultnostar);
+},
+// This function implements an ifnextchar macro.
+IfnextcharFunction(parser, name) {
+let whichchar = parser.GetArgument(name);
+if (whichchar.match(/^(?:0x[0-9A-F]+|[0-9]+)$/i)) {
+// $ syntax highlighting
+whichchar = String.fromCodePoint(parseInt(whichchar));
+}
+const resultnextchar = parser.GetArgument(name);
+const resultnotnextchar = parser.GetArgument(name);
+const gotchar = (parser.GetNext() === whichchar);
+useArgument(parser, gotchar ? resultnextchar : resultnotnextchar);
+},
+// This function implements an ifblank macro.
+IfblankFunction(parser, name) {
+const blankarg = parser.GetArgument(name);
+const resultblank = parser.GetArgument(name);
+const resultnotblank = parser.GetArgument(name);
+const isblank = (blankarg.trim() == "");
+useArgument(parser, isblank ? resultblank : resultnotblank);
+},
+// This function implements an ifstrequal macro.
+IfstrequalFunction(parser, name) {
+const strequalfirst = parser.GetArgument(name);
+const strequalsecond = parser.GetArgument(name);
+const resultequal = parser.GetArgument(name);
+const resultnotequal = parser.GetArgument(name);
+const isequal = (strequalfirst == strequalsecond);
+useArgument(parser, isequal ? resultequal : resultnotequal);
+},
+// This function implements a gsub macro.
+GsubstituteFunction(parser, name) {
+const gsubfirst = parser.GetArgument(name);
+const gsubsecond = parser.GetArgument(name);
+const gsubthird = parser.GetArgument(name);
+let gsubresult=gsubfirst.replace(gsubsecond, gsubthird);
+useArgument(parser, gsubresult);
+},
+// This function modifies the equation numbers.
+SeteqnumberFunction(parser, name) {
+// Get the macro parameters
+const star = parser.GetStar(); // true if there is a *
+const optBrackets = parser.GetBrackets(name); // contents of optional brackets
+const newsubequations = parser.GetArgument(name); // the subequations argument
+const neweqsection = parser.GetArgument(name); // the eq section argument
+const neweqnumber = parser.GetArgument(name); // the eq number argument
+MathJax.config.subequations=newsubequations ; // a string with boolean meaning
+MathJax.config.section=neweqsection ; // a string with numeric meaning
+parser.tags.counter = parser.tags.allCounter = neweqnumber ;
+}
+});
+// Create the Lwarp-macros package
+Configuration.create('Lwarp-macros', {
+handler: {macro: ['Lwarp-macros']}
+});
+MathJax.startup.defaultReady();
+// For forward references:
+MathJax.startup.input[0].preFilters.add(({math}) => {
+if (math.inputData.recompile){
+MathJax.config.subequations = math.inputData.recompile.subequations;
+MathJax.config.section = math.inputData.recompile.section;
+}
+});
+MathJax.startup.input[0].postFilters.add(({math}) => {
+if (math.inputData.recompile){
+math.inputData.recompile.subequations = MathJax.config.subequations;
+math.inputData.recompile.section = MathJax.config.section;
+}
+});
+// For \left, \right with unicode-math:
+const {DelimiterMap} = MathJax._.input.tex.SymbolMap;
+const {Symbol} = MathJax._.input.tex.Symbol;
+const {MapHandler} = MathJax._.input.tex.MapHandler;
+const delimiter = MapHandler.getMap('delimiter');
+delimiter.add('\\lBrack', new Symbol('\\lBrack', '\u27E6'));
+delimiter.add('\\rBrack', new Symbol('\\rBrack', '\u27E7'));
+delimiter.add('\\lAngle', new Symbol('\\lAngle', '\u27EA'));
+delimiter.add('\\rAngle', new Symbol('\\rAngle', '\u27EB'));
+delimiter.add('\\lbrbrak', new Symbol('\\lbrbrak', '\u2772'));
+delimiter.add('\\rbrbrak', new Symbol('\\rbrbrak', '\u2773'));
+delimiter.add('\\lbag', new Symbol('\\lbag', '\u27C5'));
+delimiter.add('\\rbag', new Symbol('\\rbag', '\u27C6'));
+delimiter.add('\\llparenthesis', new Symbol('\\llparenthesis', '\u2987'));
+delimiter.add('\\rrparenthesis', new Symbol('\\rrparenthesis', '\u2988'));
+delimiter.add('\\llangle', new Symbol('\\llangle', '\u2989'));
+delimiter.add('\\rrangle', new Symbol('\\rrangle', '\u298A'));
+delimiter.add('\\Lbrbrak', new Symbol('\\Lbrbrak', '\u27EC'));
+delimiter.add('\\Rbrbrak', new Symbol('\\Rbrbrak', '\u27ED'));
+delimiter.add('\\lBrace', new Symbol('\\lBrace', '\u2983'));
+delimiter.add('\\rBrace', new Symbol('\\rBrace', '\u2984'));
+delimiter.add('\\lParen', new Symbol('\\lParen', '\u2985'));
+delimiter.add('\\rParen', new Symbol('\\rParen', '\u2986'));
+delimiter.add('\\lbrackubar', new Symbol('\\lbrackubar', '\u298B'));
+delimiter.add('\\rbrackubar', new Symbol('\\rbrackubar', '\u298C'));
+delimiter.add('\\lbrackultick', new Symbol('\\lbrackultick', '\u298D'));
+delimiter.add('\\rbracklrtick', new Symbol('\\rbracklrtick', '\u298E'));
+delimiter.add('\\lbracklltick', new Symbol('\\lbracklltick', '\u298F'));
+delimiter.add('\\rbrackurtick', new Symbol('\\rbrackurtick', '\u2990'));
+delimiter.add('\\langledot', new Symbol('\\langledot', '\u2991'));
+delimiter.add('\\rangledot', new Symbol('\\rangledot', '\u2992'));
+delimiter.add('\\lparenless', new Symbol('\\lparenless', '\u2993'));
+delimiter.add('\\rparengtr', new Symbol('\\rparengtr', '\u2994'));
+delimiter.add('\\Lparengtr', new Symbol('\\Lparengtr', '\u2995'));
+delimiter.add('\\Rparenless', new Symbol('\\Rparenless', '\u2996'));
+delimiter.add('\\lblkbrbrak', new Symbol('\\lblkbrbrak', '\u2997'));
+delimiter.add('\\rblkbrbrak', new Symbol('\\rblkbrbrak', '\u2998'));
+delimiter.add('\\lvzigzag', new Symbol('\\lvzigzag', '\u29D8'));
+delimiter.add('\\rvzigzag', new Symbol('\\rvzigzag', '\u29D9'));
+delimiter.add('\\Lvzigzag', new Symbol('\\Lvzigzag', '\u29DA'));
+delimiter.add('\\Rvzigzag', new Symbol('\\Rvzigzag', '\u29DB'));
+delimiter.add('\\lcurvyangle', new Symbol('\\lcurvyangle', '\u29FC'));
+delimiter.add('\\rcurvyangle', new Symbol('\\rcurvyangle', '\u29FD'));
+delimiter.add('\\Vvert', new Symbol('\\Vvert', '\u2980'));
+} // ready
+}, // startup
+tex: {
+packages: {'[+]': ['tagformat', 'Lwarp-macros', 'textmacros']},
+tags: "ams",
+tagformat: {
+number: function (n) {
+if(MathJax.config.subequations==0)
+return(MathJax.config.section + n);
+else
+return(MathJax.config.section + String.fromCharCode(96+n));
+},
+},
+}
+}
+</script>
+<script
+id="MathJax-script"
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
+></script>
+</head>
+<body>
+<a id="main-html-autopage-762"></a>
+<div class="pagegrid">
+<nav class="topnavigation"><a href="main-html.html" class="linkhome" >
+Головна</a></nav>
+<div class="sidetoccontainer">
+<nav class="sidetoc">
+<div class="sidetoctitle">
+<p>
+<span class="sidetocthetitle">Квантово-механічні методи обчислення</span>
+</p>
+<p class="sidetoc-meta"><a href="../PyscfBook/index.html">Про посібник</a><span aria-hidden="true">·</span><a href="../PyscfBook/pyscfBook.pdf">PDF</a></p>
+</div>
+<div class="sidetoccontents">
+<p>
+<a href="main-html.html" class="linkhome" >
+Головна</a>
+</p>
+<p>
+<a href="preface.html#autosec-7" class="tocchapter" >
+Передмова</a>
+</p>
+<p>
+<a href="preface.html#autosec-8" class="tocsection" >
+Актуальність квантово-механічних обчислень</a>
+</p>
+<p>
+<a href="preface.html#autosec-9" class="tocsection" >
+Передумови</a>
+</p>
+<p>
+<a href="preface.html#autosec-13" class="tocsection" >
+Організація навчальних матеріалів</a>
+</p>
+<p>
+<a href="preface.html#autosec-19" class="tocsection" >
+Як користуватися посібником</a>
+</p>
+<p>
+<a href="preface.html#autosec-20" class="tocsection" >
+Зворотний зв’язок</a>
+</p>
+<p>
+<a href="preface.html#autosec-21" class="tocsection" >
+Ліцензія та використання</a>
+</p>
+<p>
+<a href="welcome.html#autosec-25" class="tocpart" >
+<span class="sectionnumber">I</span><span class="toctitle">&#x2003;Вступ до PySCF: основи та перші кроки</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-26" class="tocchapter" >
+<span class="sectionnumber">1</span><span class="toctitle">&#x2003;Знайомство з PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-27" class="tocsection" >
+<span class="sectionnumber">1.1</span><span class="toctitle">&#x2003;PySCF: концепція та філософія</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-28" class="tocsection" >
+<span class="sectionnumber">1.2</span><span class="toctitle">&#x2003;Основні можливості PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-29" class="tocsection" >
+<span class="sectionnumber">1.3</span><span class="toctitle">&#x2003;Архітектура і дизайн PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-36" class="tocsection" >
+<span class="sectionnumber">1.4</span><span class="toctitle">&#x2003;Порівняння з іншими програмами</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-40" class="tocsection" >
+<span class="sectionnumber">1.5</span><span class="toctitle">&#x2003;Встановлення PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-58" class="tocsection" >
+<span class="sectionnumber">1.6</span><span class="toctitle">&#x2003;Базова структура програми на PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-62" class="tocsection" >
+<span class="sectionnumber">1.7</span><span class="toctitle">&#x2003;Система одиниць та конвенції</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-71" class="tocsection" >
+<span class="sectionnumber">1.8</span><span class="toctitle">&#x2003;Документація та ресурси</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-76" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="welcome.html#autosec-77" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="mole.html#autosec-84" class="tocchapter" >
+<span class="sectionnumber">2</span><span class="toctitle">&#x2003;Базові об’єкти <kbd>PySCF</kbd></span></a>
+</p>
+<p>
+<a href="mole.html#autosec-85" class="tocsection" >
+<span class="sectionnumber">2.1</span><span class="toctitle">&#x2003;Молекулярний об’єкт (Mole)</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-109" class="tocsection" >
+<span class="sectionnumber">2.2</span><span class="toctitle">&#x2003;Періодичний об’єкт (Cell)</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-117" class="tocsection" >
+<span class="sectionnumber">2.3</span><span class="toctitle">&#x2003;Базисні набори в <kbd>PySCF</kbd></span></a>
+</p>
+<p>
+<a href="mole.html#autosec-128" class="tocsection" >
+<span class="sectionnumber">2.4</span><span class="toctitle">&#x2003;Симетрія в атомних розрахунках</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-134" class="tocsection" >
+<span class="sectionnumber">2.5</span><span class="toctitle">&#x2003;Спін та мультиплетність</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-138" class="tocsection" >
+<span class="sectionnumber">2.6</span><span class="toctitle">&#x2003;Типова схема розрахунків у <kbd>PySCF</kbd></span></a>
+</p>
+<p>
+<a href="mole.html#autosec-139" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="mole.html#autosec-140" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-147" class="tocpart" >
+<span class="sectionnumber">II</span><span class="toctitle">&#x2003;Ab Initio методи: від Хартрі-Фока до пост-HF і DFT</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-148" class="tocchapter" >
+<span class="sectionnumber">3</span><span class="toctitle">&#x2003;Метод Хартрі-Фока</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-149" class="tocsection" >
+<span class="sectionnumber">3.1</span><span class="toctitle">&#x2003;Теоретичні основи методу Хартрі–Фока</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-155" class="tocsection" >
+<span class="sectionnumber">3.2</span><span class="toctitle">&#x2003;SFC-процедура</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-160" class="tocsection" >
+<span class="sectionnumber">3.3</span><span class="toctitle">&#x2003;Які бувають базиси</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-169" class="tocsection" >
+<span class="sectionnumber">3.4</span><span class="toctitle">&#x2003;Варіанти методу Хартрі–Фока</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-195" class="tocsection" >
+<span class="sectionnumber">3.5</span><span class="toctitle">&#x2003;Метод UHF та спінове забруднення</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-205" class="tocsection" >
+<span class="sectionnumber">3.6</span><span class="toctitle">&#x2003;Прості атомні системи</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-212" class="tocsection" >
+<span class="sectionnumber">3.7</span><span class="toctitle">&#x2003;Атоми другого періоду (Li–Ne)</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-248" class="tocsection" >
+<span class="sectionnumber">3.8</span><span class="toctitle">&#x2003;Енергія, орбіталі та електронна густина</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-278" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-279" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="diatomic.html#autosec-314" class="tocchapter" >
+<span class="sectionnumber">4</span><span class="toctitle">&#x2003;Метод Хартрі–Фока для простих молекул</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-319" class="tocsection" >
+<span class="sectionnumber">4.1</span><span class="toctitle">&#x2003;Наближення Борна–Опенгеймера</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-320" class="tocsection" >
+<span class="sectionnumber">4.2</span><span class="toctitle">&#x2003;Орбіталі і електронні стани молекул</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-332" class="tocsection" >
+<span class="sectionnumber">4.3</span><span class="toctitle">&#x2003;Модельні молекули: \(\mathrm {H_{2}^{+}}\) та \(\mathrm {H_{2}}\)</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-345" class="tocsection" >
+<span class="sectionnumber">4.4</span><span class="toctitle">&#x2003;Іон молекули водню \(\mathrm {H_{2}^{+}}\)</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-382" class="tocsection" >
+<span class="sectionnumber">4.5</span><span class="toctitle">&#x2003;Крива потенціальної енергії</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-402" class="tocsection" >
+<span class="sectionnumber">4.6</span><span class="toctitle">&#x2003;Молекула водню \(\mathrm {H_{2}}\)</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-435" class="tocsection" >
+<span class="sectionnumber">4.7</span><span class="toctitle">&#x2003;Дипольний момент молекул</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-463" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="diatomic.html#autosec-464" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="post-hf.html#autosec-519" class="tocchapter" >
+<span class="sectionnumber">5</span><span class="toctitle">&#x2003;Пост-Хартрі-Фоківські методи</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-520" class="tocsection" >
+<span class="sectionnumber">5.1</span><span class="toctitle">&#x2003;Вступ до електронної кореляції</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-531" class="tocsection" >
+<span class="sectionnumber">5.2</span><span class="toctitle">&#x2003;Теорія збурень Møller–Plesset (MP2)</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-548" class="tocsection" >
+<span class="sectionnumber">5.3</span><span class="toctitle">&#x2003;Основи методу конфігураційної взаємодії</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-565" class="tocsection" >
+<span class="sectionnumber">5.4</span><span class="toctitle">&#x2003;Метод зв’язаних кластерів</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-586" class="tocsection" >
+<span class="sectionnumber">5.5</span><span class="toctitle">&#x2003;Метод повного активного простору конфігурацій</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-608" class="tocsection" >
+<span class="sectionnumber">5.6</span><span class="toctitle">&#x2003;Функціонал енергії та натуральні орбіталі</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-616" class="tocsection" >
+<span class="sectionnumber">5.7</span><span class="toctitle">&#x2003;Межі наближень і рівняння Шредінґера</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-623" class="tocsection" >
+<span class="sectionnumber">5.8</span><span class="toctitle">&#x2003;Корисні посилання</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-624" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="post-hf.html#autosec-626" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="dft.html#autosec-663" class="tocchapter" >
+<span class="sectionnumber">6</span><span class="toctitle">&#x2003;Теорія функціоналу густини (DFT)</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-664" class="tocsection" >
+<span class="sectionnumber">6.1</span><span class="toctitle">&#x2003;Основи теорії функціоналу густини</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-675" class="tocsection" >
+<span class="sectionnumber">6.2</span><span class="toctitle">&#x2003;Базова структура DFT розрахунку</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-683" class="tocsection" >
+<span class="sectionnumber">6.3</span><span class="toctitle">&#x2003;Функціонали обміну-кореляції</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-714" class="tocsection" >
+<span class="sectionnumber">6.4</span><span class="toctitle">&#x2003;Практичні рекомендації</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-716" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="dft.html#autosec-717" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="response.html#autosec-764" class="tocpart" >
+<span class="sectionnumber">III</span><span class="toctitle">&#x2003;Властивості молекул</span></a>
+</p>
+<p>
+<a href="response.html#autosec-765" class="tocchapter" >
+<span class="sectionnumber">7</span><span class="toctitle">&#x2003;Молекулярні властивості як похідні енергії</span></a>
+</p>
+<p>
+<a href="response.html#autosec-766" class="tocsection" >
+<span class="sectionnumber">7.1</span><span class="toctitle">&#x2003;Молекулярні властивості як похідні енергії</span></a>
+</p>
+<p>
+<a href="response.html#autosec-773" class="tocsection" >
+<span class="sectionnumber">7.2</span><span class="toctitle">&#x2003;Чисельні та аналітичні похідні</span></a>
+</p>
+<p>
+<a href="response.html#autosec-777" class="tocsection" >
+<span class="sectionnumber">7.3</span><span class="toctitle">&#x2003;Варіаційні методи та залежність енергії від параметрів</span></a>
+</p>
+<p>
+<a href="response.html#autosec-778" class="tocsection" >
+<span class="sectionnumber">7.4</span><span class="toctitle">&#x2003;Аналітичні похідні в методі Хартрі-Фока</span></a>
+</p>
+<p>
+<a href="response.html#autosec-800" class="tocsection" >
+<span class="sectionnumber">7.5</span><span class="toctitle">&#x2003;Поляризовність у методі HF</span></a>
+</p>
+<p>
+<a href="response.html#autosec-812" class="tocsection" >
+<span class="sectionnumber">7.6</span><span class="toctitle">&#x2003;Ядерний гесіан у методі HF</span></a>
+</p>
+<p>
+<a href="response.html#autosec-816" class="tocsection" >
+<span class="sectionnumber">7.7</span><span class="toctitle">&#x2003;Оптимізація геометрії</span></a>
+</p>
+<p>
+<a href="response.html#autosec-824" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="vibrations.html#autosec-851" class="tocchapter" >
+<span class="sectionnumber">8</span><span class="toctitle">&#x2003;Коливальні властивості молекул</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-854" class="tocsection" >
+<span class="sectionnumber">8.1</span><span class="toctitle">&#x2003;Гессіан та нормальні моди</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-876" class="tocsection" >
+<span class="sectionnumber">8.2</span><span class="toctitle">&#x2003;Інфрачервоні (ІЧ) спектри</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-907" class="tocsection" >
+<span class="sectionnumber">8.3</span><span class="toctitle">&#x2003;Термохімія та нульова енергія</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-919" class="tocsection" >
+<span class="sectionnumber">8.4</span><span class="toctitle">&#x2003;Перехідні стани та уявні частоти</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-927" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="vibrations.html#autosec-928" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="excited-states.html#autosec-941" class="tocchapter" >
+<span class="sectionnumber">9</span><span class="toctitle">&#x2003;Збуджені стани та UV/VIS спектроскопія</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-942" class="tocsection" >
+<span class="sectionnumber">9.1</span><span class="toctitle">&#x2003;Спектроскопічні властивості: перехідні дипольні моменти і сили осцилятора</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-948" class="tocsection" >
+<span class="sectionnumber">9.2</span><span class="toctitle">&#x2003;Збуджені стани в рамках методу Хартрі–Фока</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-954" class="tocsection" >
+<span class="sectionnumber">9.3</span><span class="toctitle">&#x2003;Часозалежна теорія функціонала густини (TD-DFT)</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-958" class="tocsection" >
+<span class="sectionnumber">9.4</span><span class="toctitle">&#x2003;Збуджені стани у методах конфігураційної взаємодії</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-959" class="tocsection" >
+<span class="sectionnumber">9.5</span><span class="toctitle">&#x2003;Метод рівнянь руху (EOM)</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-973" class="tocsection" >
+<span class="sectionnumber">9.6</span><span class="toctitle">&#x2003;Збуджені стани у CASSCF / NEVPT2</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-974" class="tocsection" >
+<span class="sectionnumber">9.7</span><span class="toctitle">&#x2003;Рекомендації з вибору методу</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-975" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="excited-states.html#autosec-976" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="appendices.html#autosec-991" class="tocchapter" >
+Додатки</a>
+</p>
+<p>
+<a href="appendices.html#autosec-992" class="tocsection" >
+<span class="sectionnumber">А</span><span class="toctitle">&#x2003;Список абревіатур</span></a>
+</p>
+<p>
+<a href="appendices.html#autosec-993" class="tocsection" >
+<span class="sectionnumber">Б</span><span class="toctitle">&#x2003;Молекулярно-орбітальне (МО) представлення</span></a>
+</p>
+<p>
+<a href="appendices.html#autosec-999" class="tocsection" >
+<span class="sectionnumber">В</span><span class="toctitle">&#x2003;Метод DIIS та прискорення збіжності SCF</span></a>
+</p>
+<p>
+<a href="appendices.html#autosec-1000" class="tocsection" >
+<span class="sectionnumber">Г</span><span class="toctitle">&#x2003;Проблеми збіжності SCF та їх усунення</span></a>
+</p>
+<p>
+<a href="bibliography.html#autosec-1020" class="tocchapter" >
+Література</a>
+</p>
+</div>
+</nav>
+</div>
+<main class="bodycontainer" data-pagefind-body data-pagefind-meta="title[data-title]" data-title="Властивості молекул">
+<section class="textbody">
+<h1 data-pagefind-ignore>Квантово-механічні методи обчислення</h1>
+<!--MathJax customizations:-->
+<div data-nosnippet
+style="display:none"
+>
+\(\newcommand{\footnotename}{footnote}\)
+\(\def \LWRfootnote {1}\)
+\(\newcommand {\footnote }[2][\LWRfootnote ]{{}^{\mathrm {#1}}}\)
+\(\newcommand {\footnotemark }[1][\LWRfootnote ]{{}^{\mathrm {#1}}}\)
+\(\let \LWRorighspace \hspace \)
+\(\renewcommand {\hspace }{\ifstar \LWRorighspace \LWRorighspace }\)
+\(\newcommand {\TextOrMath }[2]{#2}\)
+\(\newcommand {\mathnormal }[1]{{#1}}\)
+\(\newcommand \ensuremath [1]{#1}\)
+\(\newcommand {\LWRframebox }[2][]{\fbox {#2}} \newcommand {\framebox }[1][]{\LWRframebox } \)
+\(\newcommand {\setlength }[2]{}\)
+\(\newcommand {\addtolength }[2]{}\)
+\(\newcommand {\setcounter }[2]{}\)
+\(\newcommand {\addtocounter }[2]{}\)
+\(\newcommand {\arabic }[1]{}\)
+\(\newcommand {\number }[1]{}\)
+\(\newcommand {\noalign }[1]{\text {#1}\notag \\}\)
+\(\newcommand {\cline }[1]{}\)
+\(\newcommand {\directlua }[1]{\text {(directlua)}}\)
+\(\newcommand {\luatexdirectlua }[1]{\text {(directlua)}}\)
+\(\newcommand {\protect }{}\)
+\(\def \LWRabsorbnumber #1 {}\)
+\(\def \LWRabsorbquotenumber &quot;#1 {}\)
+\(\newcommand {\LWRabsorboption }[1][]{}\)
+\(\newcommand {\LWRabsorbtwooptions }[1][]{\LWRabsorboption }\)
+\(\def \mathchar {\ifnextchar &quot;\LWRabsorbquotenumber \LWRabsorbnumber }\)
+\(\def \mathcode #1={\mathchar }\)
+\(\let \delcode \mathcode \)
+\(\let \delimiter \mathchar \)
+\(\def \oe {\unicode {x0153}}\)
+\(\def \OE {\unicode {x0152}}\)
+\(\def \ae {\unicode {x00E6}}\)
+\(\def \AE {\unicode {x00C6}}\)
+\(\def \aa {\unicode {x00E5}}\)
+\(\def \AA {\unicode {x00C5}}\)
+\(\def \o {\unicode {x00F8}}\)
+\(\def \O {\unicode {x00D8}}\)
+\(\def \l {\unicode {x0142}}\)
+\(\def \L {\unicode {x0141}}\)
+\(\def \ss {\unicode {x00DF}}\)
+\(\def \SS {\unicode {x1E9E}}\)
+\(\def \dag {\unicode {x2020}}\)
+\(\def \ddag {\unicode {x2021}}\)
+\(\def \P {\unicode {x00B6}}\)
+\(\def \copyright {\unicode {x00A9}}\)
+\(\def \pounds {\unicode {x00A3}}\)
+\(\let \LWRref \ref \)
+\(\renewcommand {\ref }{\ifstar \LWRref \LWRref }\)
+\( \newcommand {\multicolumn }[3]{#3}\)
+\(\require {textcomp}\)
+\(\require {colortbl}\)
+\(\let \LWRorigcolumncolor \columncolor \)
+\(\renewcommand {\columncolor }[2][named]{\LWRorigcolumncolor [#1]{#2}\LWRabsorbtwooptions }\)
+\(\let \LWRorigrowcolor \rowcolor \)
+\(\renewcommand {\rowcolor }[2][named]{\LWRorigrowcolor [#1]{#2}\LWRabsorbtwooptions }\)
+\(\let \LWRorigcellcolor \cellcolor \)
+\(\renewcommand {\cellcolor }[2][named]{\LWRorigcellcolor [#1]{#2}\LWRabsorbtwooptions }\)
+\(\newcommand {\intertext }[1]{\text {#1}\notag \\}\)
+\(\let \Hat \hat \)
+\(\let \Check \check \)
+\(\let \Tilde \tilde \)
+\(\let \Acute \acute \)
+\(\let \Grave \grave \)
+\(\let \Dot \dot \)
+\(\let \Ddot \ddot \)
+\(\let \Breve \breve \)
+\(\let \Bar \bar \)
+\(\let \Vec \vec \)
+\(\let \symnormal \mathit \)
+\(\let \symliteral \mathrm \)
+\(\let \symbb \mathbb \)
+\(\let \symbbit \mathbb \)
+\(\let \symcal \mathcal \)
+\(\let \symscr \mathscr \)
+\(\let \symfrak \mathfrak \)
+\(\let \symsfup \mathsf \)
+\(\let \symsfit \mathit \)
+\(\let \symbfsf \mathbf \)
+\(\let \symbfup \mathbf \)
+\(\newcommand {\symbfit }[1]{\boldsymbol {#1}}\)
+\(\let \symbfcal \mathcal \)
+\(\let \symbfscr \mathscr \)
+\(\let \symbffrak \mathfrak \)
+\(\let \symbfsfup \mathbf \)
+\(\newcommand {\symbfsfit }[1]{\boldsymbol {#1}}\)
+\(\let \symup \mathrm \)
+\(\let \symbf \mathbf \)
+\(\let \symit \mathit \)
+\(\let \symtt \mathtt \)
+\(\let \symbffrac \mathbffrac \)
+\(\newcommand {\mathfence }[1]{\mathord {#1}}\)
+\(\newcommand {\mathover }[1]{#1}\)
+\(\newcommand {\mathunder }[1]{#1}\)
+\(\newcommand {\mathaccent }[1]{#1}\)
+\(\newcommand {\mathbotaccent }[1]{#1}\)
+\(\newcommand {\mathalpha }[1]{\mathord {#1}}\)
+\(\def\upAlpha{\unicode{x0391}}\)
+\(\def\upBeta{\unicode{x0392}}\)
+\(\def\upGamma{\unicode{x0393}}\)
+\(\def\upDigamma{\unicode{x03DC}}\)
+\(\def\upDelta{\unicode{x0394}}\)
+\(\def\upEpsilon{\unicode{x0395}}\)
+\(\def\upZeta{\unicode{x0396}}\)
+\(\def\upEta{\unicode{x0397}}\)
+\(\def\upTheta{\unicode{x0398}}\)
+\(\def\upVartheta{\unicode{x03F4}}\)
+\(\def\upIota{\unicode{x0399}}\)
+\(\def\upKappa{\unicode{x039A}}\)
+\(\def\upLambda{\unicode{x039B}}\)
+\(\def\upMu{\unicode{x039C}}\)
+\(\def\upNu{\unicode{x039D}}\)
+\(\def\upXi{\unicode{x039E}}\)
+\(\def\upOmicron{\unicode{x039F}}\)
+\(\def\upPi{\unicode{x03A0}}\)
+\(\def\upVarpi{\unicode{x03D6}}\)
+\(\def\upRho{\unicode{x03A1}}\)
+\(\def\upSigma{\unicode{x03A3}}\)
+\(\def\upTau{\unicode{x03A4}}\)
+\(\def\upUpsilon{\unicode{x03A5}}\)
+\(\def\upPhi{\unicode{x03A6}}\)
+\(\def\upChi{\unicode{x03A7}}\)
+\(\def\upPsi{\unicode{x03A8}}\)
+\(\def\upOmega{\unicode{x03A9}}\)
+\(\def\itAlpha{\unicode{x1D6E2}}\)
+\(\def\itBeta{\unicode{x1D6E3}}\)
+\(\def\itGamma{\unicode{x1D6E4}}\)
+\(\def\itDigamma{\mathit{\unicode{x03DC}}}\)
+\(\def\itDelta{\unicode{x1D6E5}}\)
+\(\def\itEpsilon{\unicode{x1D6E6}}\)
+\(\def\itZeta{\unicode{x1D6E7}}\)
+\(\def\itEta{\unicode{x1D6E8}}\)
+\(\def\itTheta{\unicode{x1D6E9}}\)
+\(\def\itVartheta{\unicode{x1D6F3}}\)
+\(\def\itIota{\unicode{x1D6EA}}\)
+\(\def\itKappa{\unicode{x1D6EB}}\)
+\(\def\itLambda{\unicode{x1D6EC}}\)
+\(\def\itMu{\unicode{x1D6ED}}\)
+\(\def\itNu{\unicode{x1D6EE}}\)
+\(\def\itXi{\unicode{x1D6EF}}\)
+\(\def\itOmicron{\unicode{x1D6F0}}\)
+\(\def\itPi{\unicode{x1D6F1}}\)
+\(\def\itRho{\unicode{x1D6F2}}\)
+\(\def\itSigma{\unicode{x1D6F4}}\)
+\(\def\itTau{\unicode{x1D6F5}}\)
+\(\def\itUpsilon{\unicode{x1D6F6}}\)
+\(\def\itPhi{\unicode{x1D6F7}}\)
+\(\def\itChi{\unicode{x1D6F8}}\)
+\(\def\itPsi{\unicode{x1D6F9}}\)
+\(\def\itOmega{\unicode{x1D6FA}}\)
+\(\def\upalpha{\unicode{x03B1}}\)
+\(\def\upbeta{\unicode{x03B2}}\)
+\(\def\upvarbeta{\unicode{x03D0}}\)
+\(\def\upgamma{\unicode{x03B3}}\)
+\(\def\updigamma{\unicode{x03DD}}\)
+\(\def\updelta{\unicode{x03B4}}\)
+\(\def\upepsilon{\unicode{x03F5}}\)
+\(\def\upvarepsilon{\unicode{x03B5}}\)
+\(\def\upzeta{\unicode{x03B6}}\)
+\(\def\upeta{\unicode{x03B7}}\)
+\(\def\uptheta{\unicode{x03B8}}\)
+\(\def\upvartheta{\unicode{x03D1}}\)
+\(\def\upiota{\unicode{x03B9}}\)
+\(\def\upkappa{\unicode{x03BA}}\)
+\(\def\upvarkappa{\unicode{x03F0}}\)
+\(\def\uplambda{\unicode{x03BB}}\)
+\(\def\upmu{\unicode{x03BC}}\)
+\(\def\upnu{\unicode{x03BD}}\)
+\(\def\upxi{\unicode{x03BE}}\)
+\(\def\upomicron{\unicode{x03BF}}\)
+\(\def\uppi{\unicode{x03C0}}\)
+\(\def\upvarpi{\unicode{x03D6}}\)
+\(\def\uprho{\unicode{x03C1}}\)
+\(\def\upvarrho{\unicode{x03F1}}\)
+\(\def\upsigma{\unicode{x03C3}}\)
+\(\def\upvarsigma{\unicode{x03C2}}\)
+\(\def\uptau{\unicode{x03C4}}\)
+\(\def\upupsilon{\unicode{x03C5}}\)
+\(\def\upphi{\unicode{x03D5}}\)
+\(\def\upvarphi{\unicode{x03C6}}\)
+\(\def\upchi{\unicode{x03C7}}\)
+\(\def\uppsi{\unicode{x03C8}}\)
+\(\def\upomega{\unicode{x03C9}}\)
+\(\def\italpha{\unicode{x1D6FC}}\)
+\(\def\itbeta{\unicode{x1D6FD}}\)
+\(\def\itvarbeta{\unicode{x03D0}}\)
+\(\def\itgamma{\unicode{x1D6FE}}\)
+\(\def\itdigamma{\mathit{\unicode{x03DD}}}\)
+\(\def\itdelta{\unicode{x1D6FF}}\)
+\(\def\itepsilon{\unicode{x1D716}}\)
+\(\def\itvarepsilon{\unicode{x1D700}}\)
+\(\def\itzeta{\unicode{x1D701}}\)
+\(\def\iteta{\unicode{x1D702}}\)
+\(\def\ittheta{\unicode{x1D703}}\)
+\(\def\itvartheta{\unicode{x1D717}}\)
+\(\def\itiota{\unicode{x1D704}}\)
+\(\def\itkappa{\unicode{x1D705}}\)
+\(\def\itvarkappa{\unicode{x1D718}}\)
+\(\def\itlambda{\unicode{x1D706}}\)
+\(\def\itmu{\unicode{x1D707}}\)
+\(\def\itnu{\unicode{x1D708}}\)
+\(\def\itxi{\unicode{x1D709}}\)
+\(\def\itomicron{\unicode{x1D70A}}\)
+\(\def\itpi{\unicode{x1D70B}}\)
+\(\def\itvarpi{\unicode{x1D71B}}\)
+\(\def\itrho{\unicode{x1D70C}}\)
+\(\def\itvarrho{\unicode{x1D71A}}\)
+\(\def\itsigma{\unicode{x1D70E}}\)
+\(\def\itvarsigma{\unicode{x1D70D}}\)
+\(\def\ittau{\unicode{x1D70F}}\)
+\(\def\itupsilon{\unicode{x1D710}}\)
+\(\def\itphi{\unicode{x1D719}}\)
+\(\def\itvarphi{\unicode{x1D711}}\)
+\(\def\itchi{\unicode{x1D712}}\)
+\(\def\itpsi{\unicode{x1D713}}\)
+\(\def\itomega{\unicode{x1D714}}\)
+\(\let \lparen (\)
+\(\let \rparen )\)
+\(\newcommand {\cuberoot }[1]{\,{}^3\!\!\sqrt {#1}}\,\)
+\(\newcommand {\fourthroot }[1]{\,{}^4\!\!\sqrt {#1}}\,\)
+\(\newcommand {\longdivision }[1]{\mathord {\unicode {x027CC}#1}}\)
+\(\newcommand {\mathcomma }{,}\)
+\(\newcommand {\mathcolon }{:}\)
+\(\newcommand {\mathsemicolon }{;}\)
+\(\newcommand {\overbracket }[1]{\mathinner {\overline {\ulcorner {#1}\urcorner }}}\)
+\(\newcommand {\underbracket }[1]{\mathinner {\underline {\llcorner {#1}\lrcorner }}}\)
+\(\newcommand {\overbar }[1]{\mathord {#1\unicode {x00305}}}\)
+\(\newcommand {\ovhook }[1]{\mathord {#1\unicode {x00309}}}\)
+\(\newcommand {\ocirc }[1]{\mathord {#1\unicode {x0030A}}}\)
+\(\newcommand {\candra }[1]{\mathord {#1\unicode {x00310}}}\)
+\(\newcommand {\oturnedcomma }[1]{\mathord {#1\unicode {x00312}}}\)
+\(\newcommand {\ocommatopright }[1]{\mathord {#1\unicode {x00315}}}\)
+\(\newcommand {\droang }[1]{\mathord {#1\unicode {x0031A}}}\)
+\(\newcommand {\leftharpoonaccent }[1]{\mathord {#1\unicode {x020D0}}}\)
+\(\newcommand {\rightharpoonaccent }[1]{\mathord {#1\unicode {x020D1}}}\)
+\(\newcommand {\vertoverlay }[1]{\mathord {#1\unicode {x020D2}}}\)
+\(\newcommand {\leftarrowaccent }[1]{\mathord {#1\unicode {x020D0}}}\)
+\(\newcommand {\annuity }[1]{\mathord {#1\unicode {x020E7}}}\)
+\(\newcommand {\widebridgeabove }[1]{\mathord {#1\unicode {x020E9}}}\)
+\(\newcommand {\asteraccent }[1]{\mathord {#1\unicode {x020F0}}}\)
+\(\newcommand {\threeunderdot }[1]{\mathord {#1\unicode {x020E8}}}\)
+\(\newcommand {\Bbbsum }{\mathop {\unicode {x2140}}\limits }\)
+\(\newcommand {\oiint }{\mathop {\unicode {x222F}}\limits }\)
+\(\newcommand {\oiiint }{\mathop {\unicode {x2230}}\limits }\)
+\(\newcommand {\intclockwise }{\mathop {\unicode {x2231}}\limits }\)
+\(\newcommand {\ointclockwise }{\mathop {\unicode {x2232}}\limits }\)
+\(\newcommand {\ointctrclockwise }{\mathop {\unicode {x2233}}\limits }\)
+\(\newcommand {\varointclockwise }{\mathop {\unicode {x2232}}\limits }\)
+\(\newcommand {\leftouterjoin }{\mathop {\unicode {x27D5}}\limits }\)
+\(\newcommand {\rightouterjoin }{\mathop {\unicode {x27D6}}\limits }\)
+\(\newcommand {\fullouterjoin }{\mathop {\unicode {x27D7}}\limits }\)
+\(\newcommand {\bigbot }{\mathop {\unicode {x27D8}}\limits }\)
+\(\newcommand {\bigtop }{\mathop {\unicode {x27D9}}\limits }\)
+\(\newcommand {\xsol }{\mathop {\unicode {x29F8}}\limits }\)
+\(\newcommand {\xbsol }{\mathop {\unicode {x29F9}}\limits }\)
+\(\newcommand {\bigcupdot }{\mathop {\unicode {x2A03}}\limits }\)
+\(\newcommand {\bigsqcap }{\mathop {\unicode {x2A05}}\limits }\)
+\(\newcommand {\conjquant }{\mathop {\unicode {x2A07}}\limits }\)
+\(\newcommand {\disjquant }{\mathop {\unicode {x2A08}}\limits }\)
+\(\newcommand {\bigtimes }{\mathop {\unicode {x2A09}}\limits }\)
+\(\newcommand {\modtwosum }{\mathop {\unicode {x2A0A}}\limits }\)
+\(\newcommand {\sumint }{\mathop {\unicode {x2A0B}}\limits }\)
+\(\newcommand {\intbar }{\mathop {\unicode {x2A0D}}\limits }\)
+\(\newcommand {\intBar }{\mathop {\unicode {x2A0E}}\limits }\)
+\(\newcommand {\fint }{\mathop {\unicode {x2A0F}}\limits }\)
+\(\newcommand {\cirfnint }{\mathop {\unicode {x2A10}}\limits }\)
+\(\newcommand {\awint }{\mathop {\unicode {x2A11}}\limits }\)
+\(\newcommand {\rppolint }{\mathop {\unicode {x2A12}}\limits }\)
+\(\newcommand {\scpolint }{\mathop {\unicode {x2A13}}\limits }\)
+\(\newcommand {\npolint }{\mathop {\unicode {x2A14}}\limits }\)
+\(\newcommand {\pointint }{\mathop {\unicode {x2A15}}\limits }\)
+\(\newcommand {\sqint }{\mathop {\unicode {x2A16}}\limits }\)
+\(\newcommand {\intlarhk }{\mathop {\unicode {x2A17}}\limits }\)
+\(\newcommand {\intx }{\mathop {\unicode {x2A18}}\limits }\)
+\(\newcommand {\intcap }{\mathop {\unicode {x2A19}}\limits }\)
+\(\newcommand {\intcup }{\mathop {\unicode {x2A1A}}\limits }\)
+\(\newcommand {\upint }{\mathop {\unicode {x2A1B}}\limits }\)
+\(\newcommand {\lowint }{\mathop {\unicode {x2A1C}}\limits }\)
+\(\newcommand {\bigtriangleleft }{\mathop {\unicode {x2A1E}}\limits }\)
+\(\newcommand {\zcmp }{\mathop {\unicode {x2A1F}}\limits }\)
+\(\newcommand {\zpipe }{\mathop {\unicode {x2A20}}\limits }\)
+\(\newcommand {\zproject }{\mathop {\unicode {x2A21}}\limits }\)
+\(\newcommand {\biginterleave }{\mathop {\unicode {x2AFC}}\limits }\)
+\(\newcommand {\bigtalloblong }{\mathop {\unicode {x2AFF}}\limits }\)
+\(\newcommand {\arabicmaj }{\mathop {\unicode {x1EEF0}}\limits }\)
+\(\newcommand {\arabichad }{\mathop {\unicode {x1EEF1}}\limits }\)
+\(\newcommand {\nicefrac }[3][]{\mathinner {{}^{#2}\!/\!_{#3}}}\)
+\(\require {mhchem}\)
+\(\newcommand {\LWRnicearrayarray }[1]{\begin {array}{#1}}\)
+\(\def \LWRnicearrayarrayopt #1[#2] {\begin {array}{#1}}\)
+\(\newenvironment {NiceArray}[2][]{\ifnextchar [{\LWRnicearrayarrayopt {#2}}{\LWRnicearrayarray {#2}}}{\end {array}}\)
+\(\newcommand {\LWRnicearraywithdelimtwo }[2][]{\ifnextchar [{\LWRnicearrayarrayopt {#2}}{\LWRnicearrayarray {#2}}}\)
+\(\newenvironment {NiceArrayWithDelims}[2]{\def \LWRnicearrayrightdelim {\right #2}\left #1\LWRnicearraywithdelimtwo }{\end {array}\LWRnicearrayrightdelim }\)
+\(\newenvironment {pNiceArray} {\begin {NiceArrayWithDelims}{(}{)}} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {bNiceArray} {\begin {NiceArrayWithDelims}{[}{]}} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {BNiceArray} {\begin {NiceArrayWithDelims}{\{}{\}}} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {vNiceArray} {\begin {NiceArrayWithDelims}{\vert }{\vert }} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {VNiceArray} {\begin {NiceArrayWithDelims}{\Vert }{\Vert }} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {NiceMatrix}[1][]{\begin {matrix}}{\end {matrix}}\)
+\(\newenvironment {pNiceMatrix}[1][]{\begin {pmatrix}}{\end {pmatrix}}\)
+\(\newenvironment {bNiceMatrix}[1][]{\begin {bmatrix}}{\end {bmatrix}}\)
+\(\newenvironment {BNiceMatrix}[1][]{\begin {Bmatrix}}{\end {Bmatrix}}\)
+\(\newenvironment {vNiceMatrix}[1][]{\begin {vmatrix}}{\end {vmatrix}}\)
+\(\newenvironment {VNiceMatrix}[1][]{\begin {Vmatrix}}{\end {Vmatrix}}\)
+\(\newcommand {\LWRnicematrixBlock }[1]{#1}\)
+\(\def \LWRnicematrixBlockopt &lt;#1&gt;#2{#2}\)
+\(\newcommand {\Block }[2][]{\ifnextchar &lt;\LWRnicematrixBlockopt \LWRnicematrixBlock }\)
+\(\newcommand {\diagbox }[2]{\begin {array}{l}\hfill \quad #2\\\hline #1\quad \hfill \end {array}}\)
+\(\let \hdottedline \hdashline \)
+\(\newcommand {\Hline }[1][]{\hline }\)
+\(\newcommand {\CodeBefore }{}\)
+\(\newcommand {\Body }{}\)
+\(\newcommand {\CodeAfter }{}\)
+\(\newcommand {\line }[3][]{}\)
+\(\newcommand {\RowStyle }[2][]{}\)
+\(\newcommand {\LWRSubMatrix }[1][]{}\)
+\(\newcommand {\SubMatrix }[4]{\LWRSubMatrix }\)
+\(\newcommand {\OverBrace }[4][]{}\)
+\(\newcommand {\UnderBrace }[4][]{}\)
+\(\newcommand {\HBrace }[3][]{}\)
+\(\newcommand {\VBrace }[3][]{}\)
+\(\newcommand {\ShowCellNames }{}\)
+\(\newcommand {\tabularnote }[2][]{}\)
+\(\newcommand {\cellcolor }[3][]{}\)
+\(\newcommand {\rowcolor }[3][]{}\)
+\(\newcommand {\LWRrowcolors }[1][]{}\)
+\(\newcommand {\rowcolors }[4][]{\LWRrowcolors }\)
+\(\newcommand {\rowlistcolors }[3][]{\LWRrowcolors }\)
+\(\newcommand {\columncolor }[3][]{}\)
+\(\newcommand {\rectanglecolor }[4][]{}\)
+\(\newcommand {\arraycolor }[2][]{}\)
+\(\newcommand {\chessboardcolors }[3][]{}\)
+\(\newcommand {\ldots }[1][]{\dots }\)
+\(\newcommand {\Cdots }[1][]{\cdots }\)
+\(\newcommand {\Vdots }[1][]{\vdots }\)
+\(\newcommand {\Ddots }[1][]{\ddots }\)
+\(\newcommand {\Iddots }[1][]{\mathinner {\unicode {x22F0}}}\)
+\(\newcommand {\Hdotsfor }[1]{\ldots }\)
+\(\newcommand {\Vdotsfor }[1]{\vdots }\)
+\(\newcommand {\AutoNiceMatrix }[2]{\text {(AutoNiceMatrix #1)}}\)
+\(\let \pAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \bAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \BAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \vAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \VAutoNiceMatrix \AutoNiceMatrix \)
+\(\newcommand {\toprule }[1][]{\hline }\)
+\(\let \midrule \toprule \)
+\(\let \bottomrule \toprule \)
+\(\def \LWRbooktabscmidruleparen (#1)#2{}\)
+\(\newcommand {\LWRbooktabscmidrulenoparen }[1]{}\)
+\(\newcommand {\cmidrule }[1][]{\ifnextchar (\LWRbooktabscmidruleparen \LWRbooktabscmidrulenoparen }\)
+\(\newcommand {\morecmidrules }{}\)
+\(\newcommand {\specialrule }[3]{\hline }\)
+\(\newcommand {\addlinespace }[1][]{}\)
+\(\newcommand {\LWRsubmultirow }[2][]{#2}\)
+\(\newcommand {\LWRmultirow }[2][]{\LWRsubmultirow }\)
+\(\newcommand {\multirow }[2][]{\LWRmultirow }\)
+\(\newcommand {\mrowcell }{}\)
+\(\newcommand {\mcolrowcell }{}\)
+\(\newcommand {\STneed }[1]{}\)
+\(\DeclareMathOperator {\const }{const}\)
+\(\DeclareMathOperator {\Div }{div}\)
+\(\DeclareMathOperator {\Rot }{rot}\)
+\(\DeclareMathOperator {\Grad }{grad}\)
+\(\DeclareMathOperator {\inv }{inv}\)
+\(\DeclareMathOperator {\Tr }{Tr}\)
+\(\newcommand {\emf }{ℰ}\)
+\(\newcommand {\tikzmarknode }[2]{#2}\)
+\(\newcommand {\tikzmark }[1]{}\)
+\(\newcommand {\enquote }[1]{«#1»}\)
+\(\newcommand {\allowbreak }{}\)
+\(\newcommand {\mitlambda }{\lambda }\)
+\(\newcommand {\mitomega }{\omega }\)
+\(\newcommand {\mittheta }{\theta }\)
+\(\newcommand {\mitphi }{\varphi }\)
+\(\newcommand {\tcbhighmath }[1]{\boxed {#1}}\)
+\(\newcommand {\Efield }{\mathbf {E}}\)
+\(\newcommand {\Dfield }{\mathbf {D}}\)
+\(\newcommand {\Bfield }{\mathbf {B}}\)
+\(\newcommand {\Hfield }{\mathbf {H}}\)
+\(\newcommand {\ket }[1]{\left | #1 \right \rangle }\)
+\(\newcommand {\bra }[1]{\left \langle #1 \right |}\)
+\(\newcommand {\opbraket }[3]{\left \langle #1 \middle | #2 \middle | #3 \right \rangle }\)
+\(\newcommand {\diff }[2]{\frac {\partial #1}{\partial #2}}\)
+\(\newcommand {\ddiff }[2]{\frac {\partial ^2 #1}{\partial #2^2}}\)
+\(\newcommand {\grad }{\mathbf {\nabla }}\)
+\(\newcommand {\rot }{\mathbf {\nabla }\times }\)
+\(\newcommand {\divg }{\mathbf {\nabla }\cdot }\)
+\(\newcommand {\Laplasian }{\Delta }\)
+\(\newcommand {\EMF }{\mathcal {E}}\)
+\(\newcommand {\vxi }{\vec {\xi }}\)
+\(\newcommand {\vr }{\vec {r}}\)
+\(\newcommand {\vphi }{\varphi }\)
+\(\newcommand {\veps }{\varepsilon }\)
+\(\newcommand {\eff }{\mathrm {eff}}\)
+\(\newcommand {\PySCF }{\texttt {PySCF}}\)
+\(\newcommand {\vect }[1]{\mathbf {#1}}\)
+\(\newcommand {\symbf }[1]{\mathbf {#1}}\)
+\(\DeclareMathOperator {\sh }{sh}\)
+\(\DeclareMathOperator {\ch }{ch}\)
+\(\DeclareMathOperator {\tg }{tg}\)
+\(\DeclareMathOperator {\ctg }{ctg}\)
+\(\DeclareMathOperator {\arctg }{arctg}\)
+\(\DeclareMathOperator {\arcctg }{arcctg}\)
+\(\DeclareMathOperator {\cth }{cth}\)
+\(\DeclareMathOperator {\cosec }{cosec}\)
+\(\let \symsf \symsfup \)
+\(\def\Alpha{\unicode{x0391}}\)
+\(\def\Beta{\unicode{x0392}}\)
+\(\def\Gamma{\unicode{x0393}}\)
+\(\def\Digamma{\unicode{x03DC}}\)
+\(\def\Delta{\unicode{x0394}}\)
+\(\def\Epsilon{\unicode{x0395}}\)
+\(\def\Zeta{\unicode{x0396}}\)
+\(\def\Eta{\unicode{x0397}}\)
+\(\def\Theta{\unicode{x0398}}\)
+\(\def\Vartheta{\unicode{x03F4}}\)
+\(\def\Iota{\unicode{x0399}}\)
+\(\def\Kappa{\unicode{x039A}}\)
+\(\def\Lambda{\unicode{x039B}}\)
+\(\def\Mu{\unicode{x039C}}\)
+\(\def\Nu{\unicode{x039D}}\)
+\(\def\Xi{\unicode{x039E}}\)
+\(\def\Omicron{\unicode{x039F}}\)
+\(\def\Pi{\unicode{x03A0}}\)
+\(\def\Varpi{\unicode{x03D6}}\)
+\(\def\Rho{\unicode{x03A1}}\)
+\(\def\Sigma{\unicode{x03A3}}\)
+\(\def\Tau{\unicode{x03A4}}\)
+\(\def\Upsilon{\unicode{x03A5}}\)
+\(\def\Phi{\unicode{x03A6}}\)
+\(\def\Chi{\unicode{x03A7}}\)
+\(\def\Psi{\unicode{x03A8}}\)
+\(\def\Omega{\unicode{x03A9}}\)
+\(\def\alpha{\unicode{x1D6FC}}\)
+\(\def\beta{\unicode{x1D6FD}}\)
+\(\def\varbeta{\unicode{x03D0}}\)
+\(\def\gamma{\unicode{x1D6FE}}\)
+\(\def\digamma{\mathit{\unicode{x03DD}}}\)
+\(\def\delta{\unicode{x1D6FF}}\)
+\(\def\epsilon{\unicode{x1D716}}\)
+\(\def\varepsilon{\unicode{x1D700}}\)
+\(\def\zeta{\unicode{x1D701}}\)
+\(\def\eta{\unicode{x1D702}}\)
+\(\def\theta{\unicode{x1D703}}\)
+\(\def\vartheta{\unicode{x1D717}}\)
+\(\def\iota{\unicode{x1D704}}\)
+\(\def\kappa{\unicode{x1D705}}\)
+\(\def\varkappa{\unicode{x1D718}}\)
+\(\def\lambda{\unicode{x1D706}}\)
+\(\def\mu{\unicode{x1D707}}\)
+\(\def\nu{\unicode{x1D708}}\)
+\(\def\xi{\unicode{x1D709}}\)
+\(\def\omicron{\unicode{x1D70A}}\)
+\(\def\pi{\unicode{x1D70B}}\)
+\(\def\varpi{\unicode{x1D71B}}\)
+\(\def\rho{\unicode{x1D70C}}\)
+\(\def\varrho{\unicode{x1D71A}}\)
+\(\def\sigma{\unicode{x1D70E}}\)
+\(\def\varsigma{\unicode{x1D70D}}\)
+\(\def\tau{\unicode{x1D70F}}\)
+\(\def\upsilon{\unicode{x1D710}}\)
+\(\def\phi{\unicode{x1D719}}\)
+\(\def\varphi{\unicode{x1D711}}\)
+\(\def\chi{\unicode{x1D712}}\)
+\(\def\psi{\unicode{x1D713}}\)
+\(\def\omega{\unicode{x1D714}}\)
+</div>
+<!--
+...... part Властивості молекул ......
+-->
+<h2 id="autosec-764">Частина&nbsp;<span class="sectionnumber">III&#x2003;</span>Властивості молекул</h2>
+<a id="main-html-autopage-764"></a>
+<a id="main-html-autofile-8"></a>
+<div class="epigraph" role="note">
+<div class="qitem">
+<p>
+«Ми змушені визнавати, що кожне спостереження неминуче порушує явище, але водночас саме спостереження й дає нам знання про нього.»
+</p>
+<div class="epigraphsource">
+<p>
+— Нільс Бор
+</p>
+</div>
+</div>
+</div>
+<!--
+...... chapter Молекулярні властивості як похідні енергії ......
+-->
+<h3 id="autosec-765"><span class="sectionnumber">7&#x2003;</span>Молекулярні властивості як похідні енергії</h3>
+<a id="main-html-autopage-765"></a>
+<p>
+У квантовій хімії енергія \(E\) молекули є основним об’єктом розрахунків, але вона не єдина величина, що визначає поведінку системи. Переважна більшість експериментальних спостережуваних — це <em>похідні енергії</em> за певними зовнішніми параметрами:
+електричним полем, магнітним полем, координатами ядер, формою потенціалу, навантаженням тощо. Саме тому аналітичні похідні енергії відіграють фундаментальну роль у квантовій теорії молекулярних властивостей.
+</p>
+<!--
+...... section Молекулярні властивості як похідні енергії ......
+-->
+<h4 id="autosec-766"><span class="sectionnumber">&#xA7;&#x202F;7.1&#x2003;</span>Молекулярні властивості як похідні енергії</h4>
+<a id="main-html-autopage-766"></a>
+<p>
+Енергія квантової системи залежить від зовнішнього параметра \(x\), який може описувати дію електричного або магнітного поля, зміну геометрії молекули, деформацію потенціалу тощо:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{0}\)</span>
+<!--
+𝐸 = 𝐸(𝑥). (7.1) --><a id="eq:E_x_def"></a><!--
+-->
+<p>
+\begin{equation}
+E = E(x). \label {eq:E_x_def}
+\end{equation}
+</p>
+<p>
+Для малих змін параметра виконують ряд Тейлора:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{1}\)</span>
+<!--
+𝐸(𝑥) = 𝐸(0) + 𝐸(1)𝑥 + 1
+2
+𝐸(2)𝑥2 + 1
+6
+𝐸(3)𝑥3 + … , (7.2) --><a id="eq:E_Taylor"></a><!--
+-->
+<p>
+\begin{equation}
+E(x)= E^{(0)} + E^{(1)}x + \tfrac 12 E^{(2)}x^2 + \tfrac 16 E^{(3)}x^3 + \dots , \label {eq:E_Taylor}
+\end{equation}
+</p>
+<p>
+де
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{2}\)</span>
+<!--
+𝐸(𝑛) =
+𝑑𝑛𝐸
+𝑑𝑥𝑛
+|
+|
+|
+𝑥=0
+. (7.3) --><a id="eq:E_n_def"></a><!--
+-->
+<p>
+\begin{equation}
+E^{(n)} = \left .\frac {d^n E}{dx^n}\right |_{x=0}. \label {eq:E_n_def}
+\end{equation}
+</p>
+<p>
+Кожна похідна має фізичний зміст, оскільки описує реакцію енергії на зовнішнє збурення. Розглянемо кілька фундаментальних прикладів.
+</p>
+<!--
+...... paragraph Дипольний момент та поляризовність. ......
+-->
+<p>
+<span class="paragraph" id="autosec-767">Дипольний момент та поляризовність.</span>
+<a id="main-html-autopage-767"></a>
+</p>
+<p>
+Почнемо з фундаментального визначення. Дипольний момент молекули — це зміна енергії при малому збільшенні однорідного електричного поля \(\mathcal {E}\):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{3}\)</span>
+<!--
+𝜇 = −
+𝑑𝐸
+𝑑ℰ
+|
+|
+|
+ℰ=0
+. (7.4) --><a id="eq:dipole_def"></a><!--
+-->
+<p>
+\begin{equation}
+\mu = -\,\left .\frac {dE}{d\mathcal {E}}\right |_{\mathcal {E}=0}. \label {eq:dipole_def}
+\end{equation}
+</p>
+<p>
+Іншими словами, дипольний момент — це лінійний коефіцієнт у розкладі енергії за полем. Однак цю ж думку можна подати з іншого боку: розглянемо розклад самого дипольного моменту за полем.
+</p>
+<p>
+Дипольний момент у полі \(\mathcal {E}\) змінюється так:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{4}\)</span>
+<!--
+𝜇(ℰ) = 𝜇(0) + 𝛼 ℰ + 1
+2
+𝛽 ℰ2 + … , (7.5) --><a id="eq:mu_Taylor"></a><!--
+-->
+<p>
+\begin{equation}
+\mu (\mathcal {E}) = \mu ^{(0)} + \alpha \,\mathcal {E} + \tfrac 12 \beta \,\mathcal {E}^2 +\dots , \label {eq:mu_Taylor}
+\end{equation}
+</p>
+<p>
+де
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> \(\mu ^{(0)}\) — власний дипольний момент у відсутності поля;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(\alpha \) — поляризованість;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(\beta \) — друга гіперполяризованість;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> наступні члени відповідають нелінійному відгуку.
+</p>
+</li>
+</ul>
+<p>
+<b>Загалом</b>, повний дипольний момент \(\mu (\mathcal {E})\) складається з:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <b>перманентного дипольного моменту</b> \(\mu ^{(0)}\) — існує завжди (якщо \(\mu ^{(0)} \neq 0\)),
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>наведеного дипольного моменту</b> — виникає під дією поля і включає як лінійний (\(\alpha \mathcal {E}\)), так і нелінійні (\(\beta \mathcal {E}^2\), \(\gamma \mathcal {E}^3\) тощо) вклади.
+</p>
+</li>
+</ul>
+<p>
+Тепер використаємо факт, що енергія — це інтеграл взаємодії дипольного моменту з полем:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{5}\)</span>
+<!--
+𝐸(ℰ) = 𝐸0 −
+ˆ ℰ
+0
+𝜇(ℰ′) 𝑑ℰ′. (7.6) --><a id="eq:E_as_integral_of_mu"></a><!--
+-->
+<p>
+\begin{equation}
+E(\mathcal {E}) = E_0 - \int _0^{\mathcal {E}} \mu (\mathcal {E}&apos;)\, d\mathcal {E}&apos;. \label {eq:E_as_integral_of_mu}
+\end{equation}
+</p>
+<p>
+Підставляємо розклад <span class="textup">(<a href="response.html#eq:mu_Taylor">7.5</a>)</span>:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{6}\)</span>
+<!--
+𝐸(ℰ) = 𝐸0 − 𝜇(0)ℰ − 1
+2
+𝛼 ℰ2 − 1
+6
+𝛽 ℰ3 − … (7.7) --><a id="eq:E_expanded_correct"></a><!--
+-->
+<p>
+\begin{equation}
+E(\mathcal {E}) = E_0 - \mu ^{(0)}\mathcal {E} - \tfrac 12 \alpha \,\mathcal {E}^2 - \tfrac 16 \beta \,\mathcal {E}^3 - \dots \label {eq:E_expanded_correct}
+\end{equation}
+</p>
+<p>
+З цього рівняння вже видно, що:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{7}\)</span>
+<!--
+𝜇(0) = −
+𝑑𝐸
+𝑑ℰ
+|
+|
+|
+ℰ=0
+, 𝛼 =
+𝑑2𝐸
+𝑑ℰ2
+|
+|
+|
+ℰ=0
+, 𝛽 = −
+𝑑3𝐸
+𝑑ℰ3
+|
+|
+|
+ℰ=0
+, (7.8)
+-->
+<p>
+\begin{equation}
+\mu ^{(0)} = -\,\left .\frac {dE}{d\mathcal {E}}\right |_{\mathcal {E}=0}, \quad \alpha = \left .\frac {d^2E}{d\mathcal {E}^2}\right |_{\mathcal {E}=0}, \quad \beta = -\,\left .\frac {d^3E}{d\mathcal
+{E}^3}\right |_{\mathcal {E}=0},
+\end{equation}
+</p>
+<p>
+тобто:
+</p>
+<p>
+\[ \text {перша похідна енергії дає дипольний момент,} \]
+</p>
+<p>
+\[ \text {друга похідна енергії дає поляризованість,} \]
+</p>
+<p>
+\[ \text {третя похідна --- гіперполяризованість.} \]
+</p>
+<p>
+Саме тому всі електричні властивості природно визначаються похідними енергії за зовнішнім полем.
+</p>
+<!--
+...... paragraph Сили на ядрах. ......
+-->
+<p>
+<span class="paragraph" id="autosec-768">Сили на ядрах.</span>
+<a id="main-html-autopage-768"></a>
+</p>
+<p>
+Почнемо з фундаментального визначення. Сила, що діє на ядро \(A\), визначається як зміна енергії при малому зміщенні координати \(R_A\):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{8}\)</span>
+<!--
+𝐹𝐴 = −
+𝑑𝐸
+𝑑𝑅𝐴
+. (7.9) --><a id="eq:force_def"></a><!--
+-->
+<p>
+\begin{equation}
+F_A = -\,\frac {dE}{dR_A}. \label {eq:force_def}
+\end{equation}
+</p>
+<p>
+Це є пряме квантово-механічне формулювання принципу:
+</p>
+<p>
+\[ \text {сила} = -\nabla E. \]
+</p>
+<p>
+Розглянемо тепер, як сила змінюється при малих зміщеннях ядра. Вона також може бути розкладена в ряд Тейлора:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{9}\)</span>
+<!--
+𝐹𝐴(𝑅𝐴) = 𝐹(0)
+𝐴
++ ∑
+𝐵
+𝑘𝐴𝐵 (𝑅𝐵 − 𝑅(0)
+𝐵
+) + … , (7.10) --><a id="eq:force_Taylor"></a><!--
+-->
+<p>
+\begin{equation}
+F_A(R_A) = F_A^{(0)} + \sum _B k_{AB}\,(R_B - R_B^{(0)}) + \dots , \label {eq:force_Taylor}
+\end{equation}
+</p>
+<p>
+де \(k_{AB}\) — коефіцієнти, що описують зміну сили при зміщенні інших ядер.
+</p>
+<p>
+Коефіцієнти \(k_{AB}\) — це елементи матриці силових констант:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{10}\)</span>
+<!--
+𝑘𝐴𝐵 =
+𝜕𝐹𝐴
+𝜕𝑅𝐵
+|
+|
+|
+0
+. (7.11) --><a id="eq:force_constants_def"></a><!--
+-->
+<p>
+\begin{equation}
+k_{AB} = \left .\frac {\partial F_A}{\partial R_B}\right |_{0}. \label {eq:force_constants_def}
+\end{equation}
+</p>
+<p>
+Тепер скористаємося зв’язком між силою і енергією <span class="textup">(<a href="response.html#eq:force_def">7.9</a>)</span>. Диференціюємо його за \(R_B\):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{11}\)</span>
+<!--
+𝜕𝐹𝐴
+𝜕𝑅𝐵
+= −
+𝜕2𝐸
+𝜕𝑅𝐴𝜕𝑅𝐵
+. (7.12) --><a id="eq:F_derivative_relation"></a><!--
+-->
+<p>
+\begin{equation}
+\frac {\partial F_A}{\partial R_B} = -\,\frac {\partial ^2 E}{\partial R_A \partial R_B}. \label {eq:F_derivative_relation}
+\end{equation}
+</p>
+<p>
+Таким чином,
+</p>
+<p>
+\[ k_{AB} = -\,\frac {\partial ^2 E}{\partial R_A \partial R_B}. \]
+</p>
+<p>
+З іншого боку, друга похідна енергії природно визначає елемент матриці гессіана:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{12}\)</span>
+<!--
+𝐻𝐴𝐵 =
+𝜕2𝐸
+𝜕𝑅𝐴 𝜕𝑅𝐵
+. (7.13) --><a id="eq:nuclear_Hessian_def_fixed"></a><!--
+-->
+<p>
+\begin{equation}
+H_{AB} = \frac {\partial ^2 E}{\partial R_A\,\partial R_B}. \label {eq:nuclear_Hessian_def_fixed}
+\end{equation}
+</p>
+<p>
+Отже,
+</p>
+<p>
+\[ k_{AB} = -H_{AB}. \]
+</p>
+<!--
+...... paragraph Ядерний гесiян. ......
+-->
+<p>
+<span class="paragraph" id="autosec-769">Ядерний гесiян.</span>
+<a id="main-html-autopage-769"></a>
+</p>
+<p>
+Ядерний гесiян — це другий диференціал енергії за координатами ядер:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{13}\)</span>
+<!--
+𝐻𝐴𝐵 =
+𝜕2𝐸
+𝜕𝑅𝐴 𝜕𝑅𝐵
+, (7.14)
+-->
+<p>
+\begin{equation}
+H_{AB} = \frac {\partial ^2 E}{\partial R_A\,\partial R_B},
+\end{equation}
+</p>
+<p>
+і саме ця матриця визначає:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> форму та кривизну поверхні потенціальної енергії,
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> рівноважність геометрії (мінімум, сідлові точки),
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> вібраційні частоти та нормальні координати.
+</p>
+</li>
+</ul>
+<p>
+Зв’язок
+</p>
+<p>
+\[ F_A = -\frac {\partial E}{\partial R_A}, \qquad k_{AB} = \frac {\partial F_A}{\partial R_B}, \]
+</p>
+<p>
+призводить до висновку:
+</p>
+<p>
+\[ H_{AB} = -\,k_{AB}. \]
+</p>
+<p>
+Таким чином, як електричні,так і механічні властивості молекули описуються єдиним математичним підходом — через похідні енергії за параметрами, що збурюють систему.
+</p>
+<p>
+Іншими словами, похідні енергії визначають, як молекула реагує на поля або зміни геометрії. Цю реакцію системи на зовнішні збурення називають відгуком.
+</p>
+<p>
+Концепція відгуку надзвичайно універсальна: практично всі молекулярні властивості можна розглядати як похідні енергії за зовнішніми параметрами — електричним або магнітним полем, координатами ядер (саме цей випадок був детально розглянутий в розділі <a
+href="vibrations.html#Oscilations">8</a>) тощо. В табл. <a href="response.html#tab:prop">7.1</a>) наведено узагальнену схему, що показує, як похідні різних порядків визначають ті чи інші властивості .
+</p>
+<div class="cb-comment">
+<p>
+<b>Коментар</b>
+</p>
+<p>
+<b>Теорія відгуку</b> — це узагальнення теорії збурень, в якій замість формального розкладу хвильової функції розглядається її <em>варіаційний відгук</em> на зовнішнє поле.
+</p>
+</div>
+<figure id="autoid-32" class="table ">
+<div class="center">
+<div class="figurecaption">
+Таблиця&nbsp;7.1. Зв’язок порядку похідних енергії з молекулярними властивостями. Тут \(q\) — координати, \(E\) — зовнішнє електричне поле, \(B\) — зовнішнє магнітне поле, \(I\) — магнітне поле ядра.
+</div>
+<a id="tab:prop"></a>
+<p>
+<span
+id="lateximage-main-html-176"
+class="lateximagesource"
+><!--
+𝑛-та похідна енергії Збурення
+𝑛𝑅
+𝑛𝐸
+𝑛𝐵
+𝑛𝐼
+Властивість
+1 0 0 0 Сила
+2 0 0 0 Частоти гармонічних коливань
+3 0 0 0 Ангармонічні поправки
+0 1 0 0 Електричний дипольний момент ⃗
+𝜇𝑒
+0 2 0 0 Електрична поляризованість 𝜒𝑒
+0 3 0 0 Електрична надполяризованість
+0 0 1 0 Магнітна сприйнятливість 𝜒𝑚
+0 0 2 1 Константа надтонкого зв’язку (EPR)
+0 0 0 2 Стала спін-спінової взаємодії ядер
+1 1 0 0 Інтенсивності ІЧ-спектрів
+2 1 0 0 Інтенсивності обертонів в ІЧ-спектрах
+1 2 0 0 Інтенсивності Раманівських спектрів
+2 2 0 0 Інтенсивності обертонів у Раманівських спектрах
+0 1 1 0 Циркулярний дихроїзм
+0 2 1 0 Магнітний циркулярний дихроїзм
+0 0 1 1 Хімічний зсув (NMR)
+--><img
+src="main-html-images/image-176.svg"
+alt="Рисунок 1"
+style=""
+class="lateximage"
+></span>
+</p>
+</div>
+</figure>
+<p>
+Як видно, усі ці властивості — від сил та частот до магнітного екранування — описуються похідними енергії різних порядків за різними збуреннями. Таким чином, <em>усі властивості молекули є лише різними проявами одного й того ж принципу: відгуку хвильової
+функції на зовнішнє збурення.</em>
+</p>
+<!--
+...... section Чисельні та аналітичні похідні ......
+-->
+<h4 id="autosec-773"><span class="sectionnumber">&#xA7;&#x202F;7.2&#x2003;</span>Чисельні та аналітичні похідні</h4>
+<a id="main-html-autopage-773"></a>
+<p>
+Найпростіший спосіб отримати похідну енергії — використати кінцеві різниці.
+</p>
+<!--
+...... paragraph Перша похідна. ......
+-->
+<p>
+<span class="paragraph" id="autosec-774">Перша похідна.</span>
+<a id="main-html-autopage-774"></a>
+</p>
+<p>
+Одностороння формула (перший порядок точності):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{14}\)</span>
+<!--
+𝑑𝐸
+𝑑𝑥
+≈
+𝐸(𝑥 + ℎ) − 𝐸(𝑥)
+ℎ
+. (7.15) --><a id="eq:finite_diff_forward"></a><!--
+-->
+<p>
+\begin{equation}
+\frac {dE}{dx} \approx \frac {E(x+h)-E(x)}{h}. \label {eq:finite_diff_forward}
+\end{equation}
+</p>
+<p>
+Центральна формула (другий порядок точності):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{15}\)</span>
+<!--
+𝑑𝐸
+𝑑𝑥
+≈
+𝐸(𝑥 + ℎ) − 𝐸(𝑥 − ℎ)
+2ℎ
+. (7.16) --><a id="eq:finite_diff_central_1st"></a><!--
+-->
+<p>
+\begin{equation}
+\frac {dE}{dx} \approx \frac {E(x+h)-E(x-h)}{2h}. \label {eq:finite_diff_central_1st}
+\end{equation}
+</p>
+<!--
+...... paragraph Друга похідна. ......
+-->
+<p>
+<span class="paragraph" id="autosec-775">Друга похідна.</span>
+<a id="main-html-autopage-775"></a>
+</p>
+<p>
+Центральна формула для другої похідної:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{16}\)</span>
+<!--
+𝑑2𝐸
+𝑑𝑥2
+≈
+𝐸(𝑥 + ℎ) − 2𝐸(𝑥) + 𝐸(𝑥 − ℎ)
+ℎ2
+. (7.17) --><a id="eq:finite_diff_2nd"></a><!--
+-->
+<p>
+\begin{equation}
+\frac {d^2E}{dx^2} \approx \frac {E(x+h)-2E(x)+E(x-h)}{h^2}. \label {eq:finite_diff_2nd}
+\end{equation}
+</p>
+<!--
+...... paragraph Змішана друга похідна. ......
+-->
+<p>
+<span class="paragraph" id="autosec-776">Змішана друга похідна.</span>
+<a id="main-html-autopage-776"></a>
+</p>
+<p>
+Для двох параметрів \(x\) і \(y\) змішана похідна наближено виражається як
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{17}\)</span>
+<!--
+𝜕2𝐸
+𝜕𝑥 𝜕𝑦
+≈
+𝐸(𝑥 + ℎ, 𝑦 + 𝑘) − 𝐸(𝑥 + ℎ, 𝑦 − 𝑘) − 𝐸(𝑥 − ℎ, 𝑦 + 𝑘) + 𝐸(𝑥 − ℎ, 𝑦 − 𝑘)
+4ℎ𝑘
+. (7.18) --><a id="eq:finite_diff_mixed"></a><!--
+-->
+<p>
+\begin{equation}
+\frac {\partial ^2 E}{\partial x\,\partial y} \approx \frac { E(x+h,\,y+k) - E(x+h,\,y-k) - E(x-h,\,y+k) + E(x-h,\,y-k) }{4hk}. \label {eq:finite_diff_mixed}
+\end{equation}
+</p>
+<p>
+Однак такий підхід має суттєві недоліки:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> похибка різницевого диференціювання, яка зростає при малих кроках;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> необхідність багатьох повних SCF-розрахунків;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> неможливість отримати точні частоти коливань у великих системах;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> нестабільність для високих похідних та слабких збурень.
+</p>
+</li>
+</ul>
+<p>
+У той час як <em>аналітичні</em> формули забезпечують:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> точні градієнти і гессіани без чисельних похибок;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> значно нижчу обчислювальну складність;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> природне включення релаксації електронів;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> можливість обробляти великі молекули та складні властивості.
+</p>
+</li>
+</ul>
+<p>
+Саме тому в сучасній квантовій хімії більшість властивостей — від геометрій до поляризованостей, силових констант і спектрів — за можливості обчислюються через аналітичні похідні. Аналітичні методи мають високу точність і масштабованість, оскільки дозволяють
+уникнути чисельних кінцевих різниць.
+</p>
+<p>
+Втім, аналітичні формули доступні не для всіх методів і не для всіх властивостей. У складніших теоріях (наприклад, <kbd>CCSD(T)</kbd> або деяких багатоконфігураційних підходах) повні аналітичні похідні можуть бути недоступні або надто дорогі. У таких випадках
+застосовують обмежені аналітичні похідні, гібридні схеми або чисто чисельні оцінки.
+</p>
+<p>
+Важливо відзначити, що аналітичні похідні можливі лише тому, що енергія \(E\) у методах <kbd>HF</kbd> та <kbd>DFT</kbd> має замкнений аналітичний вигляд. Енергія виражається через інтеграли від відомих базисних функцій, а всі оператори (кулонівський,
+обмінний, зовнішнього поля) мають чітко визначені математичні формули. Тому похідні будь-якого порядку можна отримати шляхом аналітичного диференціювання цих виразів.
+</p>
+<p>
+Іншими словами, наявність явного аналітичного виразу для енергії дозволяє обчислювати \(\frac {dE}{dx}\), \(\frac {d^2E}{dx^2}\), а за потреби й похідні вищих порядків, не вдаючись до чисельних кінцевих різниць.
+</p>
+<!--
+...... section Варіаційні методи та залежність енергії від параметрів ......
+-->
+<h4 id="autosec-777"><span class="sectionnumber">&#xA7;&#x202F;7.3&#x2003;</span>Варіаційні методи та залежність енергії від параметрів</h4>
+<a id="main-html-autopage-777"></a>
+<p>
+Багато важливих квантовохімічних методів, зокрема <kbd>HF</kbd>, <kbd>DFT</kbd> і <kbd>CASSCF</kbd>, є варіаційними. Це означає, що їхня хвильова функція \(\Psi \) залежить від набору варіаційних параметрів \(\mathbf p\), які визначають молекулярні
+орбіталі. Енергію таких методів можна подати у вигляді
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{18}\)</span>
+<!--
+𝐸 = 𝐸(𝑥, p(𝑥)), (7.19) --><a id="eq:E_x_p"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:E_x_p} E = E(x, \mathbf p(x)),
+\end{equation}
+</p>
+<p>
+де \(x\) — зовнішній параметр (координата ядра, електричне поле, зміна геометрії тощо).
+</p>
+<p>
+Позначимо через \(\mathbf p_0(x)\) оптимальні (стаціонарні) параметри для даного \(x\), тобто ті, що задовольняють умову стаціонарності:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{19}\)</span>
+<!--
+𝜕𝐸(𝑥, p)
+𝜕𝑝𝑖
+|
+|
+|
+p=p0(𝑥)
+= 0 для всіх 𝑖. (7.20) --><a id="eq:stationarity_p0"></a><!--
+-->
+<p>
+\begin{equation}
+\left .\frac {\partial E(x,\mathbf p)}{\partial p_i}\right |_{\mathbf p=\mathbf p_0(x)} = 0 \qquad \text {для всіх }i. \label {eq:stationarity_p0}
+\end{equation}
+</p>
+<p>
+У варіаційних методах (<kbd>HF</kbd>, <kbd>DFT</kbd>, <kbd>CASSCF</kbd>) ця умова виконується.
+</p>
+<p>
+Тоді повна похідна енергії при зміні \(x\) записується як:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{20}\)</span>
+<!--
+𝑑𝐸
+𝑑𝑥
+=
+𝜕𝐸(𝑥, p)
+𝜕𝑥
+|
+|
+|
+p=p(0)(𝑥)
++ ∑
+𝑖
+𝜕𝐸(𝑥, p)
+𝜕𝑝𝑖
+|
+|
+|
+p=p(0)(𝑥)
+𝑑𝑝0𝑖(𝑥)
+𝑑𝑥
+. (7.21) --><a id="eq:dE_dx_general"></a><!--
+-->
+<p>
+\begin{equation}
+\frac {dE}{dx} = \left .\frac {\partial E(x,\mathbf p)}{\partial x}\right |_{\mathbf p=\mathbf p^{(0)}(x)} + \sum _i \left .\frac {\partial E(x,\mathbf p)}{\partial p_i}\right |_{\mathbf p=\mathbf p^{(0)}(x)}
+\frac {d p_{0i}(x)}{dx}. \label {eq:dE_dx_general}
+\end{equation}
+</p>
+<p>
+Оскільки для оптимальних параметрів \(\mathbf p^{(0)}(x)\) виконано <span class="textup">(<a href="response.html#eq:stationarity_p0">7.20</a>)</span>, другий член дорівнює нулю, і отримуємо робочу формулу для першої похідної:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{21}\)</span>
+<!--
+𝑑𝐸
+𝑑𝑥
+=
+𝜕𝐸(𝑥, p)
+𝜕𝑥
+|
+|
+|
+p=p(0)(𝑥)
+. (7.22) --><a id="eq:dE_dx_stationary"></a><!--
+-->
+<p>
+\begin{equation}
+\frac {dE}{dx} = \left .\frac {\partial E(x,\mathbf p)}{\partial x}\right |_{\mathbf p=\mathbf p^{(0)}(x)}. \label {eq:dE_dx_stationary}
+\end{equation}
+</p>
+<p>
+Видно, що <em>перші</em> похідні залежать лише від явної залежності \(E\) від \(x\).
+</p>
+<p>
+Щоб побачити появу лінійної реакції орбіталей явно, запишемо повну другу похідну енергії:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{22}\)</span>
+<!--
+𝑑2𝐸
+𝑑𝑥2
+=
+𝜕2𝐸
+𝜕𝑥2
++ 2 ∑
+𝑖
+𝜕2𝐸
+𝜕𝑥 𝜕𝑝𝑖
+𝑑𝑝𝑖
+𝑑𝑥
++ ∑
+𝑖,𝑗
+𝜕2𝐸
+𝜕𝑝𝑖𝜕𝑝𝑗
+𝑑𝑝𝑖
+𝑑𝑥
+𝑑𝑝𝑗
+𝑑𝑥
++ ∑
+𝑖
+𝜕𝐸
+𝜕𝑝𝑖
+𝑑2𝑝𝑖
+𝑑𝑥2
+. (7.23) --><a id="eq:second_derivative_full"></a><!--
+-->
+<p>
+\begin{equation}
+\frac {d^2E}{dx^2} = \frac {\partial ^2 E}{\partial x^2} + 2 \sum _i \frac {\partial ^2 E}{\partial x\,\partial p_i}\frac {dp_i}{dx} + \sum _{i,j} \frac {\partial ^2 E}{\partial p_i \partial p_j} \frac
+{dp_i}{dx}\frac {dp_j}{dx} + \sum _i \frac {\partial E}{\partial p_i}\frac {d^2 p_i}{dx^2}. \label {eq:second_derivative_full}
+\end{equation}
+</p>
+<p>
+Останній член у <span class="textup">(<a href="response.html#eq:second_derivative_full">7.23</a>)</span> зникає завдяки умові <span class="textup">(<a href="response.html#eq:stationarity_p0">7.20</a>)</span>, і друга похідна набуває вигляду
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{23}\)</span>
+<!--
+𝑑2𝐸
+𝑑𝑥2
+=
+𝜕2𝐸
+𝜕𝑥2
++ 2 ∑
+𝑖
+𝜕2𝐸
+𝜕𝑥 𝜕𝑝𝑖
+𝑑𝑝𝑖
+𝑑𝑥
++ ∑
+𝑖,𝑗
+𝜕2𝐸
+𝜕𝑝𝑖𝜕𝑝𝑗
+𝑑𝑝𝑖
+𝑑𝑥
+𝑑𝑝𝑗
+𝑑𝑥
+. (7.24) --><a id="eq:second_derivative_simplified"></a><!--
+-->
+<p>
+\begin{equation}
+\frac {d^2E}{dx^2} = \frac {\partial ^2 E}{\partial x^2} + 2 \sum _i \frac {\partial ^2 E}{\partial x\,\partial p_i}\frac {dp_i}{dx} + \sum _{i,j} \frac {\partial ^2 E}{\partial p_i \partial p_j} \frac
+{dp_i}{dx}\frac {dp_j}{dx}. \label {eq:second_derivative_simplified}
+\end{equation}
+</p>
+<p>
+У <em>других</em> похідних з’являються складові \(\partial p_i/\partial x\):
+</p>
+<p>
+Оскільки рівність <span class="textup">(<a href="response.html#eq:stationarity_p0">7.20</a>)</span> справедлива для всіх \(x\), візьмемо повну похідну по \(x\) від лівої частини (тобто продиференціюємо по \(x\) рівняння стаціонарності):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{24}\)</span>
+<!--
+𝑑
+𝑑𝑥
+[
+𝜕𝐸(𝑥, p)
+𝜕𝑝𝑖
+|
+|
+|
+p=p(0)(𝑥)
+] = 0. (7.25) --><a id="eq:diff_stationarity_start"></a><!--
+-->
+<p>
+\begin{equation}
+\frac {d}{dx}\left [ \left .\frac {\partial E(x,\mathbf p)}{\partial p_i}\right |_{\mathbf p=\mathbf p^{(0)}(x)} \right ] = 0. \label {eq:diff_stationarity_start}
+\end{equation}
+</p>
+<p>
+Розкриваємо повну похідну:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{25}\)</span>
+<!--
+𝑑
+𝑑𝑥
+[
+𝜕𝐸
+𝜕𝑝𝑖
+] =
+𝜕2𝐸
+𝜕𝑥 𝜕𝑝𝑖
+|
+|
+|
+p=p(0)(𝑥)
++ ∑
+𝑗
+𝜕2𝐸
+𝜕𝑝𝑖𝜕𝑝𝑗
+|
+|
+|
+p=p(0)(𝑥)
+𝑑𝑝𝑗(𝑥)
+𝑑𝑥
+. (7.26) --><a id="eq:diff_stationarity_explicit"></a><!--
+-->
+<p>
+\begin{equation}
+\frac {d}{dx}\left [\frac {\partial E}{\partial p_i}\right ] = \left .\frac {\partial ^2 E}{\partial x\,\partial p_i}\right |_{\mathbf p=\mathbf p^{(0)}(x)} + \sum _j \left .\frac {\partial ^2 E}{\partial p_i
+\partial p_j}\right |_{\mathbf p=\mathbf p^{(0)}(x)} \frac {d p_j(x)}{dx}. \label {eq:diff_stationarity_explicit}
+\end{equation}
+</p>
+<p>
+Оскільки ліва частина рівняння <span class="textup">(<a href="response.html#eq:diff_stationarity_start">7.25</a>)</span> дорівнює нулю, отримуємо
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{26}\)</span>
+<!--
+𝜕2𝐸
+𝜕𝑝𝑖𝜕𝑝𝑗
+|
+|
+|
+p=p(0)(𝑥)
+𝑑𝑝𝑗(𝑥)
+𝑑𝑥
+= −
+𝜕2𝐸
+𝜕𝑥 𝜕𝑝𝑖
+|
+|
+|
+p=p(0)(𝑥)
+. (7.27) --><a id="eq:intermediate_CPHF"></a><!--
+-->
+<p>
+\begin{equation}
+\left .\frac {\partial ^2 E}{\partial p_i \partial p_j}\right |_{\mathbf p=\mathbf p^{(0)}(x)} \frac {d p_j(x)}{dx} = - \left .\frac {\partial ^2 E}{\partial x\,\partial p_i}\right |_{\mathbf p=\mathbf
+p^{(0)}(x)}. \label {eq:intermediate_CPHF}
+\end{equation}
+</p>
+<p>
+Позначимо матрицю других похідних по параметрах (<em>електронний гессіан</em> у просторі параметрів)
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{27}\)</span>
+<!--
+𝐻𝑖𝑗(𝑥) ≡
+𝜕2𝐸(𝑥, p)
+𝜕𝑝𝑖𝜕𝑝𝑗
+|
+|
+|
+p=p(0)(𝑥)
+, (7.28) --><a id="eq:H_matrix_def"></a><!--
+-->
+<p>
+\begin{equation}
+H_{ij}(x) \equiv \left .\frac {\partial ^2 E(x,\mathbf p)}{\partial p_i \partial p_j}\right |_{\mathbf p=\mathbf p^{(0)}(x)}, \label {eq:H_matrix_def}
+\end{equation}
+</p>
+<p>
+і вектор правої частини (змішана друга похідна)
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{28}\)</span>
+<!--
+𝑔(𝑥)
+𝑖
+≡
+𝜕2𝐸(𝑥, p)
+𝜕𝑥 𝜕𝑝𝑖
+|
+|
+|
+p=p(0)(𝑥)
+. (7.29) --><a id="eq:g_vector_def"></a><!--
+-->
+<p>
+\begin{equation}
+g_i^{(x)} \equiv \left .\frac {\partial ^2 E(x,\mathbf p)}{\partial x\,\partial p_i}\right |_{\mathbf p=\mathbf p^{(0)}(x)}. \label {eq:g_vector_def}
+\end{equation}
+</p>
+<p>
+Тоді рівняння <span class="textup">(<a href="response.html#eq:intermediate_CPHF">7.27</a>)</span> компактно записується як
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{29}\)</span>
+<!--
+∑
+𝑗
+𝐻𝑖𝑗(𝑥)
+𝑑𝑝(0)
+𝑗
+(𝑥)
+𝑑𝑥
+= − 𝑔(𝑥)
+𝑖
+. (7.30) --><a id="eq:CPHF_derived_compact"></a><!--
+-->
+<p>
+\begin{equation}
+\sum _j H_{ij}(x)\;\frac {d p_j^{(0)}(x)}{dx} = -\,g_i^{(x)}. \label {eq:CPHF_derived_compact}
+\end{equation}
+</p>
+<p>
+Якщо матриця \(H(x)\) невироджена (має обернену), то формально
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{30}\)</span>
+<!--
+𝑑p(0)(𝑥)
+𝑑𝑥
+= − H−1(𝑥) g(𝑥). (7.31) --><a id="eq:dpdx_solution"></a><!--
+-->
+<p>
+\begin{equation}
+\frac {d\mathbf p^{(0)}(x)}{dx} = -\,\mathbf {H}^{-1}(x)\,\mathbf g^{(x)}. \label {eq:dpdx_solution}
+\end{equation}
+</p>
+<p>
+Отримане рівняння є системою, що має назву зв’язано-збуреної (<em>Coupled–Perturbed</em>) у загальному вигляді. Воно визначає лінійну реакцію оптимальних варіаційних параметрів на малу зміну зовнішнього параметра \(x\).
+</p>
+<p>
+Конкретний вигляд цієї системи залежить від того, які саме параметри \(p_i\) використано для задання орбіталей. У методах <kbd>HF</kbd> та <kbd>DFT</kbd> параметри \(p_i\) відповідають елементам матриці орбітальних обертань, а величини \(dp_i/dx\) є
+їхньою лінійною реакцією. У цьому випадку матриця \(H\) і вектор \(g^{(x)}\) набувають звичних аналітичних форм, що приводить до стандартних рівнянь <kbd>CPHF</kbd>/<kbd>CPKS</kbd>.
+</p>
+<!--
+...... section Аналітичні похідні в методі Хартрі-Фока ......
+-->
+<h4 id="autosec-778"><span class="sectionnumber">&#xA7;&#x202F;7.4&#x2003;</span>Аналітичні похідні в методі Хартрі-Фока</h4>
+<a id="main-html-autopage-778"></a>
+<p>
+У попередньому розділі ми розглянули загальний варіаційний підхід: енергію \(E(x,\mathbf p)\), оптимальні параметри \(\mathbf p^{(0)}(x)\), електронний гессіан \(H\) та рівняння <span class="textup">(<a
+href="response.html#eq:dpdx_solution">7.31</a>)</span> яке формально описує, як змінюються оптимальні варіаційні параметри при малому збуренні зовнішнього параметра \(x\).
+</p>
+<!--
+...... subsection Орбітальні параметри в методі Хартрі--Фока ......
+-->
+<h5 id="autosec-779"><span class="sectionnumber">7.4.1&#x2003;</span>Орбітальні параметри в методі Хартрі–Фока</h5>
+<a id="main-html-autopage-779"></a>
+<p>
+У <kbd>HF</kbd> хвильова функція — це детермінант Слейтера, повністю визначений набором молекулярних орбіталей
+</p>
+<p>
+\[ \phi _p = \sum _\mu C_{\mu p}\,\chi _\mu . \]
+</p>
+<p>
+Проте варіювати матрицю коефіцієнтів \(\mathbf C\) безпосередньо неможливо через вимогу ортонормованості орбіталей:
+</p>
+<p>
+\[ \langle \phi _p|\phi _q\rangle =\delta _{pq}. \]
+</p>
+<p>
+Тому варіацію формулюють через <em>нескінченно малі орбітальні обертання</em>. У детермінанті фізично значимими є лише ті обертання, що змішують <em>зайняті</em> та <em>віртуальні</em> орбіталі: обертання всередині підпросторів зайнятих або віртуальних
+МО не змінюють хвильову функцію, а лише переставляють базисні функції всередині однаково заселених підпросторів.
+</p>
+<p>
+Допустима зміна зайнятої орбіталі має вигляд:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{31}\)</span>
+<!--
+𝜙𝑖 ⟶ 𝜙(0)
+𝑖
++ ∑
+𝑎
+𝑈𝑎𝑖 𝜙(0)
+𝑎 , (7.32) --><a id="eq:small_rotation_intro"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:small_rotation_intro} \phi _i \;\longrightarrow \; \phi _i^{(0)} + \sum _a U_{a i}\,\phi _a^{(0)},
+\end{equation}
+</p>
+<p>
+де змішуються лише зайняті \(\phi _i\) з віртуальними \(\phi _a\), а матриця орбітальних обертань має антисиметричні блоки:
+</p>
+<p>
+\[ U_{ai} = -U_{ia}. \]
+</p>
+<p>
+Така заміна означає ось що зайнята орбіталь під дією збурення трохи «втрачає свою форму» і набуває легку домішку віртуальних орбіталей. Віртуальні МО відіграють роль можливих «напрямків деформації», у які електронна хмара може відхилитися, реагуючи на
+зовнішній вплив. В малих базисах часто спостерігають занижену поляризовність, погану відтворюваність похідних енергії. Чим багатший базис, тим повніший набір можливих напрямків деформації й тим адекватніше описується фізична відповідь електронів.
+</p>
+<!--
+...... paragraph Варіаційні параметри. ......
+-->
+<p>
+<span class="paragraph" id="autosec-780">Варіаційні параметри.</span>
+<a id="main-html-autopage-780"></a>
+</p>
+<p>
+У підході орбітальних обертань саме коефіцієнти
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{32}\)</span>
+<!--
+𝑝𝑎𝑖 ≡ 𝑈𝑎𝑖 (7.33) --><a id="eq:p_HF_definition"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:p_HF_definition} p_{ai} \equiv U_{ai}
+\end{equation}
+</p>
+<p>
+виступають справжніми варіаційними параметрами. Вони кількісно описують, наскільки кожна зайнята орбіталь допускає домішку конкретної віртуальної, тобто наскільки електронна хмара може деформуватися в цьому напрямку. Таким чином, вектор параметрів
+</p>
+<p>
+\[ \mathbf p = \{U_{ai}\} \]
+</p>
+<p>
+є компактним описом усіх фізично значущих змін хвильової функції в межах <kbd>HF</kbd>-варіації.
+</p>
+<!--
+...... paragraph Похідні параметрів. ......
+-->
+<p>
+<span class="paragraph" id="autosec-781">Похідні параметрів.</span>
+<a id="main-html-autopage-781"></a>
+Коли зовнішній параметр \(x\) змінюється на \(dx\), оптимальні орбіталі переходять у нові оптимальні орбіталі для \(x+dx\). Лінійна зміна МО має вигляд
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{33}\)</span>
+<!--
+𝑑𝜙𝑖
+𝑑𝑥
+= ∑
+𝑎
+𝑈(𝑥)
+𝑎𝑖
+𝜙𝑎, (7.34) --><a id="eq:HF_MO_derivative"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:HF_MO_derivative} \frac {d\phi _i}{dx} = \sum _a U_{ai}^{(x)} \phi _a ,
+\end{equation}
+</p>
+<p>
+що визначає коефіцієнти
+</p>
+<p>
+\[ U_{ai}^{(x)} \equiv \frac {dU_{ai}}{dx}. \]
+</p>
+<p>
+Отже, у <kbd>HF</kbd> величини
+</p>
+<p>
+\[ \frac {dp_{ai}}{dx} = \frac {dU_{ai}}{dx} \equiv U_{ai}^{(x)} \]
+</p>
+<p>
+є <em>лінійною реакцією зайнятих орбіталей на збурення \(x\)</em>, тобто тим, як зайняті МО змішуються з віртуальними при зміні зовнішнього параметра.
+</p>
+<!--
+...... paragraph Рівняння CPHF. ......
+-->
+<p>
+<span class="paragraph" id="autosec-782">Рівняння CPHF.</span>
+<a id="main-html-autopage-782"></a>
+Матриця \(\mathbf H\) у просторі параметрів \(U_{ai}\) набуває вигляду
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{34}\)</span>
+<!--
+𝐻𝑎𝑖,𝑏𝑗 =
+𝜕2𝐸
+𝜕𝑈𝑎𝑖 𝜕𝑈𝑏𝑗
+|
+|
+|
+U=0
+. (7.35) --><a id="eq:H_ai_bj_def"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:H_ai_bj_def} H_{ai,bj} = \left .\frac {\partial ^2 E}{\partial U_{ai}\,\partial U_{bj}}\right |_{\mathbf U= 0}.
+\end{equation}
+</p>
+<p>
+Аналогічно, компоненти вектора змішаної похідної:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{35}\)</span>
+<!--
+𝑔(𝑥)
+𝑎𝑖
+=
+𝜕
+𝜕𝑈𝑎𝑖
+𝜕𝐸
+𝜕𝑥
+|
+|
+|
+𝑥=0,U=0
+. (7.36) --><a id="eq:g_ai_def"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:g_ai_def} g_{ai}^{(x)} = \frac {\partial }{\partial U_{ai}}\left .\frac {\partial E}{\partial x}\right |_{x = 0, \mathbf U= 0}.
+\end{equation}
+</p>
+<p>
+Після цих підстановок рівняння <span class="textup">(<a href="response.html#eq:dpdx_solution">7.31</a>)</span> набуває вигляду
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{36}\)</span>
+<!--
+∑
+𝑏𝑗
+𝐻𝑎𝑖,𝑏𝑗 𝑈(𝑥)
+𝑏𝑗
+= −𝑔(𝑥)
+𝑎𝑖
+. (7.37) --><a id="eq:CPHF_matrix_general"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:CPHF_matrix_general} \sum _{b j} H_{ai,bj}\;U_{bj}^{(x)} = -g_{ai}^{(x)}.
+\end{equation}
+</p>
+<p>
+Це і є загальна форма <em>зв’язано–збурених рівнянь</em> (<kbd>CPHF</kbd>). Вони визначають реакцію МО на довільне збурення \(x\).
+</p>
+<div class="cb-comment">
+<p>
+<b>Приклад</b>
+</p>
+<p>
+Розглянемо спрощену систему, де є одна зайнята орбіталь \(i\) та одна віртуальна орбіталь \(a\), розкладені за тими самими базисними функціями \(\{\chi _\mu \}\):
+</p>
+<p>
+\[ \phi _i^{(0)} = C_{1i}\chi _1 + C_{2i}\chi _2 + C_{3i}\chi _3,\qquad \phi _a^{(0)} = C_{1a}\chi _1 + C_{2a}\chi _2 + C_{3a}\chi _3. \]
+</p>
+<p>
+Після нескінченно малого обертання орбіталі змінюються за правилом <span class="textup">(<a href="response.html#eq:small_rotation_intro">7.32</a>)</span>:
+</p>
+<p>
+\[ \phi _i = \phi _i^{(0)} + U_{ai}\phi _a^{(0)}. \]
+</p>
+<p>
+Якщо система залежить від зовнішнього параметра \(x\), то в першому порядку відповідь орбіталі записується як
+</p>
+<p>
+\[ \phi _i(x) \approx \phi _i^{(0)} + x\sum _a U_{ai}^{(x)}\,\phi _a^{(0)}, \]
+</p>
+<p>
+де \(U_{ai}^{(x)}\equiv dU_{ai}/dx\) — саме ті похідні, що даються рівняннями CPHF.
+</p>
+<p>
+Підставивши явні розклади у базисі \(\{\chi _\mu \}\), отримуємо рівняння для коефіцієнтів:
+</p>
+<p>
+\[ C_{\mu i}(x) \approx C_{\mu i} + x\sum _a U_{ai}^{(x)}\,C_{\mu a}, \qquad \mu =1,2,3. \]
+</p>
+<p>
+Отже, похідні \(U_{ai}^{(x)}\) описують, як при малому змінені \(x\) змінюються коефіцієнти зайнятої орбіталі в напрямку коефіцієнтів віртуальної орбіталі.
+</p>
+</div>
+<!--
+...... subsection Стандартна форма рівнянь CPHF ......
+-->
+<h5 id="autosec-783"><span class="sectionnumber">7.4.2&#x2003;</span>Стандартна форма рівнянь CPHF</h5>
+<a id="main-html-autopage-783"></a>
+<p>
+У методі <kbd>HF</kbd> електронний гессіан у просторі \(U_{ai}\) має вигляд
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{37}\)</span>
+<!--
+𝐻𝑎𝑖,𝑏𝑗 = (𝜀𝑎 − 𝜀𝑖) 𝛿𝑎𝑏𝛿𝑖𝑗 + (𝑎𝑖||𝑏𝑗), (7.38) --><a id="eq:H_standard"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:H_standard} H_{ai,bj} = (\varepsilon _a - \varepsilon _i)\,\delta _{ab}\delta _{ij} + (ai||bj),
+\end{equation}
+</p>
+<p>
+де \((ai||bj)\) — антисиметризовані двоелектронні інтеграли.
+</p>
+<p>
+Праві частини \(g_{ai}^{(x)}\) залежать від збурення \(x\). Наприклад, при ядерному русі це:
+</p>
+<p>
+\[ g_{ai}^{(x)} = \langle \phi _a | \hat F^{(x)} | \phi _i \rangle , \]
+</p>
+<p>
+де \(\hat h^{(x)}\) — похідна одноелектронного гамільтоніана, а \(\hat V^{(x)}_{ee}\) — похідна фоківського потенціалу.
+</p>
+<p>
+Таким чином, рівняння <span class="textup">(<a href="response.html#eq:CPHF_matrix_general">7.37</a>)</span> у явному вигляді стає
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{38}\)</span>
+<!--
+(𝜀𝑎 − 𝜀𝑖) 𝑈(𝑥)
+𝑎𝑖
++ ∑
+𝑏𝑗
+(𝑎𝑖||𝑏𝑗) 𝑈(𝑥)
+𝑏𝑗
+= − 𝑔(𝑥)
+𝑎𝑖
+. (7.39) --><a id="eq:CPHF_explicit"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:CPHF_explicit} (\varepsilon _a - \varepsilon _i)\,U_{ai}^{(x)} + \sum _{b j} (ai||bj)\,U_{bj}^{(x)} = -\,g_{ai}^{(x)}.
+\end{equation}
+</p>
+<p>
+Це — стандартні рівняння <kbd>CPHF</kbd>/<kbd>CPKS</kbd>, які визначають лінійну реакцію молекулярних орбіталей при довільному збуренні \(x\).
+</p>
+<p>
+Розв’язавши <span class="textup">(<a href="response.html#eq:CPHF_explicit">7.39</a>)</span>, отримуємо \(U_{ai}^{(x)}\), тобто як зайняті орбіталі «змішуються» з віртуальними у відповідь на збурення.
+</p>
+<div class="cb-comment">
+<p>
+<b>Коментар</b>
+</p>
+<p>
+Розв’язок рівнянь CPHF (Coupled Perturbed Hartree-Fock) зазвичай є чисельним. У практичних обчисленнях квантової хімії ці рівняння представляють собою велику систему лінійних рівнянь виду \(\mathbf {H} \mathbf {U}^{(x)} = -\mathbf {g}^{(x)}\), де
+матриця \(\mathbf {H}\) (електронний гессіан) може мати високу розмірність (наприклад, тисячі або мільйони елементів для реальних молекул).
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Прямі методи (наприклад, інвертування матриці) використовуються рідко, тільки для малих систем, оскільки вони обчислювально дорогі (\(O(N^3)\) складність, де \(N\) — розмірність).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Ітераційні методи є стандартними для великих систем: наприклад, метод спряжених градієнтів (conjugate gradient), DIIS (Direct Inversion in the Iterative Subspace) або інші солвери для лінійних рівнянь. Вони дозволяють уникнути
+повного зберігання матриці \(\mathbf {H}\) в пам’яті, обчислюючи її добутки з векторами «на льоту».
+</p>
+</li>
+</ul>
+<p>
+Аналітичний розв’язок можливий лише для тривіальних або модельних систем (наприклад, атом водню), але в реальних розрахунках все робиться чисельно з контролем збіжності ітерацій. Якщо збурень багато.
+</p>
+</div>
+<figure id="autoid-33" class="figure ">
+<div class="center">
+<p>
+<span
+id="lateximage-main-html-177"
+class="lateximagesource"
+><!--
+Початкове наближення 𝑈(𝑥)
+𝑎𝑖
+= 0
+Обчислення правої частини:
+𝑔(𝑥)
+𝑎𝑖
+=
+𝜕2𝐸
+𝜕𝑥 𝜕𝑈𝑎𝑖
+|
+|
+|
+0
+(похідна Фока по 𝑥)
+Побудова електронного гессіана:
+𝐻𝑎𝑖,𝑏𝑗
+= (𝜀𝑎
+− 𝜀𝑖
+)𝛿𝑎𝑏
+𝛿𝑖𝑗
++ (𝑎𝑖||𝑏𝑗)
+Розв’язання матричних рівнянь CPHF:
+∑
+𝑏𝑗
+𝐻𝑎𝑖,𝑏𝑗
+𝑈(𝑥)
+𝑏𝑗
+= −𝑔(𝑥)
+𝑎𝑖
+Оновлення похідної густини:
+D(1)
+𝑜𝑣 = 𝑈(𝑥), D(1)
+𝑣𝑜 = 𝑈(𝑥)†
+‖𝑈(𝑥)
+𝑛+1
+− 𝑈(𝑥)
+𝑛 ‖ ≤ 𝛿
+Використання D(1) або 𝑈(𝑥)
+для обчислення другої похідної енергії,
+тензорів поляризовності, Раман-поляризовності та гессіанів.
+Ні Так
+--><img
+src="main-html-images/image-177.svg"
+alt="Рис. 7.1. Процедура розв‘язку рівнянь CPHF."
+style=""
+class="lateximage"
+></span>
+</p>
+<div class="figurecaption">
+Рис.&nbsp;7.1. Процедура розв‘язку рівнянь <kbd>CPHF</kbd>.
+</div>
+</div>
+</figure>
+<!--
+...... subsection Градієнт (перша похідна) — явний вираз у методі HF ......
+-->
+<h5 id="autosec-787"><span class="sectionnumber">7.4.3&#x2003;</span>Градієнт (перша похідна) — явний вираз у методі HF</h5>
+<a id="main-html-autopage-787"></a>
+<p>
+У методі <kbd>HF</kbd> умова стаціонарності <span class="textup">(<a href="response.html#eq:stationarity_p0">7.20</a>)</span> набуває вигляду
+</p>
+<p>
+\[ \left .\frac {\partial E}{\partial U_{ai}}\right |_{U=U^{(0)}} = 0. \]
+</p>
+<p>
+Отже, перша похідна енергії визначається <em>лише</em> явною залежністю гамільтоніана від \(x\):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{39}\)</span>
+<!--
+𝑑𝐸
+𝑑𝑥
+=
+𝜕𝐸
+𝜕𝑥
+|
+|
+|
+𝑈=𝑈(0)
+. (7.40) --><a id="eq:HF_gradient_basic"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:HF_gradient_basic} \frac {dE}{dx} = \left .\frac {\partial E}{\partial x}\right |_{U=U^{(0)}} .
+\end{equation}
+</p>
+<!--
+...... paragraph Одноелектронний внесок. ......
+-->
+<p>
+<span class="paragraph" id="autosec-788">Одноелектронний внесок.</span>
+<a id="main-html-autopage-788"></a>
+У <kbd>HF</kbd> енергія має вигляд
+</p>
+<p>
+\[ E = \sum _i h_{ii} + \tfrac {1}{2}\sum _{ij}\big ( J_{ij} - K_{ij} \big ), \]
+</p>
+<p>
+де \(h_{pq}\) — одноелектронна частина, \(J_{ij}\) і \(K_{ij}\) — кулонівський та обмінний інтеграли.
+</p>
+<p>
+Якщо зовнішній параметр \(x\) змінює ядерний потенціал або інший зовнішній оператор, то перша похідна енергії включає зміну тільки відповідних інтегралів:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{40}\)</span>
+<!--
+𝑑𝐸
+𝑑𝑥
+= ∑
+𝑖
+𝜕ℎ𝑖𝑖
+𝜕𝑥
++ 1
+2
+∑
+𝑖𝑗
+(
+𝜕𝐽𝑖𝑗
+𝜕𝑥
+−
+𝜕𝐾𝑖𝑗
+𝜕𝑥
+) , (7.41) --><a id="eq:HF_gradient_one_electron"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:HF_gradient_one_electron} \frac {dE}{dx} = \sum _i \frac {\partial h_{ii}}{\partial x} + \tfrac 12 \sum _{ij} \left ( \frac {\partial J_{ij}}{\partial x} - \frac {\partial K_{ij}}{\partial x} \right
+),
+\end{equation}
+</p>
+<p>
+оскільки зміна коефіцієнтів МО (тобто зміна \(U_{ai}\)) не дає внеску в першу похідну через стаціонарність.
+</p>
+<!--
+...... paragraph Форма через матрицю густини. ......
+-->
+<p>
+<span class="paragraph" id="autosec-789">Форма через матрицю густини.</span>
+<a id="main-html-autopage-789"></a>
+У більш компактній матричній формі:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{41}\)</span>
+<!--
+𝑑𝐸
+𝑑𝑥
+= Tr[ D
+𝜕h
+𝜕𝑥
+] + 1
+2
+Tr[D
+𝜕(J − K)
+𝜕𝑥
+] , (7.42) --><a id="eq:HF_gradient_density_matrix"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:HF_gradient_density_matrix} \frac {dE}{dx} = \mathrm {Tr}\!\left [\,\mathbf D\,\frac {\partial \mathbf h}{\partial x}\right ] + \tfrac 12\,\mathrm {Tr}\!\left [\mathbf D\,\frac {\partial (\mathbf J -
+\mathbf K)}{\partial x}\right ],
+\end{equation}
+</p>
+<p>
+де \(\mathbf D\) — матриця густини у базисі АО.
+</p>
+<p>
+Це класичний вираз градієнта у <kbd>HF</kbd>, який використовується для обчислення сил, геометричних градієнтів, похідних по зовнішньому полі тощо.
+</p>
+<!--
+...... paragraph Важлива властивість. ......
+-->
+<p>
+<span class="paragraph" id="autosec-790">Важлива властивість.</span>
+<a id="main-html-autopage-790"></a>
+Завдяки умові стаціонарності, у градієнті <em>не з’являються</em> похідні орбітальних обертань \(dU_{ai}/dx\). Інакше кажучи, у <kbd>HF</kbd> перша похідна енергії не потребує розв’язку рівнянь лінійної реакції. Всі складні терміни, пов’язані з реакцією МО,
+виникають лише у другій похідній (у наступному розділі), де вони приводять до системи <kbd>CPHF</kbd>.
+</p>
+<!--
+...... subsection Друга похідна — явний вигляд у методі HF ......
+-->
+<h5 id="autosec-791"><span class="sectionnumber">7.4.4&#x2003;</span>Друга похідна — явний вигляд у методі HF</h5>
+<a id="main-html-autopage-791"></a>
+<p>
+У попередніх підрозділах ми показали загальний варіаційний результат
+</p>
+<p>
+\[ \frac {d^2E}{dx^2} = \frac {\partial ^2 E}{\partial x^2} +2\sum _{ai}\frac {\partial ^2 E}{\partial x\,\partial U_{ai}}\frac {dU_{ai}}{dx} +\sum _{ai}\sum _{bj}\frac {\partial ^2 E}{\partial U_{ai}\partial
+U_{bj}} \frac {dU_{ai}}{dx}\frac {dU_{bj}}{dx}. \]
+</p>
+<p>
+Тепер випишемо цю формулу в термінах вже введених об’єктів \(g^{(x)}_{ai}\) та \(H_{ai,bj}\) і одержимо робочу форму для другої похідної.
+</p>
+<p>
+Остаточний вираз для другої похідної набуває компактної форми
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{42}\)</span>
+<!--
+𝑑2𝐸
+𝑑𝑥2
+=
+𝜕2𝐸
+𝜕𝑥2
+|
+|
+|
+𝑈
+− ∑
+𝑎𝑖
+∑
+𝑏𝑗
+𝑔(𝑥)
+𝑎𝑖
+(H−1)𝑎𝑖,𝑏𝑗 𝑔(𝑥)
+𝑏𝑗
+. (7.43) --><a id="eq:d2E_final_boxed"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:d2E_final_boxed} \displaystyle \frac {d^2E}{dx^2} = \left .\frac {\partial ^2 E}{\partial x^2}\right |_{U} - \sum _{ai}\sum _{bj} g^{(x)}_{ai}\,(\mathbf {H}^{-1})_{ai,bj}\,g^{(x)}_{bj}.
+\end{equation}
+</p>
+<p>
+Цю формулу часто записують у скороченому матричному вигляді:
+</p>
+<p>
+\[ \frac {d^2E}{dx^2} = \left .\frac {\partial ^2 E}{\partial x^2}\right |_{U} - \mathbf g^{(x)\,\mathrm T} \mathbf {H}^{-1}\mathbf g^{(x)}. \]
+</p>
+<!--
+...... paragraph Інтерпретація і розгорнуті компоненти. ......
+-->
+<p>
+<span class="paragraph" id="autosec-792">Інтерпретація і розгорнуті компоненти.</span>
+<a id="main-html-autopage-792"></a>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Перший член \(\displaystyle \left .\frac {\partial ^2 E}{\partial x^2}\right |_{U}\) — пряма (явна) друга похідна енергії по \(x\) при фіксованих орбіталях. У матричній формі її можна виписати як слід:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{43}\)</span>
+<!--
+𝜕2𝐸
+𝜕𝑥2
+|
+|
+|
+𝑈
+= Tr[D
+𝜕2h
+𝜕𝑥2
+] + 1
+2
+Tr[D
+𝜕2(J − K)
+𝜕𝑥2
+] +
++ додаткові Pulay-терміни явного другого порядку.
+-->
+<p>
+\begin{multline*}
+\left .\frac {\partial ^2 E}{\partial x^2}\right |_{U} = \mathrm {Tr}\!\left [\mathbf D\,\frac {\partial ^2\mathbf h}{\partial x^2}\right ] +\tfrac 12\,\mathrm {Tr}\!\left [\mathbf D\,\frac {\partial ^2(\mathbf
+J-\mathbf K)}{\partial x^2}\right ] + \\ +\text {додаткові Pulay-терміни явного другого порядку}.
+\end{multline*}
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Другий член \(-\mathbf g^{\mathrm T} H^{-1}\mathbf g\) — вклад, що походить від лінійної реакції орбіталей. Він завжди від’ємний для позитивно визначного \(\mathbf H\) і фізично відповідає зниженню енергії за
+рахунок релаксації орбіталей під дією збурення.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Компоненти \(g^{(x)}_{ai}\) у випадку <kbd>HF</kbd> зазвичай мають вигляд
+</p>
+<p>
+\[ g^{(x)}_{ai} = \langle \phi _a | \hat h^{(x)} | \phi _i \rangle + \langle \phi _a | \hat V^{(x)}_\text {HF} | \phi _i \rangle , \]
+</p>
+<p>
+де \(\hat h^{(x)}\) — явна похідна одноелектронного оператора (наприклад, похідна ядерного потенціалу), а \(\hat V^{(x)}_\text {HF}\) — похідна фоківського потенціалу (вона містить похідні двоелектронних інтегралів).
+</p>
+</li>
+</ul>
+<!--
+...... paragraph Примітки щодо практики обчислення. ......
+-->
+<p>
+<span class="paragraph" id="autosec-793">Примітки щодо практики обчислення.</span>
+<a id="main-html-autopage-793"></a>
+</p>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> Якщо базис залежить від параметра \(x\) (наприклад, при зміщенні ядер у атомно-орбітальному базисі), то необхідно врахувати Pulay-терміни як у першій, так і у другій похідній; вони входять у явну частину \(\partial
+^2E/\partial x^2\) і в компоненту \(g^{(x)}\) (через похідні інтегралів).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> У випадку виродженості або слабко визначеного H потрібно проектувати фізичний підпростір обертань (ці обернення, що фізично змінюють хвильову функцію) і інвертувати H в цьому підпросторі.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> Формула <span class="textup">(<a href="response.html#eq:d2E_final_boxed">7.43</a>)</span> є базовою для обчислення других похідних: матриці силових констант, поляризованості 2-го порядку, динамічних
+поправок тощо.
+</p>
+</li>
+</ul>
+<!--
+...... subsection Змішана похідна у методі HF — явний вигляд ......
+-->
+<h5 id="autosec-794"><span class="sectionnumber">7.4.5&#x2003;</span>Змішана похідна у методі HF — явний вигляд</h5>
+<a id="main-html-autopage-794"></a>
+<p>
+Розглянемо два зовнішні параметри \(x\) і \(y\). Для методу <kbd>HF</kbd> змішана похідна
+</p>
+<p>
+\[ \frac {d^2E}{dx\,dy} \]
+</p>
+<p>
+має ту саму структурну форму, що й у загальному варіаційному випадку, але всі складові можна виписати явно.
+</p>
+<!--
+...... paragraph 1. Явна (пряма) часткова друга похідна при фіксованих орбіталях. ......
+-->
+<p>
+<span class="paragraph" id="autosec-795">1. Явна (пряма) часткова друга похідна при фіксованих орбіталях.</span>
+<a id="main-html-autopage-795"></a>
+При фіксованих орбіталях (\(U\) константні)
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{43}\)</span>
+<!--
+𝜕2𝐸
+𝜕𝑥 𝜕𝑦
+|
+|
+|
+𝑈
+= Tr[D
+𝜕2h
+𝜕𝑥 𝜕𝑦
+] + 1
+2
+Tr[D
+𝜕2(J − K)
+𝜕𝑥 𝜕𝑦
+] +
++ (Pulay-доданки при залежному базисі). (7.44)--><a id="eq:explicit_partial_xy"></a><!--
+-->
+<p>
+\begin{multline}
+\label {eq:explicit_partial_xy} \left .\frac {\partial ^2 E}{\partial x\,\partial y}\right |_{U} = \mathrm {Tr}\!\left [\mathbf D\,\frac {\partial ^2\mathbf h}{\partial x\,\partial y}\right ] +\tfrac
+12\,\mathrm {Tr}\!\left [\mathbf D\,\frac {\partial ^2(\mathbf J-\mathbf K)}{\partial x\,\partial y}\right ] + \\ + \text {(Pulay-доданки при залежному базисі)}.
+\end{multline}
+Тут \(\mathbf D\) — матриця густини у АО-базисі, \(\mathbf h\) — матриця одноелектронного оператора, \(\mathbf J,\mathbf K\) — відповідні матриці кулон- та обмінних операторів.
+</p>
+<!--
+...... paragraph 2. Вектори змішаних похідних та . ......
+-->
+<p>
+<span class="paragraph" id="autosec-796">2. Вектори змішаних похідних \(g^{(x)}\) та \(g^{(y)}\).</span>
+<a id="main-html-autopage-796"></a>
+Для <kbd>HF</kbd> компоненти вектора \(g^{(x)}\) мають класичний вигляд
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{44}\)</span>
+<!--
+𝑔(𝑥)
+𝑎𝑖
+= ⟨𝜙𝑎 | 𝜕 ̂
+ℎ
+𝜕𝑥
+| 𝜙𝑖⟩ + ⟨𝜙𝑎 | 𝜕 ̂
+𝑉HF
+𝜕𝑥
+| 𝜙𝑖⟩ + (Pulay-доданку від залежного базису), (7.45) --><a id="eq:g_ai_HF_explicit"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:g_ai_HF_explicit} g^{(x)}_{ai} = \langle \phi _a \,|\, \tfrac {\partial \hat h}{\partial x} \,|\, \phi _i \rangle + \langle \phi _a \,|\, \tfrac {\partial \hat V_{\mathrm {HF}}}{\partial x} \,|\,
+\phi _i \rangle + \text {(Pulay-доданку від залежного базису)},
+\end{equation}
+</p>
+<p>
+де
+</p>
+<p>
+\[ \hat V_{\mathrm {HF}} = \hat J - \hat K \]
+</p>
+<p>
+— фоківський оператор. Аналогічно для \(g^{(y)}_{ai}\):
+</p>
+<p>
+\[ g^{(y)}_{ai} = \langle \phi _a \,|\, \tfrac {\partial \hat F}{\partial y} \,|\, \phi _i \rangle + \text {(Pulay)}. \]
+</p>
+<p>
+Якщо базис залежить від параметрів (\(\chi _\mu =\chi _\mu (x,y,\dots )\)), то в \(g^{(x)}_{ai}\) додатково входять члени, пропорційні похідним перекриттів \(\mathbf S^{(x)}\) і похідним інтегралів; ці Pulay-доданки можна виписати стандартно через
+\(\mathbf F\) і \(\mathbf S^{(x)}\).
+</p>
+<!--
+...... paragraph 3. Рівняння лінійної реакції і розв'язок. ......
+-->
+<p>
+<span class="paragraph" id="autosec-797">3. Рівняння лінійної реакції і розв’язок.</span>
+<a id="main-html-autopage-797"></a>
+Зв’язані рівняння для реакції при збуренні \(y\):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{45}\)</span>
+<!--
+∑
+𝑏𝑗
+𝐻𝑎𝑖,𝑏𝑗
+𝑑𝑈𝑏𝑗
+𝑑𝑦
+= − 𝑔(𝑦)
+𝑎𝑖
+, (7.46) --><a id="eq:CPHF_HF_xy"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:CPHF_HF_xy} \sum _{bj} H_{ai,bj}\,\frac {dU_{bj}}{dy} = -\,g^{(y)}_{ai},
+\end{equation}
+</p>
+<p>
+і при невиродженому \(H\) розв’язок
+</p>
+<p>
+\[ \frac {dU_{ai}}{dy} = -\sum _{bj}(H^{-1})_{ai,bj}\,g^{(y)}_{bj}. \]
+</p>
+<!--
+...... paragraph 5. Остаточна формула для змішаної похідної у HF. ......
+-->
+<p>
+<span class="paragraph" id="autosec-798">5. Остаточна формула для змішаної похідної у HF.</span>
+<a id="main-html-autopage-798"></a>
+Підставивши розв’язок у загальну формулу <span class="textup">(<a href="main-html.html#??">??</a>)</span>, одержуємо
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{46}\)</span>
+<!--
+𝑑2𝐸
+𝑑𝑥 𝑑𝑦
+= Tr[D
+𝜕2h
+𝜕𝑥 𝜕𝑦
+] + 1
+2
+Tr[D
+𝜕2(J − K)
+𝜕𝑥 𝜕𝑦
+] − ∑
+𝑎𝑖
+∑
+𝑏𝑗
+𝑔(𝑥)
+𝑎𝑖
+(H−1)𝑎𝑖,𝑏𝑗 𝑔(𝑦)
+𝑏𝑗
+(7.47) --><a id="eq:mixed_HF_final"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:mixed_HF_final} \frac {d^2E}{dx\,dy} = \mathrm {Tr}\!\left [\mathbf D\,\frac {\partial ^2\mathbf h}{\partial x\,\partial y}\right ] +\tfrac 12\,\mathrm {Tr}\!\left [\mathbf D\,\frac {\partial
+^2(\mathbf J-\mathbf K)}{\partial x\,\partial y}\right ] - \sum _{ai}\sum _{bj} g^{(x)}_{ai}\,(\mathbf {H}^{-1})_{ai,bj}\,g^{(y)}_{bj}
+\end{equation}
+</p>
+<p>
+або компактно
+</p>
+<p>
+\[ \frac {d^2E}{dx\,dy} = \left .\frac {\partial ^2 E}{\partial x\,\partial y}\right |_{U} - \mathbf g^{(x)\,\mathrm T} H^{-1}\mathbf g^{(y)}. \]
+</p>
+<!--
+...... paragraph 6. Коментарі щодо Pulay-термінів і практики. ......
+-->
+<p>
+<span class="paragraph" id="autosec-799">6. Коментарі щодо Pulay-термінів і практики.</span>
+<a id="main-html-autopage-799"></a>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Якщо базис залежить від \(x\) або \(y\), то перший член у формулі <span class="textup">(<a href="response.html#eq:mixed_HF_final">7.47</a>)</span> повинен включати Pulay-члени першого та другого порядку.
+Зокрема, у частковій другій похідній при фіксованих орбіталях входять члени з \(\partial ^2\mathbf h/\partial x\partial y\) та члени виду \(\mathrm {Tr}[\mathbf F\,\partial ^2\mathbf S/\partial x\partial y]\) (або еквівалентні вирази).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Вектори \(\mathbf g^{(x)}\) і \(\mathbf g^{(y)}\) також містять похідні двоелектронних інтегралів — їх треба збирати при побудові правих частин CPHF.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Для обчислення кількох змішаних похідних доцільно однаково розкладати або факторизувати матрицю \(H\) (наприклад, LU/Cholesky/диагоналізація в робочому підпросторі) і потім для кожного збурення швидко знаходити
+\(H^{-1}\mathbf g^{(z)}\) шляхом прямого чи зворотного ходу.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Симетрія змішаної похідної (\(d^2E/dxdy = d^2E/dydx\)) гарантується при правильному урахуванні всіх Pulay-термінів і при точному розв’язанні CPHF.
+</p>
+</li>
+</ul>
+<!--
+...... section Поляризовність у методі HF ......
+-->
+<h4 id="autosec-800"><span class="sectionnumber">&#xA7;&#x202F;7.5&#x2003;</span>Поляризовність у методі HF</h4>
+<a id="main-html-autopage-800"></a>
+<p>
+Поляризовність визначається як друга похідна енергії за компонентами зовнішнього електричного поля:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{47}\)</span>
+<!--
+𝛼𝜇𝜈 = −
+𝜕2𝐸
+𝜕ℰ𝜇 𝜕ℰ𝜈
+|
+|
+|
+ℰ=0
+. (7.48) --><a id="eq:alpha_def"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:alpha_def} \alpha _{\mu \nu } = -\left .\frac {\partial ^2 E}{\partial \mathcal E_\mu \,\partial \mathcal E_\nu }\right |_{\mathcal E = 0}.
+\end{equation}
+</p>
+<p>
+У присутності однорідного електричного поля одноелектронний оператор набуває вигляду
+</p>
+<p>
+\[ \hat h(\boldsymbol {\mathcal E}) = \hat h_0 - \sum _{\mu } \mathcal E_\mu \,\hat \mu _\mu , \]
+</p>
+<p>
+тому
+</p>
+<p>
+\[ \frac {\partial \hat h}{\partial \mathcal E_\mu } = -\hat \mu _\mu , \qquad \frac {\partial ^2 \hat h}{\partial \mathcal E_\mu \,\partial \mathcal E_\nu }=0. \]
+</p>
+<p>
+Похідна фокіана по компоненті поля \(\mu \) збігається з похідною одноелектронної частини:
+</p>
+<p>
+\[ \hat F^{(\mu )} = \frac {\partial \hat F}{\partial \mathcal E_\mu } = -\hat \mu _\mu . \]
+</p>
+<p>
+Звідси елементи вектора збурення у рівняннях <kbd>CPHF</kbd>:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{48}\)</span>
+<!--
+𝑔(𝜇)
+𝑎𝑖
+=
+𝜕2𝐸
+𝜕ℰ𝜇 𝜕𝑈𝑎𝑖
+|
+|
+|
+ℰ=0
+= 𝐹(𝜇)
+𝑎𝑖
+= −(𝜇𝜇)𝑎𝑖, (7.49) --><a id="eq:HF_g_vector_field"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:HF_g_vector_field} g^{(\mu )}_{ai} = \left .\frac {\partial ^2 E}{\partial \mathcal E_\mu \,\partial U_{ai}}\right |_{\mathcal E=0} = F^{(\mu )}_{ai} = -(\mu _{\mu })_{ai},
+\end{equation}
+</p>
+<p>
+де \(\mu = x,y,z\) - компонента поля (або дипольного моменту) вздовж відповідної осі.
+</p>
+<p>
+Розв’язавши рівняння <kbd>CPHF</kbd>,
+</p>
+<p>
+\[ \sum _{bj} H_{ai,bj}\,U^{(\mu )}_{bj} = -g^{(\mu )}_{ai}, \]
+</p>
+<p>
+отримуємо орбітальну відповідь \(U^{(\mu )}_{ai}\).
+</p>
+<p>
+Перший порядок густини:
+</p>
+<p>
+\[ D^{(\mu )}_{ai} = 2\,U^{(\mu )}_{ai}, \qquad D^{(\mu )}_{ia} = 2\,U^{(\mu )}_{ai}, \qquad D^{(\mu )}_{ij}=0,\quad D^{(\mu )}_{ab}=0. \]
+</p>
+<p>
+Оскільки похідна Фока за компонентами поля лінійна й дорівнює
+</p>
+<p>
+\[ F^{(\nu )}_{pq} = -(\mu _{\nu })_{pq}, \]
+</p>
+<p>
+змішана друга похідна енергії у RHF набуває вигляду:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{49}\)</span>
+<!--
+𝜕2𝐸
+𝜕ℰ𝜇 𝜕ℰ𝜈
+= Tr[𝐷(𝜇)𝐹(𝜈)] = −4 ∑
+𝑎𝑖
+𝑈(𝜇)
+𝑎𝑖
+(𝜇𝜈)𝑎𝑖. (7.50) --><a id="eq:HF_mixed_second_derivative"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:HF_mixed_second_derivative} \frac {\partial ^2 E}{\partial \mathcal E_\mu \,\partial \mathcal E_\nu } = \mathrm {Tr}\!\left [D^{(\mu )} F^{(\nu )}\right ] = -4 \sum _{ai} U^{(\mu )}_{ai}\,(\mu _{\nu
+})_{ai}.
+\end{equation}
+</p>
+<p>
+Підставляючи у означення поляризовності&nbsp;<span class="textup">(<a href="response.html#eq:alpha_def">7.48</a>)</span>, маємо остаточний симетричний результат:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{50}\)</span>
+<!--
+𝛼𝜇𝜈 = 4 ∑
+𝑎𝑖
+𝑈(𝜇)
+𝑎𝑖
+(𝜇𝜈)𝑎𝑖 𝛼𝜇𝜈 = 𝛼𝜈𝜇. (7.51) --><a id="eq:HF_polarizability_final_sym"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:HF_polarizability_final_sym} \alpha _{\mu \nu } = 4 \sum _{ai} U^{(\mu )}_{ai}\,(\mu _{\nu })_{ai} \qquad \alpha _{\mu \nu }=\alpha _{\nu \mu }.
+\end{equation}
+</p>
+<p>
+Поляризовність у HF — це подвійний проєкційний добуток між лінійною орбітальною реакцією системи на поле \(\mathcal E_\mu \) та матрицею дипольного моменту в напрямку \(\nu \).
+</p>
+<!--
+...... subsection Детальний розбір повної CPHF-прцедури для знаходження тензора поляризовності ......
+-->
+<h5 id="autosec-801"><span class="sectionnumber">7.5.1&#x2003;</span>Детальний розбір повної CPHF-прцедури для знаходження тензора поляризовності</h5>
+<a id="main-html-autopage-801"></a>
+<p>
+В файлі <span class="codebutton"><a href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/ResponseTheory/code/h2_custom_CPHF.py" target="_blank" ><kbd>h2_custom_CPHF.py</kbd></a></span> подано
+покроковий структурований опис коду, який реалізує обчислення тензора поляризовності молекули <span
+id="lateximage-main-html-178"
+class="lateximagesource"
+><!--
+H2
+O
+--><img
+src="main-html-images/3BD50A5CF48F9588DE1B1A127A250217.svg"
+alt="\ce{H2O}"
+style=""
+class="lateximage"
+></span> за допомогою <kbd>CPHF</kbd> на базі самостійної побудови електронного гессіана та правих частин рівнянь.
+</p>
+<!--
+...... paragraph 1. SCF, МО та базові структурні параметри. ......
+-->
+<p>
+<span class="paragraph" id="autosec-804">1. SCF, МО та базові структурні параметри.</span>
+<a id="main-html-autopage-804"></a>
+</p>
+<p>
+Початковий етап: будуємо молекулу, виконуємо <kbd>RHF</kbd> та отримуємо \(\mathbf C,\; \varepsilon _i,\; n_{\text {occ}},\; n_{\text {vir}} \), де
+</p>
+<p>
+\[ \mathbf F \mathbf C = \mathbf S\,\mathbf C\,\boldsymbol \varepsilon ,\qquad \mathbf C=\{C_{pi}\}. \]
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">26 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">import</span><span class="tk-w"> </span><span class="tk-nn">numpy</span><span class="tk-w"> </span><span class="tk-k">as</span><span class="tk-w"> </span><span class="tk-nn">np</span>
+<span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+<span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.prop.polarizability.rhf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">Polarizability</span>
+
+<span class="tk-c1"># === H2O ===</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span>
+    <span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'''</span>
+<span class="tk-s1">    O 0.000000 0.000000 0.000000</span>
+<span class="tk-s1">    H 0.000000 -0.757000 0.587000</span>
+<span class="tk-s1">    H 0.000000 0.757000 0.587000</span>
+<span class="tk-s1">    '''</span><span class="tk-p">,</span>
+    <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'6-31g'</span><span class="tk-p">,</span>
+    <span class="tk-n">verbose</span><span class="tk-o">=</span><span class="tk-mi">0</span>
+<span class="tk-p">)</span>
+
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">run</span><span class="tk-p">(</span><span class="tk-n">conv_tol</span><span class="tk-o">=</span><span class="tk-mf">1e-12</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"Енергія: </span><span class="tk-si">{</span><span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">e_tot</span><span class="tk-si">:</span><span class="tk-s2">.10f</span><span class="tk-si">}</span><span class="tk-s2"> Hartree"</span><span class="tk-p">)</span>
+
+<span class="tk-n">mo_coeff</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">mo_coeff</span>      <span class="tk-c1"># C_{p i}</span>
+<span class="tk-n">mo_energy</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">mo_energy</span>    <span class="tk-c1"># енергії МО</span>
+<span class="tk-n">mo_occ</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">mo_occ</span>          <span class="tk-c1"># заповнення МО</span>
+
+<span class="tk-n">nocc</span> <span class="tk-o">=</span> <span class="tk-nb">int</span><span class="tk-p">(</span><span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">sum</span><span class="tk-p">(</span><span class="tk-n">mo_occ</span> <span class="tk-o">&gt;</span> <span class="tk-mi">0</span><span class="tk-p">))</span>  <span class="tk-c1"># кількість зайнятих МО</span>
+<span class="tk-n">nvir</span> <span class="tk-o">=</span> <span class="tk-nb">len</span><span class="tk-p">(</span><span class="tk-n">mo_energy</span><span class="tk-p">)</span> <span class="tk-o">-</span> <span class="tk-n">nocc</span>    <span class="tk-c1"># кількість віртуальних МО</span>
+<span class="tk-n">ov</span> <span class="tk-o">=</span> <span class="tk-n">nocc</span> <span class="tk-o">*</span> <span class="tk-n">nvir</span>                <span class="tk-c1"># розмірність простору ia</span></code></pre>
+</div>
+<!--
+...... paragraph 2. Дипольні інтеграли в АО та перехід у МО. ......
+-->
+<p>
+<span class="paragraph" id="autosec-805">2. Дипольні інтеграли в АО та перехід у МО.</span>
+<a id="main-html-autopage-805"></a>
+</p>
+<p>
+Будуються матриці \((\mu _x)_{pq}, (\mu _y)_{pq}, (\mu _z)_{pq}\) та проєктуються на МО:
+</p>
+<p>
+\[ (\mu _{\nu })_{ij} = C_{pi}\cdot (\mu _\nu )_{pq}\cdot C_{qj}. \]
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">5 рядків</span></div>
+<pre class="code"><code><span class="tk-k">with</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">with_common_orig</span><span class="tk-p">((</span><span class="tk-mi">0</span><span class="tk-p">,</span><span class="tk-mi">0</span><span class="tk-p">,</span><span class="tk-mi">0</span><span class="tk-p">)):</span>
+    <span class="tk-n">dip_ao</span> <span class="tk-o">=</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">intor_symmetric</span><span class="tk-p">(</span><span class="tk-s1">'int1e_r'</span><span class="tk-p">,</span> <span class="tk-n">comp</span><span class="tk-o">=</span><span class="tk-mi">3</span><span class="tk-p">)</span>  <span class="tk-c1"># (3, nao, nao)</span>
+
+<span class="tk-n">dip_mo</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">einsum</span><span class="tk-p">(</span><span class="tk-s1">'pi,xpq,qj-&gt;xij'</span><span class="tk-p">,</span> <span class="tk-n">mo_coeff</span><span class="tk-p">,</span> <span class="tk-n">dip_ao</span><span class="tk-p">,</span> <span class="tk-n">mo_coeff</span><span class="tk-p">)</span></code></pre>
+</div>
+<!--
+...... paragraph 3. Підготовка підпросторів , . ......
+-->
+<p>
+<span class="paragraph" id="autosec-806">3. Підготовка підпросторів \(C_{\text {occ}}\), \(C_{\text {vir}}\).</span>
+<a id="main-html-autopage-806"></a>
+</p>
+<p>
+\[ C_{\text {occ}} = C[:,\, i],\qquad C_{\text {vir}} = C[:,\, a]. \]
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">3 рядки</span></div>
+<pre class="code"><code><span class="tk-n">C_occ</span> <span class="tk-o">=</span> <span class="tk-n">mo_coeff</span><span class="tk-p">[:,</span> <span class="tk-p">:</span><span class="tk-n">nocc</span><span class="tk-p">]</span>
+<span class="tk-n">C_vir</span> <span class="tk-o">=</span> <span class="tk-n">mo_coeff</span><span class="tk-p">[:,</span> <span class="tk-n">nocc</span><span class="tk-p">:]</span></code></pre>
+</div>
+<!--
+...... paragraph 4. Двоелектронні інтеграли: AO → MO. ......
+-->
+<p>
+<span class="paragraph" id="autosec-807">4. Двоелектронні інтеграли: AO → MO.</span>
+<a id="main-html-autopage-807"></a>
+</p>
+<p>
+Будуємо блоки \((ia|jb)\), \((ij|ab)\), \((ib|ja)\), які входять у CPHF-гессіан.
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{51}\)</span>
+<!--
+(𝑖𝑎|𝑗𝑏) = 𝐶occ
+𝑝𝑖
+𝐶vir
+𝑞𝑎𝐶occ
+𝑟𝑗
+𝐶vir
+𝑠𝑏
+(𝑝𝑞|𝑟𝑠),
+(𝑖𝑗|𝑎𝑏) = 𝐶occ
+𝑝𝑖
+𝐶occ
+𝑞𝑗
+𝐶vir
+𝑟𝑎𝐶vir
+𝑠𝑏
+(𝑝𝑞|𝑟𝑠).
+-->
+<p>
+\begin{align*}
+(ia|jb) &amp; = C_{pi}^{\text {occ}} C_{qa}^{\text {vir}} C_{rj}^{\text {occ}} C_{sb}^{\text {vir}}\, (pq|rs), \\ (ij|ab) &amp; = C_{pi}^{\text {occ}} C_{qj}^{\text {occ}} C_{ra}^{\text {vir}} C_{sb}^{\text
+{vir}}\, (pq|rs).
+\end{align*}
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">19 рядків</span></div>
+<pre class="code"><code><span class="tk-n">eri_ao</span> <span class="tk-o">=</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">intor</span><span class="tk-p">(</span><span class="tk-s1">'int2e'</span><span class="tk-p">)</span>
+
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-s2">"ERI → MO..."</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># (ia|jb)</span>
+<span class="tk-n">eri_iajb</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">einsum</span><span class="tk-p">(</span><span class="tk-s1">'pi,pqrs-&gt;iqrs'</span><span class="tk-p">,</span> <span class="tk-n">C_occ</span><span class="tk-p">,</span> <span class="tk-n">eri_ao</span><span class="tk-p">)</span>
+<span class="tk-n">eri_iajb</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">einsum</span><span class="tk-p">(</span><span class="tk-s1">'qa,iqrs-&gt;iars'</span><span class="tk-p">,</span> <span class="tk-n">C_vir</span><span class="tk-p">,</span> <span class="tk-n">eri_iajb</span><span class="tk-p">)</span>
+<span class="tk-n">eri_iajb</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">einsum</span><span class="tk-p">(</span><span class="tk-s1">'rj,iars-&gt;iajs'</span><span class="tk-p">,</span> <span class="tk-n">C_occ</span><span class="tk-p">,</span> <span class="tk-n">eri_iajb</span><span class="tk-p">)</span>
+<span class="tk-n">eri_iajb</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">einsum</span><span class="tk-p">(</span><span class="tk-s1">'sb,iajs-&gt;iajb'</span><span class="tk-p">,</span> <span class="tk-n">C_vir</span><span class="tk-p">,</span> <span class="tk-n">eri_iajb</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># (ij|ab)</span>
+<span class="tk-n">eri_ijab</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">einsum</span><span class="tk-p">(</span><span class="tk-s1">'pi,pqrs-&gt;iqrs'</span><span class="tk-p">,</span> <span class="tk-n">C_occ</span><span class="tk-p">,</span> <span class="tk-n">eri_ao</span><span class="tk-p">)</span>
+<span class="tk-n">eri_ijab</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">einsum</span><span class="tk-p">(</span><span class="tk-s1">'qj,iqrs-&gt;ijrs'</span><span class="tk-p">,</span> <span class="tk-n">C_occ</span><span class="tk-p">,</span> <span class="tk-n">eri_ijab</span><span class="tk-p">)</span>
+<span class="tk-n">eri_ijab</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">einsum</span><span class="tk-p">(</span><span class="tk-s1">'ra,ijrs-&gt;ijas'</span><span class="tk-p">,</span> <span class="tk-n">C_vir</span><span class="tk-p">,</span> <span class="tk-n">eri_ijab</span><span class="tk-p">)</span>
+<span class="tk-n">eri_ijab</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">einsum</span><span class="tk-p">(</span><span class="tk-s1">'sb,ijas-&gt;ijab'</span><span class="tk-p">,</span> <span class="tk-n">C_vir</span><span class="tk-p">,</span> <span class="tk-n">eri_ijab</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># (ib|ja) = перестановка (ia|jb)</span>
+<span class="tk-n">eri_ibja</span> <span class="tk-o">=</span> <span class="tk-n">eri_iajb</span><span class="tk-o">.</span><span class="tk-n">transpose</span><span class="tk-p">(</span><span class="tk-mi">0</span><span class="tk-p">,</span> <span class="tk-mi">3</span><span class="tk-p">,</span> <span class="tk-mi">2</span><span class="tk-p">,</span> <span class="tk-mi">1</span><span class="tk-p">)</span></code></pre>
+</div>
+<!--
+...... paragraph 5. Побудова гессіана CPHF. ......
+-->
+<p>
+<span class="paragraph" id="autosec-808">5. Побудова гессіана CPHF.</span>
+<a id="main-html-autopage-808"></a>
+</p>
+<p>
+Електронний гессіан:
+</p>
+<p>
+\[ H_{ia,jb} = (\varepsilon _a - \varepsilon _i)\delta _{ij}\delta _{ab} + 4(ia|jb) - (ij|ab) - (ib|ja). \]
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">13 рядків</span></div>
+<pre class="code"><code><span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-s2">"H матриця..."</span><span class="tk-p">)</span>
+
+<span class="tk-n">i_occ</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">arange</span><span class="tk-p">(</span><span class="tk-n">nocc</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">repeat</span><span class="tk-p">(</span><span class="tk-n">nvir</span><span class="tk-p">)</span>
+<span class="tk-n">a_vir</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">tile</span><span class="tk-p">(</span><span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">arange</span><span class="tk-p">(</span><span class="tk-n">nvir</span><span class="tk-p">),</span> <span class="tk-n">nocc</span><span class="tk-p">)</span>
+
+<span class="tk-n">H</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">diag</span><span class="tk-p">(</span><span class="tk-n">mo_energy</span><span class="tk-p">[</span><span class="tk-n">nocc</span> <span class="tk-o">+</span> <span class="tk-n">a_vir</span><span class="tk-p">]</span> <span class="tk-o">-</span> <span class="tk-n">mo_energy</span><span class="tk-p">[</span><span class="tk-n">i_occ</span><span class="tk-p">])</span>
+
+<span class="tk-n">H</span> <span class="tk-o">+=</span> <span class="tk-mf">4.0</span> <span class="tk-o">*</span> <span class="tk-n">eri_iajb</span><span class="tk-o">.</span><span class="tk-n">reshape</span><span class="tk-p">(</span><span class="tk-n">ov</span><span class="tk-p">,</span> <span class="tk-n">ov</span><span class="tk-p">)</span>
+<span class="tk-n">H</span> <span class="tk-o">-=</span> <span class="tk-n">eri_ijab</span><span class="tk-o">.</span><span class="tk-n">transpose</span><span class="tk-p">(</span><span class="tk-mi">0</span><span class="tk-p">,</span><span class="tk-mi">2</span><span class="tk-p">,</span><span class="tk-mi">1</span><span class="tk-p">,</span><span class="tk-mi">3</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">reshape</span><span class="tk-p">(</span><span class="tk-n">ov</span><span class="tk-p">,</span> <span class="tk-n">ov</span><span class="tk-p">)</span>
+<span class="tk-n">H</span> <span class="tk-o">-=</span> <span class="tk-n">eri_ibja</span><span class="tk-o">.</span><span class="tk-n">transpose</span><span class="tk-p">(</span><span class="tk-mi">0</span><span class="tk-p">,</span><span class="tk-mi">3</span><span class="tk-p">,</span><span class="tk-mi">2</span><span class="tk-p">,</span><span class="tk-mi">1</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">reshape</span><span class="tk-p">(</span><span class="tk-n">ov</span><span class="tk-p">,</span> <span class="tk-n">ov</span><span class="tk-p">)</span>
+
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"H: </span><span class="tk-si">{</span><span class="tk-n">H</span><span class="tk-o">.</span><span class="tk-n">shape</span><span class="tk-si">}</span><span class="tk-s2">"</span><span class="tk-p">)</span></code></pre>
+</div>
+<!--
+...... paragraph 6. Права частина CPHF: блок дипольних матриць. ......
+-->
+<p>
+<span class="paragraph" id="autosec-809">6. Права частина CPHF: блок дипольних матриць.</span>
+<a id="main-html-autopage-809"></a>
+</p>
+<p>
+\[ g^{(x)}_{ia} = - (\mu _x)_{ia} = - \langle \phi _i \mid \hat {\mu }_x \mid \phi _a \rangle ,. \]
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">2 рядки</span></div>
+<pre class="code"><code><span class="tk-n">g_ov</span> <span class="tk-o">=</span> <span class="tk-o">-</span><span class="tk-n">dip_mo</span><span class="tk-p">[:,</span> <span class="tk-p">:</span><span class="tk-n">nocc</span><span class="tk-p">,</span> <span class="tk-n">nocc</span><span class="tk-p">:]</span></code></pre>
+</div>
+<!--
+...... paragraph 7. Розв'язання системи CPHF: ......
+-->
+<p>
+<span class="paragraph" id="autosec-810">7. Розв’язання системи CPHF:</span>
+<a id="main-html-autopage-810"></a>
+</p>
+<p>
+\[ \mathbf {H}\,\mathbf {U}^{(x)} = -\mathbf {g}^{(x)}. \]
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">6 рядків</span></div>
+<pre class="code"><code><span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-s2">"</span><span class="tk-se">\n</span><span class="tk-s2">CPHF..."</span><span class="tk-p">)</span>
+
+<span class="tk-n">U</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">zeros</span><span class="tk-p">((</span><span class="tk-mi">3</span><span class="tk-p">,</span> <span class="tk-n">nocc</span><span class="tk-p">,</span> <span class="tk-n">nvir</span><span class="tk-p">))</span>
+<span class="tk-k">for</span> <span class="tk-n">x</span> <span class="tk-ow">in</span> <span class="tk-nb">range</span><span class="tk-p">(</span><span class="tk-mi">3</span><span class="tk-p">):</span>
+    <span class="tk-n">U</span><span class="tk-p">[</span><span class="tk-n">x</span><span class="tk-p">]</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">linalg</span><span class="tk-o">.</span><span class="tk-n">solve</span><span class="tk-p">(</span><span class="tk-n">H</span><span class="tk-p">,</span> <span class="tk-o">-</span><span class="tk-n">g_ov</span><span class="tk-p">[</span><span class="tk-n">x</span><span class="tk-p">]</span><span class="tk-o">.</span><span class="tk-n">ravel</span><span class="tk-p">())</span><span class="tk-o">.</span><span class="tk-n">reshape</span><span class="tk-p">(</span><span class="tk-n">nocc</span><span class="tk-p">,</span> <span class="tk-n">nvir</span><span class="tk-p">)</span></code></pre>
+</div>
+<!--
+...... paragraph 8. Тензор поляризовності. ......
+-->
+<p>
+<span class="paragraph" id="autosec-811">8. Тензор поляризовності.</span>
+<a id="main-html-autopage-811"></a>
+</p>
+<p>
+Основна формула:
+</p>
+<p>
+\[ \alpha _{\nu \mu } = 4 \sum _{ai} U^{(\mu )}_{ai}\, (\mu _\nu )_{ai} \qquad \alpha _{\nu \mu } = \alpha _{\mu \nu }. \]
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">4 рядки</span></div>
+<pre class="code"><code><span class="tk-n">mu_ov</span> <span class="tk-o">=</span> <span class="tk-n">dip_mo</span><span class="tk-p">[:,</span> <span class="tk-p">:</span><span class="tk-n">nocc</span><span class="tk-p">,</span> <span class="tk-n">nocc</span><span class="tk-p">:]</span>
+
+<span class="tk-n">alpha</span> <span class="tk-o">=</span> <span class="tk-mi">4</span> <span class="tk-o">*</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">einsum</span><span class="tk-p">(</span><span class="tk-s1">'xia,yia-&gt;xy'</span><span class="tk-p">,</span> <span class="tk-n">mu_ov</span><span class="tk-p">,</span> <span class="tk-n">U</span><span class="tk-p">)</span></code></pre>
+</div>
+<div class="cb-comment">
+<p>
+<b>Коментар</b>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Тут використано пряму лінійну алгебру (<span class="inlinecode"><kbd>np.linalg.solve</kbd></span>) — тобто жодної ітераційної процедури в коді немає: матриця \(H\) розв’язується одразу (алгоритмічно —
+LU-розклад або гасіння, як реалізовано в NumPy).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Матриця \(H\) має розмір \((n_\text {occ} n_\text {vir})^2\). Для великих молекул це швидко стає непрактичним; у реальних імплементаціях використовують розріджені або ітеративні методи, а також симетрії.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Перетворення ERI в МО-базис є дорогим по пам’яті; часто будують лише блоки, як це зроблено вище, або використовують часткові трансформації (поступово).
+</p>
+</li>
+</ul>
+</div>
+<!--
+...... section Ядерний гесіан у методі HF ......
+-->
+<h4 id="autosec-812"><span class="sectionnumber">&#xA7;&#x202F;7.6&#x2003;</span>Ядерний гесіан у методі HF</h4>
+<a id="main-html-autopage-812"></a>
+<p>
+Ядерний гесіан — це матриця других похідних повної електронної енергії за двома довільними ядерними координатами \(x=\vect {R}_A\) і \(y=\vect {R}_B\):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{51}\)</span>
+<!--
+𝐻𝑥𝑦 =
+𝑑2𝐸
+𝑑𝑥 𝑑𝑦
+. (7.52) --><a id="eq:HF_Hessian_def"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:HF_Hessian_def} H_{xy} = \frac {d^2 E}{dx\,dy}.
+\end{equation}
+</p>
+<p>
+У методі Хартрі–Фока енергія залежить від координат ядер двома способами: (1) явно — через інтеграли одно- і двоелектронної частин гамільтоніана; (2) неявно — через матрицю густини, яка змінюється при збуренні геометрії. Тому друга похідна завжди розкладається
+на явну і неявну частини:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{52}\)</span>
+<!--
+𝑑2𝐸
+𝑑𝑥 𝑑𝑦
+=
+𝜕2𝐸
+𝜕𝑥 𝜕𝑦
+|
+|
+|
+D
++ Tr[
+𝑑D
+𝑑𝑥
+𝜕F
+𝜕𝑦
+] . (7.53) --><a id="eq:HF_Hessian_split"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:HF_Hessian_split} \frac {d^2E}{dx\,dy} = \left . \frac {\partial ^2E}{\partial x\,\partial y} \right |_{\mathbf D} + \mathrm {Tr} \!\left [ \frac {d\mathbf D}{dx}\, \frac {\partial \mathbf
+F}{\partial y} \right ].
+\end{equation}
+</p>
+<!--
+...... paragraph Явна частина. ......
+-->
+<p>
+<span class="paragraph" id="autosec-813">Явна частина.</span>
+<a id="main-html-autopage-813"></a>
+</p>
+<p>
+Явна частина містить похідні інтегралів за ядерними координатами:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{53}\)</span>
+<!--
+𝜕2𝐸
+𝜕𝑥 𝜕𝑦
+|
+|
+|
+D
+= Tr[D
+𝜕2h
+𝜕𝑥 𝜕𝑦
+] +
+1
+2
+Tr[D
+𝜕2(J − K)
+𝜕𝑥 𝜕𝑦
+] . (7.54)
+-->
+<p>
+\begin{equation}
+\left . \frac {\partial ^2E}{\partial x\,\partial y} \right |_{\mathbf D} = \mathrm {Tr}\!\left [ \mathbf D\,\frac {\partial ^2 \mathbf h}{\partial x\,\partial y} \right ] + \frac 12 \mathrm {Tr}\!\left [
+\mathbf D\,\frac {\partial ^2 (\mathbf J - \mathbf K)}{\partial x\,\partial y} \right ].
+\end{equation}
+</p>
+<p>
+Це чисто інтегральні (геометричні) внески.
+</p>
+<!--
+...... paragraph Неявна частина і роль CPHF. ......
+-->
+<p>
+<span class="paragraph" id="autosec-814">Неявна частина і роль CPHF.</span>
+<a id="main-html-autopage-814"></a>
+</p>
+<p>
+Неявна частина визначається реакцією МО на геометричне збурення. Похідна густини задається амплітудами обертань \(U_{ai}^{(x)}\), отриманими з рівнянь <kbd>CPHF</kbd>:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{54}\)</span>
+<!--
+∑
+𝑏𝑗
+𝐻𝑎𝑖,𝑏𝑗 𝑈(𝑥)
+𝑏𝑗
+= −𝑔(𝑥)
+𝑎𝑖
+. (7.55) --><a id="eq:HF_Hessian_CPHF"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:HF_Hessian_CPHF} \sum _{bj} H_{ai,bj}\,U^{(x)}_{bj} = -g^{(x)}_{ai}.
+\end{equation}
+</p>
+<p>
+Перший порядок густини:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{55}\)</span>
+<!--
+𝐷(𝑥)
+𝑎𝑖
+= 𝑈(𝑥)
+𝑎𝑖
+, 𝐷(𝑥)
+𝑖𝑎
+= 𝑈(𝑥)
+𝑎𝑖
+, 𝐷(𝑥)
+𝑖𝑗
+= 0, 𝐷(𝑥)
+𝑎𝑏
+= 0. (7.56)
+-->
+<p>
+\begin{equation}
+D^{(x)}_{ai}=U^{(x)}_{ai},\qquad D^{(x)}_{ia}=U^{(x)}_{ai},\qquad D^{(x)}_{ij}=0,\qquad D^{(x)}_{ab}=0.
+\end{equation}
+</p>
+<p>
+Похідна фокіана:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{56}\)</span>
+<!--
+𝐹(𝑦) =
+𝜕𝐹
+𝜕𝑦
+=
+𝜕ℎ
+𝜕𝑦
++
+𝜕(𝐽 − 𝐾)
+𝜕𝑦
+. (7.57)
+-->
+<p>
+\begin{equation}
+F^{(y)}=\frac {\partial F}{\partial y} = \frac {\partial h}{\partial y} + \frac {\partial (J-K)}{\partial y}.
+\end{equation}
+</p>
+<p>
+Неявний внесок:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{57}\)</span>
+<!--
+Tr[𝐷(𝑥) 𝐹(𝑦)] = 2 ∑
+𝑎𝑖
+𝑈(𝑥)
+𝑎𝑖
+𝐹(𝑦)
+𝑎𝑖
+. (7.58) --><a id="eq:HF_Hessian_implicit"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:HF_Hessian_implicit} \mathrm {Tr}\!\left [ D^{(x)}\,F^{(y)} \right ] = 2\sum _{ai} U^{(x)}_{ai}\, F^{(y)}_{ai}.
+\end{equation}
+</p>
+<!--
+...... paragraph Підсумковий вираз ядерного гесіана HF. ......
+-->
+<p>
+<span class="paragraph" id="autosec-815">Підсумковий вираз ядерного гесіана HF.</span>
+<a id="main-html-autopage-815"></a>
+</p>
+<p>
+Збираючи явну і неявну частини, отримуємо:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{7.}{58}\)</span>
+<!--
+𝐻𝑥𝑦 = Tr[D
+𝜕2h
+𝜕𝑥 𝜕𝑦
+] +
+1
+2
+Tr[D
+𝜕2(J − K)
+𝜕𝑥 𝜕𝑦
+] + 2 ∑
+𝑎𝑖
+𝑈(𝑥)
+𝑎𝑖
+𝐹(𝑦)
+𝑎𝑖
+. (7.59) --><a id="eq:HF_Hessian_final"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:HF_Hessian_final} H_{xy} = \mathrm {Tr}\!\left [ \mathbf D\,\frac {\partial ^2 \mathbf h}{\partial x\,\partial y} \right ] + \frac 12 \mathrm {Tr}\!\left [ \mathbf D\,\frac {\partial ^2 (\mathbf
+J-\mathbf K)}{\partial x\,\partial y} \right ] + 2\sum _{ai} U^{(x)}_{ai}\, F^{(y)}_{ai}.
+\end{equation}
+</p>
+<p>
+Перші два доданки — <em>геометричні</em>, останній — <em>орбітальна реакція</em>, що обчислюється розв’язанням рівнянь <kbd>CPHF</kbd>.
+</p>
+<p>
+У наступному розділі ми використаємо ідеї аналітичних похідних, щоб отримати власні частоти і форми нормальних мод.
+</p>
+<!--
+...... section Оптимізація геометрії ......
+-->
+<h4 id="autosec-816"><span class="sectionnumber">&#xA7;&#x202F;7.7&#x2003;</span>Оптимізація геометрії</h4>
+<a id="main-html-autopage-816"></a>
+<a id="sec:GeometryOptimization"></a>
+<p>
+Геометрія молекули є фундаментальною характеристикою, від якої залежить практично весь спектр її фізико-хімічних властивостей: енергія, електронна структура, спектри коливань і збуджень, поляризованість, багаточастинні відгуки та реакційна здатність. У межах
+наближення Борна—Оппенгаймера ця геометрія визначає форму поверхні потенціальної енергії, а отже формує локальну поведінку електронної хмари, умови зв’язування та всі похідні величини.
+</p>
+<p>
+Будь-яке відхилення від рівноважної структури — навіть незначне — неминуче викликає систематичні спотворення. Коливальні частоти зсуваються через некоректно визначений гесіан; дипольні, квадрупольні та вищі моменти набувають залежності від деформації, яка не
+має фізичного сенсу; енергії вертикальних переходів зміщуються, а похідні, що лежать в основі теорії відгуку, стають некоректними, оскільки розраховані не в точці мінімуму, де вони математично визначені.
+</p>
+<p>
+Таким чином, оптимізація геометрії не є технічним попереднім кроком, а виступає фундаментальною частиною квантово-хімічного моделювання. Вона забезпечує коректність усіх наступних розрахунків, дозволяє строго застосовувати варіаційні та аналітичні методи, та
+гарантує, що подальший аналіз ґрунтуватиметься на фізично осмисленій, енергетично виправданій структурі.
+</p>
+<p>
+Для будь-якої квантово-хімічної моделі енергія \(E(\mathbf R)\) визначається положеннями ядер, і завдання оптимізації полягає в тому, щоб знайти таку конфігурацію
+</p>
+<p>
+\[ \mathbf R_0 = \arg \min _{\mathbf R} E(\mathbf R), \]
+</p>
+<p>
+яка відповідає стаціонарній точці поверхні потенційної енергії. У межах наближення Борна—Оппенгаймера ця точка інтерпретується як рівноважна структура, де сили повністю компенсуються:
+</p>
+<p>
+\[ \nabla _{\mathbf R} E(\mathbf R_0) = \mathbf 0. \]
+</p>
+<p>
+Градієнт \(\nabla _{\mathbf R} E\) дає напрямок найшвидшого спаду енергії, але не враховує геометрію поверхні потенціальної енергії. Тому використання лише градієнта (градієнтний спуск) неефективне. Гесіан
+</p>
+<p>
+\[ H_{\alpha \beta }=\frac {\partial ^2E}{\partial R_\alpha \partial R_\beta } \]
+</p>
+<p>
+містить інформацію про локальну кривизну, тобто про те, як змінюється градієнт. Наявність хорошої оцінки гесіана дозволяє робити «Ньютонівські» кроки, які набагато швидше приводять до мінімуму. Саме тому сучасні оптимізатори експлуатують наближення до гесіана
+й оновлюють його в міру накопичення даних.
+</p>
+<!--
+...... subsection Оптимізатори геометрії в PySCF ......
+-->
+<h5 id="autosec-817"><span class="sectionnumber">7.7.1&#x2003;</span>Оптимізатори геометрії в <kbd>PySCF</kbd></h5>
+<a id="main-html-autopage-817"></a>
+<p>
+Документацію <kbd>PySCF</kbd> з оптимізації можна знайти за посиланням <a href="https://pyscf.org/user/geomopt.html" target="_blank" >Geometry optimization</a>.
+</p>
+<p>
+<kbd>PySCF</kbd> надає два інструменти для оптимізації геометрії: застарілий <a href="https://github.com/jhrmnn/pyberny" target="_blank" >PyBerny</a>-алгоритм та сучасний оптимізатор <kbd>geomeTRIC</kbd>. Перший підтримується для
+сумісності з попередніми версіями й історичного використання,та через інтерфейси до <a href="https://github.com/leeping/geomeTRIC" target="_blank" >geomeTRIC</a>, який є рекомендованим методом для всіх актуальних задач оптимізації, включаючи
+великі системи, погані початкові геометрії та розрахунки з обмеженнями.
+</p>
+<p>
+Встановлення <kbd>PyBerny</kbd> виконується командою:
+</p>
+<div class="codeblock code-bash" data-lang="bash" data-nosnippet>
+<div class="code-head"><span class="code-lang">Термінал</span><span class="code-lines">2 рядки</span></div>
+<pre class="code"><code>pip<span class="tk-w"> </span>install<span class="tk-w"> </span>berny</code></pre>
+</div>
+<p>
+Використання <kbd>PyBerny</kbd>:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">8 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'N 0 0 0; N 0 0 1.2'</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'ccpvdz'</span><span class="tk-p">)</span>
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span>
+
+<span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.geomopt.berny_solver</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">optimize</span>
+<span class="tk-n">mol_eq</span> <span class="tk-o">=</span> <span class="tk-n">optimize</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">,</span> <span class="tk-n">maxsteps</span><span class="tk-o">=</span><span class="tk-mi">100</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-n">mol_eq</span><span class="tk-o">.</span><span class="tk-n">tostring</span><span class="tk-p">())</span></code></pre>
+</div>
+<p>
+Встановлення <kbd>geomeTRIC</kbd> виконується командою:
+</p>
+<div class="codeblock code-bash" data-lang="bash" data-nosnippet>
+<div class="code-head"><span class="code-lang">Термінал</span><span class="code-lines">2 рядки</span></div>
+<pre class="code"><code>pip<span class="tk-w"> </span>install<span class="tk-w"> </span>geometric</code></pre>
+</div>
+<p>
+Використання <kbd>geomeTRIC</kbd>:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">9 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'N 0 0 0; N 0 0 1.2'</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'ccpvdz'</span><span class="tk-p">)</span>
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># geomeTRIC</span>
+<span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.geomopt.geometric_solver</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">optimize</span>
+<span class="tk-n">mol_eq</span> <span class="tk-o">=</span> <span class="tk-n">optimize</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">,</span> <span class="tk-n">maxsteps</span><span class="tk-o">=</span><span class="tk-mi">100</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-n">mol_eq</span><span class="tk-o">.</span><span class="tk-n">tostring</span><span class="tk-p">())</span></code></pre>
+</div>
+<p>
+В <kbd>PySCF</kbd> є ще один спосіб по оптимізації — це створення <span class="inlinecode"><kbd>optimizer()</kbd></span> з класу <span class="inlinecode"><kbd>Gradients</kbd></span>:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">8 рядків</span></div>
+<pre class="code"><code><span class="tk-c1"># geomeTRIC</span>
+<span class="tk-n">mol_eq</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">Gradients</span><span class="tk-p">()</span><span class="tk-o">.</span><span class="tk-n">optimizer</span><span class="tk-p">(</span><span class="tk-n">solver</span><span class="tk-o">=</span><span class="tk-s1">'geomeTRIC'</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-n">mol_eq</span><span class="tk-o">.</span><span class="tk-n">tostring</span><span class="tk-p">())</span>
+
+<span class="tk-c1"># PyBerny</span>
+<span class="tk-n">mol_eq</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">Gradients</span><span class="tk-p">()</span><span class="tk-o">.</span><span class="tk-n">optimizer</span><span class="tk-p">(</span><span class="tk-n">solver</span><span class="tk-o">=</span><span class="tk-s1">'berny'</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-n">mol_eq</span><span class="tk-o">.</span><span class="tk-n">tostring</span><span class="tk-p">())</span></code></pre>
+</div>
+<p>
+Для бекенду <span class="inlinecode"><kbd>geomeTRIC</kbd></span> критерії збіжності контролюються такими параметрами:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">10 рядків</span></div>
+<pre class="code"><code><span class="tk-n">conv_params</span> <span class="tk-o">=</span> <span class="tk-p">{</span>  <span class="tk-c1"># Це налаштування за замовчуванням</span>
+    <span class="tk-s1">'convergence_energy'</span><span class="tk-p">:</span> <span class="tk-mf">1e-6</span><span class="tk-p">,</span>  <span class="tk-c1"># Eh</span>
+    <span class="tk-s1">'convergence_grms'</span><span class="tk-p">:</span> <span class="tk-mf">3e-4</span><span class="tk-p">,</span>    <span class="tk-c1"># Eh/Bohr</span>
+    <span class="tk-s1">'convergence_gmax'</span><span class="tk-p">:</span> <span class="tk-mf">4.5e-4</span><span class="tk-p">,</span>  <span class="tk-c1"># Eh/Bohr</span>
+    <span class="tk-s1">'convergence_drms'</span><span class="tk-p">:</span> <span class="tk-mf">1.2e-3</span><span class="tk-p">,</span>  <span class="tk-c1"># Angstrom</span>
+    <span class="tk-s1">'convergence_dmax'</span><span class="tk-p">:</span> <span class="tk-mf">1.8e-3</span><span class="tk-p">,</span>  <span class="tk-c1"># Angstrom</span>
+<span class="tk-p">}</span>
+<span class="tk-n">mol_eq</span> <span class="tk-o">=</span> <span class="tk-n">optimize</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">,</span> <span class="tk-o">**</span><span class="tk-n">conv_params</span><span class="tk-p">)</span>
+<span class="tk-n">mol_eq</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">Gradients</span><span class="tk-p">()</span><span class="tk-o">.</span><span class="tk-n">optimizer</span><span class="tk-p">(</span><span class="tk-n">solver</span><span class="tk-o">=</span><span class="tk-s1">'geomeTRIC'</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">(</span><span class="tk-n">conv_params</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Для бекенду <span class="inlinecode"><kbd>PyBerny</kbd></span> критерії збіжності контролюються такими параметрами:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">9 рядків</span></div>
+<pre class="code"><code><span class="tk-n">conv_params</span> <span class="tk-o">=</span> <span class="tk-p">{</span>  <span class="tk-c1"># Це налаштування за замовчуванням</span>
+    <span class="tk-s1">'gradientmax'</span><span class="tk-p">:</span> <span class="tk-mf">0.45e-3</span><span class="tk-p">,</span>  <span class="tk-c1"># Eh/[Bohr|rad]</span>
+    <span class="tk-s1">'gradientrms'</span><span class="tk-p">:</span> <span class="tk-mf">0.15e-3</span><span class="tk-p">,</span>  <span class="tk-c1"># Eh/[Bohr|rad]</span>
+    <span class="tk-s1">'stepmax'</span><span class="tk-p">:</span> <span class="tk-mf">1.8e-3</span><span class="tk-p">,</span>       <span class="tk-c1"># [Bohr|rad]</span>
+    <span class="tk-s1">'steprms'</span><span class="tk-p">:</span> <span class="tk-mf">1.2e-3</span><span class="tk-p">,</span>       <span class="tk-c1"># [Bohr|rad]</span>
+<span class="tk-p">}</span>
+<span class="tk-n">mol_eq</span> <span class="tk-o">=</span> <span class="tk-n">optimize</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">,</span> <span class="tk-o">**</span><span class="tk-n">conv_params</span><span class="tk-p">)</span>
+<span class="tk-n">mol_eq</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">Gradients</span><span class="tk-p">()</span><span class="tk-o">.</span><span class="tk-n">optimizer</span><span class="tk-p">(</span><span class="tk-n">solver</span><span class="tk-o">=</span><span class="tk-s1">'berny'</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">(</span><span class="tk-n">conv_params</span><span class="tk-p">)</span></code></pre>
+</div>
+<!--
+...... subsection Обмеження (Constraints) ......
+-->
+<h5 id="autosec-818"><span class="sectionnumber">7.7.2&#x2003;</span>Обмеження (Constraints)</h5>
+<a id="main-html-autopage-818"></a>
+<p>
+У практичних квантово-хімічних розрахунках оптимізація геометрії не завжди повинна проходити у повністю вільному просторі \(3N\) декартових координат. Існує широкий клас задач, у яких частина внутрішніх координат повинна бути зафіксована або змінюватися у
+контрольований спосіб. Такі <em>обмеження</em> (<i>constraints</i>) дозволяють включити додаткову фізичну інформацію або реалізувати специфічні вимоги до структури.
+</p>
+<p>
+<kbd>geomeTRIC</kbd> підтримує користувацькі обмеження. Обмеження можна вказати у текстовому файлі. Його формат описано в <a href="https://geometric.readthedocs.io/en/latest/constraints.html#input-format" target="_blank"
+>онлайн-документації</a> або в <a href="https://github.com/leeping/geomeTRIC/blob/master/examples/constraints.txt" target="_blank" >шаблонному файлі</a>. Потім ім’я файлу з обмеженнями потрібно передати PySCF:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">4 рядки</span></div>
+<pre class="code"><code><span class="tk-n">params</span> <span class="tk-o">=</span> <span class="tk-p">{</span><span class="tk-s2">"constraints"</span><span class="tk-p">:</span> <span class="tk-s2">"constraints.txt"</span><span class="tk-p">,}</span>
+<span class="tk-n">mol_eq</span> <span class="tk-o">=</span> <span class="tk-n">optimize</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">,</span> <span class="tk-o">**</span><span class="tk-n">params</span><span class="tk-p">)</span>
+<span class="tk-n">mol_eq</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">Gradients</span><span class="tk-p">()</span><span class="tk-o">.</span><span class="tk-n">optimizer</span><span class="tk-p">(</span><span class="tk-n">solver</span><span class="tk-o">=</span><span class="tk-s1">'geomeTRIC'</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">(</span><span class="tk-n">params</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Файл обмежень <kbd>constraints.txt</kbd> — це текстовий файл, де кожен рядок задає одну інструкцію.
+</p>
+<!--
+...... paragraph Основні типи обмежень ......
+-->
+<p>
+<span class="paragraph" id="autosec-819">Основні типи обмежень</span>
+<a id="main-html-autopage-819"></a>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <b><kbd>distance</kbd></b> — фіксація між’ядерної відстані;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b><kbd>angle</kbd></b> — фіксація валентного кута;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b><kbd>dihedral</kbd></b> — фіксація торсійного кута;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b><kbd>freeze atom</kbd></b> — заморожування координат атома;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b><kbd>freeze --- nslation/rotation</kbd></b> — фіксація глобальних мод;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b><kbd>lineq</kbd></b> — лінійне рівняння на координати;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b><kbd>group</kbd></b> — заморожування групи атомів як єдиного фрагмента;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b><kbd>scan</kbd></b> — параметричний перегляд координати (напівоптимізація).
+</p>
+</li>
+</ul>
+<p>
+Приклади файлу <kbd>cons --- ints.txt</kbd>:
+</p>
+<div class="codeblock code-text code-long" data-lang="text" data-nosnippet>
+<div class="code-head"><span class="code-lang">Вивід</span><span class="code-lines">35 рядків</span></div>
+<pre class="code"><code># Фіксація довжини зв'язку O–H (атоми 1 і 2)
+distance   1   2     0.960
+
+# Фіксація валентного кута H–O–H
+angle      1   2   3   104.5
+
+# Фіксація торсійного кута C–C–O–H
+dihedral   5   6   7   8   180.0
+
+# Заморожування атома №5 (всі 3 координати)
+freeze  atom     5
+
+# Заморожування двох атомів як жорсткої групи
+group   freeze   10  11  12
+
+# Заморожування глобальних мод (інколи потрібно для кластерів)
+freeze  rotation
+freeze   --- nslation
+
+# Примусове накладання планарності через лінійне рівняння
+# x_3 - x_4 = 0
+lineq   1*x3   -1*x4    =   0.0
+
+# Примус загальної симетрії: атоми 2 і 3 на однаковій висоті
+lineq   1*z2   -1*z3    =   0.0
+
+# Дзеркальна симетрія: середня точка між 1–2 лежить у площині XY
+lineq   0.5*z1  +0.5*z2  =   0.0
+
+# Параметричне сканування відстані 1–2 (використовується у scan jobs)
+scan   distance   1  2   0.90  1.50  0.05
+
+# Сканування торсії з кроком 10 градусів
+scan   dihedral   3  4  5  6    0.0   360.0   10.0</code></pre>
+</div>
+<p>
+Усередині <kbd>PySCF</kbd> файл безпосередньо передається в <kbd>geometric.optimize</kbd>, і <kbd>geomeTRIC</kbd> інтерпретує всі інструкції.
+</p>
+<!--
+...... subsection Збуджені стани ......
+-->
+<h5 id="autosec-820"><span class="sectionnumber">7.7.3&#x2003;</span>Збуджені стани</h5>
+<a id="main-html-autopage-820"></a>
+<p>
+Оптимізація геометрії збуджених електронних станів є необхідною для аналізу спектроскопії, розрахунку флуоресценції, визначення безвипромінювальних переходів та пошуку міжсистемних перетинів. На відміну від основного стану, поверхня потенційної енергії збудженого
+стану істотно відрізняється за топологією, що змінює рівноважні довжини зв’язків, кути та торсії:
+</p>
+<p>
+\[ \mathbf R^{(S_n)}_0 = \arg \min _{\mathbf R} E_{S_n}(\mathbf R). \]
+</p>
+<p>
+Для коректного пошуку стаціонарної точки треба явно вказати, <em>який саме електронний стан</em> оптимізується, оскільки градієнт є стан-специфічним. У <kbd>PySCF</kbd> це реалізовано через об’єкти <kbd>Gradients</kbd>, що отримують інформацію про
+цільовий стан з електронного розрахунку (TDDFT, CIS, CASSCF або MCSCF).
+</p>
+<p>
+Для оптимізації геометрії збуджених станів потрібно вказати стан, який оптимізується, у відповідних об’єктах <span class="inlinecode"><kbd>Gradients</kbd></span>:
+</p>
+<div class="codeblock code-python code-long" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">44 рядки</span></div>
+<pre class="code"><code><span class="tk-sd">'''</span>
+<span class="tk-sd">Оптимізація геометрії збуджених станів</span>
+
+<span class="tk-sd">Примітка: при оптимізації збуджених станів стани можуть перевертатися, що</span>
+<span class="tk-sd">може спричинити проблеми зі збіжністю в оптимізаторі геометрії.</span>
+<span class="tk-sd">'''</span>
+
+<span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span>
+<span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">scf</span>
+<span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">ci</span><span class="tk-p">,</span> <span class="tk-n">tdscf</span><span class="tk-p">,</span> <span class="tk-n">mcscf</span>
+<span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">geomopt</span>
+
+
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">Mole</span><span class="tk-p">()</span>
+<span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s2">"N; N 1, 1.1"</span>
+<span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">basis</span><span class="tk-o">=</span> <span class="tk-s2">"6-31g"</span>
+<span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">build</span><span class="tk-p">()</span>
+<span class="tk-n">mol1</span> <span class="tk-o">=</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">copy</span><span class="tk-p">()</span>
+
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">run</span><span class="tk-p">()</span>
+
+<span class="tk-n">mc</span> <span class="tk-o">=</span> <span class="tk-n">mcscf</span><span class="tk-o">.</span><span class="tk-n">CASCI</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">,</span> <span class="tk-mi">4</span><span class="tk-p">,</span><span class="tk-mi">4</span><span class="tk-p">)</span>
+<span class="tk-n">mc</span><span class="tk-o">.</span><span class="tk-n">fcisolver</span><span class="tk-o">.</span><span class="tk-n">nstates</span> <span class="tk-o">=</span> <span class="tk-mi">3</span>
+<span class="tk-n">excited_grad</span> <span class="tk-o">=</span> <span class="tk-n">mc</span><span class="tk-o">.</span><span class="tk-n">nuc_grad_method</span><span class="tk-p">()</span><span class="tk-o">.</span><span class="tk-n">as_scanner</span><span class="tk-p">(</span><span class="tk-n">state</span><span class="tk-o">=</span><span class="tk-mi">2</span><span class="tk-p">)</span>
+<span class="tk-n">mol1</span> <span class="tk-o">=</span> <span class="tk-n">excited_grad</span><span class="tk-o">.</span><span class="tk-n">optimizer</span><span class="tk-p">()</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+<span class="tk-c1"># or</span>
+<span class="tk-c1">#mol1 = geomopt.optimize(excited_grad)</span>
+
+
+<span class="tk-n">td</span> <span class="tk-o">=</span> <span class="tk-n">tdscf</span><span class="tk-o">.</span><span class="tk-n">TDHF</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">)</span>
+<span class="tk-n">td</span><span class="tk-o">.</span><span class="tk-n">nstates</span> <span class="tk-o">=</span> <span class="tk-mi">5</span>
+<span class="tk-n">excited_grad</span> <span class="tk-o">=</span> <span class="tk-n">td</span><span class="tk-o">.</span><span class="tk-n">nuc_grad_method</span><span class="tk-p">()</span><span class="tk-o">.</span><span class="tk-n">as_scanner</span><span class="tk-p">(</span><span class="tk-n">state</span><span class="tk-o">=</span><span class="tk-mi">4</span><span class="tk-p">)</span>
+<span class="tk-n">mol1</span> <span class="tk-o">=</span> <span class="tk-n">excited_grad</span><span class="tk-o">.</span><span class="tk-n">optimizer</span><span class="tk-p">()</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+<span class="tk-c1"># or</span>
+<span class="tk-c1">#mol1 = geomopt.optimize(excited_grad)</span>
+
+
+<span class="tk-n">myci</span> <span class="tk-o">=</span> <span class="tk-n">ci</span><span class="tk-o">.</span><span class="tk-n">CISD</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">)</span>
+<span class="tk-n">myci</span><span class="tk-o">.</span><span class="tk-n">nstates</span> <span class="tk-o">=</span> <span class="tk-mi">2</span>
+<span class="tk-n">excited_grad</span> <span class="tk-o">=</span> <span class="tk-n">myci</span><span class="tk-o">.</span><span class="tk-n">nuc_grad_method</span><span class="tk-p">()</span><span class="tk-o">.</span><span class="tk-n">as_scanner</span><span class="tk-p">(</span><span class="tk-n">state</span><span class="tk-o">=</span><span class="tk-mi">1</span><span class="tk-p">)</span>
+<span class="tk-n">mol1</span> <span class="tk-o">=</span> <span class="tk-n">excited_grad</span><span class="tk-o">.</span><span class="tk-n">optimizer</span><span class="tk-p">()</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+<span class="tk-c1"># or</span>
+<span class="tk-c1">#geomopt.optimize(excited_grad)</span></code></pre>
+</div>
+<p>
+Для прикладів оптимізації геометрії стан-специфічного та усередненого по станах <kbd>CASSCF</kbd> див. приклад <span class="codebutton"><a
+href="https://github.com/pyscf/pyscf/tree/master/examples/geomopt/12-mcscf_excited_states.py" target="_blank" ><kbd>12-mcscf_excited_states.py</kbd></a></span>.
+</p>
+<!--
+...... subsection Callback під час оптимізації ......
+-->
+<h5 id="autosec-821"><span class="sectionnumber">7.7.4&#x2003;</span>Callback під час оптимізації</h5>
+<a id="main-html-autopage-821"></a>
+<p>
+Під час оптимізації геометрії важливо мати доступ до проміжної інформації кожного кроку: енергії, градієнтів, зарядів, молекулярних орбіталей та інших характеристик. Стандартні оптимізатори надають лише фінальний результат, що ускладнює діагностику збіжності та
+аналіз поведінки системи. Механізм <kbd>callback</kbd> дозволяє виконувати довільний код після кожного кроку оптимізації, забезпечуючи гнучке керування процесом, відстеження стану молекули, запис проміжних структур і розрахунок додаткових властивостей. Це
+робить callback незамінним інструментом у складних розрахунках, зокрема в QM/MM, оптимізації перехідних та збуджених станів, а також під час збору даних для власних методів аналізу чи машинного навчання.
+</p>
+<p>
+Функції callback можна викликати на кожному кроці оптимізації. Наступний приклад показує, як додати аналіз заряду для кожної геометрії під час оптимізації.
+</p>
+<div class="codeblock code-python code-long" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">39 рядків</span></div>
+<pre class="code"><code><span class="tk-ch">#!/usr/bin/env python</span>
+
+<span class="tk-sd">'''</span>
+<span class="tk-sd">Оптимізація молекулярної геометрії в середовищі зарядів QM/MM.</span>
+<span class="tk-sd">'''</span>
+
+<span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+<span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.geomopt</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">berny_solver</span>
+<span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.geomopt</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">geometric_solver</span>
+
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'''</span>
+<span class="tk-s1">C        0.000000    0.000000             -0.542500</span>
+<span class="tk-s1">O        0.000000    0.000000              0.677500</span>
+<span class="tk-s1">H        0.000000    0.9353074360871938   -1.082500</span>
+<span class="tk-s1">H        0.000000   -0.9353074360871938   -1.082500</span>
+<span class="tk-s1">            '''</span><span class="tk-p">,</span>
+            <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'3-21g'</span><span class="tk-p">)</span>
+
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># Запустити функцію analyze в callback</span>
+<span class="tk-k">def</span><span class="tk-w"> </span><span class="tk-nf">cb</span><span class="tk-p">(</span><span class="tk-n">envs</span><span class="tk-p">):</span>
+    <span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">envs</span><span class="tk-p">[</span><span class="tk-s1">'g_scanner'</span><span class="tk-p">]</span><span class="tk-o">.</span><span class="tk-n">base</span>
+    <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">analyze</span><span class="tk-p">(</span><span class="tk-n">verbose</span><span class="tk-o">=</span><span class="tk-mi">4</span><span class="tk-p">)</span>
+
+<span class="tk-c1">#</span>
+<span class="tk-c1"># Метод 1: Передати callback до функції optimize</span>
+<span class="tk-c1">#</span>
+<span class="tk-n">geometric_solver</span><span class="tk-o">.</span><span class="tk-n">optimize</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">,</span> <span class="tk-n">callback</span><span class="tk-o">=</span><span class="tk-n">cb</span><span class="tk-p">)</span>
+
+<span class="tk-n">berny_solver</span><span class="tk-o">.</span><span class="tk-n">optimize</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">,</span> <span class="tk-n">callback</span><span class="tk-o">=</span><span class="tk-n">cb</span><span class="tk-p">)</span>
+
+<span class="tk-c1">#</span>
+<span class="tk-c1"># Метод 2: Додати callback до оптимізатора геометрії</span>
+<span class="tk-c1">#</span>
+<span class="tk-n">opt</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">nuc_grad_method</span><span class="tk-p">()</span><span class="tk-o">.</span><span class="tk-n">as_scanner</span><span class="tk-p">()</span><span class="tk-o">.</span><span class="tk-n">optimizer</span><span class="tk-p">()</span>
+<span class="tk-n">opt</span><span class="tk-o">.</span><span class="tk-n">callback</span> <span class="tk-o">=</span> <span class="tk-n">cb</span>
+<span class="tk-n">opt</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span></code></pre>
+</div>
+<!--
+...... subsection Початковий гесіан в оптимізації геометрії ......
+-->
+<h5 id="autosec-822"><span class="sectionnumber">7.7.5&#x2003;</span>Початковий гесіан в оптимізації геометрії</h5>
+<a id="main-html-autopage-822"></a>
+<p>
+Гесіан (матриця других похідних енергії за ядерними координатами) відіграє ключову роль у методах другого порядку та квазі-ньютонівських алгоритмах. Він визначає напрямок і довжину кроку, прогнозує зміну градієнта та дозволяє ідентифікувати характер
+стаціонарної точки (мінімум чи сідлова точка).
+</p>
+<p>
+Сучасний оптимізатор <kbd>geomeTRIC</kbd>, який є рекомендованим у <kbd>PySCF</kbd>, працює у делокалізованих внутрішніх координатах і за замовчуванням генерує евристичний початковий гесіан на основі простої моделі силового поля валентних зв’язків.
+Цього достатньо для переважної більшості задач оптимізації основного стану середнього розміру.
+</p>
+<p>
+Проте в низці випадків якість початкового наближення гесіана суттєво впливає на швидкість і надійність збіжності:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> пошук перехідних станів (потрібне правильне негативне власне значення);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> великі та гнучкі системи (>50–100 атомів),
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> сильно деформовані або штучні початкові геометрії.
+</p>
+</li>
+</ul>
+<p>
+У <kbd>PySCF</kbd> аналітичний гесіан доступний для більшості методів (HF, DFT, MP2, CCSD, CASSCF тощо) і обчислюється так:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">3 рядки</span></div>
+<pre class="code"><code><span class="tk-n">hess</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">Hessian</span><span class="tk-p">()</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>                  <span class="tk-c1"># shape (natm, 3, natm, 3)</span>
+<span class="tk-n">H</span> <span class="tk-o">=</span> <span class="tk-n">hess</span><span class="tk-o">.</span><span class="tk-n">transpose</span><span class="tk-p">(</span><span class="tk-mi">0</span><span class="tk-p">,</span> <span class="tk-mi">2</span><span class="tk-p">,</span> <span class="tk-mi">1</span><span class="tk-p">,</span> <span class="tk-mi">3</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">reshape</span><span class="tk-p">(</span><span class="tk-o">-</span><span class="tk-mi">1</span><span class="tk-p">,</span> <span class="tk-o">-</span><span class="tk-mi">1</span><span class="tk-p">)</span> <span class="tk-c1"># 3N × 3N декартовий гесіан</span></code></pre>
+</div>
+<p>
+Отриману матрицю можна зберегти та повторно використати:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">4 рядки</span></div>
+<pre class="code"><code><span class="tk-kn">import</span><span class="tk-w"> </span><span class="tk-nn">numpy</span><span class="tk-w"> </span><span class="tk-k">as</span><span class="tk-w"> </span><span class="tk-nn">np</span>
+<span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">save</span><span class="tk-p">(</span><span class="tk-s2">"initial_hessian.npy"</span><span class="tk-p">,</span> <span class="tk-n">H</span><span class="tk-p">)</span>   <span class="tk-c1"># збереження</span>
+<span class="tk-n">H</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">load</span><span class="tk-p">(</span><span class="tk-s2">"initial_hessian.npy"</span><span class="tk-p">)</span>  <span class="tk-c1"># відновлення</span></code></pre>
+</div>
+<p>
+Передача користувацького гесіана в <kbd>geomeTRIC</kbd> надзвичайно проста:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">6 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.geomopt.geometric_solver</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">optimize</span>
+
+<span class="tk-n">mol_eq</span> <span class="tk-o">=</span> <span class="tk-n">optimize</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">,</span> <span class="tk-n">hessian</span><span class="tk-o">=</span><span class="tk-n">H</span><span class="tk-p">)</span>
+<span class="tk-c1"># або через інтерфейс Gradients</span>
+<span class="tk-n">mol_eq</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">Gradients</span><span class="tk-p">()</span><span class="tk-o">.</span><span class="tk-n">optimizer</span><span class="tk-p">(</span><span class="tk-n">solver</span><span class="tk-o">=</span><span class="tk-s1">'geomeTRIC'</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">(</span><span class="tk-n">hessian</span><span class="tk-o">=</span><span class="tk-n">H</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+При цьому <kbd>geomeTRIC</kbd> автоматично проєктує декартовий гесіан на свої внутрішні координати, відсікає трансляційно-обертальні моди й використовує його як стартове наближення. Подальше оновлення відбувається стандартними квазі-ньютонівськими
+схемами (зазвичай L-BFGS).
+</p>
+<!--
+...... subsection Практичні рекомендації ......
+-->
+<h5 id="autosec-823"><span class="sectionnumber">7.7.6&#x2003;</span>Практичні рекомендації</h5>
+<a id="main-html-autopage-823"></a>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Для звичайних молекул (до \(\approx 50\) атомів) і розумних початкових геометрій передавати гесіан не потрібно — евристика <kbd>geomeTRIC</kbd> працює відмінно.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Для пошуку TS, великих систем або «холодного старту» з поганої геометрії — завжди обчислюйте і передавайте точний гесіан.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> У релаксаційному скануванні чи IRC — зберігайте гесіан з попередньої точки й передавайте як <kbd>hessian=</kbd>. Це часто скорочує кількість кроків у 2–5 разів.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Якщо аналітичний гесіан недоступний, можна використати числовий гесіан з методу <span class="inlinecode"><kbd>mf.Hessian().set(numerical=True)</kbd></span>.
+</p>
+</li>
+</ul>
+<p>
+Таким чином, хоча <kbd>geomeTRIC</kbd> і не вимагає від користувача думати про гесіан, можливість передати точну аналітичну матрицю других похідних залишається потужним інструментом для розв’язання складних і великих задач оптимізації.
+</p>
+<!--
+...... section Контрольні запитання та завдання ......
+-->
+<h4 id="autosec-824">Контрольні запитання та завдання</h4>
+<a id="main-html-autopage-824"></a>
+<!--
+...... subsection Контрольні запитання ......
+-->
+<h5 id="autosec-825">Контрольні запитання</h5>
+<a id="main-html-autopage-825"></a>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> Чому оптимізацію геометрії в квантовій хімії вважають не просто підготовчим етапом, а обов’язковою фундаментальною частиною розрахунку? Які фізичні та обчислювальні наслідки виникають, якщо подальші розрахунки
+(наприклад, коливальні частоти, енергії збудження, властивості відгуку) виконуються не в рівноважній геометрії?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> У межах наближення Борна–Оппенгаймера поясніть фізичний зміст умови \(\nabla _{\mathbf {R}} E(\mathbf {R}_0) = 0\). Чому ця умова є необхідною, але недостатньою для гарантії того, що знайдена структура
+відповідає стійкій молекулі?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> Порівняйте роль градієнта енергії та гесіана в алгоритмах оптимізації геометрії. Чому методи, що використовують лише градієнт (наприклад, простий градієнтний спуск), значно менш ефективні, ніж методи другого порядку або
+квазі-ньютонівські?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">4.</span> У яких типах задач (великі системи, пошук перехідних станів, релаксаційні сканування, сильно спотворені початкові геометрії) якість початкового гесіана суттєво впливає на швидкість і надійність збіжності оптимізації? Поясніть
+механізм цього впливу.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">5.</span> Яка основна відмінність між оптимізацією геометрії основного та збудженого електронного стану? Чому градієнт, що використовується для пошуку мінімуму, має бути стан-специфічним, і які проблеми можуть виникнути, якщо
+цього не враховувати?
+</p>
+</li>
+</ul>
+<!--
+...... subsection Практичні завдання ......
+-->
+<h5 id="autosec-826">Практичні завдання</h5>
+<a id="main-html-autopage-826"></a>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker"><b>Задача 1:</b></span> <b>Проста оптимізація геометрії</b><br />
+Оптимізуйте геометрію трьох найпростіших молекул: <span
+id="lateximage-main-html-179"
+class="lateximagesource"
+><!--
+H2
+--><img
+src="main-html-images/B210D6A401BAC692FAB8840283B0CE59.svg"
+alt="\ce{H2}"
+style=""
+class="lateximage"
+></span>, <span
+id="lateximage-main-html-180"
+class="lateximagesource"
+><!--
+H2
+O
+--><img
+src="main-html-images/3BD50A5CF48F9588DE1B1A127A250217.svg"
+alt="\ce{H2O}"
+style=""
+class="lateximage"
+></span> та <span
+id="lateximage-main-html-181"
+class="lateximagesource"
+><!--
+CO
+--><img
+src="main-html-images/1751E01A9C69DE0F6606C49642C8CD6D.svg"
+alt="\ce{CO}"
+style=""
+class="lateximage"
+></span> методами HF та B3LYP у базисі <kbd>cc-pVDZ</kbd>.<br />
+Використовуйте найпростіший спосіб:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">3 рядки</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.geomopt.geometric_solver</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">optimize</span>
+<span class="tk-n">mol_opt</span> <span class="tk-o">=</span> <span class="tk-n">optimize</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Виведіть отримані довжини зв’язків і порівняйте з експериментальними значеннями: <span
+id="lateximage-main-html-182"
+class="lateximagesource"
+><!--
+H–H
+--><img
+src="main-html-images/D0CA103A4651357865FE3235A11944EB.svg"
+alt="\ce{H-H}"
+style=""
+class="lateximage"
+></span> \(\approx 0.74\)&nbsp;Å, <span
+id="lateximage-main-html-183"
+class="lateximagesource"
+><!--
+O–H
+--><img
+src="main-html-images/2DD1CD242CF0EA93AA3E2507782102EE.svg"
+alt="\ce{O-H}"
+style=""
+class="lateximage"
+></span> \(\approx 0.96\) Å, <span
+id="lateximage-main-html-184"
+class="lateximagesource"
+><!--
+H2
+O
+--><img
+src="main-html-images/3BD50A5CF48F9588DE1B1A127A250217.svg"
+alt="\ce{H2O}"
+style=""
+class="lateximage"
+></span> \(\angle \ce {H-O-H}\approx 104.5^\circ \) <span
+id="lateximage-main-html-185"
+class="lateximagesource"
+><!--
+C–
+–O
+--><img
+src="main-html-images/542AF1C76C82987F2946DF9D02C6E7DF.svg"
+alt="\ce{C=O}"
+style=""
+class="lateximage"
+></span> \(\approx 1.128\)&nbsp;Å. Зробіть висновок: який метод (HF чи B3LYP) краще відтворює експеримент.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 2:</b></span> <b>Оптимізація з фіксованою відстанню</b><br />
+Візьміть молекулу <span
+id="lateximage-main-html-186"
+class="lateximagesource"
+><!--
+H2
+O
+--><img
+src="main-html-images/3BD50A5CF48F9588DE1B1A127A250217.svg"
+alt="\ce{H2O}"
+style=""
+class="lateximage"
+></span>.
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Спочатку оптимізуйте її вільно (B3LYP/cc-pVDZ).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Потім виконайте три розрахунки з фіксованою довжиною одного зв’язку <span
+id="lateximage-main-html-187"
+class="lateximagesource"
+><!--
+O–H
+--><img
+src="main-html-images/2DD1CD242CF0EA93AA3E2507782102EE.svg"
+alt="\ce{O-H}"
+style=""
+class="lateximage"
+></span>: \(0.90\) Å, \(1.00\) Åта \(1.20\) Å.
+</p>
+</li>
+</ul>
+<p>
+Для цього створіть файл <kbd>constraints.txt</kbd> такого вигляду:
+</p>
+<div class="codeblock code-text" data-lang="text" data-nosnippet>
+<div class="code-head"><span class="code-lang">Вивід</span><span class="code-lines">4 рядки</span></div>
+<pre class="code"><code>$distance
+1 2 1.00   # атоми нумеруються з 1: O=1, H=2, H=3
+$end</code></pre>
+</div>
+<p>
+і передайте:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">2 рядки</span></div>
+<pre class="code"><code><span class="tk-n">mol_fixed</span> <span class="tk-o">=</span> <span class="tk-n">optimize</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">,</span> <span class="tk-n">constraints</span><span class="tk-o">=</span><span class="tk-s2">"constraints.txt"</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Побудуйте графік залежності повної енергії молекули від фіксованої відстані O–H (чотири точки: вільна + три фіксовані). Знайдіть приблизне положення мінімуму на цьому графіку.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 3:</b></span> <b>Оптимізація першого збудженого стану <span
+id="lateximage-main-html-188"
+class="lateximagesource"
+><!--
+H2
+--><img
+src="main-html-images/9F8FD8047E1791E721B6851534138D05.svg"
+alt="\ce{H2}"
+style=""
+class="lateximage"
+></span></b><br />
+Для молекули <span
+id="lateximage-main-html-189"
+class="lateximagesource"
+><!--
+H2
+--><img
+src="main-html-images/B210D6A401BAC692FAB8840283B0CE59.svg"
+alt="\ce{H2}"
+style=""
+class="lateximage"
+></span> виконайте:
+</p>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">а)</span> Оптимізацію основного стану S\(_0\) методом HF/cc-pVDZ.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">б)</span> Обчисліть TD-HF (тобто CIS) і знайдіть перше синглетне збуджене стан (це буде 1σ\(_g\)→1σ\(_u\) перехід).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">в)</span> Оптимізуйте геометрію саме цього збудженого стану (state=1).
+</p>
+</li>
+</ul>
+<p>
+Кодова заготовка:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">5 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">tdscf</span>
+<span class="tk-n">td</span> <span class="tk-o">=</span> <span class="tk-n">tdscf</span><span class="tk-o">.</span><span class="tk-n">TDHF</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">run</span><span class="tk-p">(</span><span class="tk-n">nstates</span><span class="tk-o">=</span><span class="tk-mi">3</span><span class="tk-p">)</span>
+<span class="tk-n">grad_exc</span> <span class="tk-o">=</span> <span class="tk-n">td</span><span class="tk-o">.</span><span class="tk-n">nuc_grad_method</span><span class="tk-p">()</span><span class="tk-o">.</span><span class="tk-n">as_scanner</span><span class="tk-p">(</span><span class="tk-n">state</span><span class="tk-o">=</span><span class="tk-mi">1</span><span class="tk-p">)</span>  <span class="tk-c1"># стан 1</span>
+<span class="tk-n">mol_exc</span> <span class="tk-o">=</span> <span class="tk-n">optimize</span><span class="tk-p">(</span><span class="tk-n">grad_exc</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Порівняйте рівноважну відстань H–H у основному стані та у першому збудженому синглетному стані. (Очікується: у збудженому стані зв’язок суттєво довший — майже дисоціює.)
+</p>
+</li>
+</ul>
+</section>
+</main>
+<nav class="botnavigation"><a href="main-html.html" class="linkhome" >
+Головна</a></nav>
+</div><!-- grid -->
+<script src="assets/book.js" defer></script>
+</body>
+</html>

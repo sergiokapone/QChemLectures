@@ -1,0 +1,2731 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="generator" content="LaTeX Lwarp package" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Квантово-механічні методи обчислення — Базові об’єкти PySCF</title>
+<link rel="stylesheet" type="text/css" href="assets/conspect.css" />
+<script>
+// Lwarp MathJax emulation code
+//
+// Based on code by Davide P. Cervone.
+// Equation numbering: https://github.com/mathjax/MathJax/issues/2427
+// Starred and ifnextchar macros: https://github.com/mathjax/MathJax/issues/2428
+// \left, \right delimiters: https://github.com/mathjax/MathJax/issues/2535
+//
+// Modified by Brian Dunn to adjust equation numbering and add subequations.
+//
+// LaTeX can use \seteqnumber{subequations?}{section}{number} before each equation.
+// subequations? is 0 usually, 1 if inside subequations.
+// section is a string printed as-is, or empty.
+// number is auto-incremented by MathJax between equations.
+//
+MathJax = {
+subequations: "0",
+section: "",
+loader: {
+load: ['[tex]/tagformat', '[tex]/textmacros'],
+},
+startup: {
+ready() {
+// These would be replaced by import commands if you wanted to make
+// a proper extension.
+const Configuration = MathJax._.input.tex.Configuration.Configuration;
+const CommandMap = MathJax._.input.tex.SymbolMap.CommandMap;
+const Macro = MathJax._.input.tex.Symbol.Macro;
+const TexError = MathJax._.input.tex.TexError.default;
+const ParseUtil = MathJax._.input.tex.ParseUtil.default;
+const expandable = MathJax._.util.Options.expandable;
+// Insert the replacement string into the TeX string, and check
+// that there haven't been too many maxro substitutions (prevents
+// infinite loops).
+const useArgument = (parser, text) => {
+parser.string = ParseUtil.addArgs(parser, text, parser.string.slice(parser.i));
+parser.i = 0;
+if (++parser.macroCount > parser.configuration.options.maxMacros) {
+throw new TexError('MaxMacroSub1',
+'MathJax maximum macro substitution count exceeded; ' +
+'is there a recursive macro call?');
+}
+}
+// Create the command map for:
+// \ifstar, \ifnextchar, \ifblank, \ifstrequal, \gsub, \seteqnumber
+new CommandMap('Lwarp-macros', {
+ifstar: 'IfstarFunction',
+ifnextchar: 'IfnextcharFunction',
+ifblank: 'IfblankFunction',
+ifstrequal: 'IfstrequalFunction',
+gsubstitute: 'GsubstituteFunction',
+seteqnumber: 'SeteqnumberFunction'
+}, {
+// This function implements an ifstar macro.
+IfstarFunction(parser, name) {
+const resultstar = parser.GetArgument(name);
+const resultnostar = parser.GetArgument(name);
+const star = parser.GetStar(); // true if there is a *
+useArgument(parser, star ? resultstar : resultnostar);
+},
+// This function implements an ifnextchar macro.
+IfnextcharFunction(parser, name) {
+let whichchar = parser.GetArgument(name);
+if (whichchar.match(/^(?:0x[0-9A-F]+|[0-9]+)$/i)) {
+// $ syntax highlighting
+whichchar = String.fromCodePoint(parseInt(whichchar));
+}
+const resultnextchar = parser.GetArgument(name);
+const resultnotnextchar = parser.GetArgument(name);
+const gotchar = (parser.GetNext() === whichchar);
+useArgument(parser, gotchar ? resultnextchar : resultnotnextchar);
+},
+// This function implements an ifblank macro.
+IfblankFunction(parser, name) {
+const blankarg = parser.GetArgument(name);
+const resultblank = parser.GetArgument(name);
+const resultnotblank = parser.GetArgument(name);
+const isblank = (blankarg.trim() == "");
+useArgument(parser, isblank ? resultblank : resultnotblank);
+},
+// This function implements an ifstrequal macro.
+IfstrequalFunction(parser, name) {
+const strequalfirst = parser.GetArgument(name);
+const strequalsecond = parser.GetArgument(name);
+const resultequal = parser.GetArgument(name);
+const resultnotequal = parser.GetArgument(name);
+const isequal = (strequalfirst == strequalsecond);
+useArgument(parser, isequal ? resultequal : resultnotequal);
+},
+// This function implements a gsub macro.
+GsubstituteFunction(parser, name) {
+const gsubfirst = parser.GetArgument(name);
+const gsubsecond = parser.GetArgument(name);
+const gsubthird = parser.GetArgument(name);
+let gsubresult=gsubfirst.replace(gsubsecond, gsubthird);
+useArgument(parser, gsubresult);
+},
+// This function modifies the equation numbers.
+SeteqnumberFunction(parser, name) {
+// Get the macro parameters
+const star = parser.GetStar(); // true if there is a *
+const optBrackets = parser.GetBrackets(name); // contents of optional brackets
+const newsubequations = parser.GetArgument(name); // the subequations argument
+const neweqsection = parser.GetArgument(name); // the eq section argument
+const neweqnumber = parser.GetArgument(name); // the eq number argument
+MathJax.config.subequations=newsubequations ; // a string with boolean meaning
+MathJax.config.section=neweqsection ; // a string with numeric meaning
+parser.tags.counter = parser.tags.allCounter = neweqnumber ;
+}
+});
+// Create the Lwarp-macros package
+Configuration.create('Lwarp-macros', {
+handler: {macro: ['Lwarp-macros']}
+});
+MathJax.startup.defaultReady();
+// For forward references:
+MathJax.startup.input[0].preFilters.add(({math}) => {
+if (math.inputData.recompile){
+MathJax.config.subequations = math.inputData.recompile.subequations;
+MathJax.config.section = math.inputData.recompile.section;
+}
+});
+MathJax.startup.input[0].postFilters.add(({math}) => {
+if (math.inputData.recompile){
+math.inputData.recompile.subequations = MathJax.config.subequations;
+math.inputData.recompile.section = MathJax.config.section;
+}
+});
+// For \left, \right with unicode-math:
+const {DelimiterMap} = MathJax._.input.tex.SymbolMap;
+const {Symbol} = MathJax._.input.tex.Symbol;
+const {MapHandler} = MathJax._.input.tex.MapHandler;
+const delimiter = MapHandler.getMap('delimiter');
+delimiter.add('\\lBrack', new Symbol('\\lBrack', '\u27E6'));
+delimiter.add('\\rBrack', new Symbol('\\rBrack', '\u27E7'));
+delimiter.add('\\lAngle', new Symbol('\\lAngle', '\u27EA'));
+delimiter.add('\\rAngle', new Symbol('\\rAngle', '\u27EB'));
+delimiter.add('\\lbrbrak', new Symbol('\\lbrbrak', '\u2772'));
+delimiter.add('\\rbrbrak', new Symbol('\\rbrbrak', '\u2773'));
+delimiter.add('\\lbag', new Symbol('\\lbag', '\u27C5'));
+delimiter.add('\\rbag', new Symbol('\\rbag', '\u27C6'));
+delimiter.add('\\llparenthesis', new Symbol('\\llparenthesis', '\u2987'));
+delimiter.add('\\rrparenthesis', new Symbol('\\rrparenthesis', '\u2988'));
+delimiter.add('\\llangle', new Symbol('\\llangle', '\u2989'));
+delimiter.add('\\rrangle', new Symbol('\\rrangle', '\u298A'));
+delimiter.add('\\Lbrbrak', new Symbol('\\Lbrbrak', '\u27EC'));
+delimiter.add('\\Rbrbrak', new Symbol('\\Rbrbrak', '\u27ED'));
+delimiter.add('\\lBrace', new Symbol('\\lBrace', '\u2983'));
+delimiter.add('\\rBrace', new Symbol('\\rBrace', '\u2984'));
+delimiter.add('\\lParen', new Symbol('\\lParen', '\u2985'));
+delimiter.add('\\rParen', new Symbol('\\rParen', '\u2986'));
+delimiter.add('\\lbrackubar', new Symbol('\\lbrackubar', '\u298B'));
+delimiter.add('\\rbrackubar', new Symbol('\\rbrackubar', '\u298C'));
+delimiter.add('\\lbrackultick', new Symbol('\\lbrackultick', '\u298D'));
+delimiter.add('\\rbracklrtick', new Symbol('\\rbracklrtick', '\u298E'));
+delimiter.add('\\lbracklltick', new Symbol('\\lbracklltick', '\u298F'));
+delimiter.add('\\rbrackurtick', new Symbol('\\rbrackurtick', '\u2990'));
+delimiter.add('\\langledot', new Symbol('\\langledot', '\u2991'));
+delimiter.add('\\rangledot', new Symbol('\\rangledot', '\u2992'));
+delimiter.add('\\lparenless', new Symbol('\\lparenless', '\u2993'));
+delimiter.add('\\rparengtr', new Symbol('\\rparengtr', '\u2994'));
+delimiter.add('\\Lparengtr', new Symbol('\\Lparengtr', '\u2995'));
+delimiter.add('\\Rparenless', new Symbol('\\Rparenless', '\u2996'));
+delimiter.add('\\lblkbrbrak', new Symbol('\\lblkbrbrak', '\u2997'));
+delimiter.add('\\rblkbrbrak', new Symbol('\\rblkbrbrak', '\u2998'));
+delimiter.add('\\lvzigzag', new Symbol('\\lvzigzag', '\u29D8'));
+delimiter.add('\\rvzigzag', new Symbol('\\rvzigzag', '\u29D9'));
+delimiter.add('\\Lvzigzag', new Symbol('\\Lvzigzag', '\u29DA'));
+delimiter.add('\\Rvzigzag', new Symbol('\\Rvzigzag', '\u29DB'));
+delimiter.add('\\lcurvyangle', new Symbol('\\lcurvyangle', '\u29FC'));
+delimiter.add('\\rcurvyangle', new Symbol('\\rcurvyangle', '\u29FD'));
+delimiter.add('\\Vvert', new Symbol('\\Vvert', '\u2980'));
+} // ready
+}, // startup
+tex: {
+packages: {'[+]': ['tagformat', 'Lwarp-macros', 'textmacros']},
+tags: "ams",
+tagformat: {
+number: function (n) {
+if(MathJax.config.subequations==0)
+return(MathJax.config.section + n);
+else
+return(MathJax.config.section + String.fromCharCode(96+n));
+},
+},
+}
+}
+</script>
+<script
+id="MathJax-script"
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
+></script>
+</head>
+<body>
+<a id="main-html-autopage-82"></a>
+<div class="pagegrid">
+<nav class="topnavigation"><a href="main-html.html" class="linkhome" >
+Головна</a></nav>
+<div class="sidetoccontainer">
+<nav class="sidetoc">
+<div class="sidetoctitle">
+<p>
+<span class="sidetocthetitle">Квантово-механічні методи обчислення</span>
+</p>
+<p class="sidetoc-meta"><a href="../PyscfBook/index.html">Про посібник</a><span aria-hidden="true">·</span><a href="../PyscfBook/pyscfBook.pdf">PDF</a></p>
+</div>
+<div class="sidetoccontents">
+<p>
+<a href="main-html.html" class="linkhome" >
+Головна</a>
+</p>
+<p>
+<a href="preface.html#autosec-7" class="tocchapter" >
+Передмова</a>
+</p>
+<p>
+<a href="preface.html#autosec-8" class="tocsection" >
+Актуальність квантово-механічних обчислень</a>
+</p>
+<p>
+<a href="preface.html#autosec-9" class="tocsection" >
+Передумови</a>
+</p>
+<p>
+<a href="preface.html#autosec-13" class="tocsection" >
+Організація навчальних матеріалів</a>
+</p>
+<p>
+<a href="preface.html#autosec-19" class="tocsection" >
+Як користуватися посібником</a>
+</p>
+<p>
+<a href="preface.html#autosec-20" class="tocsection" >
+Зворотний зв’язок</a>
+</p>
+<p>
+<a href="preface.html#autosec-21" class="tocsection" >
+Ліцензія та використання</a>
+</p>
+<p>
+<a href="welcome.html#autosec-25" class="tocpart" >
+<span class="sectionnumber">I</span><span class="toctitle">&#x2003;Вступ до PySCF: основи та перші кроки</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-26" class="tocchapter" >
+<span class="sectionnumber">1</span><span class="toctitle">&#x2003;Знайомство з PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-27" class="tocsection" >
+<span class="sectionnumber">1.1</span><span class="toctitle">&#x2003;PySCF: концепція та філософія</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-28" class="tocsection" >
+<span class="sectionnumber">1.2</span><span class="toctitle">&#x2003;Основні можливості PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-29" class="tocsection" >
+<span class="sectionnumber">1.3</span><span class="toctitle">&#x2003;Архітектура і дизайн PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-36" class="tocsection" >
+<span class="sectionnumber">1.4</span><span class="toctitle">&#x2003;Порівняння з іншими програмами</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-40" class="tocsection" >
+<span class="sectionnumber">1.5</span><span class="toctitle">&#x2003;Встановлення PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-58" class="tocsection" >
+<span class="sectionnumber">1.6</span><span class="toctitle">&#x2003;Базова структура програми на PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-62" class="tocsection" >
+<span class="sectionnumber">1.7</span><span class="toctitle">&#x2003;Система одиниць та конвенції</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-71" class="tocsection" >
+<span class="sectionnumber">1.8</span><span class="toctitle">&#x2003;Документація та ресурси</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-76" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="welcome.html#autosec-77" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="mole.html#autosec-84" class="tocchapter" >
+<span class="sectionnumber">2</span><span class="toctitle">&#x2003;Базові об’єкти <kbd>PySCF</kbd></span></a>
+</p>
+<p>
+<a href="mole.html#autosec-85" class="tocsection" >
+<span class="sectionnumber">2.1</span><span class="toctitle">&#x2003;Молекулярний об’єкт (Mole)</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-109" class="tocsection" >
+<span class="sectionnumber">2.2</span><span class="toctitle">&#x2003;Періодичний об’єкт (Cell)</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-117" class="tocsection" >
+<span class="sectionnumber">2.3</span><span class="toctitle">&#x2003;Базисні набори в <kbd>PySCF</kbd></span></a>
+</p>
+<p>
+<a href="mole.html#autosec-128" class="tocsection" >
+<span class="sectionnumber">2.4</span><span class="toctitle">&#x2003;Симетрія в атомних розрахунках</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-134" class="tocsection" >
+<span class="sectionnumber">2.5</span><span class="toctitle">&#x2003;Спін та мультиплетність</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-138" class="tocsection" >
+<span class="sectionnumber">2.6</span><span class="toctitle">&#x2003;Типова схема розрахунків у <kbd>PySCF</kbd></span></a>
+</p>
+<p>
+<a href="mole.html#autosec-139" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="mole.html#autosec-140" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-147" class="tocpart" >
+<span class="sectionnumber">II</span><span class="toctitle">&#x2003;Ab Initio методи: від Хартрі-Фока до пост-HF і DFT</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-148" class="tocchapter" >
+<span class="sectionnumber">3</span><span class="toctitle">&#x2003;Метод Хартрі-Фока</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-149" class="tocsection" >
+<span class="sectionnumber">3.1</span><span class="toctitle">&#x2003;Теоретичні основи методу Хартрі–Фока</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-155" class="tocsection" >
+<span class="sectionnumber">3.2</span><span class="toctitle">&#x2003;SFC-процедура</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-160" class="tocsection" >
+<span class="sectionnumber">3.3</span><span class="toctitle">&#x2003;Які бувають базиси</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-169" class="tocsection" >
+<span class="sectionnumber">3.4</span><span class="toctitle">&#x2003;Варіанти методу Хартрі–Фока</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-195" class="tocsection" >
+<span class="sectionnumber">3.5</span><span class="toctitle">&#x2003;Метод UHF та спінове забруднення</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-205" class="tocsection" >
+<span class="sectionnumber">3.6</span><span class="toctitle">&#x2003;Прості атомні системи</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-212" class="tocsection" >
+<span class="sectionnumber">3.7</span><span class="toctitle">&#x2003;Атоми другого періоду (Li–Ne)</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-248" class="tocsection" >
+<span class="sectionnumber">3.8</span><span class="toctitle">&#x2003;Енергія, орбіталі та електронна густина</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-278" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-279" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="diatomic.html#autosec-314" class="tocchapter" >
+<span class="sectionnumber">4</span><span class="toctitle">&#x2003;Метод Хартрі–Фока для простих молекул</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-319" class="tocsection" >
+<span class="sectionnumber">4.1</span><span class="toctitle">&#x2003;Наближення Борна–Опенгеймера</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-320" class="tocsection" >
+<span class="sectionnumber">4.2</span><span class="toctitle">&#x2003;Орбіталі і електронні стани молекул</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-332" class="tocsection" >
+<span class="sectionnumber">4.3</span><span class="toctitle">&#x2003;Модельні молекули: \(\mathrm {H_{2}^{+}}\) та \(\mathrm {H_{2}}\)</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-345" class="tocsection" >
+<span class="sectionnumber">4.4</span><span class="toctitle">&#x2003;Іон молекули водню \(\mathrm {H_{2}^{+}}\)</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-382" class="tocsection" >
+<span class="sectionnumber">4.5</span><span class="toctitle">&#x2003;Крива потенціальної енергії</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-402" class="tocsection" >
+<span class="sectionnumber">4.6</span><span class="toctitle">&#x2003;Молекула водню \(\mathrm {H_{2}}\)</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-435" class="tocsection" >
+<span class="sectionnumber">4.7</span><span class="toctitle">&#x2003;Дипольний момент молекул</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-463" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="diatomic.html#autosec-464" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="post-hf.html#autosec-519" class="tocchapter" >
+<span class="sectionnumber">5</span><span class="toctitle">&#x2003;Пост-Хартрі-Фоківські методи</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-520" class="tocsection" >
+<span class="sectionnumber">5.1</span><span class="toctitle">&#x2003;Вступ до електронної кореляції</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-531" class="tocsection" >
+<span class="sectionnumber">5.2</span><span class="toctitle">&#x2003;Теорія збурень Møller–Plesset (MP2)</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-548" class="tocsection" >
+<span class="sectionnumber">5.3</span><span class="toctitle">&#x2003;Основи методу конфігураційної взаємодії</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-565" class="tocsection" >
+<span class="sectionnumber">5.4</span><span class="toctitle">&#x2003;Метод зв’язаних кластерів</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-586" class="tocsection" >
+<span class="sectionnumber">5.5</span><span class="toctitle">&#x2003;Метод повного активного простору конфігурацій</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-608" class="tocsection" >
+<span class="sectionnumber">5.6</span><span class="toctitle">&#x2003;Функціонал енергії та натуральні орбіталі</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-616" class="tocsection" >
+<span class="sectionnumber">5.7</span><span class="toctitle">&#x2003;Межі наближень і рівняння Шредінґера</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-623" class="tocsection" >
+<span class="sectionnumber">5.8</span><span class="toctitle">&#x2003;Корисні посилання</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-624" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="post-hf.html#autosec-626" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="dft.html#autosec-663" class="tocchapter" >
+<span class="sectionnumber">6</span><span class="toctitle">&#x2003;Теорія функціоналу густини (DFT)</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-664" class="tocsection" >
+<span class="sectionnumber">6.1</span><span class="toctitle">&#x2003;Основи теорії функціоналу густини</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-675" class="tocsection" >
+<span class="sectionnumber">6.2</span><span class="toctitle">&#x2003;Базова структура DFT розрахунку</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-683" class="tocsection" >
+<span class="sectionnumber">6.3</span><span class="toctitle">&#x2003;Функціонали обміну-кореляції</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-714" class="tocsection" >
+<span class="sectionnumber">6.4</span><span class="toctitle">&#x2003;Практичні рекомендації</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-716" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="dft.html#autosec-717" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="response.html#autosec-764" class="tocpart" >
+<span class="sectionnumber">III</span><span class="toctitle">&#x2003;Властивості молекул</span></a>
+</p>
+<p>
+<a href="response.html#autosec-765" class="tocchapter" >
+<span class="sectionnumber">7</span><span class="toctitle">&#x2003;Молекулярні властивості як похідні енергії</span></a>
+</p>
+<p>
+<a href="response.html#autosec-766" class="tocsection" >
+<span class="sectionnumber">7.1</span><span class="toctitle">&#x2003;Молекулярні властивості як похідні енергії</span></a>
+</p>
+<p>
+<a href="response.html#autosec-773" class="tocsection" >
+<span class="sectionnumber">7.2</span><span class="toctitle">&#x2003;Чисельні та аналітичні похідні</span></a>
+</p>
+<p>
+<a href="response.html#autosec-777" class="tocsection" >
+<span class="sectionnumber">7.3</span><span class="toctitle">&#x2003;Варіаційні методи та залежність енергії від параметрів</span></a>
+</p>
+<p>
+<a href="response.html#autosec-778" class="tocsection" >
+<span class="sectionnumber">7.4</span><span class="toctitle">&#x2003;Аналітичні похідні в методі Хартрі-Фока</span></a>
+</p>
+<p>
+<a href="response.html#autosec-800" class="tocsection" >
+<span class="sectionnumber">7.5</span><span class="toctitle">&#x2003;Поляризовність у методі HF</span></a>
+</p>
+<p>
+<a href="response.html#autosec-812" class="tocsection" >
+<span class="sectionnumber">7.6</span><span class="toctitle">&#x2003;Ядерний гесіан у методі HF</span></a>
+</p>
+<p>
+<a href="response.html#autosec-816" class="tocsection" >
+<span class="sectionnumber">7.7</span><span class="toctitle">&#x2003;Оптимізація геометрії</span></a>
+</p>
+<p>
+<a href="response.html#autosec-824" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="vibrations.html#autosec-851" class="tocchapter" >
+<span class="sectionnumber">8</span><span class="toctitle">&#x2003;Коливальні властивості молекул</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-854" class="tocsection" >
+<span class="sectionnumber">8.1</span><span class="toctitle">&#x2003;Гессіан та нормальні моди</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-876" class="tocsection" >
+<span class="sectionnumber">8.2</span><span class="toctitle">&#x2003;Інфрачервоні (ІЧ) спектри</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-907" class="tocsection" >
+<span class="sectionnumber">8.3</span><span class="toctitle">&#x2003;Термохімія та нульова енергія</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-919" class="tocsection" >
+<span class="sectionnumber">8.4</span><span class="toctitle">&#x2003;Перехідні стани та уявні частоти</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-927" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="vibrations.html#autosec-928" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="excited-states.html#autosec-941" class="tocchapter" >
+<span class="sectionnumber">9</span><span class="toctitle">&#x2003;Збуджені стани та UV/VIS спектроскопія</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-942" class="tocsection" >
+<span class="sectionnumber">9.1</span><span class="toctitle">&#x2003;Спектроскопічні властивості: перехідні дипольні моменти і сили осцилятора</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-948" class="tocsection" >
+<span class="sectionnumber">9.2</span><span class="toctitle">&#x2003;Збуджені стани в рамках методу Хартрі–Фока</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-954" class="tocsection" >
+<span class="sectionnumber">9.3</span><span class="toctitle">&#x2003;Часозалежна теорія функціонала густини (TD-DFT)</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-958" class="tocsection" >
+<span class="sectionnumber">9.4</span><span class="toctitle">&#x2003;Збуджені стани у методах конфігураційної взаємодії</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-959" class="tocsection" >
+<span class="sectionnumber">9.5</span><span class="toctitle">&#x2003;Метод рівнянь руху (EOM)</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-973" class="tocsection" >
+<span class="sectionnumber">9.6</span><span class="toctitle">&#x2003;Збуджені стани у CASSCF / NEVPT2</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-974" class="tocsection" >
+<span class="sectionnumber">9.7</span><span class="toctitle">&#x2003;Рекомендації з вибору методу</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-975" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="excited-states.html#autosec-976" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="appendices.html#autosec-991" class="tocchapter" >
+Додатки</a>
+</p>
+<p>
+<a href="appendices.html#autosec-992" class="tocsection" >
+<span class="sectionnumber">А</span><span class="toctitle">&#x2003;Список абревіатур</span></a>
+</p>
+<p>
+<a href="appendices.html#autosec-993" class="tocsection" >
+<span class="sectionnumber">Б</span><span class="toctitle">&#x2003;Молекулярно-орбітальне (МО) представлення</span></a>
+</p>
+<p>
+<a href="appendices.html#autosec-999" class="tocsection" >
+<span class="sectionnumber">В</span><span class="toctitle">&#x2003;Метод DIIS та прискорення збіжності SCF</span></a>
+</p>
+<p>
+<a href="appendices.html#autosec-1000" class="tocsection" >
+<span class="sectionnumber">Г</span><span class="toctitle">&#x2003;Проблеми збіжності SCF та їх усунення</span></a>
+</p>
+<p>
+<a href="bibliography.html#autosec-1020" class="tocchapter" >
+Література</a>
+</p>
+</div>
+</nav>
+</div>
+<main class="bodycontainer" data-pagefind-body data-pagefind-meta="title[data-title]" data-title="Базові об’єкти PySCF">
+<section class="textbody">
+<h1 data-pagefind-ignore>Квантово-механічні методи обчислення</h1>
+<!--MathJax customizations:-->
+<div data-nosnippet
+style="display:none"
+>
+\(\newcommand{\footnotename}{footnote}\)
+\(\def \LWRfootnote {1}\)
+\(\newcommand {\footnote }[2][\LWRfootnote ]{{}^{\mathrm {#1}}}\)
+\(\newcommand {\footnotemark }[1][\LWRfootnote ]{{}^{\mathrm {#1}}}\)
+\(\let \LWRorighspace \hspace \)
+\(\renewcommand {\hspace }{\ifstar \LWRorighspace \LWRorighspace }\)
+\(\newcommand {\TextOrMath }[2]{#2}\)
+\(\newcommand {\mathnormal }[1]{{#1}}\)
+\(\newcommand \ensuremath [1]{#1}\)
+\(\newcommand {\LWRframebox }[2][]{\fbox {#2}} \newcommand {\framebox }[1][]{\LWRframebox } \)
+\(\newcommand {\setlength }[2]{}\)
+\(\newcommand {\addtolength }[2]{}\)
+\(\newcommand {\setcounter }[2]{}\)
+\(\newcommand {\addtocounter }[2]{}\)
+\(\newcommand {\arabic }[1]{}\)
+\(\newcommand {\number }[1]{}\)
+\(\newcommand {\noalign }[1]{\text {#1}\notag \\}\)
+\(\newcommand {\cline }[1]{}\)
+\(\newcommand {\directlua }[1]{\text {(directlua)}}\)
+\(\newcommand {\luatexdirectlua }[1]{\text {(directlua)}}\)
+\(\newcommand {\protect }{}\)
+\(\def \LWRabsorbnumber #1 {}\)
+\(\def \LWRabsorbquotenumber &quot;#1 {}\)
+\(\newcommand {\LWRabsorboption }[1][]{}\)
+\(\newcommand {\LWRabsorbtwooptions }[1][]{\LWRabsorboption }\)
+\(\def \mathchar {\ifnextchar &quot;\LWRabsorbquotenumber \LWRabsorbnumber }\)
+\(\def \mathcode #1={\mathchar }\)
+\(\let \delcode \mathcode \)
+\(\let \delimiter \mathchar \)
+\(\def \oe {\unicode {x0153}}\)
+\(\def \OE {\unicode {x0152}}\)
+\(\def \ae {\unicode {x00E6}}\)
+\(\def \AE {\unicode {x00C6}}\)
+\(\def \aa {\unicode {x00E5}}\)
+\(\def \AA {\unicode {x00C5}}\)
+\(\def \o {\unicode {x00F8}}\)
+\(\def \O {\unicode {x00D8}}\)
+\(\def \l {\unicode {x0142}}\)
+\(\def \L {\unicode {x0141}}\)
+\(\def \ss {\unicode {x00DF}}\)
+\(\def \SS {\unicode {x1E9E}}\)
+\(\def \dag {\unicode {x2020}}\)
+\(\def \ddag {\unicode {x2021}}\)
+\(\def \P {\unicode {x00B6}}\)
+\(\def \copyright {\unicode {x00A9}}\)
+\(\def \pounds {\unicode {x00A3}}\)
+\(\let \LWRref \ref \)
+\(\renewcommand {\ref }{\ifstar \LWRref \LWRref }\)
+\( \newcommand {\multicolumn }[3]{#3}\)
+\(\require {textcomp}\)
+\(\require {colortbl}\)
+\(\let \LWRorigcolumncolor \columncolor \)
+\(\renewcommand {\columncolor }[2][named]{\LWRorigcolumncolor [#1]{#2}\LWRabsorbtwooptions }\)
+\(\let \LWRorigrowcolor \rowcolor \)
+\(\renewcommand {\rowcolor }[2][named]{\LWRorigrowcolor [#1]{#2}\LWRabsorbtwooptions }\)
+\(\let \LWRorigcellcolor \cellcolor \)
+\(\renewcommand {\cellcolor }[2][named]{\LWRorigcellcolor [#1]{#2}\LWRabsorbtwooptions }\)
+\(\newcommand {\intertext }[1]{\text {#1}\notag \\}\)
+\(\let \Hat \hat \)
+\(\let \Check \check \)
+\(\let \Tilde \tilde \)
+\(\let \Acute \acute \)
+\(\let \Grave \grave \)
+\(\let \Dot \dot \)
+\(\let \Ddot \ddot \)
+\(\let \Breve \breve \)
+\(\let \Bar \bar \)
+\(\let \Vec \vec \)
+\(\let \symnormal \mathit \)
+\(\let \symliteral \mathrm \)
+\(\let \symbb \mathbb \)
+\(\let \symbbit \mathbb \)
+\(\let \symcal \mathcal \)
+\(\let \symscr \mathscr \)
+\(\let \symfrak \mathfrak \)
+\(\let \symsfup \mathsf \)
+\(\let \symsfit \mathit \)
+\(\let \symbfsf \mathbf \)
+\(\let \symbfup \mathbf \)
+\(\newcommand {\symbfit }[1]{\boldsymbol {#1}}\)
+\(\let \symbfcal \mathcal \)
+\(\let \symbfscr \mathscr \)
+\(\let \symbffrak \mathfrak \)
+\(\let \symbfsfup \mathbf \)
+\(\newcommand {\symbfsfit }[1]{\boldsymbol {#1}}\)
+\(\let \symup \mathrm \)
+\(\let \symbf \mathbf \)
+\(\let \symit \mathit \)
+\(\let \symtt \mathtt \)
+\(\let \symbffrac \mathbffrac \)
+\(\newcommand {\mathfence }[1]{\mathord {#1}}\)
+\(\newcommand {\mathover }[1]{#1}\)
+\(\newcommand {\mathunder }[1]{#1}\)
+\(\newcommand {\mathaccent }[1]{#1}\)
+\(\newcommand {\mathbotaccent }[1]{#1}\)
+\(\newcommand {\mathalpha }[1]{\mathord {#1}}\)
+\(\def\upAlpha{\unicode{x0391}}\)
+\(\def\upBeta{\unicode{x0392}}\)
+\(\def\upGamma{\unicode{x0393}}\)
+\(\def\upDigamma{\unicode{x03DC}}\)
+\(\def\upDelta{\unicode{x0394}}\)
+\(\def\upEpsilon{\unicode{x0395}}\)
+\(\def\upZeta{\unicode{x0396}}\)
+\(\def\upEta{\unicode{x0397}}\)
+\(\def\upTheta{\unicode{x0398}}\)
+\(\def\upVartheta{\unicode{x03F4}}\)
+\(\def\upIota{\unicode{x0399}}\)
+\(\def\upKappa{\unicode{x039A}}\)
+\(\def\upLambda{\unicode{x039B}}\)
+\(\def\upMu{\unicode{x039C}}\)
+\(\def\upNu{\unicode{x039D}}\)
+\(\def\upXi{\unicode{x039E}}\)
+\(\def\upOmicron{\unicode{x039F}}\)
+\(\def\upPi{\unicode{x03A0}}\)
+\(\def\upVarpi{\unicode{x03D6}}\)
+\(\def\upRho{\unicode{x03A1}}\)
+\(\def\upSigma{\unicode{x03A3}}\)
+\(\def\upTau{\unicode{x03A4}}\)
+\(\def\upUpsilon{\unicode{x03A5}}\)
+\(\def\upPhi{\unicode{x03A6}}\)
+\(\def\upChi{\unicode{x03A7}}\)
+\(\def\upPsi{\unicode{x03A8}}\)
+\(\def\upOmega{\unicode{x03A9}}\)
+\(\def\itAlpha{\unicode{x1D6E2}}\)
+\(\def\itBeta{\unicode{x1D6E3}}\)
+\(\def\itGamma{\unicode{x1D6E4}}\)
+\(\def\itDigamma{\mathit{\unicode{x03DC}}}\)
+\(\def\itDelta{\unicode{x1D6E5}}\)
+\(\def\itEpsilon{\unicode{x1D6E6}}\)
+\(\def\itZeta{\unicode{x1D6E7}}\)
+\(\def\itEta{\unicode{x1D6E8}}\)
+\(\def\itTheta{\unicode{x1D6E9}}\)
+\(\def\itVartheta{\unicode{x1D6F3}}\)
+\(\def\itIota{\unicode{x1D6EA}}\)
+\(\def\itKappa{\unicode{x1D6EB}}\)
+\(\def\itLambda{\unicode{x1D6EC}}\)
+\(\def\itMu{\unicode{x1D6ED}}\)
+\(\def\itNu{\unicode{x1D6EE}}\)
+\(\def\itXi{\unicode{x1D6EF}}\)
+\(\def\itOmicron{\unicode{x1D6F0}}\)
+\(\def\itPi{\unicode{x1D6F1}}\)
+\(\def\itRho{\unicode{x1D6F2}}\)
+\(\def\itSigma{\unicode{x1D6F4}}\)
+\(\def\itTau{\unicode{x1D6F5}}\)
+\(\def\itUpsilon{\unicode{x1D6F6}}\)
+\(\def\itPhi{\unicode{x1D6F7}}\)
+\(\def\itChi{\unicode{x1D6F8}}\)
+\(\def\itPsi{\unicode{x1D6F9}}\)
+\(\def\itOmega{\unicode{x1D6FA}}\)
+\(\def\upalpha{\unicode{x03B1}}\)
+\(\def\upbeta{\unicode{x03B2}}\)
+\(\def\upvarbeta{\unicode{x03D0}}\)
+\(\def\upgamma{\unicode{x03B3}}\)
+\(\def\updigamma{\unicode{x03DD}}\)
+\(\def\updelta{\unicode{x03B4}}\)
+\(\def\upepsilon{\unicode{x03F5}}\)
+\(\def\upvarepsilon{\unicode{x03B5}}\)
+\(\def\upzeta{\unicode{x03B6}}\)
+\(\def\upeta{\unicode{x03B7}}\)
+\(\def\uptheta{\unicode{x03B8}}\)
+\(\def\upvartheta{\unicode{x03D1}}\)
+\(\def\upiota{\unicode{x03B9}}\)
+\(\def\upkappa{\unicode{x03BA}}\)
+\(\def\upvarkappa{\unicode{x03F0}}\)
+\(\def\uplambda{\unicode{x03BB}}\)
+\(\def\upmu{\unicode{x03BC}}\)
+\(\def\upnu{\unicode{x03BD}}\)
+\(\def\upxi{\unicode{x03BE}}\)
+\(\def\upomicron{\unicode{x03BF}}\)
+\(\def\uppi{\unicode{x03C0}}\)
+\(\def\upvarpi{\unicode{x03D6}}\)
+\(\def\uprho{\unicode{x03C1}}\)
+\(\def\upvarrho{\unicode{x03F1}}\)
+\(\def\upsigma{\unicode{x03C3}}\)
+\(\def\upvarsigma{\unicode{x03C2}}\)
+\(\def\uptau{\unicode{x03C4}}\)
+\(\def\upupsilon{\unicode{x03C5}}\)
+\(\def\upphi{\unicode{x03D5}}\)
+\(\def\upvarphi{\unicode{x03C6}}\)
+\(\def\upchi{\unicode{x03C7}}\)
+\(\def\uppsi{\unicode{x03C8}}\)
+\(\def\upomega{\unicode{x03C9}}\)
+\(\def\italpha{\unicode{x1D6FC}}\)
+\(\def\itbeta{\unicode{x1D6FD}}\)
+\(\def\itvarbeta{\unicode{x03D0}}\)
+\(\def\itgamma{\unicode{x1D6FE}}\)
+\(\def\itdigamma{\mathit{\unicode{x03DD}}}\)
+\(\def\itdelta{\unicode{x1D6FF}}\)
+\(\def\itepsilon{\unicode{x1D716}}\)
+\(\def\itvarepsilon{\unicode{x1D700}}\)
+\(\def\itzeta{\unicode{x1D701}}\)
+\(\def\iteta{\unicode{x1D702}}\)
+\(\def\ittheta{\unicode{x1D703}}\)
+\(\def\itvartheta{\unicode{x1D717}}\)
+\(\def\itiota{\unicode{x1D704}}\)
+\(\def\itkappa{\unicode{x1D705}}\)
+\(\def\itvarkappa{\unicode{x1D718}}\)
+\(\def\itlambda{\unicode{x1D706}}\)
+\(\def\itmu{\unicode{x1D707}}\)
+\(\def\itnu{\unicode{x1D708}}\)
+\(\def\itxi{\unicode{x1D709}}\)
+\(\def\itomicron{\unicode{x1D70A}}\)
+\(\def\itpi{\unicode{x1D70B}}\)
+\(\def\itvarpi{\unicode{x1D71B}}\)
+\(\def\itrho{\unicode{x1D70C}}\)
+\(\def\itvarrho{\unicode{x1D71A}}\)
+\(\def\itsigma{\unicode{x1D70E}}\)
+\(\def\itvarsigma{\unicode{x1D70D}}\)
+\(\def\ittau{\unicode{x1D70F}}\)
+\(\def\itupsilon{\unicode{x1D710}}\)
+\(\def\itphi{\unicode{x1D719}}\)
+\(\def\itvarphi{\unicode{x1D711}}\)
+\(\def\itchi{\unicode{x1D712}}\)
+\(\def\itpsi{\unicode{x1D713}}\)
+\(\def\itomega{\unicode{x1D714}}\)
+\(\let \lparen (\)
+\(\let \rparen )\)
+\(\newcommand {\cuberoot }[1]{\,{}^3\!\!\sqrt {#1}}\,\)
+\(\newcommand {\fourthroot }[1]{\,{}^4\!\!\sqrt {#1}}\,\)
+\(\newcommand {\longdivision }[1]{\mathord {\unicode {x027CC}#1}}\)
+\(\newcommand {\mathcomma }{,}\)
+\(\newcommand {\mathcolon }{:}\)
+\(\newcommand {\mathsemicolon }{;}\)
+\(\newcommand {\overbracket }[1]{\mathinner {\overline {\ulcorner {#1}\urcorner }}}\)
+\(\newcommand {\underbracket }[1]{\mathinner {\underline {\llcorner {#1}\lrcorner }}}\)
+\(\newcommand {\overbar }[1]{\mathord {#1\unicode {x00305}}}\)
+\(\newcommand {\ovhook }[1]{\mathord {#1\unicode {x00309}}}\)
+\(\newcommand {\ocirc }[1]{\mathord {#1\unicode {x0030A}}}\)
+\(\newcommand {\candra }[1]{\mathord {#1\unicode {x00310}}}\)
+\(\newcommand {\oturnedcomma }[1]{\mathord {#1\unicode {x00312}}}\)
+\(\newcommand {\ocommatopright }[1]{\mathord {#1\unicode {x00315}}}\)
+\(\newcommand {\droang }[1]{\mathord {#1\unicode {x0031A}}}\)
+\(\newcommand {\leftharpoonaccent }[1]{\mathord {#1\unicode {x020D0}}}\)
+\(\newcommand {\rightharpoonaccent }[1]{\mathord {#1\unicode {x020D1}}}\)
+\(\newcommand {\vertoverlay }[1]{\mathord {#1\unicode {x020D2}}}\)
+\(\newcommand {\leftarrowaccent }[1]{\mathord {#1\unicode {x020D0}}}\)
+\(\newcommand {\annuity }[1]{\mathord {#1\unicode {x020E7}}}\)
+\(\newcommand {\widebridgeabove }[1]{\mathord {#1\unicode {x020E9}}}\)
+\(\newcommand {\asteraccent }[1]{\mathord {#1\unicode {x020F0}}}\)
+\(\newcommand {\threeunderdot }[1]{\mathord {#1\unicode {x020E8}}}\)
+\(\newcommand {\Bbbsum }{\mathop {\unicode {x2140}}\limits }\)
+\(\newcommand {\oiint }{\mathop {\unicode {x222F}}\limits }\)
+\(\newcommand {\oiiint }{\mathop {\unicode {x2230}}\limits }\)
+\(\newcommand {\intclockwise }{\mathop {\unicode {x2231}}\limits }\)
+\(\newcommand {\ointclockwise }{\mathop {\unicode {x2232}}\limits }\)
+\(\newcommand {\ointctrclockwise }{\mathop {\unicode {x2233}}\limits }\)
+\(\newcommand {\varointclockwise }{\mathop {\unicode {x2232}}\limits }\)
+\(\newcommand {\leftouterjoin }{\mathop {\unicode {x27D5}}\limits }\)
+\(\newcommand {\rightouterjoin }{\mathop {\unicode {x27D6}}\limits }\)
+\(\newcommand {\fullouterjoin }{\mathop {\unicode {x27D7}}\limits }\)
+\(\newcommand {\bigbot }{\mathop {\unicode {x27D8}}\limits }\)
+\(\newcommand {\bigtop }{\mathop {\unicode {x27D9}}\limits }\)
+\(\newcommand {\xsol }{\mathop {\unicode {x29F8}}\limits }\)
+\(\newcommand {\xbsol }{\mathop {\unicode {x29F9}}\limits }\)
+\(\newcommand {\bigcupdot }{\mathop {\unicode {x2A03}}\limits }\)
+\(\newcommand {\bigsqcap }{\mathop {\unicode {x2A05}}\limits }\)
+\(\newcommand {\conjquant }{\mathop {\unicode {x2A07}}\limits }\)
+\(\newcommand {\disjquant }{\mathop {\unicode {x2A08}}\limits }\)
+\(\newcommand {\bigtimes }{\mathop {\unicode {x2A09}}\limits }\)
+\(\newcommand {\modtwosum }{\mathop {\unicode {x2A0A}}\limits }\)
+\(\newcommand {\sumint }{\mathop {\unicode {x2A0B}}\limits }\)
+\(\newcommand {\intbar }{\mathop {\unicode {x2A0D}}\limits }\)
+\(\newcommand {\intBar }{\mathop {\unicode {x2A0E}}\limits }\)
+\(\newcommand {\fint }{\mathop {\unicode {x2A0F}}\limits }\)
+\(\newcommand {\cirfnint }{\mathop {\unicode {x2A10}}\limits }\)
+\(\newcommand {\awint }{\mathop {\unicode {x2A11}}\limits }\)
+\(\newcommand {\rppolint }{\mathop {\unicode {x2A12}}\limits }\)
+\(\newcommand {\scpolint }{\mathop {\unicode {x2A13}}\limits }\)
+\(\newcommand {\npolint }{\mathop {\unicode {x2A14}}\limits }\)
+\(\newcommand {\pointint }{\mathop {\unicode {x2A15}}\limits }\)
+\(\newcommand {\sqint }{\mathop {\unicode {x2A16}}\limits }\)
+\(\newcommand {\intlarhk }{\mathop {\unicode {x2A17}}\limits }\)
+\(\newcommand {\intx }{\mathop {\unicode {x2A18}}\limits }\)
+\(\newcommand {\intcap }{\mathop {\unicode {x2A19}}\limits }\)
+\(\newcommand {\intcup }{\mathop {\unicode {x2A1A}}\limits }\)
+\(\newcommand {\upint }{\mathop {\unicode {x2A1B}}\limits }\)
+\(\newcommand {\lowint }{\mathop {\unicode {x2A1C}}\limits }\)
+\(\newcommand {\bigtriangleleft }{\mathop {\unicode {x2A1E}}\limits }\)
+\(\newcommand {\zcmp }{\mathop {\unicode {x2A1F}}\limits }\)
+\(\newcommand {\zpipe }{\mathop {\unicode {x2A20}}\limits }\)
+\(\newcommand {\zproject }{\mathop {\unicode {x2A21}}\limits }\)
+\(\newcommand {\biginterleave }{\mathop {\unicode {x2AFC}}\limits }\)
+\(\newcommand {\bigtalloblong }{\mathop {\unicode {x2AFF}}\limits }\)
+\(\newcommand {\arabicmaj }{\mathop {\unicode {x1EEF0}}\limits }\)
+\(\newcommand {\arabichad }{\mathop {\unicode {x1EEF1}}\limits }\)
+\(\newcommand {\nicefrac }[3][]{\mathinner {{}^{#2}\!/\!_{#3}}}\)
+\(\require {mhchem}\)
+\(\newcommand {\LWRnicearrayarray }[1]{\begin {array}{#1}}\)
+\(\def \LWRnicearrayarrayopt #1[#2] {\begin {array}{#1}}\)
+\(\newenvironment {NiceArray}[2][]{\ifnextchar [{\LWRnicearrayarrayopt {#2}}{\LWRnicearrayarray {#2}}}{\end {array}}\)
+\(\newcommand {\LWRnicearraywithdelimtwo }[2][]{\ifnextchar [{\LWRnicearrayarrayopt {#2}}{\LWRnicearrayarray {#2}}}\)
+\(\newenvironment {NiceArrayWithDelims}[2]{\def \LWRnicearrayrightdelim {\right #2}\left #1\LWRnicearraywithdelimtwo }{\end {array}\LWRnicearrayrightdelim }\)
+\(\newenvironment {pNiceArray} {\begin {NiceArrayWithDelims}{(}{)}} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {bNiceArray} {\begin {NiceArrayWithDelims}{[}{]}} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {BNiceArray} {\begin {NiceArrayWithDelims}{\{}{\}}} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {vNiceArray} {\begin {NiceArrayWithDelims}{\vert }{\vert }} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {VNiceArray} {\begin {NiceArrayWithDelims}{\Vert }{\Vert }} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {NiceMatrix}[1][]{\begin {matrix}}{\end {matrix}}\)
+\(\newenvironment {pNiceMatrix}[1][]{\begin {pmatrix}}{\end {pmatrix}}\)
+\(\newenvironment {bNiceMatrix}[1][]{\begin {bmatrix}}{\end {bmatrix}}\)
+\(\newenvironment {BNiceMatrix}[1][]{\begin {Bmatrix}}{\end {Bmatrix}}\)
+\(\newenvironment {vNiceMatrix}[1][]{\begin {vmatrix}}{\end {vmatrix}}\)
+\(\newenvironment {VNiceMatrix}[1][]{\begin {Vmatrix}}{\end {Vmatrix}}\)
+\(\newcommand {\LWRnicematrixBlock }[1]{#1}\)
+\(\def \LWRnicematrixBlockopt &lt;#1&gt;#2{#2}\)
+\(\newcommand {\Block }[2][]{\ifnextchar &lt;\LWRnicematrixBlockopt \LWRnicematrixBlock }\)
+\(\newcommand {\diagbox }[2]{\begin {array}{l}\hfill \quad #2\\\hline #1\quad \hfill \end {array}}\)
+\(\let \hdottedline \hdashline \)
+\(\newcommand {\Hline }[1][]{\hline }\)
+\(\newcommand {\CodeBefore }{}\)
+\(\newcommand {\Body }{}\)
+\(\newcommand {\CodeAfter }{}\)
+\(\newcommand {\line }[3][]{}\)
+\(\newcommand {\RowStyle }[2][]{}\)
+\(\newcommand {\LWRSubMatrix }[1][]{}\)
+\(\newcommand {\SubMatrix }[4]{\LWRSubMatrix }\)
+\(\newcommand {\OverBrace }[4][]{}\)
+\(\newcommand {\UnderBrace }[4][]{}\)
+\(\newcommand {\HBrace }[3][]{}\)
+\(\newcommand {\VBrace }[3][]{}\)
+\(\newcommand {\ShowCellNames }{}\)
+\(\newcommand {\tabularnote }[2][]{}\)
+\(\newcommand {\cellcolor }[3][]{}\)
+\(\newcommand {\rowcolor }[3][]{}\)
+\(\newcommand {\LWRrowcolors }[1][]{}\)
+\(\newcommand {\rowcolors }[4][]{\LWRrowcolors }\)
+\(\newcommand {\rowlistcolors }[3][]{\LWRrowcolors }\)
+\(\newcommand {\columncolor }[3][]{}\)
+\(\newcommand {\rectanglecolor }[4][]{}\)
+\(\newcommand {\arraycolor }[2][]{}\)
+\(\newcommand {\chessboardcolors }[3][]{}\)
+\(\newcommand {\ldots }[1][]{\dots }\)
+\(\newcommand {\Cdots }[1][]{\cdots }\)
+\(\newcommand {\Vdots }[1][]{\vdots }\)
+\(\newcommand {\Ddots }[1][]{\ddots }\)
+\(\newcommand {\Iddots }[1][]{\mathinner {\unicode {x22F0}}}\)
+\(\newcommand {\Hdotsfor }[1]{\ldots }\)
+\(\newcommand {\Vdotsfor }[1]{\vdots }\)
+\(\newcommand {\AutoNiceMatrix }[2]{\text {(AutoNiceMatrix #1)}}\)
+\(\let \pAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \bAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \BAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \vAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \VAutoNiceMatrix \AutoNiceMatrix \)
+\(\newcommand {\toprule }[1][]{\hline }\)
+\(\let \midrule \toprule \)
+\(\let \bottomrule \toprule \)
+\(\def \LWRbooktabscmidruleparen (#1)#2{}\)
+\(\newcommand {\LWRbooktabscmidrulenoparen }[1]{}\)
+\(\newcommand {\cmidrule }[1][]{\ifnextchar (\LWRbooktabscmidruleparen \LWRbooktabscmidrulenoparen }\)
+\(\newcommand {\morecmidrules }{}\)
+\(\newcommand {\specialrule }[3]{\hline }\)
+\(\newcommand {\addlinespace }[1][]{}\)
+\(\newcommand {\LWRsubmultirow }[2][]{#2}\)
+\(\newcommand {\LWRmultirow }[2][]{\LWRsubmultirow }\)
+\(\newcommand {\multirow }[2][]{\LWRmultirow }\)
+\(\newcommand {\mrowcell }{}\)
+\(\newcommand {\mcolrowcell }{}\)
+\(\newcommand {\STneed }[1]{}\)
+\(\DeclareMathOperator {\const }{const}\)
+\(\DeclareMathOperator {\Div }{div}\)
+\(\DeclareMathOperator {\Rot }{rot}\)
+\(\DeclareMathOperator {\Grad }{grad}\)
+\(\DeclareMathOperator {\inv }{inv}\)
+\(\DeclareMathOperator {\Tr }{Tr}\)
+\(\newcommand {\emf }{ℰ}\)
+\(\newcommand {\tikzmarknode }[2]{#2}\)
+\(\newcommand {\tikzmark }[1]{}\)
+\(\newcommand {\enquote }[1]{«#1»}\)
+\(\newcommand {\allowbreak }{}\)
+\(\newcommand {\mitlambda }{\lambda }\)
+\(\newcommand {\mitomega }{\omega }\)
+\(\newcommand {\mittheta }{\theta }\)
+\(\newcommand {\mitphi }{\varphi }\)
+\(\newcommand {\tcbhighmath }[1]{\boxed {#1}}\)
+\(\newcommand {\Efield }{\mathbf {E}}\)
+\(\newcommand {\Dfield }{\mathbf {D}}\)
+\(\newcommand {\Bfield }{\mathbf {B}}\)
+\(\newcommand {\Hfield }{\mathbf {H}}\)
+\(\newcommand {\ket }[1]{\left | #1 \right \rangle }\)
+\(\newcommand {\bra }[1]{\left \langle #1 \right |}\)
+\(\newcommand {\opbraket }[3]{\left \langle #1 \middle | #2 \middle | #3 \right \rangle }\)
+\(\newcommand {\diff }[2]{\frac {\partial #1}{\partial #2}}\)
+\(\newcommand {\ddiff }[2]{\frac {\partial ^2 #1}{\partial #2^2}}\)
+\(\newcommand {\grad }{\mathbf {\nabla }}\)
+\(\newcommand {\rot }{\mathbf {\nabla }\times }\)
+\(\newcommand {\divg }{\mathbf {\nabla }\cdot }\)
+\(\newcommand {\Laplasian }{\Delta }\)
+\(\newcommand {\EMF }{\mathcal {E}}\)
+\(\newcommand {\vxi }{\vec {\xi }}\)
+\(\newcommand {\vr }{\vec {r}}\)
+\(\newcommand {\vphi }{\varphi }\)
+\(\newcommand {\veps }{\varepsilon }\)
+\(\newcommand {\eff }{\mathrm {eff}}\)
+\(\newcommand {\PySCF }{\texttt {PySCF}}\)
+\(\newcommand {\vect }[1]{\mathbf {#1}}\)
+\(\newcommand {\symbf }[1]{\mathbf {#1}}\)
+\(\DeclareMathOperator {\sh }{sh}\)
+\(\DeclareMathOperator {\ch }{ch}\)
+\(\DeclareMathOperator {\tg }{tg}\)
+\(\DeclareMathOperator {\ctg }{ctg}\)
+\(\DeclareMathOperator {\arctg }{arctg}\)
+\(\DeclareMathOperator {\arcctg }{arcctg}\)
+\(\DeclareMathOperator {\cth }{cth}\)
+\(\DeclareMathOperator {\cosec }{cosec}\)
+\(\let \symsf \symsfup \)
+\(\def\Alpha{\unicode{x0391}}\)
+\(\def\Beta{\unicode{x0392}}\)
+\(\def\Gamma{\unicode{x0393}}\)
+\(\def\Digamma{\unicode{x03DC}}\)
+\(\def\Delta{\unicode{x0394}}\)
+\(\def\Epsilon{\unicode{x0395}}\)
+\(\def\Zeta{\unicode{x0396}}\)
+\(\def\Eta{\unicode{x0397}}\)
+\(\def\Theta{\unicode{x0398}}\)
+\(\def\Vartheta{\unicode{x03F4}}\)
+\(\def\Iota{\unicode{x0399}}\)
+\(\def\Kappa{\unicode{x039A}}\)
+\(\def\Lambda{\unicode{x039B}}\)
+\(\def\Mu{\unicode{x039C}}\)
+\(\def\Nu{\unicode{x039D}}\)
+\(\def\Xi{\unicode{x039E}}\)
+\(\def\Omicron{\unicode{x039F}}\)
+\(\def\Pi{\unicode{x03A0}}\)
+\(\def\Varpi{\unicode{x03D6}}\)
+\(\def\Rho{\unicode{x03A1}}\)
+\(\def\Sigma{\unicode{x03A3}}\)
+\(\def\Tau{\unicode{x03A4}}\)
+\(\def\Upsilon{\unicode{x03A5}}\)
+\(\def\Phi{\unicode{x03A6}}\)
+\(\def\Chi{\unicode{x03A7}}\)
+\(\def\Psi{\unicode{x03A8}}\)
+\(\def\Omega{\unicode{x03A9}}\)
+\(\def\alpha{\unicode{x1D6FC}}\)
+\(\def\beta{\unicode{x1D6FD}}\)
+\(\def\varbeta{\unicode{x03D0}}\)
+\(\def\gamma{\unicode{x1D6FE}}\)
+\(\def\digamma{\mathit{\unicode{x03DD}}}\)
+\(\def\delta{\unicode{x1D6FF}}\)
+\(\def\epsilon{\unicode{x1D716}}\)
+\(\def\varepsilon{\unicode{x1D700}}\)
+\(\def\zeta{\unicode{x1D701}}\)
+\(\def\eta{\unicode{x1D702}}\)
+\(\def\theta{\unicode{x1D703}}\)
+\(\def\vartheta{\unicode{x1D717}}\)
+\(\def\iota{\unicode{x1D704}}\)
+\(\def\kappa{\unicode{x1D705}}\)
+\(\def\varkappa{\unicode{x1D718}}\)
+\(\def\lambda{\unicode{x1D706}}\)
+\(\def\mu{\unicode{x1D707}}\)
+\(\def\nu{\unicode{x1D708}}\)
+\(\def\xi{\unicode{x1D709}}\)
+\(\def\omicron{\unicode{x1D70A}}\)
+\(\def\pi{\unicode{x1D70B}}\)
+\(\def\varpi{\unicode{x1D71B}}\)
+\(\def\rho{\unicode{x1D70C}}\)
+\(\def\varrho{\unicode{x1D71A}}\)
+\(\def\sigma{\unicode{x1D70E}}\)
+\(\def\varsigma{\unicode{x1D70D}}\)
+\(\def\tau{\unicode{x1D70F}}\)
+\(\def\upsilon{\unicode{x1D710}}\)
+\(\def\phi{\unicode{x1D719}}\)
+\(\def\varphi{\unicode{x1D711}}\)
+\(\def\chi{\unicode{x1D712}}\)
+\(\def\psi{\unicode{x1D713}}\)
+\(\def\omega{\unicode{x1D714}}\)
+</div>
+<!--
+...... chapter Базові об'єкти PySCF ......
+-->
+<h3 id="autosec-84"><span class="sectionnumber">2&#x2003;</span>Базові об’єкти <kbd>PySCF</kbd></h3>
+<a id="main-html-autopage-84"></a>
+<a id="main-html-autofile-3"></a>
+<a id="BasePyscf"></a>
+<!--
+...... section Молекулярний об'єкт (Mole) ......
+-->
+<h4 id="autosec-85"><span class="sectionnumber">&#xA7;&#x202F;2.1&#x2003;</span>Молекулярний об’єкт (Mole)</h4>
+<a id="main-html-autopage-85"></a>
+<!--
+...... subsection Клас Mole --- серце PySCF ......
+-->
+<h5 id="autosec-86"><span class="sectionnumber">2.1.1&#x2003;</span>Клас Mole — серце <kbd>PySCF</kbd></h5>
+<a id="main-html-autopage-86"></a>
+<p>
+Клас <span class="inlinecode"><kbd>gto.Mole</kbd></span> є центральним об’єктом у бібліотеці <kbd>PySCF</kbd>. Цей клас визначає і зберігає всю інформацію про атомну або молекулярну систему, яка необхідна для квантово-хімічних розрахунків. Саме з
+нього починається будь-який проєкт у <kbd>PySCF</kbd>, адже всі інші модулі (<kbd>SCF</kbd>, <kbd>DFT</kbd>, <kbd>MP2</kbd>, <kbd>CCSD</kbd> тощо) працюють із вже побудованим об’єктом <span class="inlinecode"><kbd>Mole</kbd></span>.
+</p>
+<p>
+Об’єкт <span class="inlinecode"><kbd>Mole</kbd></span> містить такі основні дані:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <b>Геометрію системи</b> — координати атомів у просторі (в ангстремах або борах);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Базисний набір</b> — набір функцій, на яких розкладаються молекулярні орбіталі;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Заряд системи</b> та <b>спін</b> (мультиплетність);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Інформацію про симетрію</b> (за потреби);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Одиниці вимірювання</b> (ангстреми, бори).
+</p>
+</li>
+</ul>
+<p>
+Таким чином, <span class="inlinecode"><kbd>Mole</kbd></span> виконує роль «серця» всієї програми — воно зберігає стан квантової системи і передає цю інформацію до інших підсистем для проведення обчислень.
+</p>
+<!--
+...... subsection Створення об'єкта Mole ......
+-->
+<h5 id="autosec-87"><span class="sectionnumber">2.1.2&#x2003;</span>Створення об’єкта Mole</h5>
+<a id="main-html-autopage-87"></a>
+<p>
+Існує два основні способи створення молекулярного об’єкта в <kbd>PySCF</kbd>. Обидва дають однаковий результат, але відрізняються синтаксисом та зручністю для різних задач.
+</p>
+<!--
+...... paragraph Метод 1: Скорочений запис через gto.M() ......
+-->
+<p>
+<span class="paragraph" id="autosec-88">Метод 1: Скорочений запис через <span class="inlinecode"><kbd>gto.M()</kbd></span></span>
+<a id="main-html-autopage-88"></a>
+</p>
+<p>
+Найзручніший спосіб для простих систем — використання функції <span class="inlinecode"><kbd>gto.M()</kbd></span>, яка автоматично створює та ініціалізує об’єкт:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">10 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span>
+
+<span class="tk-c1"># Компактний запис</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span>
+    <span class="tk-n">atom</span> <span class="tk-o">=</span> <span class="tk-s1">'Li 0 0 0'</span><span class="tk-p">,</span>
+    <span class="tk-n">basis</span> <span class="tk-o">=</span> <span class="tk-s1">'6-31g'</span><span class="tk-p">,</span>
+    <span class="tk-n">charge</span> <span class="tk-o">=</span> <span class="tk-mi">0</span><span class="tk-p">,</span>
+    <span class="tk-n">spin</span> <span class="tk-o">=</span> <span class="tk-mi">1</span>
+<span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Тут:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>atom='Li 0 0 0'</kbd></span> — атом літію в координатах \((0, 0, 0)\);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>basis='6-31g'</kbd></span> — базисний набір;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>charge=0</kbd></span> — нейтральний атом;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>spin=1</kbd></span> — один неспарений електрон (\(2S = 1\)).
+</p>
+</li>
+</ul>
+<p>
+Функція <span class="inlinecode"><kbd>gto.M()</kbd></span> — це скорочення (shortcut), яке:
+</p>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> створює об’єкт <span class="inlinecode"><kbd>Mole()</kbd></span>,
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> передає всі параметри в <span class="inlinecode"><kbd>.build()</kbd></span>,
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> повертає готовий до використання об’єкт.
+</p>
+</li>
+</ul>
+<!--
+...... paragraph Метод 2: Покрокове налаштування ......
+-->
+<p>
+<span class="paragraph" id="autosec-89">Метод 2: Покрокове налаштування</span>
+<a id="main-html-autopage-89"></a>
+</p>
+<p>
+Для складних систем зручніше задавати параметри покроково:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">14 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span>
+
+<span class="tk-c1"># Крок 1: Створення порожнього об'єкта</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">Mole</span><span class="tk-p">()</span>
+
+<span class="tk-c1"># Крок 2: Налаштування параметрів</span>
+<span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">atom</span> <span class="tk-o">=</span> <span class="tk-s1">'C 0 0 0'</span>
+<span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">basis</span> <span class="tk-o">=</span> <span class="tk-s1">'cc-pvdz'</span>
+<span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">charge</span> <span class="tk-o">=</span> <span class="tk-mi">0</span>
+<span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">spin</span> <span class="tk-o">=</span> <span class="tk-mi">2</span>  <span class="tk-c1"># Два неспарені електрони</span>
+
+<span class="tk-c1"># Крок 3: Завершення побудови (обов'язково!)</span>
+<span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">build</span><span class="tk-p">()</span></code></pre>
+</div>
+<p>
+<b>Важливо:</b> При покроковому підході <b>обов’язково</b> викликати <span class="inlinecode"><kbd>mol.build()</kbd></span>. Ця функція генерує внутрішні структури (матриці перекриття, таблиці інтегралів, базисні функції), без яких подальші
+розрахунки неможливі.
+</p>
+<div class="cb-comment">
+<p>
+<b>Коли використовувати кожен метод?</b>
+</p>
+<p>
+<b>Використовуйте <kbd>gto.M()</kbd></b> коли:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Система проста (один-два атоми).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Всі параметри відомі заздалегідь.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Потрібен компактний код.
+</p>
+</li>
+</ul>
+<p>
+<b>Використовуйте покроковий підхід</b> коли:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Система складна (багато атомів, спеціальні налаштування).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Параметри генеруються програмно (з циклу, файлу).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Потрібна гнучкість при налаштуванні.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Параметри змінюються динамічно.
+</p>
+</li>
+</ul>
+</div>
+<!--
+...... paragraph Еквівалентність методів ......
+-->
+<p>
+<span class="paragraph" id="autosec-90">Еквівалентність методів</span>
+<a id="main-html-autopage-90"></a>
+</p>
+<p>
+Наступні два приклади дають ідентичний результат:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">11 рядків</span></div>
+<pre class="code"><code><span class="tk-c1"># Варіант 1: через gto.M()</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'H 0 0 0; H 0 0 0.74'</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'sto-3g'</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># Варіант 2: покроково</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">Mole</span><span class="tk-p">()</span>
+<span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">atom</span> <span class="tk-o">=</span> <span class="tk-s1">'H 0 0 0; H 0 0 0.74'</span>
+<span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">basis</span> <span class="tk-o">=</span> <span class="tk-s1">'sto-3g'</span>
+<span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">build</span><span class="tk-p">()</span>
+
+<span class="tk-c1"># Обидва створюють однаковий об'єкт</span></code></pre>
+</div>
+<p>
+Різниця лише в синтаксисі — <span class="inlinecode"><kbd>gto.M()</kbd></span> автоматично викликає <span class="inlinecode"><kbd>.build()</kbd></span> всередині, тому його не треба писати явно.
+</p>
+<!--
+...... subsection Основні атрибути об'єкта Mole ......
+-->
+<h5 id="autosec-91"><span class="sectionnumber">2.1.3&#x2003;</span>Основні атрибути об’єкта Mole</h5>
+<a id="main-html-autopage-91"></a>
+<p>
+Після побудови об’єкта можна отримати детальну інформацію про систему. Ось приклад, який демонструє найпоширеніші атрибути:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">21 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span>
+
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'O 0 0 0'</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'6-31g'</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">2</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># Інформація про систему</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Кількість електронів: </span><span class="tk-si">{</span><span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">nelectron</span><span class="tk-si">}</span><span class="tk-s1">'</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Заряд: </span><span class="tk-si">{</span><span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">charge</span><span class="tk-si">}</span><span class="tk-s1">'</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Спін (2S): </span><span class="tk-si">{</span><span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">spin</span><span class="tk-si">}</span><span class="tk-s1">'</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Кількість базисних функцій: </span><span class="tk-si">{</span><span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">nao_nr</span><span class="tk-p">()</span><span class="tk-si">}</span><span class="tk-s1">'</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># Альфа та бета електрони</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Альфа електронів: </span><span class="tk-si">{</span><span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">nelec</span><span class="tk-p">[</span><span class="tk-mi">0</span><span class="tk-p">]</span><span class="tk-si">}</span><span class="tk-s1">'</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Бета електронів: </span><span class="tk-si">{</span><span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">nelec</span><span class="tk-p">[</span><span class="tk-mi">1</span><span class="tk-p">]</span><span class="tk-si">}</span><span class="tk-s1">'</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># Атомна структура</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Кількість атомів: </span><span class="tk-si">{</span><span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">natm</span><span class="tk-si">}</span><span class="tk-s1">'</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Заряди ядер: </span><span class="tk-si">{</span><span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">atom_charges</span><span class="tk-p">()</span><span class="tk-si">}</span><span class="tk-s1">'</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># Базисний набір</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Назва базису: </span><span class="tk-si">{</span><span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">basis</span><span class="tk-si">}</span><span class="tk-s1">'</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Ці атрибути особливо важливі для перевірки, чи правильно задані всі вхідні параметри перед запуском складних обчислень.
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>mol.nelectron</kbd></span> — кількість електронів у системі;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>mol.charge</kbd></span> — сумарний заряд системи;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>mol.spin</kbd></span> — подвоєне значення спіну (\(2S\));
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>mol.nao_nr()</kbd></span> — кількість базисних орбіталей (число функцій, які будуть використані в обчисленнях);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>mol.nelec</kbd></span> — кортеж <span class="inlinecode"><kbd>(n_alpha, n_beta)</kbd></span> з кількістю альфа- та бета-електронів;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>mol.natm</kbd></span> — кількість атомів у системі;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>mol.atom_charges()</kbd></span> — масив ядерних зарядів;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>mol.basis</kbd></span> — опис обраного базисного набору.
+</p>
+</li>
+</ul>
+<p>
+Типовий вивід програми для атома кисню:
+</p>
+<div class="codeblock code-bash" data-lang="bash" data-nosnippet>
+<div class="code-head"><span class="code-lang">Термінал</span><span class="code-lines">10 рядків</span></div>
+<pre class="code"><code>Кількість<span class="tk-w"> </span>електронів:<span class="tk-w"> </span><span class="tk-m">8</span>
+Заряд:<span class="tk-w"> </span><span class="tk-m">0</span>
+Спін<span class="tk-w"> </span><span class="tk-o">(</span>2S<span class="tk-o">)</span>:<span class="tk-w"> </span><span class="tk-m">2</span>
+Кількість<span class="tk-w"> </span>базисних<span class="tk-w"> </span>функцій:<span class="tk-w"> </span><span class="tk-m">18</span>
+Альфа<span class="tk-w"> </span>електронів:<span class="tk-w"> </span><span class="tk-m">5</span>
+Бета<span class="tk-w"> </span>електронів:<span class="tk-w"> </span><span class="tk-m">3</span>
+Кількість<span class="tk-w"> </span>атомів:<span class="tk-w"> </span><span class="tk-m">1</span>
+Заряди<span class="tk-w"> </span>ядер:<span class="tk-w"> </span><span class="tk-o">[</span><span class="tk-m">8</span>.<span class="tk-o">]</span>
+Назва<span class="tk-w"> </span>базису:<span class="tk-w"> </span><span class="tk-m">6</span>-31g</code></pre>
+</div>
+<p>
+Такий вивід дозволяє переконатися, що система побудована коректно, а параметри відповідають фізичному змісту задачі. Наприклад, у цьому випадку маємо нейтральний атом кисню (\(Z=8\), \(N_e=8\)), у якого спін \(S=1\) (два неспарені електрони).
+</p>
+<p>
+Після побудови об’єкта <span class="inlinecode"><kbd>Mole</kbd></span> його можна передавати до будь-яких методів <kbd>PySCF</kbd> — від найпростіших <span class="inlinecode"><kbd>SCF</kbd></span> до корельованих методів
+<kbd>CCSD</kbd>, <kbd>CASCI</kbd> та інших. Тому розуміння структури і властивостей цього класу є ключем до ефективного використання всієї бібліотеки.
+</p>
+<!--
+...... subsection Визначення атома: різні способи ......
+-->
+<h5 id="autosec-92"><span class="sectionnumber">2.1.4&#x2003;</span>Визначення атома: різні способи</h5>
+<a id="main-html-autopage-92"></a>
+<p>
+Визначення атома або атомів — це перший крок при побудові квантово-хімічної моделі. У <kbd>PySCF</kbd> координати та типи атомів можна задавати кількома способами. Усі вони приводять до одного й того ж результату, тому вибір форми запису залежить лише від
+зручності.
+</p>
+<!--
+...... paragraph Спосіб 1: Рядок ......
+-->
+<p>
+<span class="paragraph" id="autosec-93">Спосіб 1: Рядок</span>
+<a id="main-html-autopage-93"></a>
+</p>
+<p>
+Цей варіант є найпростішим і найчастіше використовується для одиночних атомів або малих систем. Формат: <span class="inlinecode"><kbd><атом> x y z</kbd></span>, де координати задаються в ангстремах за замовчуванням (або в борах, якщо <span
+class="inlinecode"><kbd>unit='Bohr'</kbd></span>).
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">6 рядків</span></div>
+<pre class="code"><code><span class="tk-c1"># Один атом</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'Ne 0 0 0'</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'def2-svp'</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># Можна використовувати атомний номер</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'10 0 0 0'</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'def2-svp'</span><span class="tk-p">)</span>  <span class="tk-c1"># 10 = Ne</span></code></pre>
+</div>
+<p>
+Як видно, <kbd>PySCF</kbd> дозволяє вказувати елемент як за його хімічним символом, так і за атомним номером. У другому випадку він автоматично розпізнає елемент періодичної системи.
+</p>
+<!--
+...... paragraph Спосіб 2: Список або кортеж ......
+-->
+<p>
+<span class="paragraph" id="autosec-94">Спосіб 2: Список або кортеж</span>
+<a id="main-html-autopage-94"></a>
+</p>
+<p>
+Якщо потрібно задати кілька атомів, або якщо координати отримуються програмно (наприклад, з масиву), зручно використовувати структуру даних типу <kbd>list</kbd> або <kbd>tuple</kbd>. Кожен атом описується як пара: <span
+class="inlinecode"><kbd>[ім'я, (x, y, z)]</kbd></span>.
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">15 рядків</span></div>
+<pre class="code"><code><span class="tk-c1"># Використання списку</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span>
+    <span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-p">[[</span><span class="tk-s1">'Na'</span><span class="tk-p">,</span> <span class="tk-p">(</span><span class="tk-mf">0.0</span><span class="tk-p">,</span> <span class="tk-mf">0.0</span><span class="tk-p">,</span> <span class="tk-mf">0.0</span><span class="tk-p">)]],</span>
+    <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'aug-cc-pvdz'</span>
+<span class="tk-p">)</span>
+
+<span class="tk-c1"># Для декількох атомів (наприклад, для порівняння)</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span>
+    <span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-p">[</span>
+        <span class="tk-p">[</span><span class="tk-s1">'H'</span><span class="tk-p">,</span> <span class="tk-p">(</span><span class="tk-mf">0.0</span><span class="tk-p">,</span> <span class="tk-mf">0.0</span><span class="tk-p">,</span> <span class="tk-mf">0.0</span><span class="tk-p">)],</span>
+        <span class="tk-p">[</span><span class="tk-s1">'He'</span><span class="tk-p">,</span> <span class="tk-p">(</span><span class="tk-mf">5.0</span><span class="tk-p">,</span> <span class="tk-mf">0.0</span><span class="tk-p">,</span> <span class="tk-mf">0.0</span><span class="tk-p">)]</span>  <span class="tk-c1"># далеко один від одного</span>
+    <span class="tk-p">],</span>
+    <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'sto-3g'</span>
+<span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Така форма є більш універсальною — вона дозволяє легко зчитувати геометрію з файлів, генерувати координати циклом або будувати складні молекули. Наприклад, молекула водню <span
+id="lateximage-main-html-4"
+class="lateximagesource"
+><!--
+H2
+--><img
+src="main-html-images/B210D6A401BAC692FAB8840283B0CE59.svg"
+alt="\ce{H2}"
+style=""
+class="lateximage"
+></span> може бути задана як:
+</p>
+<p>
+\[ \inlinecode {atom = [[&apos;H&apos;, (0, 0, 0)], [&apos;H&apos;, (0, 0, 0.74)]]} \]
+</p>
+<p>
+де відстань у \(0.74\) Åвідповідає типовій довжині зв’язку <span
+id="lateximage-main-html-5"
+class="lateximagesource"
+><!--
+H–H
+--><img
+src="main-html-images/D0CA103A4651357865FE3235A11944EB.svg"
+alt="\ce{H-H}"
+style=""
+class="lateximage"
+></span>.
+</p>
+<!--
+...... subsection Робота з іонами ......
+-->
+<h5 id="autosec-99"><span class="sectionnumber">2.1.5&#x2003;</span>Робота з іонами</h5>
+<a id="main-html-autopage-99"></a>
+<p>
+Клас <span class="inlinecode"><kbd>Mole</kbd></span> дозволяє легко моделювати заряджені системи — катіони та аніони. Для цього достатньо змінити параметр <span class="inlinecode"><kbd>charge</kbd></span>, який визначає сумарний заряд
+системи:
+</p>
+<p>
+\[ Q = Z_\text {ядер} - N_\text {електронів} \]
+</p>
+<p>
+Крім того, слід відповідно скоригувати <span class="inlinecode"><kbd>spin</kbd></span>, який задає подвоєне значення спіну \(2S\). Для нейтральних атомів значення спіну зазвичай відповідає їхній електронній конфігурації.
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">15 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+
+<span class="tk-c1"># Нейтральний атом Li</span>
+<span class="tk-n">li_atom</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'Li 0 0 0'</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'6-31g'</span><span class="tk-p">,</span> <span class="tk-n">charge</span><span class="tk-o">=</span><span class="tk-mi">0</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">1</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># Катіон Li+ (втрачено 1 електрон)</span>
+<span class="tk-n">li_cation</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'Li 0 0 0'</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'6-31g'</span><span class="tk-p">,</span> <span class="tk-n">charge</span><span class="tk-o">=</span><span class="tk-mi">1</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">0</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># Аніон Li- (додано 1 електрон)</span>
+<span class="tk-n">li_anion</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'Li 0 0 0'</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'6-31g'</span><span class="tk-p">,</span> <span class="tk-n">charge</span><span class="tk-o">=-</span><span class="tk-mi">1</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">1</span><span class="tk-p">)</span>
+
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Li:  </span><span class="tk-si">{</span><span class="tk-n">li_atom</span><span class="tk-o">.</span><span class="tk-n">nelectron</span><span class="tk-si">}</span><span class="tk-s1"> електронів'</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Li+: </span><span class="tk-si">{</span><span class="tk-n">li_cation</span><span class="tk-o">.</span><span class="tk-n">nelectron</span><span class="tk-si">}</span><span class="tk-s1"> електронів'</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Li-: </span><span class="tk-si">{</span><span class="tk-n">li_anion</span><span class="tk-o">.</span><span class="tk-n">nelectron</span><span class="tk-si">}</span><span class="tk-s1"> електронів'</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+У цьому прикладі можна побачити, як зміна заряду впливає на кількість електронів:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Нейтральний атом <span
+id="lateximage-main-html-6"
+class="lateximagesource"
+><!--
+Li
+--><img
+src="main-html-images/4B4951EA8854FCA1B3BC14828CE7A553.svg"
+alt="\ce{Li}"
+style=""
+class="lateximage"
+></span> має 3 електрони;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Катіон <span
+id="lateximage-main-html-7"
+class="lateximagesource"
+><!--
+Li
+--><img
+src="main-html-images/4B4951EA8854FCA1B3BC14828CE7A553.svg"
+alt="\ce{Li}"
+style=""
+class="lateximage"
+></span> — 2 електрони (втратив один);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Аніон <span
+id="lateximage-main-html-8"
+class="lateximagesource"
+><!--
+Li–
+--><img
+src="main-html-images/471D6A09CE31FA60EAC62D7B8F2DCE10.svg"
+alt="\ce{Li-}"
+style=""
+class="lateximage"
+></span> — 4 електрони (отримав додатковий).
+</p>
+</li>
+</ul>
+<p>
+Такі прості зміни параметрів дозволяють вивчати іонізаційні енергії, електронну спорідненість, а також порівнювати властивості нейтральних і заряджених систем.
+</p>
+<!--
+...... subsection Налаштування вербальності виводу ......
+-->
+<h5 id="autosec-106"><span class="sectionnumber">2.1.6&#x2003;</span>Налаштування вербальності виводу</h5>
+<a id="main-html-autopage-106"></a>
+<p>
+<kbd>PySCF</kbd> має вбудований механізм керування докладністю текстового виводу (тобто «балакучістю» програми). Це зручно, коли потрібно або бачити повну діагностику, або, навпаки, приховати проміжні повідомлення при пакетних розрахунках.
+</p>
+<p>
+Рівень керується параметром <span class="inlinecode"><kbd>verbose</kbd></span>:
+</p>
+<p>
+\[ \texttt {0 = тихо}, \quad \texttt {4 = стандартно}, \quad \texttt {9 = детально (debug)} \]
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">13 рядків</span></div>
+<pre class="code"><code><span class="tk-c1"># verbose контролює кількість виводу</span>
+<span class="tk-c1"># 0 = мінімум, 4 = максимум (за замовчуванням), 9 = дебаг</span>
+
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span>
+    <span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'F 0 0 0'</span><span class="tk-p">,</span>
+    <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'cc-pvdz'</span><span class="tk-p">,</span>
+    <span class="tk-n">verbose</span><span class="tk-o">=</span><span class="tk-mi">4</span>  <span class="tk-c1"># Детальний вивід</span>
+<span class="tk-p">)</span>
+
+<span class="tk-c1"># Або налаштувати пізніше</span>
+<span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">verbose</span> <span class="tk-o">=</span> <span class="tk-mi">0</span>  <span class="tk-c1"># Тихий режим</span>
+<span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">build</span><span class="tk-p">()</span></code></pre>
+</div>
+<p>
+У практиці рекомендується:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Використовувати <span class="inlinecode"><kbd>verbose=4</kbd></span> для навчальних цілей, щоб бачити хід побудови базису та інтегралів;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Використовувати <span class="inlinecode"><kbd>verbose=0</kbd></span> або <span class="inlinecode"><kbd>1</kbd></span> при серійному запуску розрахунків на кластері, щоб уникнути перевантаження
+логів;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Для діагностики чи налагодження коду — <span class="inlinecode"><kbd>verbose=7-9</kbd></span>, що дає максимально деталізований вивід.
+</p>
+</li>
+</ul>
+<p>
+Таким чином, параметр <span class="inlinecode"><kbd>verbose</kbd></span> дозволяє зручно регулювати ступінь деталізації повідомлень під час обчислень, роблячи роботу з <kbd>PySCF</kbd> більш контрольованою і зручною як для навчання, так і для
+автоматизованих досліджень.
+</p>
+<!--
+...... subsection Ланцюжок викликів методів (Method Chaining) ......
+-->
+<h5 id="autosec-107"><span class="sectionnumber">2.1.7&#x2003;</span>Ланцюжок викликів методів (Method Chaining)</h5>
+<a id="main-html-autopage-107"></a>
+<p>
+<kbd>PySCF</kbd> підтримує зручний синтаксис <b>ланцюжка викликів</b> (method chaining), який дозволяє компактно записувати послідовність операцій. Замість того, щоб створювати проміжні змінні для кожного кроку, можна «з’єднати» виклики методів у один
+вираз.
+</p>
+<!--
+...... subsubsection Традиційний підхід vs Chaining ......
+-->
+<h6 id="autosec-108">Традиційний підхід vs Chaining</h6>
+<a id="main-html-autopage-108"></a>
+<p>
+Спочатку розглянемо звичайний спосіб написання коду:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">23 рядки</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+
+<span class="tk-c1"># Крок 1: Створюємо молекулу</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span>
+    <span class="tk-n">atom</span> <span class="tk-o">=</span> <span class="tk-s1">'H 0 0 0; H 0 0 0.74'</span><span class="tk-p">,</span>
+    <span class="tk-n">basis</span> <span class="tk-o">=</span> <span class="tk-s1">'cc-pvdz'</span>
+<span class="tk-p">)</span>
+
+<span class="tk-c1"># Крок 2: Створюємо об'єкт розрахунку</span>
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># Крок 3: Налаштовуємо параметри</span>
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">conv_tol</span> <span class="tk-o">=</span> <span class="tk-mf">1e-8</span>
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">max_cycle</span> <span class="tk-o">=</span> <span class="tk-mi">100</span>
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">verbose</span> <span class="tk-o">=</span> <span class="tk-mi">4</span>
+
+<span class="tk-c1"># Крок 4: Запускаємо розрахунок</span>
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+
+<span class="tk-c1"># Крок 5: Отримуємо результат</span>
+<span class="tk-n">energy</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">e_tot</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Енергія: </span><span class="tk-si">{</span><span class="tk-n">energy</span><span class="tk-si">:</span><span class="tk-s1">.8f</span><span class="tk-si">}</span><span class="tk-s1"> Ha'</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Тепер той самий код через <b>chaining</b>:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">12 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+
+
+<span class="tk-c1"># Все в одному виразі</span>
+<span class="tk-n">energy</span> <span class="tk-o">=</span> <span class="tk-p">(</span><span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'H 0 0 0; H 0 0 0.74'</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'cc-pvdz'</span><span class="tk-p">)</span>
+          <span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">()</span>
+          <span class="tk-o">.</span><span class="tk-n">set</span><span class="tk-p">(</span><span class="tk-n">conv_tol</span><span class="tk-o">=</span><span class="tk-mf">1e-8</span><span class="tk-p">,</span> <span class="tk-n">max_cycle</span><span class="tk-o">=</span><span class="tk-mi">100</span><span class="tk-p">,</span> <span class="tk-n">verbose</span><span class="tk-o">=</span><span class="tk-mi">4</span><span class="tk-p">)</span>
+          <span class="tk-o">.</span><span class="tk-n">run</span><span class="tk-p">()</span>
+          <span class="tk-o">.</span><span class="tk-n">e_tot</span><span class="tk-p">)</span>
+
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Енергія: </span><span class="tk-si">{</span><span class="tk-n">energy</span><span class="tk-si">:</span><span class="tk-s1">.8f</span><span class="tk-si">}</span><span class="tk-s1"> Ha'</span><span class="tk-p">)</span></code></pre>
+</div>
+<!--
+...... section Періодичний об'єкт (Cell) ......
+-->
+<h4 id="autosec-109"><span class="sectionnumber">&#xA7;&#x202F;2.2&#x2003;</span>Періодичний об’єкт (Cell)</h4>
+<a id="main-html-autopage-109"></a>
+<p>
+Клас <span class="inlinecode"><kbd>pyscf.pbc.gto.Cell</kbd></span> є центральним об’єктом для <b>періодичних розрахунків</b> у <kbd>PySCF</kbd>. Він виконує ту ж роль, що й <span class="inlinecode"><kbd>gto.Mole</kbd></span>
+для молекул, але моделює <b>нескінченну кристалічну структуру</b> з періодичними граничними умовами (PBC).
+</p>
+<!--
+...... subsection Створення об'єкта Cell ......
+-->
+<h5 id="autosec-110"><span class="sectionnumber">2.2.1&#x2003;</span>Створення об’єкта Cell</h5>
+<a id="main-html-autopage-110"></a>
+<p>
+Існує два основні способи — аналогічно до <span class="inlinecode"><kbd>Mole</kbd></span>:
+</p>
+<!--
+...... paragraph Скорочений запис через gto.Cell() ......
+-->
+<p>
+<span class="paragraph" id="autosec-111">Скорочений запис через <span class="inlinecode"><kbd>gto.Cell()</kbd></span></span>
+<a id="main-html-autopage-111"></a>
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">12 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.pbc</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span>
+
+<span class="tk-n">cell</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">Cell</span><span class="tk-p">(</span>
+    <span class="tk-n">atom</span> <span class="tk-o">=</span> <span class="tk-s1">'Si 0 0 0; Si 0.25 0.25 0.25'</span><span class="tk-p">,</span>
+    <span class="tk-n">a</span> <span class="tk-o">=</span> <span class="tk-p">[[</span><span class="tk-mi">0</span><span class="tk-p">,</span> <span class="tk-mf">2.715</span><span class="tk-p">,</span> <span class="tk-mf">2.715</span><span class="tk-p">],</span>
+         <span class="tk-p">[</span><span class="tk-mf">2.715</span><span class="tk-p">,</span> <span class="tk-mi">0</span><span class="tk-p">,</span> <span class="tk-mf">2.715</span><span class="tk-p">],</span>
+         <span class="tk-p">[</span><span class="tk-mf">2.715</span><span class="tk-p">,</span> <span class="tk-mf">2.715</span><span class="tk-p">,</span> <span class="tk-mi">0</span><span class="tk-p">]],</span>  <span class="tk-c1"># решіткові вектори (Å)</span>
+    <span class="tk-n">basis</span> <span class="tk-o">=</span> <span class="tk-s1">'gth-szv'</span><span class="tk-p">,</span>
+    <span class="tk-n">pseudo</span> <span class="tk-o">=</span> <span class="tk-s1">'gth-pade'</span><span class="tk-p">,</span>
+    <span class="tk-n">spin</span> <span class="tk-o">=</span> <span class="tk-mi">0</span>
+<span class="tk-p">)</span></code></pre>
+</div>
+<!--
+...... paragraph Покрокове налаштування ......
+-->
+<p>
+<span class="paragraph" id="autosec-112">Покрокове налаштування</span>
+<a id="main-html-autopage-112"></a>
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">7 рядків</span></div>
+<pre class="code"><code><span class="tk-n">cell</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">Cell</span><span class="tk-p">()</span>
+<span class="tk-n">cell</span><span class="tk-o">.</span><span class="tk-n">atom</span> <span class="tk-o">=</span> <span class="tk-s1">'C 0 0 0; C 1.42 0 0'</span>
+<span class="tk-n">cell</span><span class="tk-o">.</span><span class="tk-n">a</span> <span class="tk-o">=</span> <span class="tk-p">[[</span><span class="tk-mi">0</span><span class="tk-p">,</span> <span class="tk-mf">1.42</span><span class="tk-p">,</span> <span class="tk-mf">1.42</span><span class="tk-p">],</span> <span class="tk-p">[</span><span class="tk-mf">1.42</span><span class="tk-p">,</span> <span class="tk-mi">0</span><span class="tk-p">,</span> <span class="tk-mf">1.42</span><span class="tk-p">],</span> <span class="tk-p">[</span><span class="tk-mf">1.42</span><span class="tk-p">,</span> <span class="tk-mf">1.42</span><span class="tk-p">,</span> <span class="tk-mi">0</span><span class="tk-p">]]</span>
+<span class="tk-n">cell</span><span class="tk-o">.</span><span class="tk-n">basis</span> <span class="tk-o">=</span> <span class="tk-s1">'gth-szv'</span>
+<span class="tk-n">cell</span><span class="tk-o">.</span><span class="tk-n">pseudo</span> <span class="tk-o">=</span> <span class="tk-s1">'gth-pade'</span>
+<span class="tk-n">cell</span><span class="tk-o">.</span><span class="tk-n">build</span><span class="tk-p">()</span>  <span class="tk-c1"># обов’язково!</span></code></pre>
+</div>
+<!--
+...... subsection Основні атрибути ......
+-->
+<h5 id="autosec-113"><span class="sectionnumber">2.2.2&#x2003;</span>Основні атрибути</h5>
+<a id="main-html-autopage-113"></a>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">5 рядків</span></div>
+<pre class="code"><code><span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Об’єм комірки: </span><span class="tk-si">{</span><span class="tk-n">cell</span><span class="tk-o">.</span><span class="tk-n">vol</span><span class="tk-si">:</span><span class="tk-s1">.3f</span><span class="tk-si">}</span><span class="tk-s1"> Å³'</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Кількість k-точок: </span><span class="tk-si">{</span><span class="tk-n">cell</span><span class="tk-o">.</span><span class="tk-n">nkpt</span><span class="tk-si">}</span><span class="tk-s1">'</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Кількість базисних функцій: </span><span class="tk-si">{</span><span class="tk-n">cell</span><span class="tk-o">.</span><span class="tk-n">nao_nr</span><span class="tk-p">()</span><span class="tk-si">}</span><span class="tk-s1">'</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Альфа/бета: </span><span class="tk-si">{</span><span class="tk-n">cell</span><span class="tk-o">.</span><span class="tk-n">nelec</span><span class="tk-si">}</span><span class="tk-s1">'</span><span class="tk-p">)</span></code></pre>
+</div>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>cell.a</kbd></span> — матриця ґраткових векторів;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>cell.mesh</kbd></span> — сітка для інтегралів;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>cell.pseudo</kbd></span> — псевдопотенціал;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>cell.nkpt</kbd></span> — розмір k-сітки.
+</p>
+</li>
+</ul>
+<!--
+...... subsection Робота з іонами та спіном ......
+-->
+<h5 id="autosec-114"><span class="sectionnumber">2.2.3&#x2003;</span>Робота з іонами та спіном</h5>
+<a id="main-html-autopage-114"></a>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">3 рядки</span></div>
+<pre class="code"><code><span class="tk-c1"># Катіон у комірці (наприклад, дефект)</span>
+<span class="tk-n">cell</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">Cell</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'Li 0 0 0'</span><span class="tk-p">,</span> <span class="tk-n">a</span><span class="tk-o">=...</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'gth-szv'</span><span class="tk-p">,</span> <span class="tk-n">charge</span><span class="tk-o">=</span><span class="tk-mi">1</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">0</span><span class="tk-p">)</span></code></pre>
+</div>
+<!--
+...... subsection Ланцюжок викликів ......
+-->
+<h5 id="autosec-115"><span class="sectionnumber">2.2.4&#x2003;</span>Ланцюжок викликів</h5>
+<a id="main-html-autopage-115"></a>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">9 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.pbc</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+
+<span class="tk-n">energy</span> <span class="tk-o">=</span> <span class="tk-p">(</span><span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">Cell</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'C 0 0 0; C 0.71 0.71 0.71'</span><span class="tk-p">,</span>
+                  <span class="tk-n">a</span><span class="tk-o">=</span><span class="tk-p">[[</span><span class="tk-mi">0</span><span class="tk-p">,</span> <span class="tk-mf">1.42</span><span class="tk-p">,</span> <span class="tk-mf">1.42</span><span class="tk-p">],</span> <span class="tk-p">[</span><span class="tk-mf">1.42</span><span class="tk-p">,</span> <span class="tk-mi">0</span><span class="tk-p">,</span> <span class="tk-mf">1.42</span><span class="tk-p">],</span> <span class="tk-p">[</span><span class="tk-mf">1.42</span><span class="tk-p">,</span> <span class="tk-mf">1.42</span><span class="tk-p">,</span> <span class="tk-mi">0</span><span class="tk-p">]],</span>
+                  <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'gth-szv'</span><span class="tk-p">,</span> <span class="tk-n">pseudo</span><span class="tk-o">=</span><span class="tk-s1">'gth-pade'</span><span class="tk-p">)</span>
+          <span class="tk-o">.</span><span class="tk-n">RKS</span><span class="tk-p">(</span><span class="tk-n">xc</span><span class="tk-o">=</span><span class="tk-s1">'pbe'</span><span class="tk-p">)</span>
+          <span class="tk-o">.</span><span class="tk-n">run</span><span class="tk-p">()</span>
+          <span class="tk-o">.</span><span class="tk-n">e_tot</span><span class="tk-p">)</span></code></pre>
+</div>
+<!--
+...... subsection Коли використовувати Cell? ......
+-->
+<h5 id="autosec-116"><span class="sectionnumber">2.2.5&#x2003;</span>Коли використовувати Cell?</h5>
+<a id="main-html-autopage-116"></a>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Кристали, метали, напівпровідники;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Зонна структура, густина станів;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Псевдопотенціали для важких елементів;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>DFT</kbd>, <kbd>GW</kbd>, <kbd>RPA</kbd> у твердих тілах.
+</p>
+</li>
+</ul>
+<!--
+...... section Базисні набори в PySCF ......
+-->
+<h4 id="autosec-117"><span class="sectionnumber">&#xA7;&#x202F;2.3&#x2003;</span>Базисні набори в <kbd>PySCF</kbd></h4>
+<a id="main-html-autopage-117"></a>
+<p>
+У пакеті <kbd>PySCF</kbd> базисний набір задається через параметр <span class="inlinecode"><kbd>basis</kbd></span> при створенні об’єкта <span class="inlinecode"><kbd>Mole</kbd></span>.
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">5 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span>
+
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'H 0 0 0; O 0 0 1'</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'6-31g'</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-s1">'Кількість базисних функцій:'</span><span class="tk-p">,</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">nao_nr</span><span class="tk-p">())</span></code></pre>
+</div>
+<!--
+...... subsection Доступні бібліотечні базиси ......
+-->
+<h5 id="autosec-118"><span class="sectionnumber">2.3.1&#x2003;</span>Доступні бібліотечні базиси</h5>
+<a id="main-html-autopage-118"></a>
+<p>
+<kbd>PySCF</kbd> містить велику вбудовану бібліотеку базисних наборів: <kbd>STO-3G</kbd>, <kbd>6-31G</kbd>, <kbd>cc-pVDZ</kbd>, <kbd>def2-TZVP</kbd>, <kbd>aug-cc-pVTZ</kbd> тощо. Повний список доступний у модулі <span
+class="inlinecode"><kbd>pyscf.gto.basis</kbd></span> або онлайн: <a href="https://pyscf.org/_modules/pyscf/gto/basis.html" target="_blank" >pyscf.org/basis.html</a>.
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">3 рядки</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.gto</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">basis</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-n">basis</span><span class="tk-o">.</span><span class="tk-n">basis_names</span><span class="tk-o">.</span><span class="tk-n">keys</span><span class="tk-p">())</span>   <span class="tk-c1"># усі доступні назви базисів</span></code></pre>
+</div>
+<!--
+...... subsection Задання власного базису ......
+-->
+<h5 id="autosec-119"><span class="sectionnumber">2.3.2&#x2003;</span>Задання власного базису</h5>
+<a id="main-html-autopage-119"></a>
+<p>
+Користувач може визначити власні базисні функції безпосередньо у коді. Наприклад, простий базис для атома гелію можна записати так:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">8 рядків</span></div>
+<pre class="code"><code><span class="tk-n">custom_basis</span> <span class="tk-o">=</span> <span class="tk-p">{</span>
+    <span class="tk-s1">'He'</span><span class="tk-p">:</span> <span class="tk-p">[</span>
+        <span class="tk-p">[</span><span class="tk-mi">0</span><span class="tk-p">,</span> <span class="tk-p">[</span> <span class="tk-p">(</span><span class="tk-mf">13.6267</span><span class="tk-p">,</span> <span class="tk-mf">0.1752</span><span class="tk-p">),</span> <span class="tk-p">(</span><span class="tk-mf">1.99935</span><span class="tk-p">,</span> <span class="tk-mf">0.8935</span><span class="tk-p">)</span> <span class="tk-p">]],</span>  <span class="tk-c1"># s-функції</span>
+    <span class="tk-p">]</span>
+<span class="tk-p">}</span>
+
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'He 0 0 0'</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-n">custom_basis</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Також можна поєднувати бібліотечні базиси з власними:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">3 рядки</span></div>
+<pre class="code"><code><span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'Li 0 0 0; H 0 0 1.6'</span><span class="tk-p">,</span>
+            <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-p">{</span><span class="tk-s1">'Li'</span><span class="tk-p">:</span> <span class="tk-s1">'def2-SVP'</span><span class="tk-p">,</span> <span class="tk-s1">'H'</span><span class="tk-p">:</span> <span class="tk-n">custom_basis</span><span class="tk-p">})</span></code></pre>
+</div>
+<!--
+...... subsection Рекомендації ......
+-->
+<h5 id="autosec-120"><span class="sectionnumber">2.3.3&#x2003;</span>Рекомендації</h5>
+<a id="main-html-autopage-120"></a>
+<p>
+Для тестових розрахунків підходить <kbd>STO-3G</kbd>. Для точніших результатів — <kbd>6-31G*</kbd> або <kbd>cc-pVDZ</kbd>. У розрахунках DFT зазвичай застосовують <kbd>def2-TZVP</kbd> або <kbd>def2-SVP</kbd>.
+</p>
+<div class="cb-comment">
+<p>
+<b>Порада</b>
+</p>
+<p>
+Бібліотечні базиси <kbd>PySCF</kbd> зберігаються у модулі <a href="https://pyscf.org/pyscf_api_docs/pyscf.gto.basis" target="_blank" ><span class="inlinecode"><kbd>pyscf.gto.basis</kbd></span></a>. Їх можна переглядати,
+змінювати чи додавати власні файли у форматі Python-словників.
+</p>
+</div>
+<!--
+...... subsection Власні базисні набори ......
+-->
+<h5 id="autosec-121"><span class="sectionnumber">2.3.4&#x2003;</span>Власні базисні набори</h5>
+<a id="main-html-autopage-121"></a>
+<p>
+Іноді потрібно створити власний базис (наприклад, для навчання або тестування гібридних моделей). <kbd>PySCF</kbd> дозволяє явно задавати коефіцієнти та експоненти базисних функцій через <span
+class="inlinecode"><kbd>gto.basis.parse()</kbd></span>.
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><a class="code-file" href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/BasePyscf/code/CustomBasisExample.py" target="_blank" rel="noopener" title="Відкрити файл на GitHub">CustomBasisExample.py</a><span class="code-lines">19 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span>
+
+<span class="tk-c1"># Визначення базису для H (тільки s-функції)</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span>
+    <span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'H 0 0 0'</span><span class="tk-p">,</span>
+    <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-p">{</span>
+        <span class="tk-s1">'H'</span><span class="tk-p">:</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">basis</span><span class="tk-o">.</span><span class="tk-n">parse</span><span class="tk-p">(</span><span class="tk-s1">'''</span>
+<span class="tk-s1">            H    S</span>
+<span class="tk-s1">                 13.00773     0.019685</span>
+<span class="tk-s1">                  1.962079    0.137977</span>
+<span class="tk-s1">                  0.444529    0.478148</span>
+<span class="tk-s1">            H    S</span>
+<span class="tk-s1">                  0.1219492   1.000000</span>
+<span class="tk-s1">        '''</span><span class="tk-p">)</span>
+    <span class="tk-p">}</span>
+<span class="tk-p">)</span>
+
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Власний базис: </span><span class="tk-si">{</span><span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">nao_nr</span><span class="tk-p">()</span><span class="tk-si">}</span><span class="tk-s1"> функцій'</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+У цьому прикладі явно визначено два набори \(s\)-функцій із різними коефіцієнтами. Так можна створювати спеціалізовані базиси для навчання або розширення стандартних наборів.
+</p>
+<!--
+...... subsection Комбінування базисів ......
+-->
+<h5 id="autosec-122"><span class="sectionnumber">2.3.5&#x2003;</span>Комбінування базисів</h5>
+<a id="main-html-autopage-122"></a>
+<p>
+<kbd>PySCF</kbd> підтримує <b>гібридні базиси</b> — різні для різних атомів у тій самій системі. Це корисно, коли потрібно зменшити обчислювальні витрати, наприклад, використовуючи спрощений базис для водню, а розширений — для важчих атомів.
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">13 рядків</span></div>
+<pre class="code"><code><span class="tk-c1"># Для складних систем можна використовувати різні базиси</span>
+<span class="tk-c1"># (хоча для атомів це рідко потрібно)</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span>
+    <span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'''</span>
+<span class="tk-s1">        H  0 0 0</span>
+<span class="tk-s1">        He 5 0 0</span>
+<span class="tk-s1">    '''</span><span class="tk-p">,</span>
+    <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-p">{</span>
+        <span class="tk-s1">'H'</span><span class="tk-p">:</span> <span class="tk-s1">'sto-3g'</span><span class="tk-p">,</span>
+        <span class="tk-s1">'He'</span><span class="tk-p">:</span> <span class="tk-s1">'cc-pvdz'</span>
+    <span class="tk-p">}</span>
+<span class="tk-p">)</span></code></pre>
+</div>
+<p>
+У результаті <kbd>PySCF</kbd> автоматично комбінує обидва базиси при побудові молекулярних орбіталей.
+</p>
+<!--
+...... subsection Базисні набори для періодичних систем (Cell) ......
+-->
+<h5 id="autosec-123"><span class="sectionnumber">2.3.6&#x2003;</span>Базисні набори для періодичних систем (Cell)</h5>
+<a id="main-html-autopage-123"></a>
+<p>
+Для об’єктів <span class="inlinecode"><kbd>Cell</kbd></span> використовуються <em>спеціалізовані базисні набори</em>, оптимізовані під періодичні граничні умови та псевдопотенціали. Вони відрізняються від молекулярних базисів (наприклад,
+<kbd>cc-pVDZ</kbd>) і зазвичай позначаються як GTH, SZV, DZVP тощо.
+</p>
+<!--
+...... subsubsection Популярні PBC-базиси ......
+-->
+<h6 id="autosec-124">Популярні PBC-базиси</h6>
+<a id="main-html-autopage-124"></a>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>gth-szv</kbd>, <kbd>gth-dzv</kbd>, <kbd>gth-tzv</kbd> — Gaussian-Type Orbitals (GTO) з псевдопотенціалами Goedecker-Teter-Hutter (GTH);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>sto-3g</kbd>, <kbd>3-21g</kbd> — можна використовувати, але менш ефективні;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>plane-wave</kbd> — не підтримується напряму, але є гібридні методи (наприклад, GPW у <kbd>cp2k</kbd>).
+</p>
+</li>
+</ul>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">7 рядків</span></div>
+<pre class="code"><code><span class="tk-n">cell</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">Cell</span><span class="tk-p">(</span>
+    <span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'Si 0 0 0; Si 0.25 0.25 0.25'</span><span class="tk-p">,</span>
+    <span class="tk-n">a</span><span class="tk-o">=...</span><span class="tk-p">,</span>
+    <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'gth-szv'</span><span class="tk-p">,</span>   <span class="tk-c1"># обов’язково з GTH-псевдопотенціалом</span>
+    <span class="tk-n">pseudo</span><span class="tk-o">=</span><span class="tk-s1">'gth-pade'</span>
+<span class="tk-p">)</span></code></pre>
+</div>
+<!--
+...... subsubsection Псевдопотенціали --- обов’язкова пара до базису ......
+-->
+<h6 id="autosec-125">Псевдопотенціали — обов’язкова пара до базису</h6>
+<a id="main-html-autopage-125"></a>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>gth-pade</kbd>, <kbd>gth-lda</kbd>, <kbd>gth-pbe</kbd> — для GTH-базисів;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>bfd-lda</kbd>, <kbd>bfd-pbe</kbd> — альтернативні (BFD);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Без псевдопотенціалу розрахунок для важких елементів буде некоректним або неможливим.
+</p>
+</li>
+</ul>
+<!--
+...... subsubsection Рекомендації ......
+-->
+<h6 id="autosec-126">Рекомендації</h6>
+<a id="main-html-autopage-126"></a>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Для тестів — <kbd>gth-szv + gth-pade</kbd>;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Для точних розрахунків — <kbd>gth-tzvp</kbd> або <kbd>gth-qzvp</kbd>;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Уникайте молекулярних базисів (<kbd>cc-pVXZ</kbd>) у <span class="inlinecode"><kbd>Cell</kbd></span> — вони не сумісні з PBC.
+</p>
+</li>
+</ul>
+<div class="cb-comment">
+<p>
+<b>Важливо</b>
+</p>
+<p>
+Базис і псевдопотенціал <b>повинні відповідати один одному</b>. Наприклад: <span class="inlinecode"><kbd>basis='gth-szv'</kbd></span> \(\rightarrow \) <span class="inlinecode"><kbd>pseudo='gth-*'</kbd></span>.
+</p>
+</div>
+<!--
+...... subsection Інформація про базисний набір ......
+-->
+<h5 id="autosec-127"><span class="sectionnumber">2.3.7&#x2003;</span>Інформація про базисний набір</h5>
+<a id="main-html-autopage-127"></a>
+<p>
+Іноді потрібно дослідити, які саме функції використовуються у вибраному базисі — їхні типи, кількість та мітки. Для цього можна скористатися внутрішніми структурами об’єкта <span class="inlinecode"><kbd>Mole</kbd></span>.
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><a class="code-file" href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/BasePyscf/code/BasisSetInfo.py" target="_blank" rel="noopener" title="Відкрити файл на GitHub">BasisSetInfo.py</a><span class="code-lines">25 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span>
+
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'C 0 0 0'</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'6-31g'</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># Детальна інформація</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-s1">'Базисні функції по типу:'</span><span class="tk-p">)</span>
+<span class="tk-k">for</span> <span class="tk-n">atom_idx</span> <span class="tk-ow">in</span> <span class="tk-nb">range</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">natm</span><span class="tk-p">):</span>
+    <span class="tk-n">symbol</span> <span class="tk-o">=</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">atom_symbol</span><span class="tk-p">(</span><span class="tk-n">atom_idx</span><span class="tk-p">)</span>
+    <span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'</span><span class="tk-se">\n</span><span class="tk-s1">Атом </span><span class="tk-si">{</span><span class="tk-n">symbol</span><span class="tk-si">}</span><span class="tk-s1">:'</span><span class="tk-p">)</span>
+
+    <span class="tk-c1"># Кількість функцій кожного типу</span>
+    <span class="tk-n">basis_atom</span> <span class="tk-o">=</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">_basis</span><span class="tk-p">[</span><span class="tk-n">symbol</span><span class="tk-p">]</span>
+    <span class="tk-k">for</span> <span class="tk-n">shell</span> <span class="tk-ow">in</span> <span class="tk-n">basis_atom</span><span class="tk-p">:</span>
+        <span class="tk-n">l_quantum</span> <span class="tk-o">=</span> <span class="tk-n">shell</span><span class="tk-p">[</span><span class="tk-mi">0</span><span class="tk-p">]</span>  <span class="tk-c1"># Азимутальне квантове число</span>
+        <span class="tk-n">n_contractions</span> <span class="tk-o">=</span> <span class="tk-nb">len</span><span class="tk-p">(</span><span class="tk-n">shell</span><span class="tk-p">[</span><span class="tk-mi">1</span><span class="tk-p">:])</span>
+
+        <span class="tk-n">shell_type</span> <span class="tk-o">=</span> <span class="tk-p">[</span><span class="tk-s1">'s'</span><span class="tk-p">,</span> <span class="tk-s1">'p'</span><span class="tk-p">,</span> <span class="tk-s1">'d'</span><span class="tk-p">,</span> <span class="tk-s1">'f'</span><span class="tk-p">,</span> <span class="tk-s1">'g'</span><span class="tk-p">][</span><span class="tk-n">l_quantum</span><span class="tk-p">]</span>
+        <span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'  </span><span class="tk-si">{</span><span class="tk-n">shell_type</span><span class="tk-si">}</span><span class="tk-s1">-тип: </span><span class="tk-si">{</span><span class="tk-n">n_contractions</span><span class="tk-si">}</span><span class="tk-s1"> contracted'</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># Діапазони базисних функцій для атома</span>
+<span class="tk-n">ao_labels</span> <span class="tk-o">=</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">ao_labels</span><span class="tk-p">()</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'</span><span class="tk-se">\n</span><span class="tk-s1">Мітки базисних функцій:'</span><span class="tk-p">)</span>
+<span class="tk-k">for</span> <span class="tk-n">i</span><span class="tk-p">,</span> <span class="tk-n">label</span> <span class="tk-ow">in</span> <span class="tk-nb">enumerate</span><span class="tk-p">(</span><span class="tk-n">ao_labels</span><span class="tk-p">):</span>
+    <span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'</span><span class="tk-si">{</span><span class="tk-n">i</span><span class="tk-si">}</span><span class="tk-s1">: </span><span class="tk-si">{</span><span class="tk-n">label</span><span class="tk-si">}</span><span class="tk-s1">'</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Так можна отримати повну структуру базису — скільки функцій кожного типу (\(s\), \(p\), \(d\)), які індекси мають їхні атомні орбіталі, та як вони нумеруються в <kbd>PySCF</kbd>. Ця інформація важлива при аналізі орбіталей, побудові щільності або інтегралів.
+</p>
+<!--
+...... section Симетрія в атомних розрахунках ......
+-->
+<h4 id="autosec-128"><span class="sectionnumber">&#xA7;&#x202F;2.4&#x2003;</span>Симетрія в атомних розрахунках</h4>
+<a id="main-html-autopage-128"></a>
+<p>
+Симетрія відіграє ключову роль у квантово-хімічних розрахунках. Вона дозволяє:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> скоротити обчислювальні витрати (менше інтегралів та менші матриці),
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> розпізнавати вироджені орбіталі та їх симетрійні властивості,
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> аналізувати структуру електронних станів через іррепи (незвідні представлення),
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> уникати «зайвих» розв’язків при самоузгодженні.
+</p>
+</li>
+</ul>
+<p>
+У <kbd>PySCF</kbd> симетрія автоматично враховується при побудові молекулярного об’єкта, якщо активувати опцію <span class="inlinecode"><kbd>symmetry=True</kbd></span>. Для атомів сферична симетрія апроксимується підгрупами типу
+<kbd>D2h</kbd>, що сумісні з декартовими координатами.
+</p>
+<!--
+...... subsection Точкові групи симетрії атомів ......
+-->
+<h5 id="autosec-129"><span class="sectionnumber">2.4.1&#x2003;</span>Точкові групи симетрії атомів</h5>
+<a id="main-html-autopage-129"></a>
+<p>
+Ізольований атом у строгому сенсі має повну сферичну симетрію \(SO(3) \). Однак у <kbd>PySCF</kbd>, через використання декартових базисних функцій, використовується одна з підгруп, зазвичай <kbd>D2h</kbd>. Це дає змогу використовувати блокову структуру
+матриць і автоматично класифікувати орбіталі за іррепами.
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><a class="code-file" href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/BasePyscf/code/SymmetryPointGroupsExample.py" target="_blank" rel="noopener" title="Відкрити файл на GitHub">SymmetryPointGroupsExample.py</a><span class="code-lines">14 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span>
+
+<span class="tk-c1"># Автоматичне визначення симетрії</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span>
+    <span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'Ne 0 0 0'</span><span class="tk-p">,</span>
+    <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'cc-pvdz'</span><span class="tk-p">,</span>
+    <span class="tk-n">symmetry</span><span class="tk-o">=</span><span class="tk-kc">True</span>  <span class="tk-c1"># Автоматичне визначення точкової групи</span>
+<span class="tk-p">)</span>
+
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Точкова група: </span><span class="tk-si">{</span><span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">groupname</span><span class="tk-si">}</span><span class="tk-s1">'</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Топологічна група: </span><span class="tk-si">{</span><span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">topgroup</span><span class="tk-si">}</span><span class="tk-s1">'</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># Для атома результат, як правило: D2h або подібна підгрупа</span></code></pre>
+</div>
+<p>
+<b>Пояснення:</b>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>groupname</kbd></span> — ідентифікатор підгрупи (наприклад, <kbd>D2h</kbd>, <kbd>C2v</kbd>, <kbd>Cs</kbd>);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>topgroup</kbd></span> — вища група симетрії, до якої належить дана підгрупа.
+</p>
+</li>
+</ul>
+<!--
+...... subsection Використання симетрії ......
+-->
+<h5 id="autosec-130"><span class="sectionnumber">2.4.2&#x2003;</span>Використання симетрії</h5>
+<a id="main-html-autopage-130"></a>
+<p>
+Симетрія допомагає прискорити розрахунок, оскільки гамільтоніан та інші оператори блокуються відповідно до іррепів. Тобто інтеграли між функціями з різних симетрій не обчислюються — що значно зменшує обсяг роботи.
+</p>
+<div class="codeblock code-python code-long" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><a class="code-file" href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/BasePyscf/code/UsingSymmetryExample.py" target="_blank" rel="noopener" title="Відкрити файл на GitHub">UsingSymmetryExample.py</a><span class="code-lines">48 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+<span class="tk-kn">import</span><span class="tk-w"> </span><span class="tk-nn">time</span>
+
+<span class="tk-c1"># -------------------------------------------------------------</span>
+<span class="tk-c1"># З симетрією</span>
+<span class="tk-c1"># -------------------------------------------------------------</span>
+<span class="tk-n">t0</span> <span class="tk-o">=</span> <span class="tk-n">time</span><span class="tk-o">.</span><span class="tk-n">perf_counter</span><span class="tk-p">()</span>
+
+<span class="tk-n">mol_sym</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span>
+    <span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'''</span>
+<span class="tk-s1">    O  0.0000  0.0000  0.0000</span>
+<span class="tk-s1">    H  0.7570  0.5860  0.0000</span>
+<span class="tk-s1">    H -0.7570  0.5860  0.0000</span>
+<span class="tk-s1">    '''</span><span class="tk-p">,</span>
+    <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'cc-pVDZ'</span><span class="tk-p">,</span>
+    <span class="tk-n">symmetry</span><span class="tk-o">=</span><span class="tk-kc">True</span>
+<span class="tk-p">)</span>
+<span class="tk-n">mf_sym</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol_sym</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">run</span><span class="tk-p">()</span>
+<span class="tk-n">t1</span> <span class="tk-o">=</span> <span class="tk-n">time</span><span class="tk-o">.</span><span class="tk-n">perf_counter</span><span class="tk-p">()</span>
+
+<span class="tk-c1"># -------------------------------------------------------------</span>
+<span class="tk-c1"># Без симетрії</span>
+<span class="tk-c1"># -------------------------------------------------------------</span>
+<span class="tk-n">t2</span> <span class="tk-o">=</span> <span class="tk-n">time</span><span class="tk-o">.</span><span class="tk-n">perf_counter</span><span class="tk-p">()</span>
+
+<span class="tk-n">mol_nosym</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span>
+    <span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-n">mol_sym</span><span class="tk-o">.</span><span class="tk-n">atom</span><span class="tk-p">,</span>  <span class="tk-c1"># та сама геометрія</span>
+    <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'cc-pVDZ'</span><span class="tk-p">,</span>
+    <span class="tk-n">symmetry</span><span class="tk-o">=</span><span class="tk-kc">False</span>
+<span class="tk-p">)</span>
+<span class="tk-n">mf_nosym</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol_nosym</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">run</span><span class="tk-p">()</span>
+<span class="tk-n">t3</span> <span class="tk-o">=</span> <span class="tk-n">time</span><span class="tk-o">.</span><span class="tk-n">perf_counter</span><span class="tk-p">()</span>
+
+<span class="tk-c1"># -------------------------------------------------------------</span>
+<span class="tk-c1"># Порівняння</span>
+<span class="tk-c1"># -------------------------------------------------------------</span>
+<span class="tk-n">e_sym</span> <span class="tk-o">=</span> <span class="tk-n">mf_sym</span><span class="tk-o">.</span><span class="tk-n">e_tot</span>
+<span class="tk-n">e_nosym</span> <span class="tk-o">=</span> <span class="tk-n">mf_nosym</span><span class="tk-o">.</span><span class="tk-n">e_tot</span>
+<span class="tk-n">time_sym</span> <span class="tk-o">=</span> <span class="tk-n">t1</span> <span class="tk-o">-</span> <span class="tk-n">t0</span>
+<span class="tk-n">time_nosym</span> <span class="tk-o">=</span> <span class="tk-n">t3</span> <span class="tk-o">-</span> <span class="tk-n">t2</span>
+
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'З симетрією:  </span><span class="tk-si">{</span><span class="tk-n">e_sym</span><span class="tk-si">:</span><span class="tk-s1">.8f</span><span class="tk-si">}</span><span class="tk-s1"> Ha  (час: </span><span class="tk-si">{</span><span class="tk-n">time_sym</span><span class="tk-si">:</span><span class="tk-s1">.3f</span><span class="tk-si">}</span><span class="tk-s1"> c)'</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Без симетрії: </span><span class="tk-si">{</span><span class="tk-n">e_nosym</span><span class="tk-si">:</span><span class="tk-s1">.8f</span><span class="tk-si">}</span><span class="tk-s1"> Ha  (час: </span><span class="tk-si">{</span><span class="tk-n">time_nosym</span><span class="tk-si">:</span><span class="tk-s1">.3f</span><span class="tk-si">}</span><span class="tk-s1"> c)'</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Різниця енергій: </span><span class="tk-si">{</span><span class="tk-nb">abs</span><span class="tk-p">(</span><span class="tk-n">e_sym</span><span class="tk-w"> </span><span class="tk-o">-</span><span class="tk-w"> </span><span class="tk-n">e_nosym</span><span class="tk-p">)</span><span class="tk-si">:</span><span class="tk-s1">.2e</span><span class="tk-si">}</span><span class="tk-s1"> Ha'</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Прискорення: </span><span class="tk-si">{</span><span class="tk-n">time_nosym</span><span class="tk-w"> </span><span class="tk-o">/</span><span class="tk-w"> </span><span class="tk-n">time_sym</span><span class="tk-si">:</span><span class="tk-s1">.2f</span><span class="tk-si">}</span><span class="tk-s1">×'</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Виявлена група симетрії: </span><span class="tk-si">{</span><span class="tk-n">mol_sym</span><span class="tk-o">.</span><span class="tk-n">topgroup</span><span class="tk-si">}</span><span class="tk-s1">'</span><span class="tk-p">)</span></code></pre>
+</div>
+<div class="cb-comment">
+<p>
+<b>Коментар</b>
+</p>
+<p>
+Різниця в енергіях практично нульова (обидва методи еквівалентні з фізичної точки зору), але симетрійний розрахунок потребує менше часу і пам’яті.
+</p>
+</div>
+<!--
+...... subsection Симетрія орбіталей ......
+-->
+<h5 id="autosec-131"><span class="sectionnumber">2.4.3&#x2003;</span>Симетрія орбіталей</h5>
+<a id="main-html-autopage-131"></a>
+<p>
+<kbd>PySCF</kbd> автоматично визначає симетрійні властивості орбіталей після розрахунку. Це особливо корисно для аналізу заповнених і віртуальних рівнів, побудови діаграм енергетичних рівнів та порівняння з експериментом.
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><a class="code-file" href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/BasePyscf/code/OrbitalSymmetryExample.py" target="_blank" rel="noopener" title="Відкрити файл на GitHub">OrbitalSymmetryExample.py</a><span class="code-lines">24 рядки</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span>
+    <span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'N 0 0 0'</span><span class="tk-p">,</span>
+    <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'cc-pvdz'</span><span class="tk-p">,</span>
+    <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">3</span><span class="tk-p">,</span>  <span class="tk-c1"># Основний стан ⁴S</span>
+    <span class="tk-n">symmetry</span><span class="tk-o">=</span><span class="tk-kc">True</span>
+<span class="tk-p">)</span>
+
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">UHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span>
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+
+<span class="tk-c1"># Орбітальна симетрія</span>
+<span class="tk-k">if</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">symmetry</span><span class="tk-p">:</span>
+    <span class="tk-n">orbsym</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">hf_symm</span><span class="tk-o">.</span><span class="tk-n">get_orbsym</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">,</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">mo_coeff</span><span class="tk-p">[</span><span class="tk-mi">0</span><span class="tk-p">])</span>
+    <span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.symm</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">label_orb_symm</span>
+
+    <span class="tk-n">labels</span> <span class="tk-o">=</span> <span class="tk-n">label_orb_symm</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">,</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">irrep_name</span><span class="tk-p">,</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">symm_orb</span><span class="tk-p">,</span>
+                           <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">mo_coeff</span><span class="tk-p">[</span><span class="tk-mi">0</span><span class="tk-p">])</span>
+
+    <span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-s1">'</span><span class="tk-se">\n</span><span class="tk-s1">Симетрія заповнених орбіталей (альфа):'</span><span class="tk-p">)</span>
+    <span class="tk-k">for</span> <span class="tk-n">i</span> <span class="tk-ow">in</span> <span class="tk-nb">range</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">nelec</span><span class="tk-p">[</span><span class="tk-mi">0</span><span class="tk-p">]):</span>
+        <span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'  MO </span><span class="tk-si">{</span><span class="tk-n">i</span><span class="tk-o">+</span><span class="tk-mi">1</span><span class="tk-si">}</span><span class="tk-s1">: </span><span class="tk-si">{</span><span class="tk-n">labels</span><span class="tk-p">[</span><span class="tk-n">i</span><span class="tk-p">]</span><span class="tk-si">}</span><span class="tk-s1">'</span><span class="tk-p">)</span></code></pre>
+</div>
+<div class="cb-comment">
+<p>
+<b>Коментар</b>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>mol.irrep_name</kbd></span> — список назв іррепів<sup>1</sup>;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>mol.symm_orb</kbd></span> — матриці симетричних орбіталей;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>label_orb_symm()</kbd></span> — функція, що відображає орбіталі у відповідні іррепи;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>get_orbsym()</kbd></span> — отримує симетрії молекулярних орбіталей з урахуванням побудованих коефіцієнтів.
+</p>
+</li>
+</ul>
+</div>
+<p>
+Це дає змогу, наприклад, визначити які орбіталі мають однакову симетрію, а які не взаємодіють між собою.
+</p>
+<div role="note" class="footnotes">
+<a id="main-html-autopage-132"></a>
+<p>
+<sup>1</sup>&nbsp;<b>Незвідне представлення (irrep)</b> — фундаментальне поняття теорії груп, що описує, як функція (зокрема молекулярна орбіталь) трансформується під дією операцій симетрії молекули. Кожне ірредуцибельне представлення відповідає
+певному типу симетрії: наприклад, для групи \(C_{2v}\) це \(A_1\), \(A_2\), \(B_1\), \(B_2\), а для групи \(D_{2h}\) — \(A_g\), \(B_{1g}\), \(B_{2g}\), \(B_{3g}\), \(A_u\), \(B_{1u}\), \(B_{2u}\), \(B_{3u}\). Всі орбіталі, що належать до одного й того ж irrep,
+мають однакову симетрію і можуть змішуватися між собою, тоді як орбіталі різних <kbd>irrep</kbd> не взаємодіють.
+</p>
+</div>
+<!--
+...... subsection Коли вимикати симетрію ......
+-->
+<h5 id="autosec-133"><span class="sectionnumber">2.4.4&#x2003;</span>Коли вимикати симетрію</h5>
+<a id="main-html-autopage-133"></a>
+<p>
+Хоча симетрія зазвичай корисна, існують ситуації, коли її слід <b>вимкнути</b>:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> При моделюванні <b>збуджених станів</b>, які порушують симетрію основного стану.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> При побудові <b>поверхонь потенційної енергії (<kbd>PES</kbd>)</b>, де геометрія змінюється і симетрія зникає.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Якщо виникають <b>проблеми з конвергенцією</b> — часто через жорсткі симетрійні обмеження.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Коли необхідно вручну <b>змінювати орбіталі</b> або аналізувати змішування між різними симетріями.
+</p>
+</li>
+</ul>
+<p>
+У таких випадках достатньо задати:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">2 рядки</span></div>
+<pre class="code"><code><span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'...'</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'...'</span><span class="tk-p">,</span> <span class="tk-n">symmetry</span><span class="tk-o">=</span><span class="tk-kc">False</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+<b>Підсумок:</b> Використання симетрії — це не лише «оптимізація швидкості», а й <b>фізично обґрунтований підхід</b>, що дозволяє зрозуміти структуру електронних рівнів, виродження та природу хімічних зв’язків.
+</p>
+<!--
+...... section Спін та мультиплетність ......
+-->
+<h4 id="autosec-134"><span class="sectionnumber">&#xA7;&#x202F;2.5&#x2003;</span>Спін та мультиплетність</h4>
+<a id="main-html-autopage-134"></a>
+<!--
+...... subsection Визначення спінового стану ......
+-->
+<h5 id="autosec-135"><span class="sectionnumber">2.5.1&#x2003;</span>Визначення спінового стану</h5>
+<a id="main-html-autopage-135"></a>
+<p>
+У квантовій хімії поняття спіну має фундаментальне значення. Кожен електрон характеризується спіном \(s = \frac {1}{2}\), тобто він може перебувати в одному з двох можливих спінових станів — «вгору» (\(\alpha \)) або «вниз» (\(\beta \)).
+</p>
+<p>
+Для багаточастинкової системи повний спін \(S\) визначається як векторна сума спінів усіх електронів. У більшості практичних розрахунків нас цікавить тільки величина \(S\) (а не його напрям).
+</p>
+<p>
+В <kbd>PySCF</kbd> параметр <span class="inlinecode"><kbd>spin</kbd></span> задає величину \(2S\), тобто різницю між кількістю \(\alpha \)- та \(\beta \)-електронів:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{2.}{0}\)</span>
+<!--
+2𝑆 = 𝑁𝛼 − 𝑁𝛽 (2.1)
+-->
+<p>
+\begin{equation}
+2S = N_\alpha - N_\beta
+\end{equation}
+</p>
+<p>
+Звідси:
+</p>
+<p>
+\[ S = \frac {N_\alpha - N_\beta }{2}, \quad M = 2S + 1 \]
+</p>
+<p>
+де \(M\) — мультиплетність (кількість можливих орієнтацій спіну системи в магнітному полі).
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> \(S = 0\) \(\Rightarrow \) синглет (\(M=1\))
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(S = \frac {1}{2}\) \(\Rightarrow \) дублет (\(M=2\))
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(S = 1\) \(\Rightarrow \) триплет (\(M=3\))
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(S = \frac {3}{2}\) \(\Rightarrow \) квартет (\(M=4\))
+</p>
+</li>
+</ul>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><a class="code-file" href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/BasePyscf/code/SpinExamples.py" target="_blank" rel="noopener" title="Відкрити файл на GitHub">SpinExamples.py</a><span class="code-lines">19 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span>
+
+<span class="tk-c1"># Атом H: S=1/2, 2S=1, дублет (M=2)</span>
+<span class="tk-n">h</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'H 0 0 0'</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'cc-pvdz'</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">1</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># Атом He: S=0, 2S=0, синглет (M=1)</span>
+<span class="tk-n">he</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'He 0 0 0'</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'cc-pvdz'</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">0</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># Атом O: основний стан ³P, S=1, 2S=2, триплет (M=3)</span>
+<span class="tk-n">o</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'O 0 0 0'</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'cc-pvdz'</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">2</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># Атом N: основний стан ⁴S, S=3/2, 2S=3, квартет (M=4)</span>
+<span class="tk-n">n</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'N 0 0 0'</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'cc-pvdz'</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">3</span><span class="tk-p">)</span>
+
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'H:  </span><span class="tk-si">{</span><span class="tk-n">h</span><span class="tk-o">.</span><span class="tk-n">nelec</span><span class="tk-si">}</span><span class="tk-s1">, 2S=</span><span class="tk-si">{</span><span class="tk-n">h</span><span class="tk-o">.</span><span class="tk-n">spin</span><span class="tk-si">}</span><span class="tk-s1">, M=</span><span class="tk-si">{</span><span class="tk-n">h</span><span class="tk-o">.</span><span class="tk-n">spin</span><span class="tk-o">+</span><span class="tk-mi">1</span><span class="tk-si">}</span><span class="tk-s1">'</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'He: </span><span class="tk-si">{</span><span class="tk-n">he</span><span class="tk-o">.</span><span class="tk-n">nelec</span><span class="tk-si">}</span><span class="tk-s1">, 2S=</span><span class="tk-si">{</span><span class="tk-n">he</span><span class="tk-o">.</span><span class="tk-n">spin</span><span class="tk-si">}</span><span class="tk-s1">, M=</span><span class="tk-si">{</span><span class="tk-n">he</span><span class="tk-o">.</span><span class="tk-n">spin</span><span class="tk-o">+</span><span class="tk-mi">1</span><span class="tk-si">}</span><span class="tk-s1">'</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'O:  </span><span class="tk-si">{</span><span class="tk-n">o</span><span class="tk-o">.</span><span class="tk-n">nelec</span><span class="tk-si">}</span><span class="tk-s1">, 2S=</span><span class="tk-si">{</span><span class="tk-n">o</span><span class="tk-o">.</span><span class="tk-n">spin</span><span class="tk-si">}</span><span class="tk-s1">, M=</span><span class="tk-si">{</span><span class="tk-n">o</span><span class="tk-o">.</span><span class="tk-n">spin</span><span class="tk-o">+</span><span class="tk-mi">1</span><span class="tk-si">}</span><span class="tk-s1">'</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'N:  </span><span class="tk-si">{</span><span class="tk-n">n</span><span class="tk-o">.</span><span class="tk-n">nelec</span><span class="tk-si">}</span><span class="tk-s1">, 2S=</span><span class="tk-si">{</span><span class="tk-n">n</span><span class="tk-o">.</span><span class="tk-n">spin</span><span class="tk-si">}</span><span class="tk-s1">, M=</span><span class="tk-si">{</span><span class="tk-n">n</span><span class="tk-o">.</span><span class="tk-n">spin</span><span class="tk-o">+</span><span class="tk-mi">1</span><span class="tk-si">}</span><span class="tk-s1">'</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Цей код створює атомні молекули з різними значеннями параметра <span class="inlinecode"><kbd>spin</kbd></span>. В об’єкті <span class="inlinecode"><kbd>mol.nelec</kbd></span> <kbd>PySCF</kbd> зберігає кортеж \((N_\alpha , N_\beta
+)\), що дозволяє контролювати спінову структуру системи.
+</p>
+<!--
+...... subsection Розподіл альфа- та бета-електронів ......
+-->
+<h5 id="autosec-136"><span class="sectionnumber">2.5.2&#x2003;</span>Розподіл альфа- та бета-електронів</h5>
+<a id="main-html-autopage-136"></a>
+<p>
+У багатоспінових системах важливо знати, як електрони розподілені за спіновими підрівнями. В <kbd>PySCF</kbd> ця інформація визначається автоматично на основі параметра <span class="inlinecode"><kbd>spin</kbd></span>, однак її можна перевірити
+вручну.
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><a class="code-file" href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/BasePyscf/code/PrintElectronConfig.py" target="_blank" rel="noopener" title="Відкрити файл на GitHub">PrintElectronConfig.py</a><span class="code-lines">23 рядки</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span>
+
+<span class="tk-k">def</span><span class="tk-w"> </span><span class="tk-nf">print_electron_config</span><span class="tk-p">(</span><span class="tk-n">atom_symbol</span><span class="tk-p">,</span> <span class="tk-n">charge</span><span class="tk-o">=</span><span class="tk-mi">0</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">0</span><span class="tk-p">):</span>
+    <span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span>
+        <span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-sa">f</span><span class="tk-s1">'</span><span class="tk-si">{</span><span class="tk-n">atom_symbol</span><span class="tk-si">}</span><span class="tk-s1"> 0 0 0'</span><span class="tk-p">,</span>
+        <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'sto-3g'</span><span class="tk-p">,</span>
+        <span class="tk-n">charge</span><span class="tk-o">=</span><span class="tk-n">charge</span><span class="tk-p">,</span>
+        <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-n">spin</span>
+    <span class="tk-p">)</span>
+
+    <span class="tk-n">n_alpha</span><span class="tk-p">,</span> <span class="tk-n">n_beta</span> <span class="tk-o">=</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">nelec</span>
+    <span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'</span><span class="tk-si">{</span><span class="tk-n">atom_symbol</span><span class="tk-si">}</span><span class="tk-s1"> (charge=</span><span class="tk-si">{</span><span class="tk-n">charge</span><span class="tk-si">}</span><span class="tk-s1">, 2S=</span><span class="tk-si">{</span><span class="tk-n">spin</span><span class="tk-si">}</span><span class="tk-s1">):'</span><span class="tk-p">)</span>
+    <span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'  Всього електронів: </span><span class="tk-si">{</span><span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">nelectron</span><span class="tk-si">}</span><span class="tk-s1">'</span><span class="tk-p">)</span>
+    <span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'  α-електронів: </span><span class="tk-si">{</span><span class="tk-n">n_alpha</span><span class="tk-si">}</span><span class="tk-s1">'</span><span class="tk-p">)</span>
+    <span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'  β-електронів: </span><span class="tk-si">{</span><span class="tk-n">n_beta</span><span class="tk-si">}</span><span class="tk-s1">'</span><span class="tk-p">)</span>
+    <span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'  Неспарених: </span><span class="tk-si">{</span><span class="tk-n">n_alpha</span><span class="tk-w"> </span><span class="tk-o">-</span><span class="tk-w"> </span><span class="tk-n">n_beta</span><span class="tk-si">}</span><span class="tk-se">\n</span><span class="tk-s1">'</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># Приклади</span>
+<span class="tk-n">print_electron_config</span><span class="tk-p">(</span><span class="tk-s1">'Li'</span><span class="tk-p">,</span> <span class="tk-n">charge</span><span class="tk-o">=</span><span class="tk-mi">0</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">1</span><span class="tk-p">)</span>    <span class="tk-c1"># Li (2s¹)</span>
+<span class="tk-n">print_electron_config</span><span class="tk-p">(</span><span class="tk-s1">'C'</span><span class="tk-p">,</span>  <span class="tk-n">charge</span><span class="tk-o">=</span><span class="tk-mi">0</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">2</span><span class="tk-p">)</span>    <span class="tk-c1"># C (³P)</span>
+<span class="tk-n">print_electron_config</span><span class="tk-p">(</span><span class="tk-s1">'O'</span><span class="tk-p">,</span>  <span class="tk-n">charge</span><span class="tk-o">=</span><span class="tk-mi">0</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">2</span><span class="tk-p">)</span>    <span class="tk-c1"># O (³P)</span>
+<span class="tk-n">print_electron_config</span><span class="tk-p">(</span><span class="tk-s1">'O'</span><span class="tk-p">,</span>  <span class="tk-n">charge</span><span class="tk-o">=-</span><span class="tk-mi">1</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">1</span><span class="tk-p">)</span>   <span class="tk-c1"># O⁻ (дублет)</span></code></pre>
+</div>
+<p>
+Ця функція показує, як саме <kbd>PySCF</kbd> обчислює кількість \(\alpha \)- та \(\beta \)-електронів. Наприклад, для нейтрального атома кисню (\(Z=8\)) маємо 8 електронів. При \(2S=2\) отримаємо:
+</p>
+<p>
+\[ N_\alpha = 5,\quad N_\beta = 3 \]
+</p>
+<p>
+тобто два неспарені електрони — саме це відповідає триплетному стану (\({}^3P\)).
+</p>
+<!--
+...... subsection Вибір правильного спіну ......
+-->
+<h5 id="autosec-137"><span class="sectionnumber">2.5.3&#x2003;</span>Вибір правильного спіну</h5>
+<a id="main-html-autopage-137"></a>
+<p>
+У квантовій хімії кожен атом має характерний спіновий стан основного рівня. Неправильно заданий <span class="inlinecode"><kbd>spin</kbd></span> може призвести до помилок збіжності або фізично некоректних результатів.
+</p>
+<p>
+<b>Приклад:</b> Атом Карбону в основному стані має конфігурацію \(2s^2 2p^2\) з двома неспареними електронами, тому <span class="inlinecode"><kbd>spin=2</kbd></span> (триплет \(^3P\)).
+</p>
+<div class="cb-comment">
+<p>
+<b>Практичні поради</b>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Для молекул із <b>непарним числом електронів</b> <span class="inlinecode"><kbd>spin</kbd></span> завжди непарний.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Неправильний спін часто призводить до <kbd>SCF not converged</kbd>.
+</p>
+</li>
+</ul>
+</div>
+<!--
+...... section Типова схема розрахунків у PySCF ......
+-->
+<h4 id="autosec-138"><span class="sectionnumber">&#xA7;&#x202F;2.6&#x2003;</span>Типова схема розрахунків у <kbd>PySCF</kbd></h4>
+<a id="main-html-autopage-138"></a>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> Задати молекулу через об’єкт <span class="inlinecode"><kbd>gto.M</kbd></span>, указавши атоми, базис і спін.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> Створити об’єкт середнього поля, наприклад <span class="inlinecode"><kbd>scf.RHF(mol)</kbd></span>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> Виконати самозгоджене розв’язання рівнянь командою <span class="inlinecode"><kbd>mf.kernel()</kbd></span>.
+</p>
+</li>
+</ul>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">9 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s2">"H 0 0 0; H 0 0 0.74"</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s2">"def2-svp"</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">0</span><span class="tk-p">)</span>
+
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span>
+<span class="tk-n">energy</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"Енергія H2 (HF): </span><span class="tk-si">{</span><span class="tk-n">energy</span><span class="tk-si">:</span><span class="tk-s2">.8f</span><span class="tk-si">}</span><span class="tk-s2"> Ha"</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Після виконання команди <span class="inlinecode"><kbd>mf.kernel()</kbd></span> <kbd>PySCF</kbd> розв’язує рівняння самоузгодженого поля та зберігає результати (енергію, орбіталі, матрицю густини) всередині об’єкта <span
+class="inlinecode"><kbd>mf</kbd></span>. Це універсальний інтерфейс — однаковий для всіх методів: <kbd>RHF</kbd>, <kbd>UHF</kbd>, <kbd>RKS</kbd>, <kbd>UKS</kbd> тощо.
+</p>
+<p>
+Для базового аналізу результатів можна викликати:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">3 рядки</span></div>
+<pre class="code"><code><span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">analyze</span><span class="tk-p">()</span>
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">spin_square</span><span class="tk-p">()</span></code></pre>
+</div>
+<p>
+Метод <span class="inlinecode"><kbd>mf.analyze()</kbd></span> виводить енергію, орбіталі, симетрії та заселеності, а <span class="inlinecode"><kbd>mf.spin_square()</kbd></span> — обчислює середнє значення \(\langle S^2 \rangle \) і
+мультиплетність. Такі перевірки допомагають оцінити спінову чистоту й правильність розв’язку.
+</p>
+<div class="cb-comment">
+<p>
+<b>Примітка</b>
+</p>
+<p>
+Детальні пояснення принципів методу Хартрі-Фока (<a href="hartree-fock.html#HFMethod">3</a>), формулювання рівнянь Кона-Шема (<a href="dft.html#DFTMethod">6</a>) та вибору обмінно-кореляційних функціоналів наведено у наступних розділах. Тут же
+показано лише загальну структуру запуску розрахунку в <kbd>PySCF</kbd>.
+</p>
+</div>
+<!--
+...... section Резюме ......
+-->
+<h4 id="autosec-139">Резюме</h4>
+<a id="main-html-autopage-139"></a>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <b>Клас <span class="inlinecode"><kbd>Mole</kbd></span></b> — центральний об’єкт для ізольованих молекулярних систем; зберігає геометрію, базис, заряд, спін і симетрію.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Клас <span class="inlinecode"><kbd>Cell</kbd></span></b> — аналог <span class="inlinecode"><kbd>Mole</kbd></span> для періодичних кристалічних структур (<kbd>PBC</kbd>).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Базисні набори</b> визначають якість опису електронної структури; у <kbd>PySCF</kbd>підтримуються як бібліотечні, так і користувацькі базиси.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Симетрія</b> прискорює розрахунки та дозволяє класифікувати орбіталі за іррепами, але може бути вимкнена для збуджених станів або нестабільних геометрій.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Спін</b> і мультиплетність задаються через параметр <span class="inlinecode"><kbd>spin = 2S</kbd></span> і визначають конфігурацію альфа/бета електронів.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Типова схема розрахунку</b> у <kbd>PySCF</kbd>: створити об’єкт <span class="inlinecode"><kbd>Mole</kbd></span> \(\rightarrow \) вибрати метод <kbd>SCF</kbd> \(\rightarrow \) запустити
+<span class="inlinecode"><kbd>mf.kernel()</kbd></span> \(\rightarrow \) проаналізувати результати через <span class="inlinecode"><kbd>mf.analyze()</kbd></span> або <span
+class="inlinecode"><kbd>mf.spin_square()</kbd></span>.
+</p>
+</li>
+</ul>
+<p>
+У цьому розділі ми розглянули технічну структуру об’єктів і типову логіку запуску розрахунку. Детальні пояснення фізичних принципів методів <kbd>RHF</kbd>, <kbd>UHF</kbd>, <kbd>RKS</kbd>, <kbd>UKS</kbd> будуть подані далі.
+</p>
+<p>
+У наступному розділі ми детально розглянемо метод Хартрі-Фока та його застосування до розрахунків.
+</p>
+<!--
+...... section Контрольні запитання та завдання ......
+-->
+<h4 id="autosec-140">Контрольні запитання та завдання</h4>
+<a id="main-html-autopage-140"></a>
+<!--
+...... subsection Контрольні запитання ......
+-->
+<h5 id="autosec-141">Контрольні запитання</h5>
+<a id="main-html-autopage-141"></a>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> Яка різниця між методами створення об’єкта <span class="inlinecode"><kbd>Mole</kbd></span> через <span class="inlinecode"><kbd>gto.M()</kbd></span> та покроково?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> У чому різниця між класами <span class="inlinecode"><kbd>Mole</kbd></span> та <span class="inlinecode"><kbd>Cell</kbd></span>?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> Чому для атома Карбону у основному стані використовується <span class="inlinecode"><kbd>spin=2</kbd></span>?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">4.</span> Як задається мультиплетність системи у <kbd>PySCF</kbd>? Як з параметра <span class="inlinecode"><kbd>spin</kbd></span> обчислюється \(S\) і \(M\)?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">5.</span> Яке призначення параметра <span class="inlinecode"><kbd>verbose</kbd></span>? Коли доцільно змінювати його значення?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">6.</span> Опишіть послідовність типового розрахунку у <kbd>PySCF</kbd>. Яку функцію виконує <span class="inlinecode"><kbd>mf.kernel()</kbd></span>?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">7.</span> Для чого використовуються команди <span class="inlinecode"><kbd>mf.analyze()</kbd></span> та <span class="inlinecode"><kbd>mf.spin_square()</kbd></span>?
+</p>
+</li>
+</ul>
+<!--
+...... subsection Практичні завдання ......
+-->
+<h5 id="autosec-142">Практичні завдання</h5>
+<a id="main-html-autopage-142"></a>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker"><b>Задача 1:</b></span> Створіть функцію, яка за заданим хімічним символом атома та його зарядом повертає коректні значення <span class="inlinecode"><kbd>charge</kbd></span> і <span
+class="inlinecode"><kbd>spin</kbd></span> для нейтрального стану, катіона та аніона (використовуйте періодичну таблицю).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 2:</b></span> Напишіть код, який створює об’єкт <span class="inlinecode"><kbd>Cell</kbd></span> для графіту (двошарова структура з відстанню між шарами 3.35 Å) з використанням ґраткових векторів, базису
+<kbd>gth-szv</kbd> та псевдопотенціалу <kbd>gth-pbe</kbd>. Не запускайте розрахунок — лише побудуйте об’єкт і виведіть його об’єм комірки.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 3:</b></span> Порівняйте синтаксис створення об’єктів <span class="inlinecode"><kbd>Mole</kbd></span> і <span class="inlinecode"><kbd>Cell</kbd></span> для молекули <span
+id="lateximage-main-html-9"
+class="lateximagesource"
+><!--
+H2
+--><img
+src="main-html-images/B210D6A401BAC692FAB8840283B0CE59.svg"
+alt="\ce{H2}"
+style=""
+class="lateximage"
+></span> та гіпотетичної 1D-ланцюжкової структури &#x2026;H-H-H &#x2026; з періодом \(0.74\) Å. Покажіть, які параметри є спільними, а які — унікальними для кожного класу.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 4:</b></span> Створіть словник, що зіставляє популярні PBC-базиси (<kbd>gth-szv</kbd>, <kbd>gth-dzvp</kbd>, <kbd>gth-tzvp</kbd>) з рекомендованими псевдопотенціалами. Додайте коментарі, для яких типів
+систем (легкі/важкі елементи, точність) кожен підходить.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 5:</b></span> Напишіть функцію, яка приймає список атомів і повертає два об’єкти: <span class="inlinecode"><kbd>Mole</kbd></span> (ізольована система) та <span
+class="inlinecode"><kbd>Cell</kbd></span> (періодична, з довільною кубічною коміркою \(10\)&nbsp;Å). Порівняйте кількість базисних функцій у обох випадках для базису <kbd>sto-3g</kbd>.
+</p>
+</li>
+</ul>
+</section>
+</main>
+<nav class="botnavigation"><a href="main-html.html" class="linkhome" >
+Головна</a></nav>
+</div><!-- grid -->
+<script src="assets/book.js" defer></script>
+</body>
+</html>

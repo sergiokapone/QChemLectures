@@ -1,0 +1,2542 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="generator" content="LaTeX Lwarp package" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Квантово-механічні методи обчислення — Додатки</title>
+<link rel="stylesheet" type="text/css" href="assets/conspect.css" />
+<script>
+// Lwarp MathJax emulation code
+//
+// Based on code by Davide P. Cervone.
+// Equation numbering: https://github.com/mathjax/MathJax/issues/2427
+// Starred and ifnextchar macros: https://github.com/mathjax/MathJax/issues/2428
+// \left, \right delimiters: https://github.com/mathjax/MathJax/issues/2535
+//
+// Modified by Brian Dunn to adjust equation numbering and add subequations.
+//
+// LaTeX can use \seteqnumber{subequations?}{section}{number} before each equation.
+// subequations? is 0 usually, 1 if inside subequations.
+// section is a string printed as-is, or empty.
+// number is auto-incremented by MathJax between equations.
+//
+MathJax = {
+subequations: "0",
+section: "",
+loader: {
+load: ['[tex]/tagformat', '[tex]/textmacros'],
+},
+startup: {
+ready() {
+// These would be replaced by import commands if you wanted to make
+// a proper extension.
+const Configuration = MathJax._.input.tex.Configuration.Configuration;
+const CommandMap = MathJax._.input.tex.SymbolMap.CommandMap;
+const Macro = MathJax._.input.tex.Symbol.Macro;
+const TexError = MathJax._.input.tex.TexError.default;
+const ParseUtil = MathJax._.input.tex.ParseUtil.default;
+const expandable = MathJax._.util.Options.expandable;
+// Insert the replacement string into the TeX string, and check
+// that there haven't been too many maxro substitutions (prevents
+// infinite loops).
+const useArgument = (parser, text) => {
+parser.string = ParseUtil.addArgs(parser, text, parser.string.slice(parser.i));
+parser.i = 0;
+if (++parser.macroCount > parser.configuration.options.maxMacros) {
+throw new TexError('MaxMacroSub1',
+'MathJax maximum macro substitution count exceeded; ' +
+'is there a recursive macro call?');
+}
+}
+// Create the command map for:
+// \ifstar, \ifnextchar, \ifblank, \ifstrequal, \gsub, \seteqnumber
+new CommandMap('Lwarp-macros', {
+ifstar: 'IfstarFunction',
+ifnextchar: 'IfnextcharFunction',
+ifblank: 'IfblankFunction',
+ifstrequal: 'IfstrequalFunction',
+gsubstitute: 'GsubstituteFunction',
+seteqnumber: 'SeteqnumberFunction'
+}, {
+// This function implements an ifstar macro.
+IfstarFunction(parser, name) {
+const resultstar = parser.GetArgument(name);
+const resultnostar = parser.GetArgument(name);
+const star = parser.GetStar(); // true if there is a *
+useArgument(parser, star ? resultstar : resultnostar);
+},
+// This function implements an ifnextchar macro.
+IfnextcharFunction(parser, name) {
+let whichchar = parser.GetArgument(name);
+if (whichchar.match(/^(?:0x[0-9A-F]+|[0-9]+)$/i)) {
+// $ syntax highlighting
+whichchar = String.fromCodePoint(parseInt(whichchar));
+}
+const resultnextchar = parser.GetArgument(name);
+const resultnotnextchar = parser.GetArgument(name);
+const gotchar = (parser.GetNext() === whichchar);
+useArgument(parser, gotchar ? resultnextchar : resultnotnextchar);
+},
+// This function implements an ifblank macro.
+IfblankFunction(parser, name) {
+const blankarg = parser.GetArgument(name);
+const resultblank = parser.GetArgument(name);
+const resultnotblank = parser.GetArgument(name);
+const isblank = (blankarg.trim() == "");
+useArgument(parser, isblank ? resultblank : resultnotblank);
+},
+// This function implements an ifstrequal macro.
+IfstrequalFunction(parser, name) {
+const strequalfirst = parser.GetArgument(name);
+const strequalsecond = parser.GetArgument(name);
+const resultequal = parser.GetArgument(name);
+const resultnotequal = parser.GetArgument(name);
+const isequal = (strequalfirst == strequalsecond);
+useArgument(parser, isequal ? resultequal : resultnotequal);
+},
+// This function implements a gsub macro.
+GsubstituteFunction(parser, name) {
+const gsubfirst = parser.GetArgument(name);
+const gsubsecond = parser.GetArgument(name);
+const gsubthird = parser.GetArgument(name);
+let gsubresult=gsubfirst.replace(gsubsecond, gsubthird);
+useArgument(parser, gsubresult);
+},
+// This function modifies the equation numbers.
+SeteqnumberFunction(parser, name) {
+// Get the macro parameters
+const star = parser.GetStar(); // true if there is a *
+const optBrackets = parser.GetBrackets(name); // contents of optional brackets
+const newsubequations = parser.GetArgument(name); // the subequations argument
+const neweqsection = parser.GetArgument(name); // the eq section argument
+const neweqnumber = parser.GetArgument(name); // the eq number argument
+MathJax.config.subequations=newsubequations ; // a string with boolean meaning
+MathJax.config.section=neweqsection ; // a string with numeric meaning
+parser.tags.counter = parser.tags.allCounter = neweqnumber ;
+}
+});
+// Create the Lwarp-macros package
+Configuration.create('Lwarp-macros', {
+handler: {macro: ['Lwarp-macros']}
+});
+MathJax.startup.defaultReady();
+// For forward references:
+MathJax.startup.input[0].preFilters.add(({math}) => {
+if (math.inputData.recompile){
+MathJax.config.subequations = math.inputData.recompile.subequations;
+MathJax.config.section = math.inputData.recompile.section;
+}
+});
+MathJax.startup.input[0].postFilters.add(({math}) => {
+if (math.inputData.recompile){
+math.inputData.recompile.subequations = MathJax.config.subequations;
+math.inputData.recompile.section = MathJax.config.section;
+}
+});
+// For \left, \right with unicode-math:
+const {DelimiterMap} = MathJax._.input.tex.SymbolMap;
+const {Symbol} = MathJax._.input.tex.Symbol;
+const {MapHandler} = MathJax._.input.tex.MapHandler;
+const delimiter = MapHandler.getMap('delimiter');
+delimiter.add('\\lBrack', new Symbol('\\lBrack', '\u27E6'));
+delimiter.add('\\rBrack', new Symbol('\\rBrack', '\u27E7'));
+delimiter.add('\\lAngle', new Symbol('\\lAngle', '\u27EA'));
+delimiter.add('\\rAngle', new Symbol('\\rAngle', '\u27EB'));
+delimiter.add('\\lbrbrak', new Symbol('\\lbrbrak', '\u2772'));
+delimiter.add('\\rbrbrak', new Symbol('\\rbrbrak', '\u2773'));
+delimiter.add('\\lbag', new Symbol('\\lbag', '\u27C5'));
+delimiter.add('\\rbag', new Symbol('\\rbag', '\u27C6'));
+delimiter.add('\\llparenthesis', new Symbol('\\llparenthesis', '\u2987'));
+delimiter.add('\\rrparenthesis', new Symbol('\\rrparenthesis', '\u2988'));
+delimiter.add('\\llangle', new Symbol('\\llangle', '\u2989'));
+delimiter.add('\\rrangle', new Symbol('\\rrangle', '\u298A'));
+delimiter.add('\\Lbrbrak', new Symbol('\\Lbrbrak', '\u27EC'));
+delimiter.add('\\Rbrbrak', new Symbol('\\Rbrbrak', '\u27ED'));
+delimiter.add('\\lBrace', new Symbol('\\lBrace', '\u2983'));
+delimiter.add('\\rBrace', new Symbol('\\rBrace', '\u2984'));
+delimiter.add('\\lParen', new Symbol('\\lParen', '\u2985'));
+delimiter.add('\\rParen', new Symbol('\\rParen', '\u2986'));
+delimiter.add('\\lbrackubar', new Symbol('\\lbrackubar', '\u298B'));
+delimiter.add('\\rbrackubar', new Symbol('\\rbrackubar', '\u298C'));
+delimiter.add('\\lbrackultick', new Symbol('\\lbrackultick', '\u298D'));
+delimiter.add('\\rbracklrtick', new Symbol('\\rbracklrtick', '\u298E'));
+delimiter.add('\\lbracklltick', new Symbol('\\lbracklltick', '\u298F'));
+delimiter.add('\\rbrackurtick', new Symbol('\\rbrackurtick', '\u2990'));
+delimiter.add('\\langledot', new Symbol('\\langledot', '\u2991'));
+delimiter.add('\\rangledot', new Symbol('\\rangledot', '\u2992'));
+delimiter.add('\\lparenless', new Symbol('\\lparenless', '\u2993'));
+delimiter.add('\\rparengtr', new Symbol('\\rparengtr', '\u2994'));
+delimiter.add('\\Lparengtr', new Symbol('\\Lparengtr', '\u2995'));
+delimiter.add('\\Rparenless', new Symbol('\\Rparenless', '\u2996'));
+delimiter.add('\\lblkbrbrak', new Symbol('\\lblkbrbrak', '\u2997'));
+delimiter.add('\\rblkbrbrak', new Symbol('\\rblkbrbrak', '\u2998'));
+delimiter.add('\\lvzigzag', new Symbol('\\lvzigzag', '\u29D8'));
+delimiter.add('\\rvzigzag', new Symbol('\\rvzigzag', '\u29D9'));
+delimiter.add('\\Lvzigzag', new Symbol('\\Lvzigzag', '\u29DA'));
+delimiter.add('\\Rvzigzag', new Symbol('\\Rvzigzag', '\u29DB'));
+delimiter.add('\\lcurvyangle', new Symbol('\\lcurvyangle', '\u29FC'));
+delimiter.add('\\rcurvyangle', new Symbol('\\rcurvyangle', '\u29FD'));
+delimiter.add('\\Vvert', new Symbol('\\Vvert', '\u2980'));
+} // ready
+}, // startup
+tex: {
+packages: {'[+]': ['tagformat', 'Lwarp-macros', 'textmacros']},
+tags: "ams",
+tagformat: {
+number: function (n) {
+if(MathJax.config.subequations==0)
+return(MathJax.config.section + n);
+else
+return(MathJax.config.section + String.fromCharCode(96+n));
+},
+},
+}
+}
+</script>
+<script
+id="MathJax-script"
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
+></script>
+</head>
+<body>
+<a id="main-html-autopage-989"></a>
+<div class="pagegrid">
+<nav class="topnavigation"><a href="main-html.html" class="linkhome" >
+Головна</a></nav>
+<div class="sidetoccontainer">
+<nav class="sidetoc">
+<div class="sidetoctitle">
+<p>
+<span class="sidetocthetitle">Квантово-механічні методи обчислення</span>
+</p>
+<p class="sidetoc-meta"><a href="../PyscfBook/index.html">Про посібник</a><span aria-hidden="true">·</span><a href="../PyscfBook/pyscfBook.pdf">PDF</a></p>
+</div>
+<div class="sidetoccontents">
+<p>
+<a href="main-html.html" class="linkhome" >
+Головна</a>
+</p>
+<p>
+<a href="preface.html#autosec-7" class="tocchapter" >
+Передмова</a>
+</p>
+<p>
+<a href="preface.html#autosec-8" class="tocsection" >
+Актуальність квантово-механічних обчислень</a>
+</p>
+<p>
+<a href="preface.html#autosec-9" class="tocsection" >
+Передумови</a>
+</p>
+<p>
+<a href="preface.html#autosec-13" class="tocsection" >
+Організація навчальних матеріалів</a>
+</p>
+<p>
+<a href="preface.html#autosec-19" class="tocsection" >
+Як користуватися посібником</a>
+</p>
+<p>
+<a href="preface.html#autosec-20" class="tocsection" >
+Зворотний зв’язок</a>
+</p>
+<p>
+<a href="preface.html#autosec-21" class="tocsection" >
+Ліцензія та використання</a>
+</p>
+<p>
+<a href="welcome.html#autosec-25" class="tocpart" >
+<span class="sectionnumber">I</span><span class="toctitle">&#x2003;Вступ до PySCF: основи та перші кроки</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-26" class="tocchapter" >
+<span class="sectionnumber">1</span><span class="toctitle">&#x2003;Знайомство з PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-27" class="tocsection" >
+<span class="sectionnumber">1.1</span><span class="toctitle">&#x2003;PySCF: концепція та філософія</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-28" class="tocsection" >
+<span class="sectionnumber">1.2</span><span class="toctitle">&#x2003;Основні можливості PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-29" class="tocsection" >
+<span class="sectionnumber">1.3</span><span class="toctitle">&#x2003;Архітектура і дизайн PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-36" class="tocsection" >
+<span class="sectionnumber">1.4</span><span class="toctitle">&#x2003;Порівняння з іншими програмами</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-40" class="tocsection" >
+<span class="sectionnumber">1.5</span><span class="toctitle">&#x2003;Встановлення PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-58" class="tocsection" >
+<span class="sectionnumber">1.6</span><span class="toctitle">&#x2003;Базова структура програми на PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-62" class="tocsection" >
+<span class="sectionnumber">1.7</span><span class="toctitle">&#x2003;Система одиниць та конвенції</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-71" class="tocsection" >
+<span class="sectionnumber">1.8</span><span class="toctitle">&#x2003;Документація та ресурси</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-76" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="welcome.html#autosec-77" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="mole.html#autosec-84" class="tocchapter" >
+<span class="sectionnumber">2</span><span class="toctitle">&#x2003;Базові об’єкти <kbd>PySCF</kbd></span></a>
+</p>
+<p>
+<a href="mole.html#autosec-85" class="tocsection" >
+<span class="sectionnumber">2.1</span><span class="toctitle">&#x2003;Молекулярний об’єкт (Mole)</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-109" class="tocsection" >
+<span class="sectionnumber">2.2</span><span class="toctitle">&#x2003;Періодичний об’єкт (Cell)</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-117" class="tocsection" >
+<span class="sectionnumber">2.3</span><span class="toctitle">&#x2003;Базисні набори в <kbd>PySCF</kbd></span></a>
+</p>
+<p>
+<a href="mole.html#autosec-128" class="tocsection" >
+<span class="sectionnumber">2.4</span><span class="toctitle">&#x2003;Симетрія в атомних розрахунках</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-134" class="tocsection" >
+<span class="sectionnumber">2.5</span><span class="toctitle">&#x2003;Спін та мультиплетність</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-138" class="tocsection" >
+<span class="sectionnumber">2.6</span><span class="toctitle">&#x2003;Типова схема розрахунків у <kbd>PySCF</kbd></span></a>
+</p>
+<p>
+<a href="mole.html#autosec-139" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="mole.html#autosec-140" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-147" class="tocpart" >
+<span class="sectionnumber">II</span><span class="toctitle">&#x2003;Ab Initio методи: від Хартрі-Фока до пост-HF і DFT</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-148" class="tocchapter" >
+<span class="sectionnumber">3</span><span class="toctitle">&#x2003;Метод Хартрі-Фока</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-149" class="tocsection" >
+<span class="sectionnumber">3.1</span><span class="toctitle">&#x2003;Теоретичні основи методу Хартрі–Фока</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-155" class="tocsection" >
+<span class="sectionnumber">3.2</span><span class="toctitle">&#x2003;SFC-процедура</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-160" class="tocsection" >
+<span class="sectionnumber">3.3</span><span class="toctitle">&#x2003;Які бувають базиси</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-169" class="tocsection" >
+<span class="sectionnumber">3.4</span><span class="toctitle">&#x2003;Варіанти методу Хартрі–Фока</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-195" class="tocsection" >
+<span class="sectionnumber">3.5</span><span class="toctitle">&#x2003;Метод UHF та спінове забруднення</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-205" class="tocsection" >
+<span class="sectionnumber">3.6</span><span class="toctitle">&#x2003;Прості атомні системи</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-212" class="tocsection" >
+<span class="sectionnumber">3.7</span><span class="toctitle">&#x2003;Атоми другого періоду (Li–Ne)</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-248" class="tocsection" >
+<span class="sectionnumber">3.8</span><span class="toctitle">&#x2003;Енергія, орбіталі та електронна густина</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-278" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-279" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="diatomic.html#autosec-314" class="tocchapter" >
+<span class="sectionnumber">4</span><span class="toctitle">&#x2003;Метод Хартрі–Фока для простих молекул</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-319" class="tocsection" >
+<span class="sectionnumber">4.1</span><span class="toctitle">&#x2003;Наближення Борна–Опенгеймера</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-320" class="tocsection" >
+<span class="sectionnumber">4.2</span><span class="toctitle">&#x2003;Орбіталі і електронні стани молекул</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-332" class="tocsection" >
+<span class="sectionnumber">4.3</span><span class="toctitle">&#x2003;Модельні молекули: \(\mathrm {H_{2}^{+}}\) та \(\mathrm {H_{2}}\)</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-345" class="tocsection" >
+<span class="sectionnumber">4.4</span><span class="toctitle">&#x2003;Іон молекули водню \(\mathrm {H_{2}^{+}}\)</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-382" class="tocsection" >
+<span class="sectionnumber">4.5</span><span class="toctitle">&#x2003;Крива потенціальної енергії</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-402" class="tocsection" >
+<span class="sectionnumber">4.6</span><span class="toctitle">&#x2003;Молекула водню \(\mathrm {H_{2}}\)</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-435" class="tocsection" >
+<span class="sectionnumber">4.7</span><span class="toctitle">&#x2003;Дипольний момент молекул</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-463" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="diatomic.html#autosec-464" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="post-hf.html#autosec-519" class="tocchapter" >
+<span class="sectionnumber">5</span><span class="toctitle">&#x2003;Пост-Хартрі-Фоківські методи</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-520" class="tocsection" >
+<span class="sectionnumber">5.1</span><span class="toctitle">&#x2003;Вступ до електронної кореляції</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-531" class="tocsection" >
+<span class="sectionnumber">5.2</span><span class="toctitle">&#x2003;Теорія збурень Møller–Plesset (MP2)</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-548" class="tocsection" >
+<span class="sectionnumber">5.3</span><span class="toctitle">&#x2003;Основи методу конфігураційної взаємодії</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-565" class="tocsection" >
+<span class="sectionnumber">5.4</span><span class="toctitle">&#x2003;Метод зв’язаних кластерів</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-586" class="tocsection" >
+<span class="sectionnumber">5.5</span><span class="toctitle">&#x2003;Метод повного активного простору конфігурацій</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-608" class="tocsection" >
+<span class="sectionnumber">5.6</span><span class="toctitle">&#x2003;Функціонал енергії та натуральні орбіталі</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-616" class="tocsection" >
+<span class="sectionnumber">5.7</span><span class="toctitle">&#x2003;Межі наближень і рівняння Шредінґера</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-623" class="tocsection" >
+<span class="sectionnumber">5.8</span><span class="toctitle">&#x2003;Корисні посилання</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-624" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="post-hf.html#autosec-626" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="dft.html#autosec-663" class="tocchapter" >
+<span class="sectionnumber">6</span><span class="toctitle">&#x2003;Теорія функціоналу густини (DFT)</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-664" class="tocsection" >
+<span class="sectionnumber">6.1</span><span class="toctitle">&#x2003;Основи теорії функціоналу густини</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-675" class="tocsection" >
+<span class="sectionnumber">6.2</span><span class="toctitle">&#x2003;Базова структура DFT розрахунку</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-683" class="tocsection" >
+<span class="sectionnumber">6.3</span><span class="toctitle">&#x2003;Функціонали обміну-кореляції</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-714" class="tocsection" >
+<span class="sectionnumber">6.4</span><span class="toctitle">&#x2003;Практичні рекомендації</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-716" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="dft.html#autosec-717" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="response.html#autosec-764" class="tocpart" >
+<span class="sectionnumber">III</span><span class="toctitle">&#x2003;Властивості молекул</span></a>
+</p>
+<p>
+<a href="response.html#autosec-765" class="tocchapter" >
+<span class="sectionnumber">7</span><span class="toctitle">&#x2003;Молекулярні властивості як похідні енергії</span></a>
+</p>
+<p>
+<a href="response.html#autosec-766" class="tocsection" >
+<span class="sectionnumber">7.1</span><span class="toctitle">&#x2003;Молекулярні властивості як похідні енергії</span></a>
+</p>
+<p>
+<a href="response.html#autosec-773" class="tocsection" >
+<span class="sectionnumber">7.2</span><span class="toctitle">&#x2003;Чисельні та аналітичні похідні</span></a>
+</p>
+<p>
+<a href="response.html#autosec-777" class="tocsection" >
+<span class="sectionnumber">7.3</span><span class="toctitle">&#x2003;Варіаційні методи та залежність енергії від параметрів</span></a>
+</p>
+<p>
+<a href="response.html#autosec-778" class="tocsection" >
+<span class="sectionnumber">7.4</span><span class="toctitle">&#x2003;Аналітичні похідні в методі Хартрі-Фока</span></a>
+</p>
+<p>
+<a href="response.html#autosec-800" class="tocsection" >
+<span class="sectionnumber">7.5</span><span class="toctitle">&#x2003;Поляризовність у методі HF</span></a>
+</p>
+<p>
+<a href="response.html#autosec-812" class="tocsection" >
+<span class="sectionnumber">7.6</span><span class="toctitle">&#x2003;Ядерний гесіан у методі HF</span></a>
+</p>
+<p>
+<a href="response.html#autosec-816" class="tocsection" >
+<span class="sectionnumber">7.7</span><span class="toctitle">&#x2003;Оптимізація геометрії</span></a>
+</p>
+<p>
+<a href="response.html#autosec-824" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="vibrations.html#autosec-851" class="tocchapter" >
+<span class="sectionnumber">8</span><span class="toctitle">&#x2003;Коливальні властивості молекул</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-854" class="tocsection" >
+<span class="sectionnumber">8.1</span><span class="toctitle">&#x2003;Гессіан та нормальні моди</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-876" class="tocsection" >
+<span class="sectionnumber">8.2</span><span class="toctitle">&#x2003;Інфрачервоні (ІЧ) спектри</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-907" class="tocsection" >
+<span class="sectionnumber">8.3</span><span class="toctitle">&#x2003;Термохімія та нульова енергія</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-919" class="tocsection" >
+<span class="sectionnumber">8.4</span><span class="toctitle">&#x2003;Перехідні стани та уявні частоти</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-927" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="vibrations.html#autosec-928" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="excited-states.html#autosec-941" class="tocchapter" >
+<span class="sectionnumber">9</span><span class="toctitle">&#x2003;Збуджені стани та UV/VIS спектроскопія</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-942" class="tocsection" >
+<span class="sectionnumber">9.1</span><span class="toctitle">&#x2003;Спектроскопічні властивості: перехідні дипольні моменти і сили осцилятора</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-948" class="tocsection" >
+<span class="sectionnumber">9.2</span><span class="toctitle">&#x2003;Збуджені стани в рамках методу Хартрі–Фока</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-954" class="tocsection" >
+<span class="sectionnumber">9.3</span><span class="toctitle">&#x2003;Часозалежна теорія функціонала густини (TD-DFT)</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-958" class="tocsection" >
+<span class="sectionnumber">9.4</span><span class="toctitle">&#x2003;Збуджені стани у методах конфігураційної взаємодії</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-959" class="tocsection" >
+<span class="sectionnumber">9.5</span><span class="toctitle">&#x2003;Метод рівнянь руху (EOM)</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-973" class="tocsection" >
+<span class="sectionnumber">9.6</span><span class="toctitle">&#x2003;Збуджені стани у CASSCF / NEVPT2</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-974" class="tocsection" >
+<span class="sectionnumber">9.7</span><span class="toctitle">&#x2003;Рекомендації з вибору методу</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-975" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="excited-states.html#autosec-976" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="appendices.html#autosec-991" class="tocchapter" >
+Додатки</a>
+</p>
+<p>
+<a href="appendices.html#autosec-992" class="tocsection" >
+<span class="sectionnumber">А</span><span class="toctitle">&#x2003;Список абревіатур</span></a>
+</p>
+<p>
+<a href="appendices.html#autosec-993" class="tocsection" >
+<span class="sectionnumber">Б</span><span class="toctitle">&#x2003;Молекулярно-орбітальне (МО) представлення</span></a>
+</p>
+<p>
+<a href="appendices.html#autosec-999" class="tocsection" >
+<span class="sectionnumber">В</span><span class="toctitle">&#x2003;Метод DIIS та прискорення збіжності SCF</span></a>
+</p>
+<p>
+<a href="appendices.html#autosec-1000" class="tocsection" >
+<span class="sectionnumber">Г</span><span class="toctitle">&#x2003;Проблеми збіжності SCF та їх усунення</span></a>
+</p>
+<p>
+<a href="bibliography.html#autosec-1020" class="tocchapter" >
+Література</a>
+</p>
+</div>
+</nav>
+</div>
+<main class="bodycontainer" data-pagefind-body data-pagefind-meta="title[data-title]" data-title="Додатки">
+<section class="textbody">
+<h1 data-pagefind-ignore>Квантово-механічні методи обчислення</h1>
+<!--MathJax customizations:-->
+<div data-nosnippet
+style="display:none"
+>
+\(\newcommand{\footnotename}{footnote}\)
+\(\def \LWRfootnote {1}\)
+\(\newcommand {\footnote }[2][\LWRfootnote ]{{}^{\mathrm {#1}}}\)
+\(\newcommand {\footnotemark }[1][\LWRfootnote ]{{}^{\mathrm {#1}}}\)
+\(\let \LWRorighspace \hspace \)
+\(\renewcommand {\hspace }{\ifstar \LWRorighspace \LWRorighspace }\)
+\(\newcommand {\TextOrMath }[2]{#2}\)
+\(\newcommand {\mathnormal }[1]{{#1}}\)
+\(\newcommand \ensuremath [1]{#1}\)
+\(\newcommand {\LWRframebox }[2][]{\fbox {#2}} \newcommand {\framebox }[1][]{\LWRframebox } \)
+\(\newcommand {\setlength }[2]{}\)
+\(\newcommand {\addtolength }[2]{}\)
+\(\newcommand {\setcounter }[2]{}\)
+\(\newcommand {\addtocounter }[2]{}\)
+\(\newcommand {\arabic }[1]{}\)
+\(\newcommand {\number }[1]{}\)
+\(\newcommand {\noalign }[1]{\text {#1}\notag \\}\)
+\(\newcommand {\cline }[1]{}\)
+\(\newcommand {\directlua }[1]{\text {(directlua)}}\)
+\(\newcommand {\luatexdirectlua }[1]{\text {(directlua)}}\)
+\(\newcommand {\protect }{}\)
+\(\def \LWRabsorbnumber #1 {}\)
+\(\def \LWRabsorbquotenumber &quot;#1 {}\)
+\(\newcommand {\LWRabsorboption }[1][]{}\)
+\(\newcommand {\LWRabsorbtwooptions }[1][]{\LWRabsorboption }\)
+\(\def \mathchar {\ifnextchar &quot;\LWRabsorbquotenumber \LWRabsorbnumber }\)
+\(\def \mathcode #1={\mathchar }\)
+\(\let \delcode \mathcode \)
+\(\let \delimiter \mathchar \)
+\(\def \oe {\unicode {x0153}}\)
+\(\def \OE {\unicode {x0152}}\)
+\(\def \ae {\unicode {x00E6}}\)
+\(\def \AE {\unicode {x00C6}}\)
+\(\def \aa {\unicode {x00E5}}\)
+\(\def \AA {\unicode {x00C5}}\)
+\(\def \o {\unicode {x00F8}}\)
+\(\def \O {\unicode {x00D8}}\)
+\(\def \l {\unicode {x0142}}\)
+\(\def \L {\unicode {x0141}}\)
+\(\def \ss {\unicode {x00DF}}\)
+\(\def \SS {\unicode {x1E9E}}\)
+\(\def \dag {\unicode {x2020}}\)
+\(\def \ddag {\unicode {x2021}}\)
+\(\def \P {\unicode {x00B6}}\)
+\(\def \copyright {\unicode {x00A9}}\)
+\(\def \pounds {\unicode {x00A3}}\)
+\(\let \LWRref \ref \)
+\(\renewcommand {\ref }{\ifstar \LWRref \LWRref }\)
+\( \newcommand {\multicolumn }[3]{#3}\)
+\(\require {textcomp}\)
+\(\require {colortbl}\)
+\(\let \LWRorigcolumncolor \columncolor \)
+\(\renewcommand {\columncolor }[2][named]{\LWRorigcolumncolor [#1]{#2}\LWRabsorbtwooptions }\)
+\(\let \LWRorigrowcolor \rowcolor \)
+\(\renewcommand {\rowcolor }[2][named]{\LWRorigrowcolor [#1]{#2}\LWRabsorbtwooptions }\)
+\(\let \LWRorigcellcolor \cellcolor \)
+\(\renewcommand {\cellcolor }[2][named]{\LWRorigcellcolor [#1]{#2}\LWRabsorbtwooptions }\)
+\(\newcommand {\intertext }[1]{\text {#1}\notag \\}\)
+\(\let \Hat \hat \)
+\(\let \Check \check \)
+\(\let \Tilde \tilde \)
+\(\let \Acute \acute \)
+\(\let \Grave \grave \)
+\(\let \Dot \dot \)
+\(\let \Ddot \ddot \)
+\(\let \Breve \breve \)
+\(\let \Bar \bar \)
+\(\let \Vec \vec \)
+\(\let \symnormal \mathit \)
+\(\let \symliteral \mathrm \)
+\(\let \symbb \mathbb \)
+\(\let \symbbit \mathbb \)
+\(\let \symcal \mathcal \)
+\(\let \symscr \mathscr \)
+\(\let \symfrak \mathfrak \)
+\(\let \symsfup \mathsf \)
+\(\let \symsfit \mathit \)
+\(\let \symbfsf \mathbf \)
+\(\let \symbfup \mathbf \)
+\(\newcommand {\symbfit }[1]{\boldsymbol {#1}}\)
+\(\let \symbfcal \mathcal \)
+\(\let \symbfscr \mathscr \)
+\(\let \symbffrak \mathfrak \)
+\(\let \symbfsfup \mathbf \)
+\(\newcommand {\symbfsfit }[1]{\boldsymbol {#1}}\)
+\(\let \symup \mathrm \)
+\(\let \symbf \mathbf \)
+\(\let \symit \mathit \)
+\(\let \symtt \mathtt \)
+\(\let \symbffrac \mathbffrac \)
+\(\newcommand {\mathfence }[1]{\mathord {#1}}\)
+\(\newcommand {\mathover }[1]{#1}\)
+\(\newcommand {\mathunder }[1]{#1}\)
+\(\newcommand {\mathaccent }[1]{#1}\)
+\(\newcommand {\mathbotaccent }[1]{#1}\)
+\(\newcommand {\mathalpha }[1]{\mathord {#1}}\)
+\(\def\upAlpha{\unicode{x0391}}\)
+\(\def\upBeta{\unicode{x0392}}\)
+\(\def\upGamma{\unicode{x0393}}\)
+\(\def\upDigamma{\unicode{x03DC}}\)
+\(\def\upDelta{\unicode{x0394}}\)
+\(\def\upEpsilon{\unicode{x0395}}\)
+\(\def\upZeta{\unicode{x0396}}\)
+\(\def\upEta{\unicode{x0397}}\)
+\(\def\upTheta{\unicode{x0398}}\)
+\(\def\upVartheta{\unicode{x03F4}}\)
+\(\def\upIota{\unicode{x0399}}\)
+\(\def\upKappa{\unicode{x039A}}\)
+\(\def\upLambda{\unicode{x039B}}\)
+\(\def\upMu{\unicode{x039C}}\)
+\(\def\upNu{\unicode{x039D}}\)
+\(\def\upXi{\unicode{x039E}}\)
+\(\def\upOmicron{\unicode{x039F}}\)
+\(\def\upPi{\unicode{x03A0}}\)
+\(\def\upVarpi{\unicode{x03D6}}\)
+\(\def\upRho{\unicode{x03A1}}\)
+\(\def\upSigma{\unicode{x03A3}}\)
+\(\def\upTau{\unicode{x03A4}}\)
+\(\def\upUpsilon{\unicode{x03A5}}\)
+\(\def\upPhi{\unicode{x03A6}}\)
+\(\def\upChi{\unicode{x03A7}}\)
+\(\def\upPsi{\unicode{x03A8}}\)
+\(\def\upOmega{\unicode{x03A9}}\)
+\(\def\itAlpha{\unicode{x1D6E2}}\)
+\(\def\itBeta{\unicode{x1D6E3}}\)
+\(\def\itGamma{\unicode{x1D6E4}}\)
+\(\def\itDigamma{\mathit{\unicode{x03DC}}}\)
+\(\def\itDelta{\unicode{x1D6E5}}\)
+\(\def\itEpsilon{\unicode{x1D6E6}}\)
+\(\def\itZeta{\unicode{x1D6E7}}\)
+\(\def\itEta{\unicode{x1D6E8}}\)
+\(\def\itTheta{\unicode{x1D6E9}}\)
+\(\def\itVartheta{\unicode{x1D6F3}}\)
+\(\def\itIota{\unicode{x1D6EA}}\)
+\(\def\itKappa{\unicode{x1D6EB}}\)
+\(\def\itLambda{\unicode{x1D6EC}}\)
+\(\def\itMu{\unicode{x1D6ED}}\)
+\(\def\itNu{\unicode{x1D6EE}}\)
+\(\def\itXi{\unicode{x1D6EF}}\)
+\(\def\itOmicron{\unicode{x1D6F0}}\)
+\(\def\itPi{\unicode{x1D6F1}}\)
+\(\def\itRho{\unicode{x1D6F2}}\)
+\(\def\itSigma{\unicode{x1D6F4}}\)
+\(\def\itTau{\unicode{x1D6F5}}\)
+\(\def\itUpsilon{\unicode{x1D6F6}}\)
+\(\def\itPhi{\unicode{x1D6F7}}\)
+\(\def\itChi{\unicode{x1D6F8}}\)
+\(\def\itPsi{\unicode{x1D6F9}}\)
+\(\def\itOmega{\unicode{x1D6FA}}\)
+\(\def\upalpha{\unicode{x03B1}}\)
+\(\def\upbeta{\unicode{x03B2}}\)
+\(\def\upvarbeta{\unicode{x03D0}}\)
+\(\def\upgamma{\unicode{x03B3}}\)
+\(\def\updigamma{\unicode{x03DD}}\)
+\(\def\updelta{\unicode{x03B4}}\)
+\(\def\upepsilon{\unicode{x03F5}}\)
+\(\def\upvarepsilon{\unicode{x03B5}}\)
+\(\def\upzeta{\unicode{x03B6}}\)
+\(\def\upeta{\unicode{x03B7}}\)
+\(\def\uptheta{\unicode{x03B8}}\)
+\(\def\upvartheta{\unicode{x03D1}}\)
+\(\def\upiota{\unicode{x03B9}}\)
+\(\def\upkappa{\unicode{x03BA}}\)
+\(\def\upvarkappa{\unicode{x03F0}}\)
+\(\def\uplambda{\unicode{x03BB}}\)
+\(\def\upmu{\unicode{x03BC}}\)
+\(\def\upnu{\unicode{x03BD}}\)
+\(\def\upxi{\unicode{x03BE}}\)
+\(\def\upomicron{\unicode{x03BF}}\)
+\(\def\uppi{\unicode{x03C0}}\)
+\(\def\upvarpi{\unicode{x03D6}}\)
+\(\def\uprho{\unicode{x03C1}}\)
+\(\def\upvarrho{\unicode{x03F1}}\)
+\(\def\upsigma{\unicode{x03C3}}\)
+\(\def\upvarsigma{\unicode{x03C2}}\)
+\(\def\uptau{\unicode{x03C4}}\)
+\(\def\upupsilon{\unicode{x03C5}}\)
+\(\def\upphi{\unicode{x03D5}}\)
+\(\def\upvarphi{\unicode{x03C6}}\)
+\(\def\upchi{\unicode{x03C7}}\)
+\(\def\uppsi{\unicode{x03C8}}\)
+\(\def\upomega{\unicode{x03C9}}\)
+\(\def\italpha{\unicode{x1D6FC}}\)
+\(\def\itbeta{\unicode{x1D6FD}}\)
+\(\def\itvarbeta{\unicode{x03D0}}\)
+\(\def\itgamma{\unicode{x1D6FE}}\)
+\(\def\itdigamma{\mathit{\unicode{x03DD}}}\)
+\(\def\itdelta{\unicode{x1D6FF}}\)
+\(\def\itepsilon{\unicode{x1D716}}\)
+\(\def\itvarepsilon{\unicode{x1D700}}\)
+\(\def\itzeta{\unicode{x1D701}}\)
+\(\def\iteta{\unicode{x1D702}}\)
+\(\def\ittheta{\unicode{x1D703}}\)
+\(\def\itvartheta{\unicode{x1D717}}\)
+\(\def\itiota{\unicode{x1D704}}\)
+\(\def\itkappa{\unicode{x1D705}}\)
+\(\def\itvarkappa{\unicode{x1D718}}\)
+\(\def\itlambda{\unicode{x1D706}}\)
+\(\def\itmu{\unicode{x1D707}}\)
+\(\def\itnu{\unicode{x1D708}}\)
+\(\def\itxi{\unicode{x1D709}}\)
+\(\def\itomicron{\unicode{x1D70A}}\)
+\(\def\itpi{\unicode{x1D70B}}\)
+\(\def\itvarpi{\unicode{x1D71B}}\)
+\(\def\itrho{\unicode{x1D70C}}\)
+\(\def\itvarrho{\unicode{x1D71A}}\)
+\(\def\itsigma{\unicode{x1D70E}}\)
+\(\def\itvarsigma{\unicode{x1D70D}}\)
+\(\def\ittau{\unicode{x1D70F}}\)
+\(\def\itupsilon{\unicode{x1D710}}\)
+\(\def\itphi{\unicode{x1D719}}\)
+\(\def\itvarphi{\unicode{x1D711}}\)
+\(\def\itchi{\unicode{x1D712}}\)
+\(\def\itpsi{\unicode{x1D713}}\)
+\(\def\itomega{\unicode{x1D714}}\)
+\(\let \lparen (\)
+\(\let \rparen )\)
+\(\newcommand {\cuberoot }[1]{\,{}^3\!\!\sqrt {#1}}\,\)
+\(\newcommand {\fourthroot }[1]{\,{}^4\!\!\sqrt {#1}}\,\)
+\(\newcommand {\longdivision }[1]{\mathord {\unicode {x027CC}#1}}\)
+\(\newcommand {\mathcomma }{,}\)
+\(\newcommand {\mathcolon }{:}\)
+\(\newcommand {\mathsemicolon }{;}\)
+\(\newcommand {\overbracket }[1]{\mathinner {\overline {\ulcorner {#1}\urcorner }}}\)
+\(\newcommand {\underbracket }[1]{\mathinner {\underline {\llcorner {#1}\lrcorner }}}\)
+\(\newcommand {\overbar }[1]{\mathord {#1\unicode {x00305}}}\)
+\(\newcommand {\ovhook }[1]{\mathord {#1\unicode {x00309}}}\)
+\(\newcommand {\ocirc }[1]{\mathord {#1\unicode {x0030A}}}\)
+\(\newcommand {\candra }[1]{\mathord {#1\unicode {x00310}}}\)
+\(\newcommand {\oturnedcomma }[1]{\mathord {#1\unicode {x00312}}}\)
+\(\newcommand {\ocommatopright }[1]{\mathord {#1\unicode {x00315}}}\)
+\(\newcommand {\droang }[1]{\mathord {#1\unicode {x0031A}}}\)
+\(\newcommand {\leftharpoonaccent }[1]{\mathord {#1\unicode {x020D0}}}\)
+\(\newcommand {\rightharpoonaccent }[1]{\mathord {#1\unicode {x020D1}}}\)
+\(\newcommand {\vertoverlay }[1]{\mathord {#1\unicode {x020D2}}}\)
+\(\newcommand {\leftarrowaccent }[1]{\mathord {#1\unicode {x020D0}}}\)
+\(\newcommand {\annuity }[1]{\mathord {#1\unicode {x020E7}}}\)
+\(\newcommand {\widebridgeabove }[1]{\mathord {#1\unicode {x020E9}}}\)
+\(\newcommand {\asteraccent }[1]{\mathord {#1\unicode {x020F0}}}\)
+\(\newcommand {\threeunderdot }[1]{\mathord {#1\unicode {x020E8}}}\)
+\(\newcommand {\Bbbsum }{\mathop {\unicode {x2140}}\limits }\)
+\(\newcommand {\oiint }{\mathop {\unicode {x222F}}\limits }\)
+\(\newcommand {\oiiint }{\mathop {\unicode {x2230}}\limits }\)
+\(\newcommand {\intclockwise }{\mathop {\unicode {x2231}}\limits }\)
+\(\newcommand {\ointclockwise }{\mathop {\unicode {x2232}}\limits }\)
+\(\newcommand {\ointctrclockwise }{\mathop {\unicode {x2233}}\limits }\)
+\(\newcommand {\varointclockwise }{\mathop {\unicode {x2232}}\limits }\)
+\(\newcommand {\leftouterjoin }{\mathop {\unicode {x27D5}}\limits }\)
+\(\newcommand {\rightouterjoin }{\mathop {\unicode {x27D6}}\limits }\)
+\(\newcommand {\fullouterjoin }{\mathop {\unicode {x27D7}}\limits }\)
+\(\newcommand {\bigbot }{\mathop {\unicode {x27D8}}\limits }\)
+\(\newcommand {\bigtop }{\mathop {\unicode {x27D9}}\limits }\)
+\(\newcommand {\xsol }{\mathop {\unicode {x29F8}}\limits }\)
+\(\newcommand {\xbsol }{\mathop {\unicode {x29F9}}\limits }\)
+\(\newcommand {\bigcupdot }{\mathop {\unicode {x2A03}}\limits }\)
+\(\newcommand {\bigsqcap }{\mathop {\unicode {x2A05}}\limits }\)
+\(\newcommand {\conjquant }{\mathop {\unicode {x2A07}}\limits }\)
+\(\newcommand {\disjquant }{\mathop {\unicode {x2A08}}\limits }\)
+\(\newcommand {\bigtimes }{\mathop {\unicode {x2A09}}\limits }\)
+\(\newcommand {\modtwosum }{\mathop {\unicode {x2A0A}}\limits }\)
+\(\newcommand {\sumint }{\mathop {\unicode {x2A0B}}\limits }\)
+\(\newcommand {\intbar }{\mathop {\unicode {x2A0D}}\limits }\)
+\(\newcommand {\intBar }{\mathop {\unicode {x2A0E}}\limits }\)
+\(\newcommand {\fint }{\mathop {\unicode {x2A0F}}\limits }\)
+\(\newcommand {\cirfnint }{\mathop {\unicode {x2A10}}\limits }\)
+\(\newcommand {\awint }{\mathop {\unicode {x2A11}}\limits }\)
+\(\newcommand {\rppolint }{\mathop {\unicode {x2A12}}\limits }\)
+\(\newcommand {\scpolint }{\mathop {\unicode {x2A13}}\limits }\)
+\(\newcommand {\npolint }{\mathop {\unicode {x2A14}}\limits }\)
+\(\newcommand {\pointint }{\mathop {\unicode {x2A15}}\limits }\)
+\(\newcommand {\sqint }{\mathop {\unicode {x2A16}}\limits }\)
+\(\newcommand {\intlarhk }{\mathop {\unicode {x2A17}}\limits }\)
+\(\newcommand {\intx }{\mathop {\unicode {x2A18}}\limits }\)
+\(\newcommand {\intcap }{\mathop {\unicode {x2A19}}\limits }\)
+\(\newcommand {\intcup }{\mathop {\unicode {x2A1A}}\limits }\)
+\(\newcommand {\upint }{\mathop {\unicode {x2A1B}}\limits }\)
+\(\newcommand {\lowint }{\mathop {\unicode {x2A1C}}\limits }\)
+\(\newcommand {\bigtriangleleft }{\mathop {\unicode {x2A1E}}\limits }\)
+\(\newcommand {\zcmp }{\mathop {\unicode {x2A1F}}\limits }\)
+\(\newcommand {\zpipe }{\mathop {\unicode {x2A20}}\limits }\)
+\(\newcommand {\zproject }{\mathop {\unicode {x2A21}}\limits }\)
+\(\newcommand {\biginterleave }{\mathop {\unicode {x2AFC}}\limits }\)
+\(\newcommand {\bigtalloblong }{\mathop {\unicode {x2AFF}}\limits }\)
+\(\newcommand {\arabicmaj }{\mathop {\unicode {x1EEF0}}\limits }\)
+\(\newcommand {\arabichad }{\mathop {\unicode {x1EEF1}}\limits }\)
+\(\newcommand {\nicefrac }[3][]{\mathinner {{}^{#2}\!/\!_{#3}}}\)
+\(\require {mhchem}\)
+\(\newcommand {\LWRnicearrayarray }[1]{\begin {array}{#1}}\)
+\(\def \LWRnicearrayarrayopt #1[#2] {\begin {array}{#1}}\)
+\(\newenvironment {NiceArray}[2][]{\ifnextchar [{\LWRnicearrayarrayopt {#2}}{\LWRnicearrayarray {#2}}}{\end {array}}\)
+\(\newcommand {\LWRnicearraywithdelimtwo }[2][]{\ifnextchar [{\LWRnicearrayarrayopt {#2}}{\LWRnicearrayarray {#2}}}\)
+\(\newenvironment {NiceArrayWithDelims}[2]{\def \LWRnicearrayrightdelim {\right #2}\left #1\LWRnicearraywithdelimtwo }{\end {array}\LWRnicearrayrightdelim }\)
+\(\newenvironment {pNiceArray} {\begin {NiceArrayWithDelims}{(}{)}} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {bNiceArray} {\begin {NiceArrayWithDelims}{[}{]}} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {BNiceArray} {\begin {NiceArrayWithDelims}{\{}{\}}} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {vNiceArray} {\begin {NiceArrayWithDelims}{\vert }{\vert }} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {VNiceArray} {\begin {NiceArrayWithDelims}{\Vert }{\Vert }} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {NiceMatrix}[1][]{\begin {matrix}}{\end {matrix}}\)
+\(\newenvironment {pNiceMatrix}[1][]{\begin {pmatrix}}{\end {pmatrix}}\)
+\(\newenvironment {bNiceMatrix}[1][]{\begin {bmatrix}}{\end {bmatrix}}\)
+\(\newenvironment {BNiceMatrix}[1][]{\begin {Bmatrix}}{\end {Bmatrix}}\)
+\(\newenvironment {vNiceMatrix}[1][]{\begin {vmatrix}}{\end {vmatrix}}\)
+\(\newenvironment {VNiceMatrix}[1][]{\begin {Vmatrix}}{\end {Vmatrix}}\)
+\(\newcommand {\LWRnicematrixBlock }[1]{#1}\)
+\(\def \LWRnicematrixBlockopt &lt;#1&gt;#2{#2}\)
+\(\newcommand {\Block }[2][]{\ifnextchar &lt;\LWRnicematrixBlockopt \LWRnicematrixBlock }\)
+\(\newcommand {\diagbox }[2]{\begin {array}{l}\hfill \quad #2\\\hline #1\quad \hfill \end {array}}\)
+\(\let \hdottedline \hdashline \)
+\(\newcommand {\Hline }[1][]{\hline }\)
+\(\newcommand {\CodeBefore }{}\)
+\(\newcommand {\Body }{}\)
+\(\newcommand {\CodeAfter }{}\)
+\(\newcommand {\line }[3][]{}\)
+\(\newcommand {\RowStyle }[2][]{}\)
+\(\newcommand {\LWRSubMatrix }[1][]{}\)
+\(\newcommand {\SubMatrix }[4]{\LWRSubMatrix }\)
+\(\newcommand {\OverBrace }[4][]{}\)
+\(\newcommand {\UnderBrace }[4][]{}\)
+\(\newcommand {\HBrace }[3][]{}\)
+\(\newcommand {\VBrace }[3][]{}\)
+\(\newcommand {\ShowCellNames }{}\)
+\(\newcommand {\tabularnote }[2][]{}\)
+\(\newcommand {\cellcolor }[3][]{}\)
+\(\newcommand {\rowcolor }[3][]{}\)
+\(\newcommand {\LWRrowcolors }[1][]{}\)
+\(\newcommand {\rowcolors }[4][]{\LWRrowcolors }\)
+\(\newcommand {\rowlistcolors }[3][]{\LWRrowcolors }\)
+\(\newcommand {\columncolor }[3][]{}\)
+\(\newcommand {\rectanglecolor }[4][]{}\)
+\(\newcommand {\arraycolor }[2][]{}\)
+\(\newcommand {\chessboardcolors }[3][]{}\)
+\(\newcommand {\ldots }[1][]{\dots }\)
+\(\newcommand {\Cdots }[1][]{\cdots }\)
+\(\newcommand {\Vdots }[1][]{\vdots }\)
+\(\newcommand {\Ddots }[1][]{\ddots }\)
+\(\newcommand {\Iddots }[1][]{\mathinner {\unicode {x22F0}}}\)
+\(\newcommand {\Hdotsfor }[1]{\ldots }\)
+\(\newcommand {\Vdotsfor }[1]{\vdots }\)
+\(\newcommand {\AutoNiceMatrix }[2]{\text {(AutoNiceMatrix #1)}}\)
+\(\let \pAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \bAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \BAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \vAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \VAutoNiceMatrix \AutoNiceMatrix \)
+\(\newcommand {\toprule }[1][]{\hline }\)
+\(\let \midrule \toprule \)
+\(\let \bottomrule \toprule \)
+\(\def \LWRbooktabscmidruleparen (#1)#2{}\)
+\(\newcommand {\LWRbooktabscmidrulenoparen }[1]{}\)
+\(\newcommand {\cmidrule }[1][]{\ifnextchar (\LWRbooktabscmidruleparen \LWRbooktabscmidrulenoparen }\)
+\(\newcommand {\morecmidrules }{}\)
+\(\newcommand {\specialrule }[3]{\hline }\)
+\(\newcommand {\addlinespace }[1][]{}\)
+\(\newcommand {\LWRsubmultirow }[2][]{#2}\)
+\(\newcommand {\LWRmultirow }[2][]{\LWRsubmultirow }\)
+\(\newcommand {\multirow }[2][]{\LWRmultirow }\)
+\(\newcommand {\mrowcell }{}\)
+\(\newcommand {\mcolrowcell }{}\)
+\(\newcommand {\STneed }[1]{}\)
+\(\DeclareMathOperator {\const }{const}\)
+\(\DeclareMathOperator {\Div }{div}\)
+\(\DeclareMathOperator {\Rot }{rot}\)
+\(\DeclareMathOperator {\Grad }{grad}\)
+\(\DeclareMathOperator {\inv }{inv}\)
+\(\DeclareMathOperator {\Tr }{Tr}\)
+\(\newcommand {\emf }{ℰ}\)
+\(\newcommand {\tikzmarknode }[2]{#2}\)
+\(\newcommand {\tikzmark }[1]{}\)
+\(\newcommand {\enquote }[1]{«#1»}\)
+\(\newcommand {\allowbreak }{}\)
+\(\newcommand {\mitlambda }{\lambda }\)
+\(\newcommand {\mitomega }{\omega }\)
+\(\newcommand {\mittheta }{\theta }\)
+\(\newcommand {\mitphi }{\varphi }\)
+\(\newcommand {\tcbhighmath }[1]{\boxed {#1}}\)
+\(\newcommand {\Efield }{\mathbf {E}}\)
+\(\newcommand {\Dfield }{\mathbf {D}}\)
+\(\newcommand {\Bfield }{\mathbf {B}}\)
+\(\newcommand {\Hfield }{\mathbf {H}}\)
+\(\newcommand {\ket }[1]{\left | #1 \right \rangle }\)
+\(\newcommand {\bra }[1]{\left \langle #1 \right |}\)
+\(\newcommand {\opbraket }[3]{\left \langle #1 \middle | #2 \middle | #3 \right \rangle }\)
+\(\newcommand {\diff }[2]{\frac {\partial #1}{\partial #2}}\)
+\(\newcommand {\ddiff }[2]{\frac {\partial ^2 #1}{\partial #2^2}}\)
+\(\newcommand {\grad }{\mathbf {\nabla }}\)
+\(\newcommand {\rot }{\mathbf {\nabla }\times }\)
+\(\newcommand {\divg }{\mathbf {\nabla }\cdot }\)
+\(\newcommand {\Laplasian }{\Delta }\)
+\(\newcommand {\EMF }{\mathcal {E}}\)
+\(\newcommand {\vxi }{\vec {\xi }}\)
+\(\newcommand {\vr }{\vec {r}}\)
+\(\newcommand {\vphi }{\varphi }\)
+\(\newcommand {\veps }{\varepsilon }\)
+\(\newcommand {\eff }{\mathrm {eff}}\)
+\(\newcommand {\PySCF }{\texttt {PySCF}}\)
+\(\newcommand {\vect }[1]{\mathbf {#1}}\)
+\(\newcommand {\symbf }[1]{\mathbf {#1}}\)
+\(\DeclareMathOperator {\sh }{sh}\)
+\(\DeclareMathOperator {\ch }{ch}\)
+\(\DeclareMathOperator {\tg }{tg}\)
+\(\DeclareMathOperator {\ctg }{ctg}\)
+\(\DeclareMathOperator {\arctg }{arctg}\)
+\(\DeclareMathOperator {\arcctg }{arcctg}\)
+\(\DeclareMathOperator {\cth }{cth}\)
+\(\DeclareMathOperator {\cosec }{cosec}\)
+\(\let \symsf \symsfup \)
+\(\def\Alpha{\unicode{x0391}}\)
+\(\def\Beta{\unicode{x0392}}\)
+\(\def\Gamma{\unicode{x0393}}\)
+\(\def\Digamma{\unicode{x03DC}}\)
+\(\def\Delta{\unicode{x0394}}\)
+\(\def\Epsilon{\unicode{x0395}}\)
+\(\def\Zeta{\unicode{x0396}}\)
+\(\def\Eta{\unicode{x0397}}\)
+\(\def\Theta{\unicode{x0398}}\)
+\(\def\Vartheta{\unicode{x03F4}}\)
+\(\def\Iota{\unicode{x0399}}\)
+\(\def\Kappa{\unicode{x039A}}\)
+\(\def\Lambda{\unicode{x039B}}\)
+\(\def\Mu{\unicode{x039C}}\)
+\(\def\Nu{\unicode{x039D}}\)
+\(\def\Xi{\unicode{x039E}}\)
+\(\def\Omicron{\unicode{x039F}}\)
+\(\def\Pi{\unicode{x03A0}}\)
+\(\def\Varpi{\unicode{x03D6}}\)
+\(\def\Rho{\unicode{x03A1}}\)
+\(\def\Sigma{\unicode{x03A3}}\)
+\(\def\Tau{\unicode{x03A4}}\)
+\(\def\Upsilon{\unicode{x03A5}}\)
+\(\def\Phi{\unicode{x03A6}}\)
+\(\def\Chi{\unicode{x03A7}}\)
+\(\def\Psi{\unicode{x03A8}}\)
+\(\def\Omega{\unicode{x03A9}}\)
+\(\def\alpha{\unicode{x1D6FC}}\)
+\(\def\beta{\unicode{x1D6FD}}\)
+\(\def\varbeta{\unicode{x03D0}}\)
+\(\def\gamma{\unicode{x1D6FE}}\)
+\(\def\digamma{\mathit{\unicode{x03DD}}}\)
+\(\def\delta{\unicode{x1D6FF}}\)
+\(\def\epsilon{\unicode{x1D716}}\)
+\(\def\varepsilon{\unicode{x1D700}}\)
+\(\def\zeta{\unicode{x1D701}}\)
+\(\def\eta{\unicode{x1D702}}\)
+\(\def\theta{\unicode{x1D703}}\)
+\(\def\vartheta{\unicode{x1D717}}\)
+\(\def\iota{\unicode{x1D704}}\)
+\(\def\kappa{\unicode{x1D705}}\)
+\(\def\varkappa{\unicode{x1D718}}\)
+\(\def\lambda{\unicode{x1D706}}\)
+\(\def\mu{\unicode{x1D707}}\)
+\(\def\nu{\unicode{x1D708}}\)
+\(\def\xi{\unicode{x1D709}}\)
+\(\def\omicron{\unicode{x1D70A}}\)
+\(\def\pi{\unicode{x1D70B}}\)
+\(\def\varpi{\unicode{x1D71B}}\)
+\(\def\rho{\unicode{x1D70C}}\)
+\(\def\varrho{\unicode{x1D71A}}\)
+\(\def\sigma{\unicode{x1D70E}}\)
+\(\def\varsigma{\unicode{x1D70D}}\)
+\(\def\tau{\unicode{x1D70F}}\)
+\(\def\upsilon{\unicode{x1D710}}\)
+\(\def\phi{\unicode{x1D719}}\)
+\(\def\varphi{\unicode{x1D711}}\)
+\(\def\chi{\unicode{x1D712}}\)
+\(\def\psi{\unicode{x1D713}}\)
+\(\def\omega{\unicode{x1D714}}\)
+</div>
+<!--
+...... chapter Додатки ......
+-->
+<h3 id="autosec-991">Додатки</h3>
+<a id="main-html-autopage-991"></a>
+<a id="main-html-autofile-11"></a>
+<!--
+...... section Список абревіатур ......
+-->
+<h4 id="autosec-992"><span class="sectionnumber">А&#x2003;</span>Список абревіатур</h4>
+<a id="main-html-autopage-992"></a>
+<p>
+У цьому посібнику для зручності використовуються стандартні абревіатури з квантової хімії та обчислювальних методів. Наведено їх розшифровку та переклад українською мовою. Абревіатури подано в алфавітному порядку англійських скорочень.
+</p>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">HF</span> Hartree-Fock — метод Хартрі-Фока.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">RHF</span> Restricted Hartree-Fock — обмежений метод Хартрі-Фока (для систем із замкненими оболонками)..
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">UHF</span> Unrestricted Hartree-Fock — необмежений метод Хартрі-Фока (для систем із відкритими оболонками).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">ROHF</span> Restricted Open-shell Hartree-Fock — обмежений метод Хартрі-Фока для відкритих оболонок.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">GHF</span> Generalized Hartree-Fock — узагальнений метод Хартрі-Фока.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">SCF</span> Self-Consistent Field — самоузгоджене поле.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">CI</span> Configuration Interaction — конфігураційна взаємодія.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">CIS</span> Configuration Interaction Singles — конфігураційна взаємодія з одноелектронними збудженнями.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">CISD</span> Configuration Interaction Singles and Doubles — конфігураційна взаємодія з одно- та двоелектронними. збудженнями.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">CISDT</span> Configuration Interaction Singles, Doubles and Triples — конфігураційна взаємодія з одно-, дво- та триелектронними збудженнями.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">FCI</span> Full Configuration Interaction — повна конфігураційна взаємодія.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">CASCI</span> Complete Active Space Configuration Interaction — конфігураційна взаємодія з повним активним простором.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">MCSCF</span> Multi-Configurational Self-Consistent Field — багатоконфігураційне самоузгоджене поле.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">CASSCF</span> Complete Active Space Self-Consistent Field — самоузгоджене поле з повним активним простором.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">RASSCF</span> Restricted Active Space Self-Consistent Field — самоузгоджене поле з обмеженим активним простором.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">GASSCF</span> Generalized Active Space Self-Consistent Field — самоузгоджене поле з узагальненим активним простором.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">CC</span> Coupled Cluster — зв’язані кластери.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">CCD</span> Coupled Cluster Doubles — метод зв’язаних кластерів з подвійними збудженнями.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">CCSD</span> Coupled Cluster Singles and Doubles — метод зв’язаних кластерів з одинарними та подвійними збудженнями.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">CCSD(T)</span> CCSD with perturbative Triples — CCSD з пертурбативними потрійними збудженнями.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">CCSDT</span> Coupled Cluster Singles, Doubles and Triples — метод зв’язаних кластерів з одинарними, подвійними та потрійними збудженнями.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">CCSDTQ</span> Coupled Cluster Singles, Doubles, Triples and Quadruples — метод зв’язаних кластерів з одинарними, подвійними, потрійними та четвірними збудженнями.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">MP</span> Møller-Plesset perturbation theory — теорія збурень Мьоллера-Плессета.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">MP2</span> Second-order Møller-Plesset perturbation theory — теорія збурень Мьоллера-Плессета другого порядку.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">MP3</span> Third-order Møller-Plesset perturbation theory — теорія збурень Мьоллера-Плессета третього порядку.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">MP4</span> Fourth-order Møller-Plesset perturbation theory — теорія збурень Мьоллера-Плессета четвертого порядку.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">MP5</span> Fifth-order Møller-Plesset perturbation theory — теорія збурень Мьоллера-Плессета п’ятого порядку.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">DFT</span> Density Functional Theory — теорія функціонала густини.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">KS-DFT</span> Kohn-Sham Density Functional Theory — теорія функціонала густини Кона-Шема.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">TDDFT</span> Time-Dependent Density Functional Theory — часозалежна теорія функціонала густини.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">LDA</span> Local Density Approximation — наближення локальної густини.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">LSDA</span> Local Spin Density Approximation — наближення локальної спінової густини.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">GGA</span> Generalized Gradient Approximation — узагальнене градієнтне наближення.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">meta-GGA</span> meta-Generalized Gradient Approximation — мета-узагальнене градієнтне наближення.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">hybrid-GGA</span> hybrid Generalized Gradient Approximation — гібридне узагальнене градієнтне наближення.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">hybrid-meta-GGA</span> hybrid meta-Generalized Gradient Approximation — гібридне мета-узагальнене градієнтне наближення.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">XC</span> Exchange-Correlation — обмінно-кореляційний.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">LYP</span> Lee-Yang-Parr — кореляційний функціонал Лі-Янга-Парра.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">PW91</span> Perdew-Wang 91 — функціонал Пердью-Вонга 1991 року.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">PBE</span> Perdew-Burke-Ernzerhof — функціонал Пердью-Берка-Ернцерхофа.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">PBE0</span> PBE hybrid functional — гібридний функціонал на основі PBE.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">B3LYP</span> Becke 3-parameter Lee-Yang-Parr — гібридний функціонал Бекке з трьома параметрами та кореляційним функціоналом Лі-Янга-Парра.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">B3PW91</span> Becke 3-parameter Perdew-Wang 91 — гібридний функціонал Бекке з трьома параметрами та PW91.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">BLYP</span> Becke-Lee-Yang-Parr — функціонал з обмінним функціоналом Бекке та кореляційним LYP.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">BP86</span> Becke-Perdew 86 — функціонал з обмінним функціоналом Бекке та кореляційним Пердью 86.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">M06</span> Minnesota 06 functional — Міннесотський функціонал 2006 року.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">M06-2X</span> Minnesota 06 double-hybrid functional — Міннесотський подвійно-гібридний функціонал 2006 року.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">wB97X-D</span> range-separated hybrid functional with dispersion — далекосяжний гібридний функціонал з дисперсійною корекцією.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">CAM-B3LYP</span> Coulomb-Attenuating Method B3LYP — B3LYP з кулонівським загасанням.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">MRCI</span> Multi-Reference Configuration Interaction — багатодетермінантна конфігураційна взаємодія.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">MRCC</span> Multi-Reference Coupled Cluster — багатодетермінантний метод зв’язаних кластерів.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">MRPT</span> Multi-Reference Perturbation Theory — багатодетермінантна теорія збурень.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">CASPT2</span> Complete Active Space second-order Perturbation Theory — теорія збурень другого порядку з повним активним простором.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">RASPT2</span> Restricted Active Space second-order Perturbation Theory — теорія збурень другого порядку з обмеженим активним простором.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">NEVPT2</span> N-Electron Valence state Perturbation Theory — теорія збурень валентного стану N-електронів другого порядку.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">QMC</span> Quantum Monte Carlo — квантовий метод Монте-Карло.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">VMC</span> Variational Monte Carlo — варіаційний метод Монте-Карло.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">DMC</span> Diffusion Monte Carlo — дифузійний метод Монте-Карло.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">DMRG</span> Density Matrix Renormalization Group — метод ренормалізаційної групи матриці густини.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">EOM-CC</span> Equation-of-Motion Coupled Cluster — метод зв’язаних кластерів рівнянь руху.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">EOM-CCSD</span> Equation-of-Motion CCSD — метод рівнянь руху CCSD.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">SAC-CI</span> Symmetry-Adapted Cluster Configuration Interaction — конфігураційна взаємодія кластерів, адаптована до симетрії.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">AO</span> Atomic Orbital — атомна орбіталь.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">MO</span> Molecular Orbital — молекулярна орбіталь.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">LCAO</span> Linear Combination of Atomic Orbitals — лінійна комбінація атомних орбіталей.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">HOMO</span> Highest Occupied Molecular Orbital — найвища зайнята молекулярна орбіталь.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">LUMO</span> Lowest Unoccupied Molecular Orbital — найнижча незайнята молекулярна орбіталь.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">SOMO</span> Singly Occupied Molecular Orbital — однократно зайнята молекулярна орбіталь.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">STO</span> Slater-Type Orbital — орбіталь типу Слейтера.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">GTO</span> Gaussian-Type Orbital — орбіталь гаусового типу.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">CGTO</span> Contracted Gaussian-Type Orbital — контрактована орбіталь гаусового типу.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">PGTO</span> Primitive Gaussian-Type Orbital — примітивна орбіталь гаусового типу.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">RI</span> Resolution of Identity — розкладання одиниці.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">DF</span> Density Fitting — підгонка густини.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">RI-MP2</span> Resolution of Identity MP2 — MP2 з розкладанням одиниці.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">BSSE</span> Basis Set Superposition Error — похибка суперпозиції базисного набору.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">CP</span> Counterpoise correction — контрвагова корекція.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">ZPE</span> Zero-Point Energy — енергія нульових коливань.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">ZPVE</span> Zero-Point Vibrational Energy — енергія нульових коливань.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">IRC</span> Intrinsic Reaction Coordinate — внутрішня координата реакції.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">TS</span> Transition State — перехідний стан.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">MEP</span> Minimum Energy Path — шлях мінімальної енергії.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">NBO</span> Natural Bond Orbital — натуральна зв’язуюча орбіталь.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">NAO</span> Natural Atomic Orbital — натуральна атомна орбіталь.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">NPA</span> Natural Population Analysis — натуральний популяційний аналіз.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">ESP</span> Electrostatic Potential — електростатичний потенціал.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">RESP</span> Restrained Electrostatic Potential — обмежений електростатичний потенціал.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">PCM</span> Polarizable Continuum Model — модель поляризованого континууму.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">SMD</span> Solvation Model based on Density — модель сольватації на основі густини.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">QM/MM</span> Quantum Mechanics/Molecular Mechanics — квантова механіка/молекулярна механіка.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">ONIOM</span> Our own N-layered Integrated molecular Orbital and Molecular mechanics — багатошаровий інтегрований метод молекулярних орбіталей та молекулярної механіки.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">PBC</span> Periodic Boundary Conditions — періодичні граничні умови.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">PW</span> Plane Wave — плоска хвиля.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">DFT+U</span> DFT with Hubbard U correction — DFT з корекцією Хаббарда U.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">GW</span> Green’s function and screened Coulomb interaction — функція Гріна та екранована кулонівська взаємодія.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">BSE</span> Bethe-Salpeter Equation — рівняння Бете-Солпітера.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">AIMD</span> Ab Initio Molecular Dynamics — молекулярна динаміка з перших принципів.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">BOMD</span> Born-Oppenheimer Molecular Dynamics — молекулярна динаміка Борна-Оппенгеймера.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">CPMD</span> Car-Parrinello Molecular Dynamics — молекулярна динаміка Кара-Паррінелло.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">VCI</span> Vibrational Configuration Interaction — конфігураційна взаємодія коливань.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">VPT2</span> Vibrational second-order Perturbation Theory — теорія збурень другого порядку для коливань.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">VSCF</span> Vibrational Self-Consistent Field — самоузгоджене поле для коливань.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">post-HF</span> Post-Hartree-Fock — пост-методи Хартрі-Фока.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">ERI</span> Electron Repulsion Integrals — інтеграли відштовхування електронів.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">DZ</span> Double-Zeta — подвійний дзета.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">TZ</span> Triple-Zeta — потрійний дзета.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">VQZ</span> Quadruple-Zeta — четвірний дзета.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">5Z</span> Quintuple-Zeta — п’ятірний дзета.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">IE</span> Ionization Energy — енергія іонізації.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">DIIS</span> Direct Inversion in the Iterative Subspace — пряма інверсія в ітеративному підпросторі.
+</p>
+</li>
+</ul>
+<!--
+...... section Молекулярно-орбітальне (МО) представлення ......
+-->
+<h4 id="autosec-993"><span class="sectionnumber">Б&#x2003;</span>Молекулярно-орбітальне (МО) представлення</h4>
+<a id="main-html-autopage-993"></a>
+<p>
+Хоча рівняння Хартрі–Фока розв’язуються в базисі атомних орбіталей \(\{\chi _\mu \}\) (АО-представлення), після розв’язання ми завжди виконуємо перехід до <b>молекулярно-орбітального (МО) представлення</b>. У ньому одноелектронні хвильові функції
+— це вже не атомні орбіталі, а їх лінійні комбінації — <b>молекулярні орбіталі</b> \(\{\varphi _p\}\).
+</p>
+<p>
+Перехід від АО до МО здійснюється за допомогою матриці коефіцієнтів \(\mathbf {C}\) (розмірність \(M\times M\), де \(M\) — число базисних функцій):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{}{0}\)</span>
+<!--
+𝜑𝑝(r) =
+𝑀
+∑
+𝜇=1
+𝐶𝜇𝑝 𝜒𝜇(r), 𝑝 = 1, 2, … , 𝑀 (Б.1) --><a id="eq:MO_expansion"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:MO_expansion} \varphi _p(\mathbf {r}) = \sum _{\mu =1}^{M} C_{\mu p}\,\chi _\mu (\mathbf {r}), \qquad p = 1,2,\dots ,M
+\end{equation}
+</p>
+<p>
+або в компактній матричній формі:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{}{1}\)</span>
+<!--
+𝜑 = 𝜒 C. (Б.2)
+-->
+<p>
+\begin{equation}
+\boldsymbol {\varphi } = \boldsymbol {\chi }\,\mathbf {C}.
+\end{equation}
+</p>
+<p>
+Стовпці матриці \(\mathbf {C}\) — це і є шукані молекулярні орбіталі, виражені в базисі атомних орбіталей.
+</p>
+<p>
+Перехід до МО-представлення необхідний з кількох ключових причин:
+</p>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> <b>Діагоналізація фокіана.</b> У канонічному МО-базисі матриця Фока стає діагональною: \(\mathbf {F}^{\text {MO}} = \boldsymbol {\varepsilon } = \mathrm {diag}(\varepsilon _1,\varepsilon
+_2,\dots ,\varepsilon _M)\).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> <b>Чіткий поділ на зайняті та віртуальні орбіталі.</b> Матриця густини в МО-базисі має блочно-діагональний вигляд: зайняті орбіталі — з населенням 2 (RHF) або 1 (UHF/ROHF), віртуальні — 0.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> <b>Зручність для пост-HF методів.</b> Усі методи кореляції (MP2, CI, CC, CASSCF), а також лінійний відгук (TDHF, TDDFT, CPHF) природно формулюються саме в МО-базисі. Двоелектронні інтеграли набувають
+компактної антисиметризованої форми \((ij\|ab)\).
+</p>
+</li>
+</ul>
+<p>
+Таким чином, МО-представлення — це не просто технічна заміна базису, а основа сучасної інтерпретації результатів HF-розрахунків і фундамент для всіх наступних рівнів квантово-хімічної теорії.
+</p>
+<div class="cb-comment">
+<p>
+<b>Заміна базису: АО \(\to \) МО</b>
+</p>
+<p>
+Перехід від АО- до МО-представлення — це стандартна унітарна трансформація. Якщо \(\mathbf {C}\) — матриця переходу (стовпці — МО-коефіцієнти), то:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{}{2}\)</span>
+<!--
+OMO = C†OC.
+-->
+<p>
+\begin{equation*}
+\mathbf {O}^{\text {MO}} = \mathbf {C}^\dagger \mathbf {O} \mathbf {C}.
+\end{equation*}
+</p>
+</div>
+<!--
+...... subsubsection Матриця густини в МО-представленні ......
+-->
+<h6 id="autosec-994">Матриця густини в МО-представленні</h6>
+<a id="main-html-autopage-994"></a>
+<p>
+Матриця густини в атомно-орбітальному (АО) базисі для RHF має вигляд:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{}{2}\)</span>
+<!--
+DAO = 2
+𝑛occ
+∑
+𝑖=1
+C𝑖C†
+𝑖
+= 2 Cocc
+C†
+occ, (Б.3)
+-->
+<p>
+\begin{equation}
+\mathbf {D}^{\text {AO}} = 2 \sum _{i=1}^{n_{\text {occ}}} \mathbf {C}_i \mathbf {C}_i^\dagger = 2 \, \mathbf {C}_{\text {occ}} \mathbf {C}_{\text {occ}}^\dagger ,
+\end{equation}
+</p>
+<p>
+де \(\mathbf {C}_{\text {occ}}\) — підматриця коефіцієнтів зайнятих молекулярних орбіталей, а множник 2 відповідає подвійному заповненню (спіни \(\alpha \) і \(\beta \)).
+</p>
+<p>
+Для переходу в МО-базис необхідно врахувати, що МО-коефіцієнти \(\mathbf {C}\) ортонормовані <b>в метриці матриці перекриття</b> \(\mathbf {S}\):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{}{3}\)</span>
+<!--
+C†SC = I. (Б.4)
+-->
+<p>
+\begin{equation}
+\mathbf {C}^\dagger \mathbf {S} \mathbf {C} = \mathbf {I}.
+\end{equation}
+</p>
+<p>
+Трансформація матриці густини в МО-базис виконується через:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{}{4}\)</span>
+<!--
+DMO = C†S DAO SC. (Б.5) --><a id="eq:D_MO_transform"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:D_MO_transform} \mathbf {D}^{\text {MO}} = \mathbf {C}^\dagger \mathbf {S} \, \mathbf {D}^{\text {AO}} \, \mathbf {S} \mathbf {C}.
+\end{equation}
+</p>
+<p>
+Для канонічних молекулярних орбіталей (власних векторів оператора Фока) матриця густини у МО-представленні є <b>діагональною</b>:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{}{5}\)</span>
+<!--
+𝐷MO
+𝑝𝑞 = 𝑛𝑝 𝛿𝑝𝑞, (Б.6) --><a id="eq:D_MO_diagonal"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:D_MO_diagonal} D_{pq}^{\mathrm {MO}} = n_p\,\delta _{pq},
+\end{equation}
+</p>
+<p>
+де \(n_p\) — заселеність орбіталі \(p\):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{}{6}\)</span>
+<!--
+𝑛𝑝 =
+⎧
+⎪
+⎨
+⎪
+⎩
+2, RHF, зайнята орбіталь,
+1, UHF/ROHF, зайнята \(\alpha \) або \(\beta \) орбіталь,
+0, віртуальна орбіталь.
+(Б.7)
+-->
+<p>
+\begin{equation}
+n_p = \begin{cases} 2, &amp; \text {RHF, зайнята орбіталь},\\[4pt] 1, &amp; \text {UHF/ROHF, зайнята $\alpha $ або $\beta $ орбіталь},\\[4pt] 0, &amp; \text {віртуальна орбіталь}. \end {cases}
+\end{equation}
+</p>
+<p>
+<b>Важливо:</b> пряме перетворення \(\mathbf {C}^\dagger \mathbf {D}^{\text {AO}} \mathbf {C}\) <i>без</i> матриці перекриття \(\mathbf {S}\) є некоректним і не дає діагональної матриці.
+</p>
+<!--
+...... subsubsection Фокіан і одноелектронні оператори ......
+-->
+<h6 id="autosec-995">Фокіан і одноелектронні оператори</h6>
+<a id="main-html-autopage-995"></a>
+<p>
+Фокіан у МО-базисі:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{}{7}\)</span>
+<!--
+FMO = C†FC = 𝜀 = diag(𝜀1, 𝜀2, … , 𝜀𝑀). (Б.8)
+-->
+<p>
+\begin{equation}
+\mathbf {F}^{\text {MO}} = \mathbf {C}^\dagger \mathbf {F} \mathbf {C} = \boldsymbol {\varepsilon } = \mathrm {diag}(\varepsilon _1,\varepsilon _2,\dots ,\varepsilon _M).
+\end{equation}
+</p>
+<p>
+Аналогічно перетворюються будь-які одноелектронні оператори (наприклад, дипольний момент, кінетична енергія тощо):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{}{8}\)</span>
+<!--
+hMO = C†hC. (Б.9)
+-->
+<p>
+\begin{equation}
+\mathbf {h}^{\text {MO}} = \mathbf {C}^\dagger \mathbf {h} \mathbf {C}.
+\end{equation}
+</p>
+<!--
+...... subsubsection Двоелектронні інтеграли в МО-базисі ......
+-->
+<h6 id="autosec-996">Двоелектронні інтеграли в МО-базисі</h6>
+<a id="main-html-autopage-996"></a>
+<p>
+Двоелектронні інтеграли в МО-представленні отримують шляхом чотирикратної трансформації:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{}{9}\)</span>
+<!--
+(𝑝𝑞|𝑟𝑠) = ∑
+𝜇𝜈𝜆𝜍
+𝐶𝜇𝑝𝐶𝜈𝑞𝐶𝜆𝑟𝐶𝜍𝑠 (𝜇𝜈|𝜆𝜍). (Б.10) --><a id="eq:MO_eri"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:MO_eri} (pq|rs) = \sum _{\mu \nu \lambda \sigma } C_{\mu p} C_{\nu q} C_{\lambda r} C_{\sigma s}\, (\mu \nu |\lambda \sigma ).
+\end{equation}
+</p>
+<p>
+У пост-HF методах часто використовується антисиметризована форма \((ij\|ab)\).
+</p>
+<p>
+Наступний код демонструє розрахунки в МО-базисі:
+</p>
+<div class="codeblock code-python code-long" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">32 рядки</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+<span class="tk-kn">import</span><span class="tk-w"> </span><span class="tk-nn">numpy</span><span class="tk-w"> </span><span class="tk-k">as</span><span class="tk-w"> </span><span class="tk-nn">np</span>
+
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'H 0 0 0; H 0 0 1.0'</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'sto-3g'</span><span class="tk-p">,</span> <span class="tk-n">verbose</span><span class="tk-o">=</span><span class="tk-mi">0</span><span class="tk-p">)</span>
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">run</span><span class="tk-p">()</span>
+
+<span class="tk-c1"># --- матриця C_{μp} ---</span>
+<span class="tk-n">C</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">mo_coeff</span>
+
+<span class="tk-c1"># --- матриця густини ---</span>
+<span class="tk-n">D</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">make_rdm1</span><span class="tk-p">()</span>               <span class="tk-c1"># густина в АО</span>
+
+<span class="tk-c1"># --- Матриця Фока ---</span>
+<span class="tk-n">F</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">get_fock</span><span class="tk-p">()</span>
+
+<span class="tk-c1"># --- матриця перекриття ---</span>
+
+<span class="tk-n">S</span> <span class="tk-o">=</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">intor</span><span class="tk-p">(</span><span class="tk-s1">'int1e_ovlp'</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-s2">"</span><span class="tk-se">\n</span><span class="tk-s2">Матриця густини в МО-базисі (правильна):"</span><span class="tk-p">)</span>
+<span class="tk-n">D_MO</span> <span class="tk-o">=</span> <span class="tk-n">C</span><span class="tk-o">.</span><span class="tk-n">T</span> <span class="tk-o">@</span> <span class="tk-n">S</span> <span class="tk-o">@</span> <span class="tk-n">D</span> <span class="tk-o">@</span> <span class="tk-n">S</span> <span class="tk-o">@</span> <span class="tk-n">C</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">round</span><span class="tk-p">(</span><span class="tk-n">D_MO</span><span class="tk-p">,</span> <span class="tk-mi">6</span><span class="tk-p">))</span>
+
+<span class="tk-c1"># --- Матриця Фока в МО-основі (повинна бути діагональною!) ---</span>
+<span class="tk-n">F_MO</span> <span class="tk-o">=</span> <span class="tk-n">C</span><span class="tk-o">.</span><span class="tk-n">T</span> <span class="tk-o">@</span> <span class="tk-n">F</span> <span class="tk-o">@</span> <span class="tk-n">C</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-s2">"</span><span class="tk-se">\n</span><span class="tk-s2">Матриця Фока в МО-представлені:</span><span class="tk-se">\n</span><span class="tk-s2">"</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">round</span><span class="tk-p">(</span><span class="tk-n">F_MO</span><span class="tk-p">,</span> <span class="tk-mi">6</span><span class="tk-p">))</span>
+
+<span class="tk-c1"># --- Орбітальні енергії з PySCF ---</span>
+<span class="tk-n">eps</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">mo_energy</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-s2">"</span><span class="tk-se">\n</span><span class="tk-s2">Орбітальні енергії:</span><span class="tk-se">\n</span><span class="tk-s2">"</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">round</span><span class="tk-p">(</span><span class="tk-n">eps</span><span class="tk-p">,</span> <span class="tk-mi">6</span><span class="tk-p">))</span></code></pre>
+</div>
+<!--
+...... subsubsection Енергія Хартрі–Фока в МО-представленні ......
+-->
+<h6 id="autosec-997">Енергія Хартрі–Фока в МО-представленні</h6>
+<a id="main-html-autopage-997"></a>
+<p>
+У МО-базисі вираз для повної енергії набуває особливо прозорого вигляду (для RHF):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{}{10}\)</span>
+<!--
+𝐸HF
+=
+occ
+∑
+𝑖
+2 𝜀𝑖 −
+1
+2
+occ
+∑
+𝑖,𝑗
+(2(𝑖𝑗|𝑖𝑗) − (𝑖𝑗|𝑗𝑖)) + 𝑉𝑁𝑁
+=
+occ
+∑
+𝑖
+2 𝜀𝑖 −
+occ
+∑
+𝑖,𝑗
+((𝑖𝑗|𝑖𝑗) − 1
+2
+(𝑖𝑗|𝑗𝑖)) + 𝑉𝑁𝑁. (Б.11) --><a id="eq:E_HF_MO_explicit"></a><!--
+-->
+<p>
+\begin{align}
+\label {eq:E_HF_MO_explicit} E_{\mathrm {HF}} &amp;= \sum _{i}^{\text {occ}} 2\,\varepsilon _i - \frac {1}{2} \sum _{i,j}^{\text {occ}} \bigl (2(ij|ij) - (ij|ji)\bigr ) + V_{NN} \notag \\[6pt] &amp;= \sum
+_{i}^{\text {occ}} 2\,\varepsilon _i - \sum _{i,j}^{\text {occ}} \bigl ((ij|ij) - \tfrac {1}{2}(ij|ji)\bigr ) + V_{NN}.
+\end{align}
+</p>
+<p>
+Альтернативна (часто зручніша) форма:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{}{11}\)</span>
+<!--
+𝐸HF
+=
+occ
+∑
+𝑖
+2 𝜀𝑖 −
+1
+2
+occ
+∑
+𝑖,𝑗
+(2𝐽𝑖𝑗 − 𝐾𝑖𝑗) + 𝑉𝑁𝑁. (Б.12)
+-->
+<p>
+\begin{equation}
+E_{\mathrm {HF}} = \sum _{i}^{\text {occ}} 2\,\varepsilon _i - \frac {1}{2} \sum _{i,j}^{\text {occ}} (2J_{ij} - K_{ij}) + V_{NN}.
+\end{equation}
+</p>
+<!--
+...... subsubsection МО-формулювання рівнянь Хартрі–Фока ......
+-->
+<h6 id="autosec-998">МО-формулювання рівнянь Хартрі–Фока</h6>
+<a id="main-html-autopage-998"></a>
+<p>
+Вихідна матрична форма в АО-базисі:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{}{12}\)</span>
+<!--
+FC = SC𝜀 (Б.13)
+-->
+<p>
+\begin{equation}
+\mathbf {F} \mathbf {C} = \mathbf {S} \mathbf {C} \boldsymbol {\varepsilon }
+\end{equation}
+</p>
+<p>
+після переходу до МО-представлення зводиться до тривіального вигляду:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{}{13}\)</span>
+<!--
+FMO = 𝜀. (Б.14)
+-->
+<p>
+\begin{equation}
+\mathbf {F}^{\text {MO}} = \boldsymbol {\varepsilon }.
+\end{equation}
+</p>
+<p>
+Саме тому канонічні молекулярні орбіталі — це власні функції ефективного одноелектронного гамільтоніана (фокіана) в середньому полі інших електронів.
+</p>
+<!--
+...... section Метод DIIS та прискорення збіжності SCF ......
+-->
+<h4 id="autosec-999"><span class="sectionnumber">В&#x2003;</span>Метод DIIS та прискорення збіжності SCF</h4>
+<a id="main-html-autopage-999"></a>
+<a id="sec:DIIS"></a>
+<p>
+У стандартному SCF-алгоритмі ми на кожній ітерації будуємо нову матрицю Фока \(\vect {F}^{(k)}\) з поточної матриці густини \(\vect {D}^{(k-1)}\), розв’язуємо задачу на власні значення та отримуємо нову матрицю густини \(\vect {D}^{(k)}\). Цей
+процес повторюється до збіжності.
+</p>
+<p>
+Проблема у тому, що такий простий ітераційний процес може збігатися дуже повільно, особливо для складних систем. Іноді енергія навіть осцилює між кількома значеннями і не досягає стабільного результату.
+</p>
+<p>
+Метод <b>DIIS</b> (Direct Inversion in the Iterative Subspace — пряма інверсія в ітераційному підпросторі), запропонований Пітером Пулаєм у 1980 році, вирішує цю проблему наступним чином: замість того, щоб використовувати лише матрицю Фока з поточної ітерації,
+DIIS <em>запам’ятовує</em> кілька попередніх матриць Фока
+</p>
+<span class="hidden"> \(\seteqnumber{0}{}{0}\)</span>
+<!--
+𝐅(𝑛−𝑘), 𝐅(𝑛−𝑘+1), … , 𝐅(𝑛−1), 𝐅(𝑛)
+-->
+<p>
+\begin{equation*}
+\vect {F}^{(n-k)}, \vect {F}^{(n-k+1)}, \ldots , \vect {F}^{(n-1)}, \vect {F}^{(n)}
+\end{equation*}
+</p>
+<p>
+та будує оптимальну лінійну комбінацію:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{}{0}\)</span>
+<!--
+𝐅(𝑛)
+DIIS
+=
+𝑚
+∑
+𝑖=1
+𝑐𝑖𝐅(𝑛−𝑚+𝑖) (В.1)
+-->
+<p>
+\begin{equation}
+\vect {F}_{\text {DIIS}}^{(n)} = \sum _{i=1}^{m} c_i \vect {F}^{(n-m+i)}
+\end{equation}
+</p>
+<p>
+де коефіцієнти \(c_i\) підбираються так, щоб мінімізувати похибку самоузгодженості.
+</p>
+<div class="cb-comment">
+<p>
+<b>Що таке похибка самоузгодженості?</b>
+</p>
+<p>
+Якщо рішення ідеально самоузгоджене, то виконується комутаційне співвідношення:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{}{1}\)</span>
+<!--
+[𝐅, 𝐃𝐒] = 𝐅𝐃𝐒 − 𝐒𝐃𝐅 = 𝟎 (В.2)
+-->
+<p>
+\begin{equation}
+[\vect {F}, \vect {D}\vect {S}] = \vect {F}\vect {D}\vect {S} - \vect {S}\vect {D}\vect {F} = \vect {0}
+\end{equation}
+</p>
+<p>
+Похибка (residual) на \(i\)-тій ітерації — це відхилення від цієї умови:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{}{2}\)</span>
+<!--
+𝐑(𝑖) = 𝐅(𝑖)𝐃(𝑖)𝐒 − 𝐒𝐃(𝑖)𝐅(𝑖) (В.3)
+-->
+<p>
+\begin{equation}
+\vect {R}^{(i)} = \vect {F}^{(i)} \vect {D}^{(i)} \vect {S} - \vect {S} \vect {D}^{(i)} \vect {F}^{(i)}
+\end{equation}
+</p>
+<p>
+DIIS шукає такі коефіцієнти \(c_i\), щоб похибка комбінованої матриці Фока була мінімальною.
+</p>
+</div>
+<p>
+SCF-процес умовно можна уявити як «рух по енергетичному ландшафту» до мінімуму. Без DIIS процедура робить кроки, які можуть «перестрибувати» через мінімум туди-сюди. DIIS аналізує кілька попередніх кроків і робить «розумну» екстраполяцію, яка швидше веде
+до мінімуму.
+</p>
+<p>
+Типова схема роботи:
+</p>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> <b>Ітерації 1–2:</b> звичайний SCF без DIIS (потрібно накопичити історію)
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> <b>Ітерація 3 і далі:</b> DIIS активується автоматично, зберігає 6–8 останніх матриць Фока та похибок
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> На кожній ітерації будується оптимальна комбінація, яка прискорює збіжність
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">4.</span> Процес продовжується до досягнення заданої точності (наприклад, \(\Delta E &lt; 10^{-6}\) Hartree)
+</p>
+</li>
+</ul>
+<p>
+Як керувати <kbd>DIIS</kbd>, та що робити, коли він не працює, наведено в додатку&nbsp;<a href="appendices.html#sec:convergence">Г</a>.
+</p>
+<!--
+...... section Проблеми збіжності SCF та їх усунення ......
+-->
+<h4 id="autosec-1000"><span class="sectionnumber">Г&#x2003;</span>Проблеми збіжності SCF та їх усунення</h4>
+<a id="main-html-autopage-1000"></a>
+<a id="sec:convergence"></a>
+<p>
+Розрахунки у квантовій хімії не завжди проходять гладко. Навіть для простих систем ітераційна процедура самозгодженого поля (SCF) може не досягати стабільного рішення. Найчастіше проблеми збіжності виникають для перехідних металів, відкритих оболонок та
+систем із виродженими орбіталями. У цьому розділі розглянемо основні джерела труднощів та методи їх подолання.
+</p>
+<!--
+...... subsection Причини поганої збіжності ......
+-->
+<h5 id="autosec-1001"><span class="sectionnumber">Г.1&#x2003;</span>Причини поганої збіжності</h5>
+<a id="main-html-autopage-1001"></a>
+<p>
+Типові джерела нестабільності SCF:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> сильна електронна кореляція у незаповнених \(d\)- і \(f\)-оболонках;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> мала різниця енергій між орбіталями (виродження чи квазівиродження);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> невдалий початковий вектор коефіцієнтів (погане стартове наближення);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> занадто жорсткі або занадто м’які критерії збіжності.
+</p>
+</li>
+</ul>
+<p>
+У таких випадках енергія може осцилювати або навіть зростати замість того, щоб збігатися. Для вирішення цих проблем існує кілька стратегій стабілізації.
+</p>
+<!--
+...... subsection Методи стабілізації збіжності ......
+-->
+<h5 id="autosec-1002"><span class="sectionnumber">Г.2&#x2003;</span>Методи стабілізації збіжності</h5>
+<a id="main-html-autopage-1002"></a>
+<p>
+Коли стандартний SCF з DIIS-процедурою (див. додаток&nbsp;<a href="appendices.html#sec:DIIS">В</a>) не працює, у PySCF доступні наступні інструменти:
+</p>
+<!--
+...... subsubsection Level shifting (зсув рівнів) ......
+-->
+<h6 id="autosec-1003">Level shifting (зсув рівнів)</h6>
+<a id="main-html-autopage-1003"></a>
+<p>
+Метод штучно підвищує енергії віртуальних орбіталей на величину \(\Delta \):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{}{0}\)</span>
+<!--
+𝜀virt
+→ 𝜀virt
++ Δ (Г.1)
+-->
+<p>
+\begin{equation}
+\varepsilon _{\text {virt}} \to \varepsilon _{\text {virt}} + \Delta
+\end{equation}
+</p>
+<p>
+Це запобігає коливанням заповнення орбіталей між ітераціями та стабілізує збіжність. Фізично це еквівалентно збільшенню енергетичного бар’єру для переходу електронів з заповнених на віртуальні орбіталі.
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">2 рядки</span></div>
+<pre class="code"><code><span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">level_shift</span> <span class="tk-o">=</span> <span class="tk-mf">0.5</span>  <span class="tk-c1"># типові значення 0.2-1.0 Hartree</span></code></pre>
+</div>
+<!--
+...... subsubsection Налаштування та альтернативи DIIS у PySCF ......
+-->
+<h6 id="autosec-1004">Налаштування та альтернативи DIIS у <kbd>PySCF</kbd></h6>
+<a id="main-html-autopage-1004"></a>
+<p>
+Для прискорення збіжності <kbd>SCF</kbd>-процедури у <kbd>PySCF</kbd> реалізовано кілька варіантів <kbd>DIIS</kbd>-алгоритмів. Типовим є класичний <kbd>CDIIS</kbd>, однак у складних випадках корисно застосовувати розширені схеми.
+</p>
+<!--
+...... paragraph EDIIS (Energy DIIS) ......
+-->
+<p>
+<span class="paragraph" id="autosec-1005">EDIIS (Energy DIIS)</span>
+<a id="main-html-autopage-1005"></a>
+Мінімізує енергію замість похибки самоузгодженості. Це часто стабілізує збіжність на ранніх ітераціях, коли система ще далека від стаціонарного стану:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">2 рядки</span></div>
+<pre class="code"><code><span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">DIIS</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">EDIIS</span></code></pre>
+</div>
+<!--
+...... paragraph ADIIS (Augmented DIIS) ......
+-->
+<p>
+<span class="paragraph" id="autosec-1006">ADIIS (Augmented DIIS)</span>
+<a id="main-html-autopage-1006"></a>
+Комбінує енергетичний (<kbd>EDIIS</kbd>) та звичайний (<kbd>DIIS</kbd>) підходи. На початкових ітераціях використовується <kbd>EDIIS</kbd>, а ближче до мінімуму автоматично переходить у стандартний <kbd>DIIS</kbd>:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">2 рядки</span></div>
+<pre class="code"><code><span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">DIIS</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">ADIIS</span></code></pre>
+</div>
+<!--
+...... paragraph Параметри DIIS ......
+-->
+<p>
+<span class="paragraph" id="autosec-1007">Параметри DIIS</span>
+<a id="main-html-autopage-1007"></a>
+Можна тонко контролювати простір інтерполяції, початок застосування DIIS, а також файл для збереження стану:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">4 рядки</span></div>
+<pre class="code"><code><span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">diis_space</span> <span class="tk-o">=</span> <span class="tk-mi">8</span>           <span class="tk-c1"># розмір підпростору DIIS</span>
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">diis_start_cycle</span> <span class="tk-o">=</span> <span class="tk-mi">4</span>     <span class="tk-c1"># номер ітерації, з якої почати DIIS</span>
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">diis_file</span> <span class="tk-o">=</span> <span class="tk-s1">'o2_diis.h5'</span> <span class="tk-c1"># файл для збереження стану</span></code></pre>
+</div>
+<!--
+...... paragraph Приклад з офіційного репозиторію PySCF ......
+-->
+<p>
+<span class="paragraph" id="autosec-1008">Приклад з офіційного репозиторію <kbd>PySCF</kbd></span>
+<a id="main-html-autopage-1008"></a>
+Повне налаштування параметрів <kbd>DIIS</kbd> наведено у демонстраційному файлі <span class="codebutton"><a href="https://github.com/pyscf/pyscf/blob/master/examples/scf/24-tune_diis.py" target="_blank"
+><kbd>24-tune_diis.py</kbd></a></span>. У цьому прикладі показано, як переключатися між <kbd>CDIIS</kbd>, <kbd>EDIIS</kbd> та <kbd>ADIIS</kbd>, а також як зберігати та відновлювати стан ітерацій:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">6 рядків</span></div>
+<pre class="code"><code><span class="tk-n">my_diis_obj</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">ADIIS</span><span class="tk-p">()</span>
+<span class="tk-n">my_diis_obj</span><span class="tk-o">.</span><span class="tk-n">space</span> <span class="tk-o">=</span> <span class="tk-mi">12</span>
+<span class="tk-n">my_diis_obj</span><span class="tk-o">.</span><span class="tk-n">filename</span> <span class="tk-o">=</span> <span class="tk-s1">'o2_diis.h5'</span>
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">diis</span> <span class="tk-o">=</span> <span class="tk-n">my_diis_obj</span>
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">run</span><span class="tk-p">()</span></code></pre>
+</div>
+<!--
+...... subsubsection Метод Ньютона--Рафсона ......
+-->
+<h6 id="autosec-1009">Метод Ньютона–Рафсона</h6>
+<a id="main-html-autopage-1009"></a>
+<p>
+Для систем, які вже близькі до збіжності, але повільно сходяться, можна використати метод другого порядку:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">3 рядки</span></div>
+<pre class="code"><code><span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">newton</span><span class="tk-p">()</span>  <span class="tk-c1"># перехід до Newton-Raphson</span>
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span></code></pre>
+</div>
+<p>
+Це забезпечує квадратичну збіжність поблизу мінімуму, але вимагає додаткових обчислень гессіану.
+</p>
+<!--
+...... subsection Вироджені орбіталі та дробові заповнення ......
+-->
+<h5 id="autosec-1010"><span class="sectionnumber">Г.3&#x2003;</span>Вироджені орбіталі та дробові заповнення</h5>
+<a id="main-html-autopage-1010"></a>
+<p>
+Якщо в системі наявні вироджені або майже вироджені орбіталі, SCF може «коливатись», не вибираючи між ними. Класичні приклади — атоми з частково заповненими \(p\)- або \(d\)-оболонками.
+</p>
+<p>
+Для таких випадків ефективним є застосування <i>дробових заповнень орбіталей</i> (fractional occupations), що згладжують різницю між рівнями енергії.
+</p>
+<p>
+Ідея полягає у введенні ефективного теплового розмазування Фермі–Дірака:
+</p>
+<p>
+\[ f_i = \frac {1}{1 + e^{(\varepsilon _i - \mu )/kT}}, \]
+</p>
+<p>
+де \(f_i\) — часткове заповнення орбіталі \(i\), \(\varepsilon _i\) — її енергія, \(\mu \) — хімічний потенціал, а \(kT\) — параметр розмазування (зазвичай \(\sim 0.1\)–\(0.3\) Hartree).
+</p>
+<p>
+Цей підхід дозволяє SCF уникнути нестійких перестрибувань між виродженими рівнями, імітуючи систему при скінченній температурі.
+</p>
+<p>
+У PySCF для цього достатньо викликати:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">3 рядки</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">scf</span>
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">addons</span><span class="tk-o">.</span><span class="tk-n">frac_occ</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Методика (<span class="codebutton"><a href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/Additions/code/uhf_fractional_occupations.py" target="_blank"
+><kbd>uhf_fractional_occupations.py</kbd></a></span>) добре працює для атомів (<span
+id="lateximage-main-html-205"
+class="lateximagesource"
+><!--
+V
+--><img
+src="main-html-images/4355A9A51A70A5A381ACBE4D3C6FBC04.svg"
+alt="\ce{V}"
+style=""
+class="lateximage"
+></span>, <span
+id="lateximage-main-html-206"
+class="lateximagesource"
+><!--
+Cr
+--><img
+src="main-html-images/5B00F6843B6500B79CC3A6237C7ADBE8.svg"
+alt="\ce{Cr}"
+style=""
+class="lateximage"
+></span>), радикалів та малих кластерів перехідних металів.
+</p>
+<!--
+...... subsection Перехідні метали --- приклад складної системи ......
+-->
+<h5 id="autosec-1015"><span class="sectionnumber">Г.4&#x2003;</span>Перехідні метали — приклад складної системи</h5>
+<a id="main-html-autopage-1015"></a>
+<p>
+Перехідні елементи (Fe, Co, Ni, Cr, Mn тощо) — класичні приклади систем із поганою збіжністю SCF. Вони поєднують декілька факторів складності одночасно.
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">6 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s2">"Ni 0 0 0"</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s2">"sto-3g"</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">0</span><span class="tk-p">)</span>
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">UHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">run</span><span class="tk-p">()</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-s2">"Converged?"</span><span class="tk-p">,</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">converged</span><span class="tk-p">)</span>  <span class="tk-c1"># часто False</span></code></pre>
+</div>
+<p>
+Причини проблем:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> близькість енергетичних рівнів \(3d\) і \(4s\)-орбіталей;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> можливість декількох спінових станів, близьких за енергією;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> наявність кількох локальних мінімумів функціоналу енергії;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> сильна кореляція в незаповненій \(d\)-оболонці.
+</p>
+</li>
+</ul>
+<p>
+У PySCF це проявляється як:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> осциляції енергії між ітераціями;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> розбігання DIIS;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> стрибки значення \(\langle S^2 \rangle \) між кроками (спін-забруднення).
+</p>
+</li>
+</ul>
+<p>
+В файлі <span class="codebutton"><a href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/Additions/code/Transition_Metals_UHF.py" target="_blank"
+><kbd>Transition_Metals_UHF.py</kbd></a></span> наведено приклад універсальної функції для стабільного розрахунку атомів перехідних металів із урахуванням описаних вище прийомів:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> використовується UHF (для врахування спіну);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> застосовується зсув рівнів (<span class="inlinecode"><kbd>level_shift</kbd></span>);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> розширюється DIIS-простір (<span class="inlinecode"><kbd>diis_space</kbd></span>);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> використовується атомне початкове наближення (<span class="inlinecode"><kbd>init_guess='atom'</kbd></span>);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> у разі потреби вмикається уточнення Ньютона–Рафсона;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> контролюється спін-забруднення через \(\langle S^2 \rangle \).
+</p>
+</li>
+</ul>
+<p>
+Такий комплексний підхід забезпечує стабільність навіть для важких атомів, де стандартний SCF часто не сходиться.
+</p>
+<!--
+...... subsection Загальна стратегія досягнення збіжності ......
+-->
+<h5 id="autosec-1016"><span class="sectionnumber">Г.5&#x2003;</span>Загальна стратегія досягнення збіжності</h5>
+<a id="main-html-autopage-1016"></a>
+<p>
+Для надійного отримання фізично коректного рішення рекомендується послідовна стратегія — від простих прийомів до складніших:
+</p>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> Спробувати стандартний UHF/RHF;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> Якщо не збігається — додати зсув рівнів: <span class="inlinecode"><kbd>level_shift=0.5</kbd></span>;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> Змінити початкове наближення: <span class="inlinecode"><kbd>init_guess='atom'</kbd></span>;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">4.</span> Використати ADIIS: <span class="inlinecode"><kbd>mf.DIIS = scf.ADIIS</kbd></span>;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">5.</span> Збільшити DIIS-простір: <span class="inlinecode"><kbd>diis_space=10</kbd></span>;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">6.</span> Для вироджених систем — дробові заповнення: <span class="inlinecode"><kbd>frac_occ</kbd></span>;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">7.</span> Якщо близько до збіжності — метод Ньютона: <span class="inlinecode"><kbd>mf.newton()</kbd></span>;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">8.</span> Вимкнути симетрію: <span class="inlinecode"><kbd>symmetry=False</kbd></span> (як останній засіб).
+</p>
+</li>
+</ul>
+<p>
+В програмі <span class="codebutton"><a href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/Additions/code/uhf_convergence_strategies.py" target="_blank"
+><kbd>uhf_convergence_strategies.py</kbd></a></span> продемонстровано різні стратегії покращення збіжності SCF на конкретних прикладах.
+</p>
+<!--
+...... paragraph Практичні рекомендації: ......
+-->
+<p>
+<span class="paragraph" id="autosec-1017">Практичні рекомендації:</span>
+<a id="main-html-autopage-1017"></a>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Завжди перевіряйте <span class="inlinecode"><kbd>mf.converged</kbd></span> після розрахунку;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Для систем з відкритими оболонками контролюйте \(\langle S^2 \rangle \) — велике спін-забруднення вказує на проблеми;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Для великих систем на перших етапах можна зменшити точність:<br />
+<span class="inlinecode"><kbd>conv_tol=1e-5</kbd></span>;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Якщо енергія осцилює — це сигнал використати level shifting або EDIIS;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Не бійтесь експериментувати з комбінаціями методів — іноді неочевидна комбінація працює найкраще.
+</p>
+</li>
+</ul>
+<p>
+Таким чином, навіть якщо стандартна процедура SCF не збігається, послідовне застосування описаних прийомів практично гарантує стабільне та фізично обґрунтоване рішення. Ключ до успіху — розуміння природи проблеми та систематичний підхід до її вирішення.
+</p>
+</section>
+</main>
+<nav class="botnavigation"><a href="main-html.html" class="linkhome" >
+Головна</a></nav>
+</div><!-- grid -->
+<script src="assets/book.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,3538 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="generator" content="LaTeX Lwarp package" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Квантово-механічні методи обчислення — Теорія функціоналу густини (DFT)</title>
+<link rel="stylesheet" type="text/css" href="assets/conspect.css" />
+<script>
+// Lwarp MathJax emulation code
+//
+// Based on code by Davide P. Cervone.
+// Equation numbering: https://github.com/mathjax/MathJax/issues/2427
+// Starred and ifnextchar macros: https://github.com/mathjax/MathJax/issues/2428
+// \left, \right delimiters: https://github.com/mathjax/MathJax/issues/2535
+//
+// Modified by Brian Dunn to adjust equation numbering and add subequations.
+//
+// LaTeX can use \seteqnumber{subequations?}{section}{number} before each equation.
+// subequations? is 0 usually, 1 if inside subequations.
+// section is a string printed as-is, or empty.
+// number is auto-incremented by MathJax between equations.
+//
+MathJax = {
+subequations: "0",
+section: "",
+loader: {
+load: ['[tex]/tagformat', '[tex]/textmacros'],
+},
+startup: {
+ready() {
+// These would be replaced by import commands if you wanted to make
+// a proper extension.
+const Configuration = MathJax._.input.tex.Configuration.Configuration;
+const CommandMap = MathJax._.input.tex.SymbolMap.CommandMap;
+const Macro = MathJax._.input.tex.Symbol.Macro;
+const TexError = MathJax._.input.tex.TexError.default;
+const ParseUtil = MathJax._.input.tex.ParseUtil.default;
+const expandable = MathJax._.util.Options.expandable;
+// Insert the replacement string into the TeX string, and check
+// that there haven't been too many maxro substitutions (prevents
+// infinite loops).
+const useArgument = (parser, text) => {
+parser.string = ParseUtil.addArgs(parser, text, parser.string.slice(parser.i));
+parser.i = 0;
+if (++parser.macroCount > parser.configuration.options.maxMacros) {
+throw new TexError('MaxMacroSub1',
+'MathJax maximum macro substitution count exceeded; ' +
+'is there a recursive macro call?');
+}
+}
+// Create the command map for:
+// \ifstar, \ifnextchar, \ifblank, \ifstrequal, \gsub, \seteqnumber
+new CommandMap('Lwarp-macros', {
+ifstar: 'IfstarFunction',
+ifnextchar: 'IfnextcharFunction',
+ifblank: 'IfblankFunction',
+ifstrequal: 'IfstrequalFunction',
+gsubstitute: 'GsubstituteFunction',
+seteqnumber: 'SeteqnumberFunction'
+}, {
+// This function implements an ifstar macro.
+IfstarFunction(parser, name) {
+const resultstar = parser.GetArgument(name);
+const resultnostar = parser.GetArgument(name);
+const star = parser.GetStar(); // true if there is a *
+useArgument(parser, star ? resultstar : resultnostar);
+},
+// This function implements an ifnextchar macro.
+IfnextcharFunction(parser, name) {
+let whichchar = parser.GetArgument(name);
+if (whichchar.match(/^(?:0x[0-9A-F]+|[0-9]+)$/i)) {
+// $ syntax highlighting
+whichchar = String.fromCodePoint(parseInt(whichchar));
+}
+const resultnextchar = parser.GetArgument(name);
+const resultnotnextchar = parser.GetArgument(name);
+const gotchar = (parser.GetNext() === whichchar);
+useArgument(parser, gotchar ? resultnextchar : resultnotnextchar);
+},
+// This function implements an ifblank macro.
+IfblankFunction(parser, name) {
+const blankarg = parser.GetArgument(name);
+const resultblank = parser.GetArgument(name);
+const resultnotblank = parser.GetArgument(name);
+const isblank = (blankarg.trim() == "");
+useArgument(parser, isblank ? resultblank : resultnotblank);
+},
+// This function implements an ifstrequal macro.
+IfstrequalFunction(parser, name) {
+const strequalfirst = parser.GetArgument(name);
+const strequalsecond = parser.GetArgument(name);
+const resultequal = parser.GetArgument(name);
+const resultnotequal = parser.GetArgument(name);
+const isequal = (strequalfirst == strequalsecond);
+useArgument(parser, isequal ? resultequal : resultnotequal);
+},
+// This function implements a gsub macro.
+GsubstituteFunction(parser, name) {
+const gsubfirst = parser.GetArgument(name);
+const gsubsecond = parser.GetArgument(name);
+const gsubthird = parser.GetArgument(name);
+let gsubresult=gsubfirst.replace(gsubsecond, gsubthird);
+useArgument(parser, gsubresult);
+},
+// This function modifies the equation numbers.
+SeteqnumberFunction(parser, name) {
+// Get the macro parameters
+const star = parser.GetStar(); // true if there is a *
+const optBrackets = parser.GetBrackets(name); // contents of optional brackets
+const newsubequations = parser.GetArgument(name); // the subequations argument
+const neweqsection = parser.GetArgument(name); // the eq section argument
+const neweqnumber = parser.GetArgument(name); // the eq number argument
+MathJax.config.subequations=newsubequations ; // a string with boolean meaning
+MathJax.config.section=neweqsection ; // a string with numeric meaning
+parser.tags.counter = parser.tags.allCounter = neweqnumber ;
+}
+});
+// Create the Lwarp-macros package
+Configuration.create('Lwarp-macros', {
+handler: {macro: ['Lwarp-macros']}
+});
+MathJax.startup.defaultReady();
+// For forward references:
+MathJax.startup.input[0].preFilters.add(({math}) => {
+if (math.inputData.recompile){
+MathJax.config.subequations = math.inputData.recompile.subequations;
+MathJax.config.section = math.inputData.recompile.section;
+}
+});
+MathJax.startup.input[0].postFilters.add(({math}) => {
+if (math.inputData.recompile){
+math.inputData.recompile.subequations = MathJax.config.subequations;
+math.inputData.recompile.section = MathJax.config.section;
+}
+});
+// For \left, \right with unicode-math:
+const {DelimiterMap} = MathJax._.input.tex.SymbolMap;
+const {Symbol} = MathJax._.input.tex.Symbol;
+const {MapHandler} = MathJax._.input.tex.MapHandler;
+const delimiter = MapHandler.getMap('delimiter');
+delimiter.add('\\lBrack', new Symbol('\\lBrack', '\u27E6'));
+delimiter.add('\\rBrack', new Symbol('\\rBrack', '\u27E7'));
+delimiter.add('\\lAngle', new Symbol('\\lAngle', '\u27EA'));
+delimiter.add('\\rAngle', new Symbol('\\rAngle', '\u27EB'));
+delimiter.add('\\lbrbrak', new Symbol('\\lbrbrak', '\u2772'));
+delimiter.add('\\rbrbrak', new Symbol('\\rbrbrak', '\u2773'));
+delimiter.add('\\lbag', new Symbol('\\lbag', '\u27C5'));
+delimiter.add('\\rbag', new Symbol('\\rbag', '\u27C6'));
+delimiter.add('\\llparenthesis', new Symbol('\\llparenthesis', '\u2987'));
+delimiter.add('\\rrparenthesis', new Symbol('\\rrparenthesis', '\u2988'));
+delimiter.add('\\llangle', new Symbol('\\llangle', '\u2989'));
+delimiter.add('\\rrangle', new Symbol('\\rrangle', '\u298A'));
+delimiter.add('\\Lbrbrak', new Symbol('\\Lbrbrak', '\u27EC'));
+delimiter.add('\\Rbrbrak', new Symbol('\\Rbrbrak', '\u27ED'));
+delimiter.add('\\lBrace', new Symbol('\\lBrace', '\u2983'));
+delimiter.add('\\rBrace', new Symbol('\\rBrace', '\u2984'));
+delimiter.add('\\lParen', new Symbol('\\lParen', '\u2985'));
+delimiter.add('\\rParen', new Symbol('\\rParen', '\u2986'));
+delimiter.add('\\lbrackubar', new Symbol('\\lbrackubar', '\u298B'));
+delimiter.add('\\rbrackubar', new Symbol('\\rbrackubar', '\u298C'));
+delimiter.add('\\lbrackultick', new Symbol('\\lbrackultick', '\u298D'));
+delimiter.add('\\rbracklrtick', new Symbol('\\rbracklrtick', '\u298E'));
+delimiter.add('\\lbracklltick', new Symbol('\\lbracklltick', '\u298F'));
+delimiter.add('\\rbrackurtick', new Symbol('\\rbrackurtick', '\u2990'));
+delimiter.add('\\langledot', new Symbol('\\langledot', '\u2991'));
+delimiter.add('\\rangledot', new Symbol('\\rangledot', '\u2992'));
+delimiter.add('\\lparenless', new Symbol('\\lparenless', '\u2993'));
+delimiter.add('\\rparengtr', new Symbol('\\rparengtr', '\u2994'));
+delimiter.add('\\Lparengtr', new Symbol('\\Lparengtr', '\u2995'));
+delimiter.add('\\Rparenless', new Symbol('\\Rparenless', '\u2996'));
+delimiter.add('\\lblkbrbrak', new Symbol('\\lblkbrbrak', '\u2997'));
+delimiter.add('\\rblkbrbrak', new Symbol('\\rblkbrbrak', '\u2998'));
+delimiter.add('\\lvzigzag', new Symbol('\\lvzigzag', '\u29D8'));
+delimiter.add('\\rvzigzag', new Symbol('\\rvzigzag', '\u29D9'));
+delimiter.add('\\Lvzigzag', new Symbol('\\Lvzigzag', '\u29DA'));
+delimiter.add('\\Rvzigzag', new Symbol('\\Rvzigzag', '\u29DB'));
+delimiter.add('\\lcurvyangle', new Symbol('\\lcurvyangle', '\u29FC'));
+delimiter.add('\\rcurvyangle', new Symbol('\\rcurvyangle', '\u29FD'));
+delimiter.add('\\Vvert', new Symbol('\\Vvert', '\u2980'));
+} // ready
+}, // startup
+tex: {
+packages: {'[+]': ['tagformat', 'Lwarp-macros', 'textmacros']},
+tags: "ams",
+tagformat: {
+number: function (n) {
+if(MathJax.config.subequations==0)
+return(MathJax.config.section + n);
+else
+return(MathJax.config.section + String.fromCharCode(96+n));
+},
+},
+}
+}
+</script>
+<script
+id="MathJax-script"
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
+></script>
+</head>
+<body>
+<a id="main-html-autopage-661"></a>
+<div class="pagegrid">
+<nav class="topnavigation"><a href="main-html.html" class="linkhome" >
+Головна</a></nav>
+<div class="sidetoccontainer">
+<nav class="sidetoc">
+<div class="sidetoctitle">
+<p>
+<span class="sidetocthetitle">Квантово-механічні методи обчислення</span>
+</p>
+<p class="sidetoc-meta"><a href="../PyscfBook/index.html">Про посібник</a><span aria-hidden="true">·</span><a href="../PyscfBook/pyscfBook.pdf">PDF</a></p>
+</div>
+<div class="sidetoccontents">
+<p>
+<a href="main-html.html" class="linkhome" >
+Головна</a>
+</p>
+<p>
+<a href="preface.html#autosec-7" class="tocchapter" >
+Передмова</a>
+</p>
+<p>
+<a href="preface.html#autosec-8" class="tocsection" >
+Актуальність квантово-механічних обчислень</a>
+</p>
+<p>
+<a href="preface.html#autosec-9" class="tocsection" >
+Передумови</a>
+</p>
+<p>
+<a href="preface.html#autosec-13" class="tocsection" >
+Організація навчальних матеріалів</a>
+</p>
+<p>
+<a href="preface.html#autosec-19" class="tocsection" >
+Як користуватися посібником</a>
+</p>
+<p>
+<a href="preface.html#autosec-20" class="tocsection" >
+Зворотний зв’язок</a>
+</p>
+<p>
+<a href="preface.html#autosec-21" class="tocsection" >
+Ліцензія та використання</a>
+</p>
+<p>
+<a href="welcome.html#autosec-25" class="tocpart" >
+<span class="sectionnumber">I</span><span class="toctitle">&#x2003;Вступ до PySCF: основи та перші кроки</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-26" class="tocchapter" >
+<span class="sectionnumber">1</span><span class="toctitle">&#x2003;Знайомство з PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-27" class="tocsection" >
+<span class="sectionnumber">1.1</span><span class="toctitle">&#x2003;PySCF: концепція та філософія</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-28" class="tocsection" >
+<span class="sectionnumber">1.2</span><span class="toctitle">&#x2003;Основні можливості PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-29" class="tocsection" >
+<span class="sectionnumber">1.3</span><span class="toctitle">&#x2003;Архітектура і дизайн PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-36" class="tocsection" >
+<span class="sectionnumber">1.4</span><span class="toctitle">&#x2003;Порівняння з іншими програмами</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-40" class="tocsection" >
+<span class="sectionnumber">1.5</span><span class="toctitle">&#x2003;Встановлення PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-58" class="tocsection" >
+<span class="sectionnumber">1.6</span><span class="toctitle">&#x2003;Базова структура програми на PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-62" class="tocsection" >
+<span class="sectionnumber">1.7</span><span class="toctitle">&#x2003;Система одиниць та конвенції</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-71" class="tocsection" >
+<span class="sectionnumber">1.8</span><span class="toctitle">&#x2003;Документація та ресурси</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-76" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="welcome.html#autosec-77" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="mole.html#autosec-84" class="tocchapter" >
+<span class="sectionnumber">2</span><span class="toctitle">&#x2003;Базові об’єкти <kbd>PySCF</kbd></span></a>
+</p>
+<p>
+<a href="mole.html#autosec-85" class="tocsection" >
+<span class="sectionnumber">2.1</span><span class="toctitle">&#x2003;Молекулярний об’єкт (Mole)</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-109" class="tocsection" >
+<span class="sectionnumber">2.2</span><span class="toctitle">&#x2003;Періодичний об’єкт (Cell)</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-117" class="tocsection" >
+<span class="sectionnumber">2.3</span><span class="toctitle">&#x2003;Базисні набори в <kbd>PySCF</kbd></span></a>
+</p>
+<p>
+<a href="mole.html#autosec-128" class="tocsection" >
+<span class="sectionnumber">2.4</span><span class="toctitle">&#x2003;Симетрія в атомних розрахунках</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-134" class="tocsection" >
+<span class="sectionnumber">2.5</span><span class="toctitle">&#x2003;Спін та мультиплетність</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-138" class="tocsection" >
+<span class="sectionnumber">2.6</span><span class="toctitle">&#x2003;Типова схема розрахунків у <kbd>PySCF</kbd></span></a>
+</p>
+<p>
+<a href="mole.html#autosec-139" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="mole.html#autosec-140" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-147" class="tocpart" >
+<span class="sectionnumber">II</span><span class="toctitle">&#x2003;Ab Initio методи: від Хартрі-Фока до пост-HF і DFT</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-148" class="tocchapter" >
+<span class="sectionnumber">3</span><span class="toctitle">&#x2003;Метод Хартрі-Фока</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-149" class="tocsection" >
+<span class="sectionnumber">3.1</span><span class="toctitle">&#x2003;Теоретичні основи методу Хартрі–Фока</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-155" class="tocsection" >
+<span class="sectionnumber">3.2</span><span class="toctitle">&#x2003;SFC-процедура</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-160" class="tocsection" >
+<span class="sectionnumber">3.3</span><span class="toctitle">&#x2003;Які бувають базиси</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-169" class="tocsection" >
+<span class="sectionnumber">3.4</span><span class="toctitle">&#x2003;Варіанти методу Хартрі–Фока</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-195" class="tocsection" >
+<span class="sectionnumber">3.5</span><span class="toctitle">&#x2003;Метод UHF та спінове забруднення</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-205" class="tocsection" >
+<span class="sectionnumber">3.6</span><span class="toctitle">&#x2003;Прості атомні системи</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-212" class="tocsection" >
+<span class="sectionnumber">3.7</span><span class="toctitle">&#x2003;Атоми другого періоду (Li–Ne)</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-248" class="tocsection" >
+<span class="sectionnumber">3.8</span><span class="toctitle">&#x2003;Енергія, орбіталі та електронна густина</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-278" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-279" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="diatomic.html#autosec-314" class="tocchapter" >
+<span class="sectionnumber">4</span><span class="toctitle">&#x2003;Метод Хартрі–Фока для простих молекул</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-319" class="tocsection" >
+<span class="sectionnumber">4.1</span><span class="toctitle">&#x2003;Наближення Борна–Опенгеймера</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-320" class="tocsection" >
+<span class="sectionnumber">4.2</span><span class="toctitle">&#x2003;Орбіталі і електронні стани молекул</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-332" class="tocsection" >
+<span class="sectionnumber">4.3</span><span class="toctitle">&#x2003;Модельні молекули: \(\mathrm {H_{2}^{+}}\) та \(\mathrm {H_{2}}\)</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-345" class="tocsection" >
+<span class="sectionnumber">4.4</span><span class="toctitle">&#x2003;Іон молекули водню \(\mathrm {H_{2}^{+}}\)</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-382" class="tocsection" >
+<span class="sectionnumber">4.5</span><span class="toctitle">&#x2003;Крива потенціальної енергії</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-402" class="tocsection" >
+<span class="sectionnumber">4.6</span><span class="toctitle">&#x2003;Молекула водню \(\mathrm {H_{2}}\)</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-435" class="tocsection" >
+<span class="sectionnumber">4.7</span><span class="toctitle">&#x2003;Дипольний момент молекул</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-463" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="diatomic.html#autosec-464" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="post-hf.html#autosec-519" class="tocchapter" >
+<span class="sectionnumber">5</span><span class="toctitle">&#x2003;Пост-Хартрі-Фоківські методи</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-520" class="tocsection" >
+<span class="sectionnumber">5.1</span><span class="toctitle">&#x2003;Вступ до електронної кореляції</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-531" class="tocsection" >
+<span class="sectionnumber">5.2</span><span class="toctitle">&#x2003;Теорія збурень Møller–Plesset (MP2)</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-548" class="tocsection" >
+<span class="sectionnumber">5.3</span><span class="toctitle">&#x2003;Основи методу конфігураційної взаємодії</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-565" class="tocsection" >
+<span class="sectionnumber">5.4</span><span class="toctitle">&#x2003;Метод зв’язаних кластерів</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-586" class="tocsection" >
+<span class="sectionnumber">5.5</span><span class="toctitle">&#x2003;Метод повного активного простору конфігурацій</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-608" class="tocsection" >
+<span class="sectionnumber">5.6</span><span class="toctitle">&#x2003;Функціонал енергії та натуральні орбіталі</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-616" class="tocsection" >
+<span class="sectionnumber">5.7</span><span class="toctitle">&#x2003;Межі наближень і рівняння Шредінґера</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-623" class="tocsection" >
+<span class="sectionnumber">5.8</span><span class="toctitle">&#x2003;Корисні посилання</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-624" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="post-hf.html#autosec-626" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="dft.html#autosec-663" class="tocchapter" >
+<span class="sectionnumber">6</span><span class="toctitle">&#x2003;Теорія функціоналу густини (DFT)</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-664" class="tocsection" >
+<span class="sectionnumber">6.1</span><span class="toctitle">&#x2003;Основи теорії функціоналу густини</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-675" class="tocsection" >
+<span class="sectionnumber">6.2</span><span class="toctitle">&#x2003;Базова структура DFT розрахунку</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-683" class="tocsection" >
+<span class="sectionnumber">6.3</span><span class="toctitle">&#x2003;Функціонали обміну-кореляції</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-714" class="tocsection" >
+<span class="sectionnumber">6.4</span><span class="toctitle">&#x2003;Практичні рекомендації</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-716" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="dft.html#autosec-717" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="response.html#autosec-764" class="tocpart" >
+<span class="sectionnumber">III</span><span class="toctitle">&#x2003;Властивості молекул</span></a>
+</p>
+<p>
+<a href="response.html#autosec-765" class="tocchapter" >
+<span class="sectionnumber">7</span><span class="toctitle">&#x2003;Молекулярні властивості як похідні енергії</span></a>
+</p>
+<p>
+<a href="response.html#autosec-766" class="tocsection" >
+<span class="sectionnumber">7.1</span><span class="toctitle">&#x2003;Молекулярні властивості як похідні енергії</span></a>
+</p>
+<p>
+<a href="response.html#autosec-773" class="tocsection" >
+<span class="sectionnumber">7.2</span><span class="toctitle">&#x2003;Чисельні та аналітичні похідні</span></a>
+</p>
+<p>
+<a href="response.html#autosec-777" class="tocsection" >
+<span class="sectionnumber">7.3</span><span class="toctitle">&#x2003;Варіаційні методи та залежність енергії від параметрів</span></a>
+</p>
+<p>
+<a href="response.html#autosec-778" class="tocsection" >
+<span class="sectionnumber">7.4</span><span class="toctitle">&#x2003;Аналітичні похідні в методі Хартрі-Фока</span></a>
+</p>
+<p>
+<a href="response.html#autosec-800" class="tocsection" >
+<span class="sectionnumber">7.5</span><span class="toctitle">&#x2003;Поляризовність у методі HF</span></a>
+</p>
+<p>
+<a href="response.html#autosec-812" class="tocsection" >
+<span class="sectionnumber">7.6</span><span class="toctitle">&#x2003;Ядерний гесіан у методі HF</span></a>
+</p>
+<p>
+<a href="response.html#autosec-816" class="tocsection" >
+<span class="sectionnumber">7.7</span><span class="toctitle">&#x2003;Оптимізація геометрії</span></a>
+</p>
+<p>
+<a href="response.html#autosec-824" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="vibrations.html#autosec-851" class="tocchapter" >
+<span class="sectionnumber">8</span><span class="toctitle">&#x2003;Коливальні властивості молекул</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-854" class="tocsection" >
+<span class="sectionnumber">8.1</span><span class="toctitle">&#x2003;Гессіан та нормальні моди</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-876" class="tocsection" >
+<span class="sectionnumber">8.2</span><span class="toctitle">&#x2003;Інфрачервоні (ІЧ) спектри</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-907" class="tocsection" >
+<span class="sectionnumber">8.3</span><span class="toctitle">&#x2003;Термохімія та нульова енергія</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-919" class="tocsection" >
+<span class="sectionnumber">8.4</span><span class="toctitle">&#x2003;Перехідні стани та уявні частоти</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-927" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="vibrations.html#autosec-928" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="excited-states.html#autosec-941" class="tocchapter" >
+<span class="sectionnumber">9</span><span class="toctitle">&#x2003;Збуджені стани та UV/VIS спектроскопія</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-942" class="tocsection" >
+<span class="sectionnumber">9.1</span><span class="toctitle">&#x2003;Спектроскопічні властивості: перехідні дипольні моменти і сили осцилятора</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-948" class="tocsection" >
+<span class="sectionnumber">9.2</span><span class="toctitle">&#x2003;Збуджені стани в рамках методу Хартрі–Фока</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-954" class="tocsection" >
+<span class="sectionnumber">9.3</span><span class="toctitle">&#x2003;Часозалежна теорія функціонала густини (TD-DFT)</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-958" class="tocsection" >
+<span class="sectionnumber">9.4</span><span class="toctitle">&#x2003;Збуджені стани у методах конфігураційної взаємодії</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-959" class="tocsection" >
+<span class="sectionnumber">9.5</span><span class="toctitle">&#x2003;Метод рівнянь руху (EOM)</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-973" class="tocsection" >
+<span class="sectionnumber">9.6</span><span class="toctitle">&#x2003;Збуджені стани у CASSCF / NEVPT2</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-974" class="tocsection" >
+<span class="sectionnumber">9.7</span><span class="toctitle">&#x2003;Рекомендації з вибору методу</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-975" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="excited-states.html#autosec-976" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="appendices.html#autosec-991" class="tocchapter" >
+Додатки</a>
+</p>
+<p>
+<a href="appendices.html#autosec-992" class="tocsection" >
+<span class="sectionnumber">А</span><span class="toctitle">&#x2003;Список абревіатур</span></a>
+</p>
+<p>
+<a href="appendices.html#autosec-993" class="tocsection" >
+<span class="sectionnumber">Б</span><span class="toctitle">&#x2003;Молекулярно-орбітальне (МО) представлення</span></a>
+</p>
+<p>
+<a href="appendices.html#autosec-999" class="tocsection" >
+<span class="sectionnumber">В</span><span class="toctitle">&#x2003;Метод DIIS та прискорення збіжності SCF</span></a>
+</p>
+<p>
+<a href="appendices.html#autosec-1000" class="tocsection" >
+<span class="sectionnumber">Г</span><span class="toctitle">&#x2003;Проблеми збіжності SCF та їх усунення</span></a>
+</p>
+<p>
+<a href="bibliography.html#autosec-1020" class="tocchapter" >
+Література</a>
+</p>
+</div>
+</nav>
+</div>
+<main class="bodycontainer" data-pagefind-body data-pagefind-meta="title[data-title]" data-title="Теорія функціоналу густини (DFT)">
+<section class="textbody">
+<h1 data-pagefind-ignore>Квантово-механічні методи обчислення</h1>
+<!--MathJax customizations:-->
+<div data-nosnippet
+style="display:none"
+>
+\(\newcommand{\footnotename}{footnote}\)
+\(\def \LWRfootnote {1}\)
+\(\newcommand {\footnote }[2][\LWRfootnote ]{{}^{\mathrm {#1}}}\)
+\(\newcommand {\footnotemark }[1][\LWRfootnote ]{{}^{\mathrm {#1}}}\)
+\(\let \LWRorighspace \hspace \)
+\(\renewcommand {\hspace }{\ifstar \LWRorighspace \LWRorighspace }\)
+\(\newcommand {\TextOrMath }[2]{#2}\)
+\(\newcommand {\mathnormal }[1]{{#1}}\)
+\(\newcommand \ensuremath [1]{#1}\)
+\(\newcommand {\LWRframebox }[2][]{\fbox {#2}} \newcommand {\framebox }[1][]{\LWRframebox } \)
+\(\newcommand {\setlength }[2]{}\)
+\(\newcommand {\addtolength }[2]{}\)
+\(\newcommand {\setcounter }[2]{}\)
+\(\newcommand {\addtocounter }[2]{}\)
+\(\newcommand {\arabic }[1]{}\)
+\(\newcommand {\number }[1]{}\)
+\(\newcommand {\noalign }[1]{\text {#1}\notag \\}\)
+\(\newcommand {\cline }[1]{}\)
+\(\newcommand {\directlua }[1]{\text {(directlua)}}\)
+\(\newcommand {\luatexdirectlua }[1]{\text {(directlua)}}\)
+\(\newcommand {\protect }{}\)
+\(\def \LWRabsorbnumber #1 {}\)
+\(\def \LWRabsorbquotenumber &quot;#1 {}\)
+\(\newcommand {\LWRabsorboption }[1][]{}\)
+\(\newcommand {\LWRabsorbtwooptions }[1][]{\LWRabsorboption }\)
+\(\def \mathchar {\ifnextchar &quot;\LWRabsorbquotenumber \LWRabsorbnumber }\)
+\(\def \mathcode #1={\mathchar }\)
+\(\let \delcode \mathcode \)
+\(\let \delimiter \mathchar \)
+\(\def \oe {\unicode {x0153}}\)
+\(\def \OE {\unicode {x0152}}\)
+\(\def \ae {\unicode {x00E6}}\)
+\(\def \AE {\unicode {x00C6}}\)
+\(\def \aa {\unicode {x00E5}}\)
+\(\def \AA {\unicode {x00C5}}\)
+\(\def \o {\unicode {x00F8}}\)
+\(\def \O {\unicode {x00D8}}\)
+\(\def \l {\unicode {x0142}}\)
+\(\def \L {\unicode {x0141}}\)
+\(\def \ss {\unicode {x00DF}}\)
+\(\def \SS {\unicode {x1E9E}}\)
+\(\def \dag {\unicode {x2020}}\)
+\(\def \ddag {\unicode {x2021}}\)
+\(\def \P {\unicode {x00B6}}\)
+\(\def \copyright {\unicode {x00A9}}\)
+\(\def \pounds {\unicode {x00A3}}\)
+\(\let \LWRref \ref \)
+\(\renewcommand {\ref }{\ifstar \LWRref \LWRref }\)
+\( \newcommand {\multicolumn }[3]{#3}\)
+\(\require {textcomp}\)
+\(\require {colortbl}\)
+\(\let \LWRorigcolumncolor \columncolor \)
+\(\renewcommand {\columncolor }[2][named]{\LWRorigcolumncolor [#1]{#2}\LWRabsorbtwooptions }\)
+\(\let \LWRorigrowcolor \rowcolor \)
+\(\renewcommand {\rowcolor }[2][named]{\LWRorigrowcolor [#1]{#2}\LWRabsorbtwooptions }\)
+\(\let \LWRorigcellcolor \cellcolor \)
+\(\renewcommand {\cellcolor }[2][named]{\LWRorigcellcolor [#1]{#2}\LWRabsorbtwooptions }\)
+\(\newcommand {\intertext }[1]{\text {#1}\notag \\}\)
+\(\let \Hat \hat \)
+\(\let \Check \check \)
+\(\let \Tilde \tilde \)
+\(\let \Acute \acute \)
+\(\let \Grave \grave \)
+\(\let \Dot \dot \)
+\(\let \Ddot \ddot \)
+\(\let \Breve \breve \)
+\(\let \Bar \bar \)
+\(\let \Vec \vec \)
+\(\let \symnormal \mathit \)
+\(\let \symliteral \mathrm \)
+\(\let \symbb \mathbb \)
+\(\let \symbbit \mathbb \)
+\(\let \symcal \mathcal \)
+\(\let \symscr \mathscr \)
+\(\let \symfrak \mathfrak \)
+\(\let \symsfup \mathsf \)
+\(\let \symsfit \mathit \)
+\(\let \symbfsf \mathbf \)
+\(\let \symbfup \mathbf \)
+\(\newcommand {\symbfit }[1]{\boldsymbol {#1}}\)
+\(\let \symbfcal \mathcal \)
+\(\let \symbfscr \mathscr \)
+\(\let \symbffrak \mathfrak \)
+\(\let \symbfsfup \mathbf \)
+\(\newcommand {\symbfsfit }[1]{\boldsymbol {#1}}\)
+\(\let \symup \mathrm \)
+\(\let \symbf \mathbf \)
+\(\let \symit \mathit \)
+\(\let \symtt \mathtt \)
+\(\let \symbffrac \mathbffrac \)
+\(\newcommand {\mathfence }[1]{\mathord {#1}}\)
+\(\newcommand {\mathover }[1]{#1}\)
+\(\newcommand {\mathunder }[1]{#1}\)
+\(\newcommand {\mathaccent }[1]{#1}\)
+\(\newcommand {\mathbotaccent }[1]{#1}\)
+\(\newcommand {\mathalpha }[1]{\mathord {#1}}\)
+\(\def\upAlpha{\unicode{x0391}}\)
+\(\def\upBeta{\unicode{x0392}}\)
+\(\def\upGamma{\unicode{x0393}}\)
+\(\def\upDigamma{\unicode{x03DC}}\)
+\(\def\upDelta{\unicode{x0394}}\)
+\(\def\upEpsilon{\unicode{x0395}}\)
+\(\def\upZeta{\unicode{x0396}}\)
+\(\def\upEta{\unicode{x0397}}\)
+\(\def\upTheta{\unicode{x0398}}\)
+\(\def\upVartheta{\unicode{x03F4}}\)
+\(\def\upIota{\unicode{x0399}}\)
+\(\def\upKappa{\unicode{x039A}}\)
+\(\def\upLambda{\unicode{x039B}}\)
+\(\def\upMu{\unicode{x039C}}\)
+\(\def\upNu{\unicode{x039D}}\)
+\(\def\upXi{\unicode{x039E}}\)
+\(\def\upOmicron{\unicode{x039F}}\)
+\(\def\upPi{\unicode{x03A0}}\)
+\(\def\upVarpi{\unicode{x03D6}}\)
+\(\def\upRho{\unicode{x03A1}}\)
+\(\def\upSigma{\unicode{x03A3}}\)
+\(\def\upTau{\unicode{x03A4}}\)
+\(\def\upUpsilon{\unicode{x03A5}}\)
+\(\def\upPhi{\unicode{x03A6}}\)
+\(\def\upChi{\unicode{x03A7}}\)
+\(\def\upPsi{\unicode{x03A8}}\)
+\(\def\upOmega{\unicode{x03A9}}\)
+\(\def\itAlpha{\unicode{x1D6E2}}\)
+\(\def\itBeta{\unicode{x1D6E3}}\)
+\(\def\itGamma{\unicode{x1D6E4}}\)
+\(\def\itDigamma{\mathit{\unicode{x03DC}}}\)
+\(\def\itDelta{\unicode{x1D6E5}}\)
+\(\def\itEpsilon{\unicode{x1D6E6}}\)
+\(\def\itZeta{\unicode{x1D6E7}}\)
+\(\def\itEta{\unicode{x1D6E8}}\)
+\(\def\itTheta{\unicode{x1D6E9}}\)
+\(\def\itVartheta{\unicode{x1D6F3}}\)
+\(\def\itIota{\unicode{x1D6EA}}\)
+\(\def\itKappa{\unicode{x1D6EB}}\)
+\(\def\itLambda{\unicode{x1D6EC}}\)
+\(\def\itMu{\unicode{x1D6ED}}\)
+\(\def\itNu{\unicode{x1D6EE}}\)
+\(\def\itXi{\unicode{x1D6EF}}\)
+\(\def\itOmicron{\unicode{x1D6F0}}\)
+\(\def\itPi{\unicode{x1D6F1}}\)
+\(\def\itRho{\unicode{x1D6F2}}\)
+\(\def\itSigma{\unicode{x1D6F4}}\)
+\(\def\itTau{\unicode{x1D6F5}}\)
+\(\def\itUpsilon{\unicode{x1D6F6}}\)
+\(\def\itPhi{\unicode{x1D6F7}}\)
+\(\def\itChi{\unicode{x1D6F8}}\)
+\(\def\itPsi{\unicode{x1D6F9}}\)
+\(\def\itOmega{\unicode{x1D6FA}}\)
+\(\def\upalpha{\unicode{x03B1}}\)
+\(\def\upbeta{\unicode{x03B2}}\)
+\(\def\upvarbeta{\unicode{x03D0}}\)
+\(\def\upgamma{\unicode{x03B3}}\)
+\(\def\updigamma{\unicode{x03DD}}\)
+\(\def\updelta{\unicode{x03B4}}\)
+\(\def\upepsilon{\unicode{x03F5}}\)
+\(\def\upvarepsilon{\unicode{x03B5}}\)
+\(\def\upzeta{\unicode{x03B6}}\)
+\(\def\upeta{\unicode{x03B7}}\)
+\(\def\uptheta{\unicode{x03B8}}\)
+\(\def\upvartheta{\unicode{x03D1}}\)
+\(\def\upiota{\unicode{x03B9}}\)
+\(\def\upkappa{\unicode{x03BA}}\)
+\(\def\upvarkappa{\unicode{x03F0}}\)
+\(\def\uplambda{\unicode{x03BB}}\)
+\(\def\upmu{\unicode{x03BC}}\)
+\(\def\upnu{\unicode{x03BD}}\)
+\(\def\upxi{\unicode{x03BE}}\)
+\(\def\upomicron{\unicode{x03BF}}\)
+\(\def\uppi{\unicode{x03C0}}\)
+\(\def\upvarpi{\unicode{x03D6}}\)
+\(\def\uprho{\unicode{x03C1}}\)
+\(\def\upvarrho{\unicode{x03F1}}\)
+\(\def\upsigma{\unicode{x03C3}}\)
+\(\def\upvarsigma{\unicode{x03C2}}\)
+\(\def\uptau{\unicode{x03C4}}\)
+\(\def\upupsilon{\unicode{x03C5}}\)
+\(\def\upphi{\unicode{x03D5}}\)
+\(\def\upvarphi{\unicode{x03C6}}\)
+\(\def\upchi{\unicode{x03C7}}\)
+\(\def\uppsi{\unicode{x03C8}}\)
+\(\def\upomega{\unicode{x03C9}}\)
+\(\def\italpha{\unicode{x1D6FC}}\)
+\(\def\itbeta{\unicode{x1D6FD}}\)
+\(\def\itvarbeta{\unicode{x03D0}}\)
+\(\def\itgamma{\unicode{x1D6FE}}\)
+\(\def\itdigamma{\mathit{\unicode{x03DD}}}\)
+\(\def\itdelta{\unicode{x1D6FF}}\)
+\(\def\itepsilon{\unicode{x1D716}}\)
+\(\def\itvarepsilon{\unicode{x1D700}}\)
+\(\def\itzeta{\unicode{x1D701}}\)
+\(\def\iteta{\unicode{x1D702}}\)
+\(\def\ittheta{\unicode{x1D703}}\)
+\(\def\itvartheta{\unicode{x1D717}}\)
+\(\def\itiota{\unicode{x1D704}}\)
+\(\def\itkappa{\unicode{x1D705}}\)
+\(\def\itvarkappa{\unicode{x1D718}}\)
+\(\def\itlambda{\unicode{x1D706}}\)
+\(\def\itmu{\unicode{x1D707}}\)
+\(\def\itnu{\unicode{x1D708}}\)
+\(\def\itxi{\unicode{x1D709}}\)
+\(\def\itomicron{\unicode{x1D70A}}\)
+\(\def\itpi{\unicode{x1D70B}}\)
+\(\def\itvarpi{\unicode{x1D71B}}\)
+\(\def\itrho{\unicode{x1D70C}}\)
+\(\def\itvarrho{\unicode{x1D71A}}\)
+\(\def\itsigma{\unicode{x1D70E}}\)
+\(\def\itvarsigma{\unicode{x1D70D}}\)
+\(\def\ittau{\unicode{x1D70F}}\)
+\(\def\itupsilon{\unicode{x1D710}}\)
+\(\def\itphi{\unicode{x1D719}}\)
+\(\def\itvarphi{\unicode{x1D711}}\)
+\(\def\itchi{\unicode{x1D712}}\)
+\(\def\itpsi{\unicode{x1D713}}\)
+\(\def\itomega{\unicode{x1D714}}\)
+\(\let \lparen (\)
+\(\let \rparen )\)
+\(\newcommand {\cuberoot }[1]{\,{}^3\!\!\sqrt {#1}}\,\)
+\(\newcommand {\fourthroot }[1]{\,{}^4\!\!\sqrt {#1}}\,\)
+\(\newcommand {\longdivision }[1]{\mathord {\unicode {x027CC}#1}}\)
+\(\newcommand {\mathcomma }{,}\)
+\(\newcommand {\mathcolon }{:}\)
+\(\newcommand {\mathsemicolon }{;}\)
+\(\newcommand {\overbracket }[1]{\mathinner {\overline {\ulcorner {#1}\urcorner }}}\)
+\(\newcommand {\underbracket }[1]{\mathinner {\underline {\llcorner {#1}\lrcorner }}}\)
+\(\newcommand {\overbar }[1]{\mathord {#1\unicode {x00305}}}\)
+\(\newcommand {\ovhook }[1]{\mathord {#1\unicode {x00309}}}\)
+\(\newcommand {\ocirc }[1]{\mathord {#1\unicode {x0030A}}}\)
+\(\newcommand {\candra }[1]{\mathord {#1\unicode {x00310}}}\)
+\(\newcommand {\oturnedcomma }[1]{\mathord {#1\unicode {x00312}}}\)
+\(\newcommand {\ocommatopright }[1]{\mathord {#1\unicode {x00315}}}\)
+\(\newcommand {\droang }[1]{\mathord {#1\unicode {x0031A}}}\)
+\(\newcommand {\leftharpoonaccent }[1]{\mathord {#1\unicode {x020D0}}}\)
+\(\newcommand {\rightharpoonaccent }[1]{\mathord {#1\unicode {x020D1}}}\)
+\(\newcommand {\vertoverlay }[1]{\mathord {#1\unicode {x020D2}}}\)
+\(\newcommand {\leftarrowaccent }[1]{\mathord {#1\unicode {x020D0}}}\)
+\(\newcommand {\annuity }[1]{\mathord {#1\unicode {x020E7}}}\)
+\(\newcommand {\widebridgeabove }[1]{\mathord {#1\unicode {x020E9}}}\)
+\(\newcommand {\asteraccent }[1]{\mathord {#1\unicode {x020F0}}}\)
+\(\newcommand {\threeunderdot }[1]{\mathord {#1\unicode {x020E8}}}\)
+\(\newcommand {\Bbbsum }{\mathop {\unicode {x2140}}\limits }\)
+\(\newcommand {\oiint }{\mathop {\unicode {x222F}}\limits }\)
+\(\newcommand {\oiiint }{\mathop {\unicode {x2230}}\limits }\)
+\(\newcommand {\intclockwise }{\mathop {\unicode {x2231}}\limits }\)
+\(\newcommand {\ointclockwise }{\mathop {\unicode {x2232}}\limits }\)
+\(\newcommand {\ointctrclockwise }{\mathop {\unicode {x2233}}\limits }\)
+\(\newcommand {\varointclockwise }{\mathop {\unicode {x2232}}\limits }\)
+\(\newcommand {\leftouterjoin }{\mathop {\unicode {x27D5}}\limits }\)
+\(\newcommand {\rightouterjoin }{\mathop {\unicode {x27D6}}\limits }\)
+\(\newcommand {\fullouterjoin }{\mathop {\unicode {x27D7}}\limits }\)
+\(\newcommand {\bigbot }{\mathop {\unicode {x27D8}}\limits }\)
+\(\newcommand {\bigtop }{\mathop {\unicode {x27D9}}\limits }\)
+\(\newcommand {\xsol }{\mathop {\unicode {x29F8}}\limits }\)
+\(\newcommand {\xbsol }{\mathop {\unicode {x29F9}}\limits }\)
+\(\newcommand {\bigcupdot }{\mathop {\unicode {x2A03}}\limits }\)
+\(\newcommand {\bigsqcap }{\mathop {\unicode {x2A05}}\limits }\)
+\(\newcommand {\conjquant }{\mathop {\unicode {x2A07}}\limits }\)
+\(\newcommand {\disjquant }{\mathop {\unicode {x2A08}}\limits }\)
+\(\newcommand {\bigtimes }{\mathop {\unicode {x2A09}}\limits }\)
+\(\newcommand {\modtwosum }{\mathop {\unicode {x2A0A}}\limits }\)
+\(\newcommand {\sumint }{\mathop {\unicode {x2A0B}}\limits }\)
+\(\newcommand {\intbar }{\mathop {\unicode {x2A0D}}\limits }\)
+\(\newcommand {\intBar }{\mathop {\unicode {x2A0E}}\limits }\)
+\(\newcommand {\fint }{\mathop {\unicode {x2A0F}}\limits }\)
+\(\newcommand {\cirfnint }{\mathop {\unicode {x2A10}}\limits }\)
+\(\newcommand {\awint }{\mathop {\unicode {x2A11}}\limits }\)
+\(\newcommand {\rppolint }{\mathop {\unicode {x2A12}}\limits }\)
+\(\newcommand {\scpolint }{\mathop {\unicode {x2A13}}\limits }\)
+\(\newcommand {\npolint }{\mathop {\unicode {x2A14}}\limits }\)
+\(\newcommand {\pointint }{\mathop {\unicode {x2A15}}\limits }\)
+\(\newcommand {\sqint }{\mathop {\unicode {x2A16}}\limits }\)
+\(\newcommand {\intlarhk }{\mathop {\unicode {x2A17}}\limits }\)
+\(\newcommand {\intx }{\mathop {\unicode {x2A18}}\limits }\)
+\(\newcommand {\intcap }{\mathop {\unicode {x2A19}}\limits }\)
+\(\newcommand {\intcup }{\mathop {\unicode {x2A1A}}\limits }\)
+\(\newcommand {\upint }{\mathop {\unicode {x2A1B}}\limits }\)
+\(\newcommand {\lowint }{\mathop {\unicode {x2A1C}}\limits }\)
+\(\newcommand {\bigtriangleleft }{\mathop {\unicode {x2A1E}}\limits }\)
+\(\newcommand {\zcmp }{\mathop {\unicode {x2A1F}}\limits }\)
+\(\newcommand {\zpipe }{\mathop {\unicode {x2A20}}\limits }\)
+\(\newcommand {\zproject }{\mathop {\unicode {x2A21}}\limits }\)
+\(\newcommand {\biginterleave }{\mathop {\unicode {x2AFC}}\limits }\)
+\(\newcommand {\bigtalloblong }{\mathop {\unicode {x2AFF}}\limits }\)
+\(\newcommand {\arabicmaj }{\mathop {\unicode {x1EEF0}}\limits }\)
+\(\newcommand {\arabichad }{\mathop {\unicode {x1EEF1}}\limits }\)
+\(\newcommand {\nicefrac }[3][]{\mathinner {{}^{#2}\!/\!_{#3}}}\)
+\(\require {mhchem}\)
+\(\newcommand {\LWRnicearrayarray }[1]{\begin {array}{#1}}\)
+\(\def \LWRnicearrayarrayopt #1[#2] {\begin {array}{#1}}\)
+\(\newenvironment {NiceArray}[2][]{\ifnextchar [{\LWRnicearrayarrayopt {#2}}{\LWRnicearrayarray {#2}}}{\end {array}}\)
+\(\newcommand {\LWRnicearraywithdelimtwo }[2][]{\ifnextchar [{\LWRnicearrayarrayopt {#2}}{\LWRnicearrayarray {#2}}}\)
+\(\newenvironment {NiceArrayWithDelims}[2]{\def \LWRnicearrayrightdelim {\right #2}\left #1\LWRnicearraywithdelimtwo }{\end {array}\LWRnicearrayrightdelim }\)
+\(\newenvironment {pNiceArray} {\begin {NiceArrayWithDelims}{(}{)}} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {bNiceArray} {\begin {NiceArrayWithDelims}{[}{]}} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {BNiceArray} {\begin {NiceArrayWithDelims}{\{}{\}}} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {vNiceArray} {\begin {NiceArrayWithDelims}{\vert }{\vert }} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {VNiceArray} {\begin {NiceArrayWithDelims}{\Vert }{\Vert }} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {NiceMatrix}[1][]{\begin {matrix}}{\end {matrix}}\)
+\(\newenvironment {pNiceMatrix}[1][]{\begin {pmatrix}}{\end {pmatrix}}\)
+\(\newenvironment {bNiceMatrix}[1][]{\begin {bmatrix}}{\end {bmatrix}}\)
+\(\newenvironment {BNiceMatrix}[1][]{\begin {Bmatrix}}{\end {Bmatrix}}\)
+\(\newenvironment {vNiceMatrix}[1][]{\begin {vmatrix}}{\end {vmatrix}}\)
+\(\newenvironment {VNiceMatrix}[1][]{\begin {Vmatrix}}{\end {Vmatrix}}\)
+\(\newcommand {\LWRnicematrixBlock }[1]{#1}\)
+\(\def \LWRnicematrixBlockopt &lt;#1&gt;#2{#2}\)
+\(\newcommand {\Block }[2][]{\ifnextchar &lt;\LWRnicematrixBlockopt \LWRnicematrixBlock }\)
+\(\newcommand {\diagbox }[2]{\begin {array}{l}\hfill \quad #2\\\hline #1\quad \hfill \end {array}}\)
+\(\let \hdottedline \hdashline \)
+\(\newcommand {\Hline }[1][]{\hline }\)
+\(\newcommand {\CodeBefore }{}\)
+\(\newcommand {\Body }{}\)
+\(\newcommand {\CodeAfter }{}\)
+\(\newcommand {\line }[3][]{}\)
+\(\newcommand {\RowStyle }[2][]{}\)
+\(\newcommand {\LWRSubMatrix }[1][]{}\)
+\(\newcommand {\SubMatrix }[4]{\LWRSubMatrix }\)
+\(\newcommand {\OverBrace }[4][]{}\)
+\(\newcommand {\UnderBrace }[4][]{}\)
+\(\newcommand {\HBrace }[3][]{}\)
+\(\newcommand {\VBrace }[3][]{}\)
+\(\newcommand {\ShowCellNames }{}\)
+\(\newcommand {\tabularnote }[2][]{}\)
+\(\newcommand {\cellcolor }[3][]{}\)
+\(\newcommand {\rowcolor }[3][]{}\)
+\(\newcommand {\LWRrowcolors }[1][]{}\)
+\(\newcommand {\rowcolors }[4][]{\LWRrowcolors }\)
+\(\newcommand {\rowlistcolors }[3][]{\LWRrowcolors }\)
+\(\newcommand {\columncolor }[3][]{}\)
+\(\newcommand {\rectanglecolor }[4][]{}\)
+\(\newcommand {\arraycolor }[2][]{}\)
+\(\newcommand {\chessboardcolors }[3][]{}\)
+\(\newcommand {\ldots }[1][]{\dots }\)
+\(\newcommand {\Cdots }[1][]{\cdots }\)
+\(\newcommand {\Vdots }[1][]{\vdots }\)
+\(\newcommand {\Ddots }[1][]{\ddots }\)
+\(\newcommand {\Iddots }[1][]{\mathinner {\unicode {x22F0}}}\)
+\(\newcommand {\Hdotsfor }[1]{\ldots }\)
+\(\newcommand {\Vdotsfor }[1]{\vdots }\)
+\(\newcommand {\AutoNiceMatrix }[2]{\text {(AutoNiceMatrix #1)}}\)
+\(\let \pAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \bAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \BAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \vAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \VAutoNiceMatrix \AutoNiceMatrix \)
+\(\newcommand {\toprule }[1][]{\hline }\)
+\(\let \midrule \toprule \)
+\(\let \bottomrule \toprule \)
+\(\def \LWRbooktabscmidruleparen (#1)#2{}\)
+\(\newcommand {\LWRbooktabscmidrulenoparen }[1]{}\)
+\(\newcommand {\cmidrule }[1][]{\ifnextchar (\LWRbooktabscmidruleparen \LWRbooktabscmidrulenoparen }\)
+\(\newcommand {\morecmidrules }{}\)
+\(\newcommand {\specialrule }[3]{\hline }\)
+\(\newcommand {\addlinespace }[1][]{}\)
+\(\newcommand {\LWRsubmultirow }[2][]{#2}\)
+\(\newcommand {\LWRmultirow }[2][]{\LWRsubmultirow }\)
+\(\newcommand {\multirow }[2][]{\LWRmultirow }\)
+\(\newcommand {\mrowcell }{}\)
+\(\newcommand {\mcolrowcell }{}\)
+\(\newcommand {\STneed }[1]{}\)
+\(\DeclareMathOperator {\const }{const}\)
+\(\DeclareMathOperator {\Div }{div}\)
+\(\DeclareMathOperator {\Rot }{rot}\)
+\(\DeclareMathOperator {\Grad }{grad}\)
+\(\DeclareMathOperator {\inv }{inv}\)
+\(\DeclareMathOperator {\Tr }{Tr}\)
+\(\newcommand {\emf }{ℰ}\)
+\(\newcommand {\tikzmarknode }[2]{#2}\)
+\(\newcommand {\tikzmark }[1]{}\)
+\(\newcommand {\enquote }[1]{«#1»}\)
+\(\newcommand {\allowbreak }{}\)
+\(\newcommand {\mitlambda }{\lambda }\)
+\(\newcommand {\mitomega }{\omega }\)
+\(\newcommand {\mittheta }{\theta }\)
+\(\newcommand {\mitphi }{\varphi }\)
+\(\newcommand {\tcbhighmath }[1]{\boxed {#1}}\)
+\(\newcommand {\Efield }{\mathbf {E}}\)
+\(\newcommand {\Dfield }{\mathbf {D}}\)
+\(\newcommand {\Bfield }{\mathbf {B}}\)
+\(\newcommand {\Hfield }{\mathbf {H}}\)
+\(\newcommand {\ket }[1]{\left | #1 \right \rangle }\)
+\(\newcommand {\bra }[1]{\left \langle #1 \right |}\)
+\(\newcommand {\opbraket }[3]{\left \langle #1 \middle | #2 \middle | #3 \right \rangle }\)
+\(\newcommand {\diff }[2]{\frac {\partial #1}{\partial #2}}\)
+\(\newcommand {\ddiff }[2]{\frac {\partial ^2 #1}{\partial #2^2}}\)
+\(\newcommand {\grad }{\mathbf {\nabla }}\)
+\(\newcommand {\rot }{\mathbf {\nabla }\times }\)
+\(\newcommand {\divg }{\mathbf {\nabla }\cdot }\)
+\(\newcommand {\Laplasian }{\Delta }\)
+\(\newcommand {\EMF }{\mathcal {E}}\)
+\(\newcommand {\vxi }{\vec {\xi }}\)
+\(\newcommand {\vr }{\vec {r}}\)
+\(\newcommand {\vphi }{\varphi }\)
+\(\newcommand {\veps }{\varepsilon }\)
+\(\newcommand {\eff }{\mathrm {eff}}\)
+\(\newcommand {\PySCF }{\texttt {PySCF}}\)
+\(\newcommand {\vect }[1]{\mathbf {#1}}\)
+\(\newcommand {\symbf }[1]{\mathbf {#1}}\)
+\(\DeclareMathOperator {\sh }{sh}\)
+\(\DeclareMathOperator {\ch }{ch}\)
+\(\DeclareMathOperator {\tg }{tg}\)
+\(\DeclareMathOperator {\ctg }{ctg}\)
+\(\DeclareMathOperator {\arctg }{arctg}\)
+\(\DeclareMathOperator {\arcctg }{arcctg}\)
+\(\DeclareMathOperator {\cth }{cth}\)
+\(\DeclareMathOperator {\cosec }{cosec}\)
+\(\let \symsf \symsfup \)
+\(\def\Alpha{\unicode{x0391}}\)
+\(\def\Beta{\unicode{x0392}}\)
+\(\def\Gamma{\unicode{x0393}}\)
+\(\def\Digamma{\unicode{x03DC}}\)
+\(\def\Delta{\unicode{x0394}}\)
+\(\def\Epsilon{\unicode{x0395}}\)
+\(\def\Zeta{\unicode{x0396}}\)
+\(\def\Eta{\unicode{x0397}}\)
+\(\def\Theta{\unicode{x0398}}\)
+\(\def\Vartheta{\unicode{x03F4}}\)
+\(\def\Iota{\unicode{x0399}}\)
+\(\def\Kappa{\unicode{x039A}}\)
+\(\def\Lambda{\unicode{x039B}}\)
+\(\def\Mu{\unicode{x039C}}\)
+\(\def\Nu{\unicode{x039D}}\)
+\(\def\Xi{\unicode{x039E}}\)
+\(\def\Omicron{\unicode{x039F}}\)
+\(\def\Pi{\unicode{x03A0}}\)
+\(\def\Varpi{\unicode{x03D6}}\)
+\(\def\Rho{\unicode{x03A1}}\)
+\(\def\Sigma{\unicode{x03A3}}\)
+\(\def\Tau{\unicode{x03A4}}\)
+\(\def\Upsilon{\unicode{x03A5}}\)
+\(\def\Phi{\unicode{x03A6}}\)
+\(\def\Chi{\unicode{x03A7}}\)
+\(\def\Psi{\unicode{x03A8}}\)
+\(\def\Omega{\unicode{x03A9}}\)
+\(\def\alpha{\unicode{x1D6FC}}\)
+\(\def\beta{\unicode{x1D6FD}}\)
+\(\def\varbeta{\unicode{x03D0}}\)
+\(\def\gamma{\unicode{x1D6FE}}\)
+\(\def\digamma{\mathit{\unicode{x03DD}}}\)
+\(\def\delta{\unicode{x1D6FF}}\)
+\(\def\epsilon{\unicode{x1D716}}\)
+\(\def\varepsilon{\unicode{x1D700}}\)
+\(\def\zeta{\unicode{x1D701}}\)
+\(\def\eta{\unicode{x1D702}}\)
+\(\def\theta{\unicode{x1D703}}\)
+\(\def\vartheta{\unicode{x1D717}}\)
+\(\def\iota{\unicode{x1D704}}\)
+\(\def\kappa{\unicode{x1D705}}\)
+\(\def\varkappa{\unicode{x1D718}}\)
+\(\def\lambda{\unicode{x1D706}}\)
+\(\def\mu{\unicode{x1D707}}\)
+\(\def\nu{\unicode{x1D708}}\)
+\(\def\xi{\unicode{x1D709}}\)
+\(\def\omicron{\unicode{x1D70A}}\)
+\(\def\pi{\unicode{x1D70B}}\)
+\(\def\varpi{\unicode{x1D71B}}\)
+\(\def\rho{\unicode{x1D70C}}\)
+\(\def\varrho{\unicode{x1D71A}}\)
+\(\def\sigma{\unicode{x1D70E}}\)
+\(\def\varsigma{\unicode{x1D70D}}\)
+\(\def\tau{\unicode{x1D70F}}\)
+\(\def\upsilon{\unicode{x1D710}}\)
+\(\def\phi{\unicode{x1D719}}\)
+\(\def\varphi{\unicode{x1D711}}\)
+\(\def\chi{\unicode{x1D712}}\)
+\(\def\psi{\unicode{x1D713}}\)
+\(\def\omega{\unicode{x1D714}}\)
+</div>
+<!--
+...... chapter Теорія функціоналу густини (DFT) ......
+-->
+<h3 id="autosec-663"><span class="sectionnumber">6&#x2003;</span>Теорія функціоналу густини (DFT)</h3>
+<a id="main-html-autopage-663"></a>
+<a id="main-html-autofile-7"></a>
+<a id="DFTMethod"></a>
+<p>
+Розглянуті вище пост-Хартрі–Фоківські методи показують, як поступово можна вдосконалювати апроксимацію Хартрі–Фока, враховуючи електронну кореляцію шляхом розширення хвильової функції. Однак усі ці підходи залишаються в межах
+<em>хвильово-функціональної парадигми</em>, що швидко стає обчислювально непідйомною для великих систем.
+</p>
+<p>
+У спробі знайти простішу, але фізично змістовну альтернативу було запропоновано іншу концепцію — опис електронної системи через <em>густину електронів</em> \(\rho (\mathbf {r})\), що залежить лише від трьох просторових координат. Історично її витоки
+сягають <b>моделі Томаса–Фермі</b>, яка вперше пов’язала енергію електронного газу з його густиною. Хоч ця модель була грубою, саме з неї виросла сучасна <b>теорія функціонала густини (DFT)</b>, що поєднує фізичну інтуїцію з математичною строгістю і
+стала одним із найпотужніших інструментів сучасної квантової хімії.
+</p>
+<p>
+Ідея моделі Томаса–Фермі полягає в тому, що енергію системи можна виразити як функціонал від густини:
+</p>
+<p>
+\[ E[\rho ] = T_\text {TF}[\rho ] + \int v_\text {ext}(\mathbf {r})\,\rho (\mathbf {r})\,d\mathbf {r} + \frac {1}{2}\iint \frac {\rho (\mathbf {r})\,\rho (\mathbf {r}&apos;)}{|\mathbf {r}-\mathbf {r}&apos;|}
+\,d\mathbf {r}\,d\mathbf {r}&apos; , \]
+</p>
+<p>
+де \(v_\text {ext}(\mathbf {r})\) — <b>зовнішній потенціал</b>, тобто потенціал, який діє на електрони з боку зовнішніх джерел поля, але не створюється самими електронами. У звичайній атомно-молекулярній системі це <em>ядерний кулонівський
+потенціал</em>
+</p>
+<p>
+\[ v_\text {ext}(\mathbf {r}) = -\sum _A \frac {Z_A}{|\mathbf {r}-\mathbf {R}_A|}, \]
+</p>
+<p>
+де \(Z_A\) — заряд ядра \(A\), а \(\mathbf {R}_A\) — його координати.
+</p>
+<p>
+Кінетична енергія в моделі Томаса–Фермі наближено виражається через густину однорідного електронного газу:
+</p>
+<p>
+\[ T_\text {TF}[\rho ] = C_\text {F}\int \rho ^{5/3}(\mathbf {r})\,d\mathbf {r}, \qquad C_\text {F} = \frac {3}{10}\,(3\pi ^2)^{2/3} \]
+</p>
+<p>
+і є локальним наближенням до кінетичної енергії, отриманим із моделі однорідного електронного газу.
+</p>
+<p>
+Мінімізація цього функціонала за \(\rho (\mathbf {r})\) при фіксованій кількості електронів
+</p>
+<p>
+\[ \int \rho (\mathbf {r})\,d\mathbf {r} = N_e \]
+</p>
+<p>
+дає рівноважний розподіл густини для основного стану.
+</p>
+<p>
+Попри свою простоту, модель Томаса–Фермі стала першим кроком до <em>безхвильового</em> опису багаточастинкових систем. Вона виявилася якісно правильною для дуже великих атомних номерів, але не могла відтворювати хімічний зв’язок, тонку структуру
+електронної густини та ефекти обміну й кореляції.
+</p>
+<p>
+Саме спроби подолати ці обмеження призвели до народження <b>теорії функціонала густини (DFT)</b>. На відміну від моделі Томаса–Фермі, DFT базується на строгих теоремах Хоенберга–Кона, які гарантують існування точного функціонала енергії від густини та
+формують основу сучасних обчислювальних методів квантової хімії.
+</p>
+<!--
+...... section Основи теорії функціоналу густини ......
+-->
+<h4 id="autosec-664"><span class="sectionnumber">&#xA7;&#x202F;6.1&#x2003;</span>Основи теорії функціоналу густини</h4>
+<a id="main-html-autopage-664"></a>
+<!--
+...... subsection Теореми Хоенберга--Кона ......
+-->
+<h5 id="autosec-665"><span class="sectionnumber">6.1.1&#x2003;</span>Теореми Хоенберга–Кона</h5>
+<a id="main-html-autopage-665"></a>
+<p>
+Теорія функціоналу густини (<kbd>DFT</kbd>) є альтернативним підходом до розв’язання багатоелектронної задачі, який, на відміну від методу Хартрі–Фока (<kbd>HF</kbd>), не оперує багатовимірною хвильовою функцією \(\Psi (\mathbf {r}_1,\dots
+,\mathbf {r}_N)\), а використовує лише тривимірну електронну густину \(\rho (\mathbf {r})\).
+</p>
+<p>
+Основу DFT становлять дві фундаментальні теореми, доведені Хоенбергом та Коном (1964).
+</p>
+<!--
+...... paragraph Теорема 1 (Теорема існування). ......
+-->
+<p>
+<span class="paragraph" id="autosec-666">Теорема 1 (Теорема існування).</span>
+<a id="main-html-autopage-666"></a>
+Зовнішній потенціал \(v_{\text {ext}}(\mathbf {r})\) (а отже, і повна енергія системи) однозначно визначається електронною густиною основного стану \(\rho (\mathbf {r})\) з точністю до адитивної константи.
+</p>
+<p>
+Це означає, що електронна густина містить всю інформацію про систему:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{0}\)</span>
+<!--
+𝐸[𝜌] = 𝑇[𝜌] + 𝑉𝑒𝑒[𝜌] +
+ˆ
+𝑣ext
+(r)𝜌(r) 𝑑r. (6.1)
+-->
+<p>
+\begin{equation}
+E[\rho ] = T[\rho ] + V_{ee}[\rho ] + \int v_{\text {ext}}(\mathbf {r}) \rho (\mathbf {r})\, d\mathbf {r}.
+\end{equation}
+</p>
+<p>
+Тут:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> \(T[\rho ]\) — точна кінетична енергія електронів (у принципі, її можна виразити через хвильову функцію, але не відомо, як безпосередньо через густину);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(V_{ee}[\rho ]\) — повна взаємодія між електронами (включає як класичну кулонівську, так і квантову обмінно-кореляційну частину);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(\displaystyle \int v_{\text {ext}}(\mathbf {r}) \rho (\mathbf {r})\, d\mathbf {r}\) — енергія взаємодії електронів із зовнішнім потенціалом, який <em>відомий</em> із геометрії молекули:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{1}\)</span>
+<!--
+𝑣ext
+(r) = − ∑
+𝐴
+𝑍𝐴
+|r − R𝐴|
+.
+-->
+<p>
+\begin{equation*}
+v_{\text {ext}}(\mathbf {r}) = -\sum _A \frac {Z_A}{|\mathbf {r}-\mathbf {R}_A|}.
+\end{equation*}
+</p>
+<p>
+</p>
+</li>
+</ul>
+<p>
+Якщо б ми знали точну функціональну залежність \(T[\rho ]\) і \(V_{ee}[\rho ]\), то можна було б отримати енергію системи, не знаючи хвильової функції. Саме це і є головна ідея DFT: замінити пошук \(\Psi \) пошуком \(\rho (\mathbf {r})\).
+</p>
+<!--
+...... paragraph Теорема 2 (Варіаційний принцип). ......
+-->
+<p>
+<span class="paragraph" id="autosec-667">Теорема 2 (Варіаційний принцип).</span>
+<a id="main-html-autopage-667"></a>
+Існує універсальний функціонал енергії \(F[\rho ]\), який для будь-якої пробної густини \(\tilde {\rho }(\mathbf {r})\) задовольняє:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{1}\)</span>
+<!--
+𝐸0 ≤ 𝐸[ ̃
+𝜌] = 𝐹[ ̃
+𝜌] +
+ˆ
+𝑣ext
+(r) ̃
+𝜌(r) 𝑑r, (6.2)
+-->
+<p>
+\begin{equation}
+E_0 \leq E[\tilde {\rho }] = F[\tilde {\rho }] + \int v_{\text {ext}}(\mathbf {r}) \tilde {\rho }(\mathbf {r})\, d\mathbf {r},
+\end{equation}
+</p>
+<p>
+де \(E_0\) — точна енергія основного стану.
+</p>
+<p>
+Функціонал \(F[\rho ]\) є <em>універсальним</em>, тобто однаковим для всіх багаточастинкових систем незалежно від зовнішнього потенціалу, і має вигляд:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{2}\)</span>
+<!--
+𝐹[𝜌] = 𝑇[𝜌] + 𝑉𝑒𝑒[𝜌].
+-->
+<p>
+\begin{equation*}
+F[\rho ] = T[\rho ] + V_{ee}[\rho ].
+\end{equation*}
+</p>
+<p>
+<i>Ця теорема повністю аналогічна варіаційному принципу в HF</i>, тільки замість хвильової функції мінімізується енергія як функціонал густини:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{2}\)</span>
+<!--
+𝐸0 = min
+𝜌
+{𝐹[𝜌] +
+ˆ
+𝑣ext
+(r)𝜌(r) 𝑑r} .
+-->
+<p>
+\begin{equation*}
+E_0 = \min _\rho \left \{ F[\rho ] + \int v_{\text {ext}}(\mathbf {r}) \rho (\mathbf {r})\, d\mathbf {r} \right \}.
+\end{equation*}
+</p>
+<p>
+Проте сам функціонал \(F[\rho ]\) невідомий — і в цьому полягає центральна проблема DFT.
+</p>
+<p>
+У практичних реалізаціях (схема Кона–Шема) \(F[\rho ]\) поділяють на відомі й невідомі частини:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{2}\)</span>
+<!--
+𝐹[𝜌] = 𝑇𝑠[𝜌] + 𝐽[𝜌] + 𝐸𝑥𝑐[𝜌],
+-->
+<p>
+\begin{equation*}
+F[\rho ] = T_s[\rho ] + J[\rho ] + E_{xc}[\rho ],
+\end{equation*}
+</p>
+<p>
+де:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> \(T_s[\rho ]\) — кінетична енергія <b>невзаємодіючої</b> системи електронів (її можна обчислити з орбіталей Кона–Шема):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{2}\)</span>
+<!--
+𝑇𝑠[𝜌] = −
+1
+2
+occ
+∑
+𝑖
+ˆ
+𝜓∗
+𝑖
+(r)∇2𝜓𝑖(r) 𝑑r.
+-->
+<p>
+\begin{equation*}
+T_s[\rho ] = -\frac {1}{2} \sum _i^{\text {occ}} \int \psi _i^*(\mathbf {r}) \nabla ^2 \psi _i(\mathbf {r})\, d\mathbf {r}.
+\end{equation*}
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(J[\rho ]\) — класична кулонівська енергія Хартрі:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{2}\)</span>
+<!--
+𝐽[𝜌] =
+1
+2
+¨
+𝜌(r) 𝜌(r′)
+|r − r′|
+𝑑r 𝑑r′.
+-->
+<p>
+\begin{equation*}
+J[\rho ] = \frac {1}{2} \iint \frac {\rho (\mathbf {r})\, \rho (\mathbf {r&apos;})}{|\mathbf {r}-\mathbf {r&apos;}|}\, d\mathbf {r}\, d\mathbf {r&apos;}.
+\end{equation*}
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(E_{xc}[\rho ]\) — обмінно-кореляційна енергія:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{2}\)</span>
+<!--
+𝐸𝑥𝑐[𝜌] = (𝑇[𝜌] − 𝑇𝑠[𝜌]) + (𝑉𝑒𝑒[𝜌] − 𝐽[𝜌]).
+-->
+<p>
+\begin{equation*}
+E_{xc}[\rho ] = (T[\rho ] - T_s[\rho ]) + (V_{ee}[\rho ] - J[\rho ]).
+\end{equation*}
+</p>
+<p>
+Він задається наближеннями. Саме ця частина акумулює всі квантові ефекти, які не описуються \(T_s\) і \(J\): справжню електронну кореляцію, обмінні ефекти (включно з принципом Паулі), а також частину кінетичної енергії, втраченої через заміну повної \(T[\rho
+]\) на \(T_s[\rho ]\).
+</p>
+</li>
+</ul>
+<p>
+DFT намагається знайти густину \(\rho _0(\mathbf {r})\), що мінімізує \(E[\rho ]\), знаючи \(v_{\text {ext}}(\mathbf {r})\), тоді як уся складність багаточастинкової взаємодії схована у вигляді наближеного функціонала \(E_{xc}[\rho ]\). Саме форма
+цього функціонала (наприклад, <kbd>LDA</kbd>, <kbd>GGA</kbd>, <kbd>meta-GGA</kbd>, <kbd>Hybrid</kbd>) визначає точність практичних розрахунків у теорії функціоналу густини.
+</p>
+<!--
+...... subsection Рівняння Кона--Шема ......
+-->
+<h5 id="autosec-668"><span class="sectionnumber">6.1.2&#x2003;</span>Рівняння Кона–Шема</h5>
+<a id="main-html-autopage-668"></a>
+<p>
+Кон і Шем (1965) запропонували практичний спосіб реалізації DFT, увівши допоміжну систему невзаємодіючих електронів, яка має ту саму густину, що й реальна система, в якій електрони взаємодіють. Невзаємодіюча система представлена набором одночастинкових
+спін-орбіталей \(\{\psi _i(\vect {r}, \sigma )\}\), кожна з яких задовольняє рівняння Кона–Шема.
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{2}\)</span>
+<!--
+[−
+1
+2
+∇2 + 𝑣eff
+(r)] 𝜓𝑖(𝐫, 𝜍) = 𝜀𝑖, 𝜓𝑖(𝐫, 𝜍) (6.3)
+-->
+<p>
+\begin{equation}
+\left [-\frac {1}{2}\nabla ^2 + v_{\text {eff}}(\mathbf {r})\right ] \psi _i(\vect {r}, \sigma ) = \varepsilon _i, \psi _i(\vect {r}, \sigma )
+\end{equation}
+</p>
+<p>
+Як і в методі Хартрі-Фока кожна спін-орбіталь мкожна представити у вигляді орбіталі та спінової функції: \(\psi _i(\vect {r}, \sigma ) = \phi _i(\vect {r})\gamma _i(\sigma )\).
+</p>
+<p>
+<i>Ці рівняння формально схожі на рівняння Хартрі–Фока,</i> але різниця принципова: у HF оператор Фока містить кулонівський і обмінний терміни, тоді як у DFT увесь ефект обміну й кореляції закладено в <b>ефективний потенціал</b> \(v_{\text
+{eff}}(\mathbf {r})\):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{3}\)</span>
+<!--
+𝑣eff
+(r) = 𝑣ext
+(r) + 𝑣𝐻(r) + 𝑣𝑥𝑐(r), (6.4)
+-->
+<p>
+\begin{equation}
+v_{\text {eff}}(\mathbf {r}) = v_{\text {ext}}(\mathbf {r}) + v_H(\mathbf {r}) + v_{xc}(\mathbf {r}),
+\end{equation}
+</p>
+<p>
+де:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> \(v_{\text {ext}}(\mathbf {r})\) — зовнішній потенціал (від ядер);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(v_H(\mathbf {r}) = \displaystyle \int \frac {\rho (\mathbf {r}&apos;)}{|\mathbf {r}-\mathbf {r}&apos;|}\, d\mathbf {r}&apos;\) — потенціал Хартрі (класичне кулонівське відштовхування);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(v_{xc}(\mathbf {r}) = \delta E_{xc}[\rho ]/\delta \rho (\mathbf {r})\) — обмінно-кореляційний потенціал.
+</p>
+</li>
+</ul>
+<p>
+Електронна густина визначається з орбіталей Кона–Шема:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{4}\)</span>
+<!--
+𝜌(𝐫) =
+𝑁
+∑
+𝑖=1
+|𝜙𝑖(r)|2 (6.5)
+-->
+<p>
+\begin{equation}
+\rho (\vect {r}) = \sum _{i=1}^{N} |\phi _i(\mathbf {r})|^2
+\end{equation}
+</p>
+<p>
+Рівняння Кона–Шема у базисі атомних орбіт (AO) отримують розкладом орбіталей по базису \(\{\chi _\mu (\mathbf r)\}\):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{5}\)</span>
+<!--
+𝜙𝑖(r) = ∑
+𝜇
+𝐶𝜇𝑖 𝜒𝜇(r),
+-->
+<p>
+\begin{equation*}
+\phi _i(\mathbf r)=\sum _\mu C_{\mu i}\,\chi _\mu (\mathbf r),
+\end{equation*}
+</p>
+<p>
+<i>Так само, як і в методі Хартрі–Фока,</i> підставлення цього розкладу у рівняння Кона–Шема перетворює його на систему матричних рівнянь відносно коефіцієнтів \(C_{\mu i}\). У результаті отримуємо узагальнене рівняння
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{5}\)</span>
+<!--
+FC = SC𝜀,
+-->
+<p>
+\begin{equation*}
+\mathbf {F}\mathbf {C} = \mathbf {S}\mathbf {C}\boldsymbol {\varepsilon },
+\end{equation*}
+</p>
+<p>
+де \(\mathbf {F}\) — матриця Кона–Шема (аналог матриці Фока в HF), \(\mathbf {S}\) — матриця перекриття базисних функцій, а \(\boldsymbol {\varepsilon }\) — діагональна матриця власних значень \(\varepsilon _i\). У DFT, на відміну від HF,
+матриця \(\mathbf {F}\) містить лише <em>локальний</em> потенціал обміну–кореляції:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{5}\)</span>
+<!--
+𝐹𝜇𝜈 = ℎ𝜇𝜈 + 𝐽𝜇𝜈 + 𝑉𝑥𝑐,𝜇𝜈,
+-->
+<p>
+\begin{equation*}
+F_{\mu \nu } = h_{\mu \nu } + J_{\mu \nu } + V_{xc,\mu \nu },
+\end{equation*}
+</p>
+<p>
+тоді як у HF аналогічну роль відіграє <em>нелокальний</em> обмінний оператор \(K_{\mu \nu }\). Це забезпечує подібну форму рівнянь, але зовсім іншу фізичну інтерпретацію — у DFT ефект обміну та кореляції згортається в скалярний потенціал \(v_{xc}(\mathbf
+r)\), що робить метод значно ефективнішим обчислювально.
+</p>
+<p>
+Матриця густини визначається через коефіцієнти заповнених орбіталей:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{5}\)</span>
+<!--
+𝐷𝜇𝜈 =
+occ
+∑
+𝑖
+𝐶∗
+𝜇𝑖
+𝐶𝜈𝑖,
+-->
+<p>
+\begin{equation*}
+D_{\mu \nu } = \sum _{i}^{\mathrm {occ}} C_{\mu i}^* C_{\nu i},
+\end{equation*}
+</p>
+<p>
+(для замкнутої системи при двох електронах на орбіталь часто вводять множник \(2\) у відповідних місцях). На основі цієї матриці визначається сама електронна густина
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{5}\)</span>
+<!--
+𝜌(r) = ∑
+𝜇𝜈
+𝐷𝜇𝜈 𝜒∗
+𝜇(r)𝜒𝜈(r)
+-->
+<p>
+\begin{equation*}
+\rho (\mathbf {r}) = \sum _{\mu \nu } D_{\mu \nu }\,\chi _\mu ^*(\mathbf r)\chi _\nu (\mathbf r)
+\end{equation*}
+</p>
+<p>
+Кулонівська (Хартрі) матриця через \(D\):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{5}\)</span>
+<!--
+𝐽𝜇𝜈 = ∑
+𝜆𝜍
+𝐷𝜆𝜍 (𝜇𝜈|𝜆𝜍).
+-->
+<p>
+\begin{equation*}
+J_{\mu \nu } = \sum _{\lambda \sigma } D_{\lambda \sigma }\,(\mu \nu |\lambda \sigma ).
+\end{equation*}
+</p>
+<p>
+Матриця елементів обмінно-кореляційного потенціалу визначається матричними інтегралами:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{5}\)</span>
+<!--
+𝑉𝑥𝑐,𝜇𝜈 =
+ˆ
+𝜒∗
+𝜇(r) 𝑣𝑥𝑐[𝜌](r) 𝜒𝜈(r) 𝑑r, 𝑣𝑥𝑐(r) =
+𝛿𝐸𝑥𝑐[𝜌]
+𝛿𝜌(r)
+.
+-->
+<p>
+\begin{equation*}
+V_{xc,\mu \nu } = \int \chi _\mu ^*(\mathbf r)\, v_{xc}[\rho ](\mathbf r)\, \chi _\nu (\mathbf r)\, d\mathbf r, \qquad v_{xc}(\mathbf r)=\frac {\delta E_{xc}[\rho ]}{\delta \rho (\mathbf r)}.
+\end{equation*}
+</p>
+<p>
+(На практиці інтеграли для \(V_{xc,\mu \nu }\) обчислюють чисельно по сітці.)
+</p>
+<figure id="autoid-28" class="figure ">
+<div class="center">
+<p>
+<span
+id="lateximage-main-html-152"
+class="lateximagesource"
+><!--
+D(0)
+𝑇𝜇𝜈
+, 𝑉nuc
+𝜇𝜈
+, (𝜇𝜈|𝜆𝜍),
+функціонал 𝐸xc
+[𝜌]
+Обчислення кулонівського потенціалу 𝑣(𝑘)
+𝐻
+(r)
+Обчислення потенціалу 𝑣(𝑘)
+𝑥𝑐 (r) = 𝛿𝐸𝑥𝑐
+/𝛿𝜌
+Формування ефективної матриці Кона–Ше-
+ма
+F(𝑘) = T + Vnuc + V(𝑘)
+𝐻
++ V(𝑘)
+𝑥𝑐
+Розв’язок рівнянь Кона–Шема
+F(𝑘)C(𝑘+1) = SC(𝑘+1)𝜀(𝑘+1)
+Побудова нової матриці густини D(𝑘+1)
+‖D(𝑘+1) − D(𝑘)‖ ≤ 𝛿
+Розрахунок енергії, густини, орбіталей та
+𝐸xc
+[𝜌]
+Ні Так
+--><img
+src="main-html-images/image-152.svg"
+alt="Рис. 6.1. Самозгоджений цикл Кона-Шема. На відміну від HF, тут замість матриць J і K будуються потенціали v_H та v_xc, які визначають ефективну матрицю Фока."
+style=""
+class="lateximage"
+></span>
+</p>
+<div class="figurecaption">
+Рис.&nbsp;6.1. Самозгоджений цикл Кона-Шема. На відміну від HF, тут замість матриць \(J\) і \(K\) будуються потенціали \(v_H\) та \(v_{xc}\), які визначають ефективну матрицю Фока.
+</div>
+<a id="fig:dft_cycle"></a>
+</div>
+</figure>
+<p>
+Як і в HF, рівняння Кона–Шема розв’язуються <b>самозгоджено</b> (<kbd>SCF</kbd>-процедура). Після розв’язання рівняння власних значень отримують оновлені коефіцієнти \(C_{\mu i}\), з яких обчислюють матрицю густини:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{5}\)</span>
+<!--
+𝐷𝜇𝜈 ←
+occ
+∑
+𝑖
+𝐶∗
+𝜇𝑖
+𝐶𝜈𝑖.
+-->
+<p>
+\begin{equation*}
+D_{\mu \nu } \leftarrow \sum _{i}^{\mathrm {occ}} C_{\mu i}^* C_{\nu i}.
+\end{equation*}
+</p>
+<p>
+На основі нової густини \(\rho (\mathbf r)\) формують оновлений ефективний потенціал
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{5}\)</span>
+<!--
+𝑣eff
+(r) = 𝑣ext
+(r) + 𝑣𝐻(r) + 𝑣𝑥𝑐(r),
+-->
+<p>
+\begin{equation*}
+v_{\text {eff}}(\mathbf {r}) = v_{\text {ext}}(\mathbf {r}) + v_H(\mathbf {r}) + v_{xc}(\mathbf {r}),
+\end{equation*}
+</p>
+<p>
+і повторюють обчислення до досягнення самозгодженості. Це означає, що потенціал \(v_{\text {eff}}(\mathbf r)\) залежить від густини \(\rho (\mathbf r)\), а сама густина — від орбіталей, знайдених у цьому ж потенціалі. Таким чином, розв’язання рівнянь
+Кона–Шема є ітераційним процесом (див. рис.&nbsp;<a href="dft.html#fig:dft_cycle">6.1</a>).
+</p>
+<p>
+Завершальний вираз для повної енергії в матричній формі має вигляд:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{5}\)</span>
+<!--
+𝐸[𝜌] = ∑
+𝜇𝜈
+𝐷𝜇𝜈 ℎ𝜇𝜈 + 1
+2
+∑
+𝜇𝜈𝜆𝜍
+𝐷𝜇𝜈𝐷𝜆𝜍 (𝜇𝜈|𝜆𝜍) + 𝐸𝑥𝑐[𝜌].
+-->
+<p>
+\begin{equation*}
+E[\rho ] = \sum _{\mu \nu } D_{\mu \nu }\, h_{\mu \nu } + \tfrac {1}{2}\sum _{\mu \nu \lambda \sigma } D_{\mu \nu } D_{\lambda \sigma }\, (\mu \nu |\lambda \sigma ) + E_{xc}[\rho ].
+\end{equation*}
+</p>
+<!--
+...... subsection Порівняння HF та DFT ......
+-->
+<h5 id="autosec-672"><span class="sectionnumber">6.1.3&#x2003;</span>Порівняння HF та DFT</h5>
+<a id="main-html-autopage-672"></a>
+<div class="center">
+<div class="figurecaption">
+<a id="autoid-29" ></a >
+Рис.&nbsp;6.2. Порівняння методів Хартрі-Фока та DFT
+</div>
+<a id="tab:hf_vs_dft"></a>
+<table>
+<tr style="display:none"><th>.</th></tr>
+<tr class="hline">
+<td colspan="1" class="tdc" style="background:#F9F9F9"><b>Аспект</b></td>
+<td colspan="1" class="tdc" style="background:#F9F9F9"><b>Hartree-Fock</b></td>
+<td colspan="1" class="tdc" style="background:#F9F9F9"><b>DFT</b></td>
+</tr>
+<tr class="hline">
+<td class="tdl">Базова змінна</td>
+<td class="tdl">Хвильова функція</td>
+<td class="tdl">Електронна густина</td>
+</tr>
+<tr>
+<td class="tdl" style="background:#F9F9F9">Обмін</td>
+<td class="tdl" style="background:#F9F9F9">Точний (нелокальний)</td>
+<td class="tdl" style="background:#F9F9F9">Наближений (локальний)</td>
+</tr>
+<tr>
+<td class="tdl">Кореляція</td>
+<td class="tdl">Відсутня</td>
+<td class="tdl">Включена наближено</td>
+</tr>
+<tr>
+<td class="tdl" style="background:#F9F9F9">Масштабування</td>
+<td class="tdl" style="background:#F9F9F9">\(\mathcal {O}(N^4)\)</td>
+<td class="tdl" style="background:#F9F9F9">\(\mathcal {O}(N^3)\)</td>
+</tr>
+<tr>
+<td class="tdl">Точність для атомів</td>
+<td class="tdl">Добра якісно</td>
+<td class="tdl">Часто краща кількісно</td>
+</tr>
+<tr class="hline" aria-hidden="true">
+<td class="tdl"></td>
+<td class="tdl"></td>
+<td class="tdl"></td>
+</tr>
+</table>
+</div>
+<div class="cb-comment">
+<p>
+<b>Коментар</b>
+</p>
+<p>
+Формально HF можна розглядати як окремий випадок DFT, у якому \(E_{xc}\) обмежується лише чисто обмінним внеском, без кореляційної частини. З цієї точки зору DFT розширює <kbd>HF</kbd>, оскільки допускає явне урахування електронної кореляції через
+узагальнений функціонал \(E_{xc}[\rho ]\). Тому методи DFT можна розглядати як альтернативний підхід до пост-<kbd>HF</kbd> методів: обидва класи теорій мають спільну мету — описати електронну кореляцію, але різними ідеологічними засобами — через
+функціонал густини, а не через розклад хвильової функції.
+</p>
+</div>
+<!--
+...... section Базова структура DFT розрахунку ......
+-->
+<h4 id="autosec-675"><span class="sectionnumber">&#xA7;&#x202F;6.2&#x2003;</span>Базова структура DFT розрахунку</h4>
+<a id="main-html-autopage-675"></a>
+<p>
+DFT-розрахунки в <kbd>PySCF</kbd> виконуються за допомогою класів <kbd>RKS</kbd> (Restricted Kohn–Sham) та <kbd>UKS</kbd> (Unrestricted Kohn–Sham), аналогічних до <kbd>RHF</kbd>/<kbd>UHF</kbd> у теорії Хартрі—Фока. Різниця полягає лише в
+одному — у DFT замість обмінного потенціалу Хартрі—Фока використовується <i>обмінно-кореляційний функціонал густини</i> \(E_{\text {xc}}[\rho ]\). Саме вибір цього функціоналу і визначає рівень наближення DFT: від <kbd>LDA</kbd> до
+<kbd>meta-GGA</kbd> та гібридних варіантів.
+</p>
+<p>
+У <kbd>PySCF</kbd> обмінно-кореляційний функціонал задається однією простою командою:
+</p>
+<p>
+\[ E_{\text {xc}}[\rho ] \;\longleftrightarrow \; \text {\inlinecode {mf.xc = &quot;pbe&quot;}} \]
+</p>
+<p>
+де в лапках указується ідентифікатор функціоналу згідно з бібліотекою <kbd>LibXC</kbd>.
+</p>
+<!--
+...... paragraph Типова структура DFT-розрахунку: ......
+-->
+<p>
+<span class="paragraph" id="autosec-676">Типова структура DFT-розрахунку:</span>
+<a id="main-html-autopage-676"></a>
+</p>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> Задати молекулу через об’єкт <span class="inlinecode"><kbd>gto.M</kbd></span>, указавши атоми, базис і спін.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> Створити об’єкт <span class="inlinecode"><kbd>dft.RKS(mol)</kbd></span> або <span class="inlinecode"><kbd>dft.UKS(mol)</kbd></span>, залежно від того, чи система закрито-, чи відкритооболонкова.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> Вибрати обмінно-кореляційний функціонал, задавши його ідентифікатор у рядку <span class="inlinecode"><kbd>mf.xc = "..."</kbd></span>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">4.</span> Виконати самозгоджене розв’язання рівнянь Кона-Шема командою <span class="inlinecode"><kbd>mf.kernel()</kbd></span>.
+</p>
+</li>
+</ul>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">10 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">dft</span>
+
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s2">"H 0 0 0; H 0 0 0.74"</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s2">"def2-svp"</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">0</span><span class="tk-p">)</span>
+
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">dft</span><span class="tk-o">.</span><span class="tk-n">RKS</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span>
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">xc</span> <span class="tk-o">=</span> <span class="tk-s2">"pbe"</span>       <span class="tk-c1"># Вибір обмінно-кореляційного функціоналу</span>
+<span class="tk-n">energy</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"Енергія H2 (PBE): </span><span class="tk-si">{</span><span class="tk-n">energy</span><span class="tk-si">:</span><span class="tk-s2">.8f</span><span class="tk-si">}</span><span class="tk-s2"> Ha"</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Таким чином, уся складність переходу від HF до DFT у PySCF зводиться до одного рядка — вибору функціоналу через <span class="inlinecode"><kbd>mf.xc</kbd></span>. Цей підхід дозволяє систематично порівнювати різні рівні теорії в єдиному коді,
+змінюючи лише ключ <span class="inlinecode"><kbd>xc</kbd></span>.
+</p>
+<p>
+Попри простоту синтаксису, точність і стабільність DFT-розрахунків залежать від кількох технічних параметрів.
+</p>
+<!--
+...... paragraph 1. Вибір функціоналу. ......
+-->
+<p>
+<span class="paragraph" id="autosec-677">1. Вибір функціоналу.</span>
+<a id="main-html-autopage-677"></a>
+</p>
+<!--
+...... paragraph 2. Контроль сітки інтегрування. ......
+-->
+<p>
+<span class="paragraph" id="autosec-678">2. Контроль сітки інтегрування.</span>
+<a id="main-html-autopage-678"></a>
+PySCF використовує адаптивні сітки Лебедєва (кутова частина) та радіальні сітки. Рівень деталізації задається параметром:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">2 рядки</span></div>
+<pre class="code"><code><span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">grids</span><span class="tk-o">.</span><span class="tk-n">level</span> <span class="tk-o">=</span> <span class="tk-mi">5</span>   <span class="tk-c1"># типове значення 3; 5 — висока точність</span></code></pre>
+</div>
+<p>
+Підвищення рівня покращує точність, але збільшує час обчислення.
+</p>
+<!--
+...... paragraph 3. Параметри збіжності. ......
+-->
+<p>
+<span class="paragraph" id="autosec-679">3. Параметри збіжності.</span>
+<a id="main-html-autopage-679"></a>
+Для стабільності SCF-процедури корисно налаштувати:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>mf.conv_tol = 1e-9</kbd></span> — поріг збіжності енергії;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>mf.max_cycle = 100</kbd></span> — максимальна кількість ітерацій;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>mf.damp = 0.2</kbd></span> — демпфування для складних систем;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <span class="inlinecode"><kbd>mf.init_guess = 'atom'</kbd></span> — атомне початкове наближення.
+</p>
+</li>
+</ul>
+<!--
+...... paragraph 4. Перевірка результатів. ......
+-->
+<p>
+<span class="paragraph" id="autosec-680">4. Перевірка результатів.</span>
+<a id="main-html-autopage-680"></a>
+Після розрахунку бажано виконати:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">3 рядки</span></div>
+<pre class="code"><code><span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">analyze</span><span class="tk-p">()</span>
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">spin_square</span><span class="tk-p">()</span></code></pre>
+</div>
+<p>
+щоб оцінити заселеності орбіталей і перевірити відсутність спінового забруднення.
+</p>
+<!--
+...... paragraph 5. Типові проблеми та їх усунення. ......
+-->
+<p>
+<span class="paragraph" id="autosec-681">5. Типові проблеми та їх усунення.</span>
+<a id="main-html-autopage-681"></a>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <b>Погана збіжність:</b> збільшити <span class="inlinecode"><kbd>mf.damp</kbd></span> або додати <span class="inlinecode"><kbd>mf.level_shift = 0.5</kbd></span>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Осциляції SCF:</b> зменшити початковий крок або використати опцію <span class="inlinecode"><kbd>mf.diis_start_cycle = 4</kbd></span>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Великі похибки енергії:</b> підвищити <span class="inlinecode"><kbd>mf.grids.level</kbd></span> або змінити функціонал.
+</p>
+</li>
+</ul>
+<!--
+...... paragraph Підсумок. ......
+-->
+<p>
+<span class="paragraph" id="autosec-682">Підсумок.</span>
+<a id="main-html-autopage-682"></a>
+Розрахунки <kbd>DFT</kbd> у PySCF залишаються настільки ж гнучкими, як і методи <kbd>HF</kbd>: достатньо змінити лише одну команду в коді, щоб перейти до рівня Кона-Шема. Однак уважне налаштування сітки, функціонала та критеріїв збіжності є
+обов’язковою умовою для надійних результатів.
+</p>
+<p>
+Усі наведені технічні параметри лише визначають, <i>як</i> виконується розрахунок. Але найважливішим питанням залишається, <i>який саме функціонал</i> \(E_{\text {xc}}[\rho ]\) використати. Далі розглянемо класифікацію функціоналів — від простих
+<kbd>LDA</kbd> до сучасних гібридних і <kbd>meta-GGA</kbd>.
+</p>
+<!--
+...... section Функціонали обміну-кореляції ......
+-->
+<h4 id="autosec-683"><span class="sectionnumber">&#xA7;&#x202F;6.3&#x2003;</span>Функціонали обміну-кореляції</h4>
+<a id="main-html-autopage-683"></a>
+<!--
+...... subsection Класифікація функціоналів: драбина Якова ......
+-->
+<h5 id="autosec-684"><span class="sectionnumber">6.3.1&#x2003;</span>Класифікація функціоналів: драбина Якова</h5>
+<a id="main-html-autopage-684"></a>
+<figure id="autoid-30" class="figure ">
+<div class="center">
+<p>
+<span
+id="lateximage-main-html-153"
+class="lateximagesource"
+><!--
+«Ад» Хартрі
+1. LSDA
+2. GGA
+3. meta-GGA
+4. Hybrid
+5. Double-Hybrid
+«Небо» точності
+зростання часу обчислення
+зростання точності
+--><img
+src="main-html-images/image-153.svg"
+alt="Рис. 6.3. Драбина Якова (Jacob’s ladder)."
+style=""
+class="lateximage"
+></span>
+</p>
+<div class="figurecaption">
+Рис.&nbsp;6.3. Драбина Якова<br />
+(Jacob’s ladder).
+</div>
+<a id="fig:dft_ladder"></a>
+</div>
+</figure>
+<p>
+Побудова рівнянь Кона–Шема зводить задачу взаємодіючої багаточастинкової системи до рівняння для невзаємодіючих частинок у деякому ефективному потенціалі \(v_{\text {eff}}(\mathbf {r})\), який містить у собі обмінно-кореляційний внесок
+\(v_{xc}(\mathbf {r})\). Однак форма цього потенціалу, а отже й точність усього методу, повністю визначаються вибором функціоналу \(E_{xc}[\rho ]\). Оскільки точний вигляд \(E_{xc}\) невідомий, у практичних розрахунках застосовують різні наближення,
+що відрізняються складністю, обчислювальною вартістю та рівнем урахування фізичних ефектів.
+</p>
+<p>
+Ці наближення зручно класифікувати за так званою <b>«драбиною Якова»</b> (Jacob’s ladder), запропонованою Джоном Пердью, яка символізує поступове наближення до «небес хімічної точності» через п’ять послідовних сходинок наближення до точного функціоналу
+(рис.&nbsp;<a href="dft.html#fig:dft_ladder">6.3</a>).
+</p>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> <b>LDA/LSDA</b> (Local Density Approximation) — залежать тільки від густини \(\rho (\mathbf {r})\).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> <b>GGA</b> (Generalized Gradient Approximation) — залежать від \(\rho (\mathbf {r})\) та її градієнта \(\nabla \rho (\mathbf {r})\).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> <b>Meta-GGA</b> — додатково враховують лапласіан густини \(\nabla ^2\rho \) або кінетичну густину \(\tau \).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">4.</span> <b>Hybrid</b> — включають частку точного обміну <kbd>HF</kbd>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">5.</span> <b>Double-hybrid</b> — поєднують обмін <kbd>HF</kbd> та кореляцію <kbd>MP2</kbd>.
+</p>
+</li>
+</ul>
+<!--
+...... subsection LDA та LSDA функціонали ......
+-->
+<h5 id="autosec-688"><span class="sectionnumber">6.3.2&#x2003;</span>LDA та LSDA функціонали</h5>
+<a id="main-html-autopage-688"></a>
+<!--
+...... subsubsection Локальне наближення густини ......
+-->
+<h6 id="autosec-689">Локальне наближення густини</h6>
+<a id="main-html-autopage-689"></a>
+<p>
+Найпростішим наближенням у теорії функціонала густини є <b>локальне наближення густини</b> (<kbd>LDA</kbd>, Local Density Approximation). Воно базується на припущенні, що електронна густина \(\rho (\mathbf {r})\) змінюється повільно в просторі,
+тому в кожній точці простору систему можна вважати локально подібною до <b>однорідного електронного газу</b> з тією самою густиною.
+</p>
+<p>
+У цьому наближенні обмінно-кореляційна енергія записується як
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{5}\)</span>
+<!--
+𝐸LDA
+𝑥𝑐 [𝜌] =
+ˆ
+𝜌(r)𝜀𝑥𝑐(𝜌(r)) 𝑑r, (6.6)
+-->
+<p>
+\begin{equation}
+E_{xc}^{\text {LDA}}[\rho ] = \int \rho (\mathbf {r}) \varepsilon _{xc}(\rho (\mathbf {r}))\, d\mathbf {r},
+\end{equation}
+</p>
+<p>
+де \(\varepsilon _{xc}(\rho )\) — енергія обміну та кореляції <em>на один електрон</em> в однорідному електронному газі густини \(\rho \). Таким чином, LDA використовує дані, отримані з точно відомої (або чисельно розрахованої) моделі вільних електронів, і
+переносить їх на реальні неоднорідні системи.
+</p>
+<!--
+...... paragraph Обмінна частина (Slater/Dirac): ......
+-->
+<p>
+<span class="paragraph" id="autosec-690">Обмінна частина (Slater/Dirac):</span>
+<a id="main-html-autopage-690"></a>
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{6}\)</span>
+<!--
+𝜀LDA
+𝑥 (𝜌) = −
+3
+4
+(
+3
+𝜋
+)
+1/3
+𝜌1/3, (6.7)
+-->
+<p>
+\begin{equation}
+\varepsilon _x^{\text {LDA}}(\rho ) = -\frac {3}{4}\left (\frac {3}{\pi }\right )^{1/3} \rho ^{1/3},
+\end{equation}
+</p>
+<p>
+що відповідає енергії обміну для повністю однорідного електронного газу. Цей результат відомий ще з теорії Слейтера—Дірака і є строго аналітичним.
+</p>
+<!--
+...... paragraph Кореляційна частина: ......
+-->
+<p>
+<span class="paragraph" id="autosec-691">Кореляційна частина:</span>
+<a id="main-html-autopage-691"></a>
+На відміну від обмінної, кореляційна частина \(\varepsilon _c(\rho )\) не має простого аналітичного вигляду. Її отримують з чисельних квантово-механічних розрахунків для електронного газу. У практиці найчастіше використовують параметризації таких
+результатів — наприклад, <kbd>VWN</kbd> (Vosko–Wilk–Nusair) або <kbd>PW92</kbd> (Perdew–Wang 1992).
+</p>
+<p>
+LDA демонструє дивовижну успішність, незважаючи на свою простоту: вона добре відтворює об’ємні властивості металів і напівпровідників, хоча й схильна <b>переоцінювати зв’язок</b> (overbinding) та <b>занижувати</b> енергії утворення молекул.
+</p>
+<!--
+...... paragraph Реалізація в PySCF: ......
+-->
+<p>
+<span class="paragraph" id="autosec-692">Реалізація в PySCF:</span>
+<a id="main-html-autopage-692"></a>
+Для перевірки різних рівнів теорії наведено приклад розрахунку енергії атома неону.
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">22 рядки</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span><span class="tk-p">,</span> <span class="tk-n">dft</span><span class="tk-p">,</span> <span class="tk-n">fci</span>
+
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s2">"Ne 0 0 0"</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s2">"cc-pvdz"</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">0</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># ====== LDA ======</span>
+<span class="tk-n">mf_lda</span> <span class="tk-o">=</span> <span class="tk-n">dft</span><span class="tk-o">.</span><span class="tk-n">RKS</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span>
+<span class="tk-n">mf_lda</span><span class="tk-o">.</span><span class="tk-n">xc</span> <span class="tk-o">=</span> <span class="tk-s2">"lda"</span>  <span class="tk-c1"># VWN для кореляції</span>
+<span class="tk-n">mf_lda</span><span class="tk-o">.</span><span class="tk-n">verbose</span> <span class="tk-o">=</span> <span class="tk-mi">0</span>
+<span class="tk-n">energy_lda</span> <span class="tk-o">=</span> <span class="tk-n">mf_lda</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"Енергія Ne (LDA): </span><span class="tk-si">{</span><span class="tk-n">energy_lda</span><span class="tk-si">:</span><span class="tk-s2">.8f</span><span class="tk-si">}</span><span class="tk-s2"> Ha"</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># ====== HF ======</span>
+<span class="tk-n">mf_hf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span>
+<span class="tk-n">mf_hf</span><span class="tk-o">.</span><span class="tk-n">verbose</span> <span class="tk-o">=</span> <span class="tk-mi">0</span>
+<span class="tk-n">energy_hf</span> <span class="tk-o">=</span> <span class="tk-n">mf_hf</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"Енергія Ne (HF):  </span><span class="tk-si">{</span><span class="tk-n">energy_hf</span><span class="tk-si">:</span><span class="tk-s2">.8f</span><span class="tk-si">}</span><span class="tk-s2"> Ha"</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># ====== FCI ======</span>
+<span class="tk-n">cisolver</span> <span class="tk-o">=</span> <span class="tk-n">fci</span><span class="tk-o">.</span><span class="tk-n">FCI</span><span class="tk-p">(</span><span class="tk-n">mf_hf</span><span class="tk-p">)</span>  <span class="tk-c1"># на основі HF орбіталей</span>
+<span class="tk-n">energy_fci</span><span class="tk-p">,</span> <span class="tk-n">_</span> <span class="tk-o">=</span> <span class="tk-n">cisolver</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"Енергія Ne (FCI): </span><span class="tk-si">{</span><span class="tk-n">energy_fci</span><span class="tk-si">:</span><span class="tk-s2">.8f</span><span class="tk-si">}</span><span class="tk-s2"> Ha"</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Виведення програми:
+</p>
+<div class="codeblock code-text" data-lang="text" data-nosnippet>
+<div class="code-head"><span class="code-lang">Вивід</span><span class="code-lines">4 рядки</span></div>
+<pre class="code"><code>Енергія Ne (LDA): -127.40946710 Ha
+Енергія Ne (HF):  -128.48877555 Ha
+Енергія Ne (FCI): -128.68088113 Ha</code></pre>
+</div>
+<p>
+Як видно з результатів роботи скрипта, LDA дає найвищу енергію. Хоча LDA формально враховує кореляцію, вона ґрунтується на моделі однорідного електронного газу і тому неточно описує локалізовані атомні густини. Обмінна частина в LDA занадто слабка, що
+призводить до завищення повної енергії, навіть попри наявність кореляційного внеску. У результаті спостерігається типовий порядок: \(E_{\text {LDA}} &gt; E_{\text {HF}} &gt; E_{\text {FCI}}\), де HF дає нижчу енергію завдяки точному обмінному
+терміну, а FCI — ще нижчу, оскільки враховує всю електронну кореляцію (це еталонний метод).
+</p>
+<!--
+...... subsubsection LSDA для спін-поляризованих систем ......
+-->
+<h6 id="autosec-693">LSDA для спін-поляризованих систем</h6>
+<a id="main-html-autopage-693"></a>
+<p>
+Для систем, у яких густини електронів з різними спінами відрізняються, використовується <b>локальне спін-залежне наближення</b> (<kbd>LSDA</kbd>, Local Spin Density Approximation). Тут функціонал енергії залежить окремо від густин \(\rho _\alpha
+(\mathbf {r})\) та \(\rho _\beta (\mathbf {r})\):
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{7}\)</span>
+<!--
+𝐸LSDA
+𝑥𝑐 [𝜌𝛼, 𝜌𝛽] =
+ˆ
+𝜌(r) 𝜀𝑥𝑐(𝜌𝛼(r), 𝜌𝛽(r)) 𝑑r. (6.8)
+-->
+<p>
+\begin{equation}
+E_{xc}^{\text {LSDA}}[\rho _\alpha , \rho _\beta ] = \int \rho (\mathbf {r})\, \varepsilon _{xc}(\rho _\alpha (\mathbf {r}), \rho _\beta (\mathbf {r}))\, d\mathbf {r}.
+\end{equation}
+</p>
+<p>
+Цей підхід дозволяє коректно описувати системи з магнітним упорядкуванням, відкритими оболонками та ферромагнітними матеріалами. LSDA успадковує переваги та обмеження LDA, але при цьому додає можливість урахування <b>спінової поляризації</b>, що
+робить його базовим інструментом у розрахунках магнітних систем.
+</p>
+<p>
+Метод <kbd>LSDA</kbd> застосовується для відкритооболонкових (спін-поляризованих) систем, де густини \(\rho _\alpha \) і \(\rho _\beta \) різні. Виклик відбувається через <kbd>UKS</kbd> (Unrestricted Kohn–Sham), який дозволяє електронам різних спінів
+мати власні орбіталі. Таким чином, <kbd>LSDA</kbd> є природним розширенням <kbd>LDA</kbd> для магнітних або радикальних систем, зберігаючи при цьому локальну апроксимацію густини.
+</p>
+<!--
+...... paragraph Реалізація в PySCF (LSDA): ......
+-->
+<p>
+<span class="paragraph" id="autosec-694">Реалізація в PySCF (LSDA):</span>
+<a id="main-html-autopage-694"></a>
+Для спін-поляризованих систем (наприклад, атомів із неспареними електронами) використовується локальне спін-залежне наближення — <kbd>LSDA</kbd>. На відміну від <kbd>LDA</kbd>, воно розділяє густину на спінові компоненти \(\rho _\alpha \) та \(\rho
+_\beta \), що дозволяє точніше описувати магнітні ефекти й спінову поляризацію. Нижче наведено приклад для атома кисню (<kbd>O</kbd>), який має два неспарені електрони:
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">11 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">dft</span>
+
+<span class="tk-c1"># Приклад для спін-поляризованої системи (атом O)</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s2">"O 0 0 0"</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s2">"cc-pvdz"</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">2</span><span class="tk-p">)</span>  <span class="tk-c1"># 2 неспарені електрони</span>
+
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">dft</span><span class="tk-o">.</span><span class="tk-n">UKS</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span>
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">xc</span> <span class="tk-o">=</span> <span class="tk-s2">"lda"</span>   <span class="tk-c1"># LSDA автоматично враховується через spin ≠ 0</span>
+<span class="tk-n">energy_lsda</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"Енергія O (LSDA): </span><span class="tk-si">{</span><span class="tk-n">energy_lsda</span><span class="tk-si">:</span><span class="tk-s2">.8f</span><span class="tk-si">}</span><span class="tk-s2"> Ha"</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Як і у випадку <kbd>LDA</kbd>, <kbd>LSDA</kbd> враховує кореляційні ефекти лише в межах моделі однорідного спін-залежного електронного газу. Це покращує опис магнітних систем, проте точність енергії залишається нижчою, ніж у <kbd>HF</kbd>, оскільки
+<kbd>LSDA</kbd> все ще не здатна адекватно врахувати нерівномірність густини та складну електронну кореляцію. Зазвичай спостерігається така послідовність результатів:
+</p>
+<p>
+\[ E_{\text {LSDA}} &gt; E_{\text {UHF}} &gt; E_{\text {FCI}}, \]
+</p>
+<p>
+що відповідає поступовому наближенню до точного розв’язку рівнянь багаточастинкової проблеми.
+</p>
+<!--
+...... subsection GGA функціонали ......
+-->
+<h5 id="autosec-695"><span class="sectionnumber">6.3.3&#x2003;</span>GGA функціонали</h5>
+<a id="main-html-autopage-695"></a>
+<p>
+Як було показано на «драбині Якова» (рис.&nbsp;<a href="dft.html#fig:dft_ladder">6.3</a>), наступним кроком після локального наближення густини є узагальнене градієнтне наближення — <b>GGA</b> (Generalized Gradient Approximation). На відміну від
+<kbd>LDA</kbd>, де кожна точка простору розглядається як частина однорідного електронного газу, у <kbd>GGA</kbd> враховується зміна густини в просторі, тобто її градієнт. Таким чином, у <kbd>GGA</kbd> з’являється інформація про локальні неоднорідності
+електронного розподілу, що особливо важливо для опису хімічних зв’язків і поверхневих явищ.
+</p>
+<p>
+Функціонал загального вигляду можна записати як:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{8}\)</span>
+<!--
+𝐸GGA
+𝑥𝑐 [𝜌] =
+ˆ
+𝑓(𝜌(r), ∇𝜌(r)) 𝑑r, (6.9)
+-->
+<p>
+\begin{equation}
+E_{xc}^{\text {GGA}}[\rho ] = \int f(\rho (\mathbf {r}), \nabla \rho (\mathbf {r}))\, d\mathbf {r},
+\end{equation}
+</p>
+<p>
+де \(f(\rho , \nabla \rho )\) — функція, яка модифікує локальну енергію в залежності від градієнта густини.
+</p>
+<p>
+На практиці більшість GGA-функціоналів записують у формі модифікації <kbd>LDA</kbd> через так званий <em>підсилювальний фактор</em> (<i>enhancement factor</i>) \(F_{xc}(s)\), який залежить від безрозмірного параметра неоднорідності:
+</p>
+<p>
+\[ s = \frac {|\nabla \rho |}{2(3\pi ^2)^{1/3}\rho ^{4/3}}. \]
+</p>
+<p>
+Тоді:
+</p>
+<p>
+\[ E_{x}^{\text {GGA}}[\rho ] = \int \rho (\mathbf {r}) \varepsilon _{x}^{\text {LDA}}(\rho ) F_x(s)\, d\mathbf {r}. \]
+</p>
+<p>
+Таке узагальнення дозволяє значно поліпшити точність у порівнянні з <kbd>LDA</kbd>, особливо для молекулярних систем, атомів і хімічних реакцій, де градієнти густини великі.
+</p>
+<!--
+...... subsubsection Популярні GGA функціонали ......
+-->
+<h6 id="autosec-696">Популярні GGA функціонали</h6>
+<a id="main-html-autopage-696"></a>
+<!--
+...... paragraph PBE (Perdew–Burke–Ernzerhof, 1996). ......
+-->
+<p>
+<span class="paragraph" id="autosec-697">PBE (Perdew–Burke–Ernzerhof, 1996).</span>
+<a id="main-html-autopage-697"></a>
+Один з найпоширеніших неемпіричних функціоналів, побудований на фізичних принципах без підгонки до експерименту. <kbd>PBE</kbd> зберігає правильну поведінку в межі однорідного газу, задовольняє ряд точних умов (наприклад, правильний обмінний потенціал
+при великих \(s\)), і є стандартом для більшості сучасних обчислень у твердофазній фізиці та квантовій хімії.
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">16 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">dft</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+
+<span class="tk-c1"># ====== PBE ======</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s2">"Ne 0 0 0"</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s2">"cc-pvtz"</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">0</span><span class="tk-p">)</span>
+<span class="tk-n">label</span> <span class="tk-o">=</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">atom_symbol</span><span class="tk-p">(</span><span class="tk-mi">0</span><span class="tk-p">)</span>
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">dft</span><span class="tk-o">.</span><span class="tk-n">UKS</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span>
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">xc</span> <span class="tk-o">=</span> <span class="tk-s2">"pbe"</span>  <span class="tk-c1"># або 'pbe,pbe'</span>
+<span class="tk-n">energy_pbe</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"Енергія </span><span class="tk-si">{</span><span class="tk-n">label</span><span class="tk-si">}</span><span class="tk-s2"> (PBE): </span><span class="tk-si">{</span><span class="tk-n">energy_pbe</span><span class="tk-si">:</span><span class="tk-s2">.8f</span><span class="tk-si">}</span><span class="tk-s2"> Ha"</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># ====== HF ======</span>
+<span class="tk-n">mf_uhf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">UHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span>
+<span class="tk-n">mf_uhf</span><span class="tk-o">.</span><span class="tk-n">verbose</span> <span class="tk-o">=</span> <span class="tk-mi">0</span>
+<span class="tk-n">energy_hf</span> <span class="tk-o">=</span> <span class="tk-n">mf_uhf</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"Енергія </span><span class="tk-si">{</span><span class="tk-n">label</span><span class="tk-si">}</span><span class="tk-s2"> (UHF):  </span><span class="tk-si">{</span><span class="tk-n">energy_hf</span><span class="tk-si">:</span><span class="tk-s2">.8f</span><span class="tk-si">}</span><span class="tk-s2"> Ha"</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+У даному прикладі видно типовий результат для GGA-функціонала:
+</p>
+<p>
+\[ E_{\text {PBE}} &lt; E_{\text {HF}}, \]
+</p>
+<p>
+оскільки градієнтні поправки до локальної густини в PBE посилюють обмінно-кореляційний внесок, знижуючи повну енергію порівняно з UHF.
+</p>
+<!--
+...... paragraph BLYP (Becke88 + Lee–Yang–Parr). ......
+-->
+<p>
+<span class="paragraph" id="autosec-698">BLYP (Becke88 + Lee–Yang–Parr).</span>
+<a id="main-html-autopage-698"></a>
+Комбінація градієнтного обмінного функціоналу <kbd>Becke88</kbd> з кореляційним функціоналом <kbd>LYP</kbd>, отриманим із фітингу до високоточних даних для атомів. <kbd>BLYP</kbd> часто застосовується у квантовій хімії для молекулярних систем,
+забезпечуючи гарний баланс між точністю та обчислювальними витратами.
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">17 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">dft</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s2">"Ne 0 0 0"</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s2">"cc-pvtz"</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">0</span><span class="tk-p">)</span>
+<span class="tk-n">label</span> <span class="tk-o">=</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">atom_symbol</span><span class="tk-p">(</span><span class="tk-mi">0</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># ====== BLYP ======</span>
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">dft</span><span class="tk-o">.</span><span class="tk-n">RKS</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span>
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">xc</span> <span class="tk-o">=</span> <span class="tk-s2">"blyp"</span>  <span class="tk-c1"># або 'b88,lyp'</span>
+<span class="tk-n">energy_blyp</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"Енергія </span><span class="tk-si">{</span><span class="tk-n">label</span><span class="tk-si">}</span><span class="tk-s2"> (BLYP): </span><span class="tk-si">{</span><span class="tk-n">energy_blyp</span><span class="tk-si">:</span><span class="tk-s2">.8f</span><span class="tk-si">}</span><span class="tk-s2"> Ha"</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># ====== HF ======</span>
+<span class="tk-n">mf_uhf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span>
+<span class="tk-n">mf_uhf</span><span class="tk-o">.</span><span class="tk-n">verbose</span> <span class="tk-o">=</span> <span class="tk-mi">0</span>
+<span class="tk-n">energy_hf</span> <span class="tk-o">=</span> <span class="tk-n">mf_uhf</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"Енергія </span><span class="tk-si">{</span><span class="tk-n">label</span><span class="tk-si">}</span><span class="tk-s2"> (UHF):  </span><span class="tk-si">{</span><span class="tk-n">energy_hf</span><span class="tk-si">:</span><span class="tk-s2">.8f</span><span class="tk-si">}</span><span class="tk-s2"> Ha"</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Як видно з результатів:
+</p>
+<p>
+\[ E_{\text {BLYP}} &lt; E_{\text {UHF}}, \]
+</p>
+<p>
+градієнтні поправки Becke88 (обмін) та Lee–Yang–Parr (кореляція) покращують опис електронної густини порівняно з чистим HF-наближенням. Функціонал BLYP забезпечує глибшу енергію завдяки більш реалістичному урахуванню як обмінних, так і кореляційних ефектів,
+що особливо важливо для атомів і молекул із локалізованими електронами.
+</p>
+<!--
+...... paragraph BP86 (Becke88 + Perdew86). ......
+-->
+<p>
+<span class="paragraph" id="autosec-699">BP86 (Becke88 + Perdew86).</span>
+<a id="main-html-autopage-699"></a>
+Інша відома комбінація, яка використовує той самий обмін Becke88, але іншу кореляцію (<kbd>Perdew86</kbd>). <kbd>BP86</kbd> є класичним вибором для органічних і неорганічних молекул та часто використовується як базовий рівень у порівнянні з гібридними
+функціоналами.
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">17 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">dft</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s2">"Ne 0 0 0"</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s2">"cc-pvtz"</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">0</span><span class="tk-p">)</span>
+<span class="tk-n">label</span> <span class="tk-o">=</span> <span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">atom_symbol</span><span class="tk-p">(</span><span class="tk-mi">0</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># ====== BP86 ======</span>
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">dft</span><span class="tk-o">.</span><span class="tk-n">RKS</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span>
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">xc</span> <span class="tk-o">=</span> <span class="tk-s1">'bp86'</span>
+<span class="tk-n">energy_bp86</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s1">'Енергія </span><span class="tk-si">{</span><span class="tk-n">label</span><span class="tk-si">}</span><span class="tk-s1"> (BP86): </span><span class="tk-si">{</span><span class="tk-n">energy_bp86</span><span class="tk-si">:</span><span class="tk-s1">.8f</span><span class="tk-si">}</span><span class="tk-s1"> Ha'</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># ====== HF ======</span>
+<span class="tk-n">mf_uhf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span>
+<span class="tk-n">mf_uhf</span><span class="tk-o">.</span><span class="tk-n">verbose</span> <span class="tk-o">=</span> <span class="tk-mi">0</span>
+<span class="tk-n">energy_hf</span> <span class="tk-o">=</span> <span class="tk-n">mf_uhf</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"Енергія </span><span class="tk-si">{</span><span class="tk-n">label</span><span class="tk-si">}</span><span class="tk-s2"> (UHF):  </span><span class="tk-si">{</span><span class="tk-n">energy_hf</span><span class="tk-si">:</span><span class="tk-s2">.8f</span><span class="tk-si">}</span><span class="tk-s2"> Ha"</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+У випадку функціонала BP86 також виконується
+</p>
+<p>
+\[ E_{\text {BP86}} &lt; E_{\text {UHF}}, \]
+</p>
+<p>
+що підтверджує тенденцію зниження повної енергії при врахуванні градієнтних поправок. Функціонал <kbd>BP86</kbd> (<kbd>Becke88</kbd> для обміну та <kbd>Perdew86</kbd> для кореляції) зазвичай дає результати, близькі до <kbd>BLYP</kbd>, але дещо
+стабільніші для атомів та малих молекул завдяки іншій формі кореляційного внеску.
+</p>
+<!--
+...... subsubsection Порівняння GGA функціоналів ......
+-->
+<h6 id="autosec-700">Порівняння GGA функціоналів</h6>
+<a id="main-html-autopage-700"></a>
+<p>
+Різні GGA-функціонали відрізняються формою підсилювального фактора \(F_{xc}(s)\) та способами урахування кореляції, що визначає їхню придатність для конкретних типів систем. Наприклад, <kbd>PBE</kbd> зазвичай краще відтворює енергії зв’язку у твердих
+тілах, тоді як <kbd>BLYP</kbd> більш точно описує геометрію і вібраційні частоти молекул.
+</p>
+<p>
+У файлі <span class="codebutton"><a href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/DFTMethod/code/compare_gga_functionals.py" target="_blank"
+><kbd>compare_gga_functionals.py</kbd></a></span> виконано порівняння ряду GGA-функціоналів (<kbd>PBE</kbd>, <kbd>BLYP</kbd>, <kbd>BP86</kbd>, <kbd>PW91</kbd>, <kbd>revPBE</kbd>) для атома Оксигену у відкритооболонковому
+стані&nbsp;(\(^3P\)). Розрахунки проведено в рамках <kbd>UKS</kbd>-формалізму з використанням базисного набору <kbd>def2-TZVP</kbd>. Результати наведено нижче:
+</p>
+<div class="codeblock code-text" data-lang="text" data-nosnippet>
+<div class="code-head"><span class="code-lang">Вивід</span><span class="code-lines">11 рядків</span></div>
+<pre class="code"><code>Порівняння GGA функціоналів для атома O (³P)
+============================================================
+Функціонал   Енергія, Ha     Відносно PBE, mHa
+------------------------------------------------------------
+pbe             -75.00967168               0.0000
+blyp            -75.08514352             -75.4718
+bp86            -75.08606294             -76.3913
+pw91            -75.06326956             -53.5979
+revpbe          -75.07119268             -61.5210
+============================================================</code></pre>
+</div>
+<p>
+Як видно, усі розглянуті функціонали дають схожі значення енергії, причому <kbd>BP86</kbd> і <kbd>BLYP</kbd> передбачають найнижчі (тобто найстабільніші) результати. Це узгоджується з тим, що градієнтні поправки в <kbd>BLYP</kbd> та <kbd>BP86</kbd>
+дещо посилюють обмінно-кореляційний внесок порівняно з <kbd>PBE</kbd>, тоді як <kbd>PW91</kbd> і <kbd>revPBE</kbd> дають енергії, близькі, але трохи вищі. Таким чином, порядок енергій має вигляд:
+</p>
+<p>
+\[ E_{\text {BP86}} \approx E_{\text {BLYP}} &lt; E_{\text {revPBE}} &lt; E_{\text {PW91}} &lt; E_{\text {PBE}}. \]
+</p>
+<p>
+Загалом, перехід від <kbd>LDA</kbd> до <kbd>GGA</kbd> є суттєвим кроком на «драбині Якова» у напрямку більш фізично обґрунтованого опису електронної структури, оскільки врахування просторових змін густини дозволяє коректніше описати обмінно-кореляційні
+ефекти у реальних, неоднорідних системах.
+</p>
+<!--
+...... subsection Meta-GGA функціонали ......
+-->
+<h5 id="autosec-701"><span class="sectionnumber">6.3.4&#x2003;</span>Meta-GGA функціонали</h5>
+<a id="main-html-autopage-701"></a>
+<p>
+Наступною сходинкою «драбини Якова» (рис.&nbsp;<a href="dft.html#fig:dft_ladder">6.3</a>) після <kbd>GGA</kbd> є <b>Meta-GGA</b> функціонали. Їхня ідея полягає в тому, щоб включити до опису додаткову локальну інформацію про електронну
+структуру — зокрема, <b>кінетичну густину</b> електронів \(\tau (\mathbf {r})\) або лапласіан густини \(\nabla ^2\rho (\mathbf {r})\). Ці величини дозволяють функціоналу відрізняти області простору з різними типами хімічного зв’язку (ковалентні,
+металічні, іонні) та ефективніше відтворювати неоднорідність електронного розподілу.
+</p>
+<p>
+У загальному вигляді meta-GGA функціонал записується як:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{9}\)</span>
+<!--
+𝐸meta-GGA
+𝑥𝑐 [𝜌] =
+ˆ
+𝑓(𝜌, ∇𝜌, 𝜏) 𝑑r, (6.10)
+-->
+<p>
+\begin{equation}
+E_{xc}^{\text {meta-GGA}}[\rho ] = \int f(\rho , \nabla \rho , \tau )\, d\mathbf {r},
+\end{equation}
+</p>
+<p>
+де кінетична густина визначається через орбіталі Кона–Шема:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{10}\)</span>
+<!--
+𝜏(r) =
+1
+2
+𝑁
+∑
+𝑖=1
+|∇𝜓𝑖(r)|2. (6.11)
+-->
+<p>
+\begin{equation}
+\tau (\mathbf {r}) = \frac {1}{2} \sum _{i=1}^{N} |\nabla \psi _i(\mathbf {r})|^2.
+\end{equation}
+</p>
+<p>
+На відміну від <kbd>GGA</kbd>, який враховує лише форму густини, <kbd>meta-GGA</kbd> частково «бачить» поведінку орбіталей через \(\tau \). Це робить такий підхід набагато гнучкішим: він може самостійно розрізняти, наприклад, щільні області ядра та
+розріджені області міжатомних просторів, не потребуючи емпіричних підгонок.
+</p>
+<p>
+У фізичному сенсі, додаткові змінні (\(\nabla ^2\rho \), \(\tau \)) дозволяють описати не тільки, <em>як сильно</em> змінюється густина, а й <em>яким чином</em> вона це робить — тобто, які орбітальні структури створюють ці зміни. Це істотно покращує опис
+кореляційних ефектів і забезпечує правильну поведінку в межах як атомів, так і твердих тіл.
+</p>
+<!--
+...... subsubsection TPSS (Tao–Perdew–Staroverov–Scuseria, 2003) ......
+-->
+<h6 id="autosec-702">TPSS (Tao–Perdew–Staroverov–Scuseria, 2003)</h6>
+<a id="main-html-autopage-702"></a>
+<p>
+Функціонал <kbd>TPSS</kbd> став першим успішним meta-GGA, побудованим повністю на фізичних принципах без емпіричних параметрів. Він узагальнює ідеї <kbd>PBE</kbd>, додаючи залежність від кінетичної густини. <kbd>TPSS</kbd> добре відтворює енергії
+атомізації, геометрію молекул і властивості твердих тіл, тому став стандартом для перевірки точності нових функціоналів.
+</p>
+<p>
+У файлі <span class="codebutton"><a href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/DFTMethod/code/compare_tpss_pbe.py" target="_blank" ><kbd>compare_tpss_pbe.py</kbd></a></span>
+продемонстровано різницю між meta-GGA та звичайним GGA-функціоналом для атома заліза у високоспіновому стані (\(^5D\)). Розрахунок виконано у базисі <kbd>def2-tzvp</kbd> з використанням <kbd>UKS</kbd>-схеми.
+</p>
+<p>
+Резутьтат роботи програми:
+</p>
+<div class="codeblock code-text" data-lang="text" data-nosnippet>
+<div class="code-head"><span class="code-lang">Вивід</span><span class="code-lines">4 рядки</span></div>
+<pre class="code"><code>Енергія Fe (TPSS): -1260.67205745 Ha
+Енергія Fe (PBE):  -1260.64822199 Ha
+Різниця (TPSS-PBE): -23.84 mHa</code></pre>
+</div>
+<p>
+Як видно з результатів, <kbd>TPSS</kbd> дає дещо нижчу енергію порівняно з <kbd>PBE</kbd>, що свідчить про покращений опис обмінно-кореляційних ефектів завдяки врахуванню кінетичної густини&nbsp;\(\tau (\mathbf {r})\). Для систем з сильними
+спіновими та обмінними взаємодіями (як у перехідних металах) такі meta-GGA-функціонали зазвичай забезпечують точнішу енергію при помірному збільшенні обчислювальних витрат.
+</p>
+<!--
+...... subsubsection M06-L (Minnesota 06 Local) ......
+-->
+<h6 id="autosec-703">M06-L (Minnesota 06 Local)</h6>
+<a id="main-html-autopage-703"></a>
+<p>
+<kbd>M06-L</kbd> — представник сильно параметризованих meta-GGA функціоналів, розроблений групою Д. Труллінгера (Minnesota). Він побудований на великій кількості експериментальних і високоточних квантово-хімічних даних, що дозволяє йому добре
+відтворювати найрізноманітніші властивості: від термохімії до поверхневих явищ і міжмолекулярних взаємодій. Недоліком є певна втрата універсальності поза межами областей, на які він оптимізований.
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">11 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">dft</span>
+
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s2">"Ni 0 0 0"</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s2">"def2-svp"</span><span class="tk-p">,</span> <span class="tk-n">spin</span><span class="tk-o">=</span><span class="tk-mi">2</span><span class="tk-p">)</span>
+
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">dft</span><span class="tk-o">.</span><span class="tk-n">UKS</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span>
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">xc</span> <span class="tk-o">=</span> <span class="tk-s2">"m06l"</span>  <span class="tk-c1"># або 'm06-l'</span>
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">verbose</span> <span class="tk-o">=</span> <span class="tk-mi">4</span>
+
+<span class="tk-n">energy_m06l</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"</span><span class="tk-se">\n</span><span class="tk-s2">Енергія Ni (M06-L): </span><span class="tk-si">{</span><span class="tk-n">energy_m06l</span><span class="tk-si">:</span><span class="tk-s2">.8f</span><span class="tk-si">}</span><span class="tk-s2"> Ha"</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+<kbd>SCAN</kbd> — сучасний і дуже впливовий meta-GGA функціонал, побудований Пердью та співавторами у 2015 році. Його особливість полягає в тому, що він задовольняє <em>усі відомі точні обмеження</em> для обмінно-кореляційної енергії — без жодних
+емпіричних параметрів. <kbd>SCAN</kbd> забезпечує високу точність одночасно для молекул, рідин і твердих тіл, тому зараз активно використовується як «робоча конячка» у матеріалознавстві.
+</p>
+<p>
+У файлі <span class="codebutton"><a href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/DFTMethod/code/scan_vs_pbe_h2o.py" target="_blank" ><kbd>scan_vs_pbe_h2o.py</kbd></a></span> наведено
+приклад порівняння <kbd>SCAN</kbd> з <kbd>PBE</kbd> для молекули води — системи, де важливу роль відіграють водневі зв’язки та локальна кореляція.
+</p>
+<p>
+Результати демонструють, що <kbd>SCAN</kbd> дає нижчу (тобто стабільнішу) повну енергію, ніж <kbd>PBE</kbd>, завдяки точнішому врахуванню локальної обмінно-кореляційної структури густини. Це відображає його перевагу в описі водневих зв’язків, хімічних
+енергій і конденсованих фаз.
+</p>
+<p>
+У підсумку, <kbd>meta-GGA</kbd> функціонали є важливим кроком у розвитку DFT, що поєднує фізичну строгість неемпіричних підходів і високу точність опису хімічних властивостей. Вони розширюють можливості рівнянь Кона–Шема, наближаючи розрахунки до
+реального багаточастинкового опису, залишаючись при цьому обчислювально ефективними.
+</p>
+<!--
+...... subsection Гібридні функціонали ......
+-->
+<h5 id="autosec-704"><span class="sectionnumber">6.3.5&#x2003;</span>Гібридні функціонали</h5>
+<a id="main-html-autopage-704"></a>
+<p>
+Піднімаючись на наступну сходинку «драбини Якова» (рис.&nbsp;<a href="dft.html#fig:dft_ladder">6.3</a>), ми переходимо до <b>гібридних функціоналів</b>. Їхня основна ідея полягає у поєднанні двох підходів: <em>орбітального</em> (як у
+<kbd>HF</kbd>) та <em>густинного</em> (як у <kbd>DFT</kbd>). Таким чином, у гібридних функціоналах частина обмінної енергії береться з точного обмінного інтегралу <kbd>HF</kbd>, а решта — з апроксимації DFT.
+</p>
+<p>
+Загальний вигляд гібридного функціоналу:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{11}\)</span>
+<!--
+𝐸hybrid
+𝑥𝑐 = 𝑎 𝐸HF
+𝑥 + (1 − 𝑎) 𝐸DFT
+𝑥 + 𝐸DFT
+𝑐 , (6.12)
+-->
+<p>
+\begin{equation}
+E_{xc}^{\text {hybrid}} = a\,E_x^{\text {HF}} + (1 - a)\,E_x^{\text {DFT}} + E_c^{\text {DFT}},
+\end{equation}
+</p>
+<p>
+де параметр \(a\) визначає <b>частку точного HF обміну</b> (зазвичай \(a = 0.20\text {--}0.25\)). Таке змішування частково усуває систематичну помилку самодії, властиву чистим функціоналам, і покращує опис локалізації електронів, бар’єрів реакцій та
+збуджених станів.
+</p>
+<p>
+Фізично це можна інтерпретувати так: DFT добре відтворює <em>кореляцію</em>, але погано описує <em>обмін</em>. Метод <kbd>HF</kbd>, навпаки, має точний обмін, але ігнорує кореляцію. Гібридний підхід дозволяє поєднати сильні сторони обох методів у єдиному
+енергетичному функціоналі.
+</p>
+<!--
+...... subsubsection B3LYP (Becke 3-parameter Lee–Yang–Parr) ......
+-->
+<h6 id="autosec-705">B3LYP (Becke 3-parameter Lee–Yang–Parr)</h6>
+<a id="main-html-autopage-705"></a>
+<p>
+<kbd>B3LYP</kbd> — найвідоміший і найпоширеніший гібридний функціонал у квантовій хімії. Він поєднує <kbd>LDA</kbd>-обмін, точний <kbd>HF</kbd>-обмін і <kbd>GGA</kbd>-кореляцію (LYP), використовуючи три емпіричні параметри, підібрані за
+експериментальними даними:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{12}\)</span>
+<!--
+𝐸B3LYP
+𝑥𝑐 = 𝐸LDA
+𝑥 + 0.20(𝐸HF
+𝑥 − 𝐸LDA
+𝑥 ) + 0.72𝐸B88
+𝑥 + 0.81𝐸LYP
+𝑐 + 0.19𝐸VWN
+𝑐 . (6.13)
+-->
+<p>
+\begin{equation}
+E_{xc}^{\text {B3LYP}} = E_x^{\text {LDA}} + 0.20(E_x^{\text {HF}} - E_x^{\text {LDA}}) + 0.72E_x^{\text {B88}} + 0.81E_c^{\text {LYP}} + 0.19E_c^{\text {VWN}}.
+\end{equation}
+</p>
+<p>
+Для ілюстрації типового розрахунку з гібридним функціоналом у скрипті <span class="codebutton"><a href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/DFTMethod/code/h2o_b3lyp.py" target="_blank"
+><kbd>h2o_b3lyp.py</kbd></a></span> наведено приклад для молекули води.
+</p>
+<p>
+<kbd>B3LYP</kbd> добре відтворює геометрії, енергії зв’язку та ІЧ-частоти для широкого класу молекул, що зробило його «<b>золотим стандартом</b>» теоретичної хімії протягом кількох десятиліть. Водночас для систем із сильною кореляцією або делокалізованими
+електронами його точність обмежена.
+</p>
+<!--
+...... subsubsection PBE0 (PBE hybrid) ......
+-->
+<h6 id="autosec-706">PBE0 (PBE hybrid)</h6>
+<a id="main-html-autopage-706"></a>
+<p>
+<kbd>PBE0</kbd> — неемпіричний гібрид, побудований на базі <kbd>PBE</kbd>-функціоналу. Він використовує фіксовану частку HF-обміну (25&percnt;) без параметризації, забезпечуючи стабільну точність і добру узгодженість між різними системами:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{13}\)</span>
+<!--
+𝐸PBE0
+𝑥𝑐 = 0.25𝐸HF
+𝑥 + 0.75𝐸PBE
+𝑥 + 𝐸PBE
+𝑐 . (6.14)
+-->
+<p>
+\begin{equation}
+E_{xc}^{\text {PBE0}} = 0.25E_x^{\text {HF}} + 0.75E_x^{\text {PBE}} + E_c^{\text {PBE}}.
+\end{equation}
+</p>
+<p>
+У файлі <span class="codebutton"><a href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/DFTMethod/code/ch4_pbe0.py" target="_blank" ><kbd>ch4_pbe0.py</kbd></a></span> наведено приклад розрахунку
+енергії молекули метану з використанням функціонала <kbd>PBE0</kbd>. Цей приклад демонструє ефект включення точної (HF) складової обміну: енергія системи стає нижчою, ніж у чистому <kbd>PBE</kbd>, а форма електронної густини —— більш локалізованою
+навколо ядер. Такі зміни покращують опис енергій зв’язку, потенційних поверхонь та збуджених станів, що робить <kbd>PBE0</kbd> придатним як для молекулярних, так і для твердотільних систем.
+</p>
+<p>
+Результат <kbd>PBE0</kbd> для молекули <span
+id="lateximage-main-html-154"
+class="lateximagesource"
+><!--
+CH4
+--><img
+src="main-html-images/41F19D92C998B76C74348C182644EE2C.svg"
+alt="\ce{CH4}"
+style=""
+class="lateximage"
+></span> зазвичай знаходиться нижче енергії чистого <kbd>PBE</kbd>, що відображає внесок точного HF-обміну та покращену опис точкових властивостей, зокрема енергії зв’язку і дипольного моменту.
+</p>
+<p>
+<kbd>PBE0</kbd> зберігає теоретичну строгість, властиву <kbd>PBE</kbd>, і часто використовується в матеріалознавстві та квантовій хімії як збалансований вибір між точністю і витратами.
+</p>
+<!--
+...... subsubsection CAM-B3LYP (Coulomb-Attenuated Method) ......
+-->
+<h6 id="autosec-709">CAM-B3LYP (Coulomb-Attenuated Method)</h6>
+<a id="main-html-autopage-709"></a>
+<p>
+Для опису процесів переносу заряду і збуджених станів звичайні гібриди виявляються недостатніми, оскільки вони не враховують правильну поведінку потенціалу на великих відстанях. Цю проблему вирішують <b>range-separated</b> функціонали, такі як
+<kbd>CAM-B3LYP</kbd>, де кулонівський потенціал розділяється на коротко- і дальньодіючі компоненти:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{6.}{14}\)</span>
+<!--
+1
+𝑟12
+=
+𝛼 + 𝛽 erf(𝜇𝑟12)
+𝑟12
++
+1 − [𝛼 + 𝛽 erf(𝜇𝑟12)]
+𝑟12
+. (6.15)
+-->
+<p>
+\begin{equation}
+\frac {1}{r_{12}} = \frac {\alpha + \beta \,\mathrm {erf}(\mu r_{12})}{r_{12}} + \frac {1 - [\alpha + \beta \,\mathrm {erf}(\mu r_{12})]}{r_{12}}.
+\end{equation}
+</p>
+<p>
+У прикладі <span class="codebutton"><a href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/DFTMethod/code/nh3_cam_b3lyp.py" target="_blank" ><kbd>nh3_cam_b3lyp.py</kbd></a></span> наведено
+розрахунок молекули аміаку із застосуванням <kbd>CAM-B3LYP</kbd>.
+</p>
+<p>
+Такі функціонали коректно відтворюють потенціал на великих відстанях і тому придатні для опису збуджених станів, переносів заряду та рідбергівських станів.
+</p>
+<!--
+...... subsubsection M06-2X та інші Minnesota функціонали ......
+-->
+<h6 id="autosec-710">M06-2X та інші Minnesota функціонали</h6>
+<a id="main-html-autopage-710"></a>
+<p>
+Родина функціоналів <kbd>M06</kbd> (розробка групи Міннесоти) являє собою серію гібридних і meta-GGA варіантів із різною часткою точного HF-обміну:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>M06-L</kbd> — 0&percnt; HF (meta-GGA);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>M06</kbd> — 27&percnt; HF;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>M06-2X</kbd> — 54&percnt; HF (високоточний для термохімії та слабких взаємодій);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>M06-HF</kbd> — 100&percnt; HF (повністю обмінний гібрид).
+</p>
+</li>
+</ul>
+<p>
+Для тесту <span class="codebutton"><a href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/DFTMethod/code/benzene_dimer_m06.py" target="_blank" ><kbd>benzene_dimer_m06.py</kbd></a></span>
+виберемо димер бензен, який є природним тестом для Minnesota-функціоналів, адже поєднує у собі термохімічну стабільність, дисперсійні ефекти та \(\pi -\pi \) взаємодії, на яких добре видно межі застосовності кожного варіанту.
+</p>
+<p>
+Функціонали цієї серії відзначаються високою точністю для кінетичних бар’єрів, нековалентних взаємодій та спектроскопічних параметрів, але через сильну параметризацію можуть втрачати переносимість між різними класами систем.
+</p>
+<p>
+Узагальнюючи, гібридні функціонали є містком між орбітальними методами (<kbd>HF</kbd>, <kbd>post-HF</kbd>) та густинними підходами (<kbd>DFT</kbd>). Вони часто дають найкраще співвідношення «точність/обчислювальна вартість» і становлять основу
+більшості сучасних квантово-хімічних розрахунків.
+</p>
+<!--
+...... subsection Вибір функціоналу: рекомендації ......
+-->
+<h5 id="autosec-711"><span class="sectionnumber">6.3.6&#x2003;</span>Вибір функціоналу: рекомендації</h5>
+<a id="main-html-autopage-711"></a>
+<p>
+Вибір функціоналу — компроміс між точністю та обчислювальними затратами. У різних задачах оптимальні різні функціонали:
+</p>
+<figure id="autoid-31" class="table ">
+<div class="center">
+<div class="figurecaption">
+Таблиця&nbsp;6.1. Рекомендовані функціонали для різних задач
+</div>
+<a id="tab:functional_recommendations"></a>
+<table>
+<tr style="display:none"><th>.</th></tr>
+<tr class="hline">
+<td colspan="1" class="tdc" style="background:#F9F9F9"><b>Задача</b></td>
+<td colspan="1" class="tdc" style="background:#F9F9F9"><b>Функціонал</b></td>
+<td colspan="1" class="tdc" style="background:#F9F9F9"><b>Коментар</b></td>
+</tr>
+<tr class="hline">
+<td class="tdl">Швидкі розрахунки</td>
+<td class="tdl">PBE</td>
+<td class="tdl">Добра точність/швидкість</td>
+</tr>
+<tr>
+<td class="tdl" style="background:#F9F9F9">Енергії атомізації</td>
+<td class="tdl" style="background:#F9F9F9">B3LYP, PBE0</td>
+<td class="tdl" style="background:#F9F9F9">Стандарт у хімії</td>
+</tr>
+<tr>
+<td class="tdl">Перехідні метали</td>
+<td class="tdl">TPSSh, M06</td>
+<td class="tdl">Краще для d-електронів</td>
+</tr>
+<tr>
+<td class="tdl" style="background:#F9F9F9">Слабкі взаємодії</td>
+<td class="tdl" style="background:#F9F9F9">M06-2X, ωB97X-D</td>
+<td class="tdl" style="background:#F9F9F9">З дисперсією</td>
+</tr>
+<tr>
+<td class="tdl">Високоспінові стани</td>
+<td class="tdl">SCAN, TPSSh</td>
+<td class="tdl">Кращий баланс</td>
+</tr>
+<tr>
+<td class="tdl" style="background:#F9F9F9">Загальні розрахунки</td>
+<td class="tdl" style="background:#F9F9F9">PBE0</td>
+<td class="tdl" style="background:#F9F9F9">Універсальний вибір</td>
+</tr>
+<tr>
+<td class="tdl">Максимальна точність</td>
+<td class="tdl">CCSD(T)</td>
+<td class="tdl">Але дуже повільно</td>
+</tr>
+<tr class="hline" aria-hidden="true">
+<td class="tdl"></td>
+<td class="tdl"></td>
+<td class="tdl"></td>
+</tr>
+</table>
+</div>
+</figure>
+<p>
+З практичної точки зору:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>PBE</kbd> — оптимальний для великих систем, поверхонь і твердих тіл;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>B3LYP</kbd> — класичний вибір для органічної хімії;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>M06-2X</kbd> — добре описує слабкі (ван-дер-ваальсові) взаємодії;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <kbd>SCAN</kbd> — сучасний неемпіричний meta-GGA, універсальний для широкого спектра задач.
+</p>
+</li>
+</ul>
+<!--
+...... section Практичні рекомендації ......
+-->
+<h4 id="autosec-714"><span class="sectionnumber">&#xA7;&#x202F;6.4&#x2003;</span>Практичні рекомендації</h4>
+<a id="main-html-autopage-714"></a>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> <b>Для простих молекул (H\(_2\), N\(_2\), O\(_2\))</b>:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Базовий розрахунок: PBE/cc-pVTZ
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Висока точність: PBE0/aug-cc-pVQZ
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Найкраща точність: CCSD(T)/aug-cc-pV5Z
+</p>
+</li>
+</ul>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> <b>Для полярних молекул (CO, NO, HF)</b>:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Гібридні функціонали обов’язкові
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Дифузні функції для дипольних моментів
+</p>
+</li>
+</ul>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> <b>Для молекул перехідних металів</b>:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> TPSSh або M06 функціонали
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Велика кількість спінових станів
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Можливо, потрібен DFT+U
+</p>
+</li>
+</ul>
+</li>
+<li>
+<p>
+<span class="listmarker">4.</span> <b>Для слабких зв’язків</b>:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Обов’язкові дисперсійні корекції (D3, D4)
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Або ωB97X-D, M06-2X функціонали
+</p>
+</li>
+</ul>
+</li>
+<li>
+<p>
+<span class="listmarker">5.</span> <b>Для збуджених станів</b>:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> TD-DFT з range-separated функціоналами
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Або багатоконфігураційні методи (CASSCF)
+</p>
+</li>
+</ul>
+</li>
+</ul>
+<!--
+...... subsection Типові помилки при розрахунках молекул ......
+-->
+<h5 id="autosec-715"><span class="sectionnumber">6.4.1&#x2003;</span>Типові помилки при розрахунках молекул</h5>
+<a id="main-html-autopage-715"></a>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> <b>Неправильна симетрія</b>:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Завжди використовуйте симетрію молекули
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Перевіряйте point group командою <span class="inlinecode"><kbd>mol.symmetry = True</kbd></span>
+</p>
+</li>
+</ul>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> <b>Хибна мультиплетність</b>:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> O\(_2\) — триплет, не синглет!
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Перевіряйте спін по <span class="inlinecode"><kbd>mol.spin</kbd></span>
+</p>
+</li>
+</ul>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> <b>Недостатня сітка інтегрування</b>:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Для точних градієнтів: <span class="inlinecode"><kbd>grids.level = 4</kbd></span>
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Для оптимізації завжди перевіряйте конвергенцію по сітці
+</p>
+</li>
+</ul>
+</li>
+<li>
+<p>
+<span class="listmarker">4.</span> <b>Погана початкова геометрія</b>:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Починайте з розумних відстаней
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Використовуйте експериментальні дані або попередні розрахунки
+</p>
+</li>
+</ul>
+</li>
+<li>
+<p>
+<span class="listmarker">5.</span> <b>Ігнорування BSSE</b> (Basis Set Superposition Error):
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Для енергій зв’язування використовуйте counterpoise корекцію
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Особливо важливо для малих базисів
+</p>
+</li>
+</ul>
+</li>
+</ul>
+<!--
+...... section Резюме ......
+-->
+<h4 id="autosec-716">Резюме</h4>
+<a id="main-html-autopage-716"></a>
+<p>
+Теорія функціоналу густини (<kbd>DFT</kbd>) є сучасною альтернативою пост-Хартрі–Фоківським методам для розв’язання багатоелектронної задачі. На відміну від методів, що оперують хвильовою функцією, <kbd>DFT</kbd> використовує лише електронну густину
+\(\rho (\mathbf {r})\) як основну змінну. Це суттєво спрощує обчислення та дозволяє досліджувати великі системи.
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Теореми Хоенберга–Кона (1964) доводять, що:
+</p>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> зовнішній потенціал \(v_\mathrm {ext}(\mathbf {r})\) і, отже, вся енергія системи однозначно визначаються густиною \(\rho (\mathbf {r})\);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> існує варіаційний принцип: основний стан відповідає мінімуму функціонала енергії \(E[\rho ]\).
+</p>
+</li>
+</ul>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Рівняння Кона–Шема (1965) переводять задачу взаємодіючих електронів у рівняння для невзаємодіючих частинок, що рухаються в ефективному потенціалі:
+</p>
+<p>
+\[ \hat {F}_\mathrm {KS} \psi _i = \varepsilon _i \psi _i, \quad \hat {F}_\mathrm {KS} = -\tfrac {1}{2}\nabla ^2 + v_\mathrm {ext} + v_\mathrm {H} + v_\mathrm {xc}, \]
+</p>
+<p>
+де \(v_\mathrm {xc}(\mathbf {r}) = \delta E_\mathrm {xc}[\rho ]/\delta \rho \) — обмінно-кореляційний потенціал.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Уся складність <kbd>DFT</kbd> зосереджена у виборі функціонала \(E_\mathrm {xc}[\rho ]\). Його форма визначає точність і область застосування методу.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Класифікація функціоналів (так звана «драбина Якова»):
+</p>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> <kbd>LDA</kbd>, <kbd>LSDA</kbd> — локальне наближення густини, базується на однорідному електронному газі;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> <kbd>GGA</kbd> — ураховує градієнт густини (\(\nabla \rho \)), підвищуючи точність для молекул;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> <kbd>meta-GGA</kbd> — включає кінетичну густину \(\tau (\mathbf {r})\) або лапласіан густини \(\nabla ^2\rho \);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">4.</span> гібридні функціонали — поєднують локальні внески з точним обміном (<kbd>HF</kbd>) у певній пропорції.
+</p>
+</li>
+</ul>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Вибір функціоналу визначає баланс між точністю, універсальністю та обчислювальними затратами. Наприклад, <kbd>PBE</kbd> і <kbd>BLYP</kbd> є стандартними неемпіричними GGA-функціоналами, тоді як
+<kbd>B3LYP</kbd> і <kbd>PBE0</kbd> — гібридні, що забезпечують найкраще відтворення експериментальних даних.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Порівняно з методом Хартрі–Фока, <kbd>DFT</kbd> включає електронну кореляцію ефективно через \(E_\mathrm {xc}[\rho ]\) і має кращу масштабованість (\(O(N^3)\) проти \(O(N^4)\) для <kbd>HF</kbd>), що
+робить його основним інструментом сучасних молекулярних і матеріалознавчих розрахунків.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Водночас точність <kbd>DFT</kbd> залежить від вибраного функціонала та може бути обмеженою у випадках сильно корельованих або збуджених станів, де більш адекватними є багатоконфігураційні методи.
+</p>
+</li>
+</ul>
+<p>
+Таким чином, теорія функціоналу густини забезпечує найкращий компроміс між фізичною обґрунтованістю, точністю та обчислювальною ефективністю. Вона стала основним робочим інструментом у квантовій хімії, фізиці твердого тіла та моделюванні складних матеріалів.
+</p>
+<!--
+...... section Контрольні запитання та завдання ......
+-->
+<h4 id="autosec-717">Контрольні запитання та завдання</h4>
+<a id="main-html-autopage-717"></a>
+<!--
+...... subsection Контрольні запитання ......
+-->
+<h5 id="autosec-718">Контрольні запитання</h5>
+<a id="main-html-autopage-718"></a>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> Які основні теореми лежать в основі теорії функціоналу густини (DFT)? Опишіть їх суть та значення для обчислень.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> Поясніть, що таке рівняння Кона-Шема. Як вони пов’язані з рівняннями Хартрі–Фока?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> Опишіть класифікацію обмінно-кореляційних функціоналів за “драбинкою Якова”. Наведіть приклади для кожного рівня.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">4.</span> Чим відрізняються LDA та GGA функціонали? Наведіть приклади та області застосування.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">5.</span> Що таке гібридні функціонали? Як вони поєднують елементи HF та DFT? Наведіть приклад розрахунку з B3LYP.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">6.</span> Які переваги та недоліки DFT порівняно з пост-HF методами? Коли DFT є кращим вибором?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">7.</span> Поясніть роль ефективного потенціалу \(v_{\text {eff}}(\vect {r})\) у DFT. Як обчислюється обмінно-кореляційна частина?
+</p>
+</li>
+</ul>
+<!--
+...... subsection Практичні завдання ......
+-->
+<h5 id="autosec-719">Практичні завдання</h5>
+<a id="main-html-autopage-719"></a>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker"><b>Задача 1:</b></span> Перевірка нормування густини в DFT. Обчисліть \(\Tr (\mathbf {D}\mathbf {S})\). Покажіть, що значення точно дорівнює \(N_e\) (як і в HF). Порівняйте з <span
+class="inlinecode"><kbd>mol.nelectron</kbd></span>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 2:</b></span> Відновлення KS-фокіана з його складових. Після запуску DFT-розрахунку отримайте <span class="inlinecode"><kbd>mf.get_veff()</kbd></span>, <span
+class="inlinecode"><kbd>mf.get_j()</kbd></span>, <span class="inlinecode"><kbd>mf.get_k()</kbd></span>. Покажіть, що
+</p>
+<p>
+\[ \mathbf {F}^{\text {KS}} = \mathbf {h} + \mathbf {J} + \mathbf {V}_{\text {xc}} \]
+</p>
+<p>
+(для не-гібридних функціоналів <span class="inlinecode"><kbd>get_k()</kbd></span> повертає \(0\)). Перевірте норму різниці.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 3:</b></span> Обмінно-кореляційний потенціал як матриця. Обчисліть
+</p>
+<p>
+\[\mathbf {V}_{\text {xc}} = \mathbf {F}^{\text {KS}} - \mathbf {h} - \mathbf {J}.\]
+</p>
+<p>
+Покажіть, що \(\mathbf {V}_\text {xc}\) — симетрична матриця.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 4:</b></span> Енергія обміну-кореляції вручну. Використовуйте<br />
+<span class="inlinecode"><kbd>mf._numint.get_rho()</kbd></span> та <span class="inlinecode"><kbd>mf.xc_code</kbd></span> для обчислення \(E_{\text {xc}}\) на сітці. Порівняйте з <span
+class="inlinecode"><kbd>mf.energy_xc()[0]</kbd></span>. Чому значення збігаються?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 5:</b></span> Ручне обчислення \(E_{\text {xc}}\) через vxc-матрицю. Для LDA/GGA: \(E_{\text {xc}} \approx \mathbf {D} : \mathbf {V}_{\text {xc}}\). Покажіть, що це дає правильне значення з
+точністю \(10^{-8}\) (для не-гібридів).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 6:</b></span> Гібридний обмін: частка точного HF-обміну. Для B3LYP, PBE0, \(\omega \)B97X тощо отримайте <span class="inlinecode"><kbd>mf.get_k()</kbd></span>. Обчисліть частку HF-обміну: \(\alpha
+= E_{\text {HFX}} / (E_{\text {HFX}} + E_{\text {DFT-x}})\). Перевірте, що \(\alpha = 0.20\) для B3LYP, \(0.25\) для PBE0.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 7:</b></span> Порівняння фокіанів HF та KS. Запустіть HF і DFT (наприклад, PBE) на одній молекулі. Обчисліть норму різниці \(\|\mathbf {F}^{\text {HF}} - \mathbf {F}^{\text {KS}}\|_F\). Поясніть, чому
+KS-фокіан «м’якший» (менше відштовхування).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 8:</b></span> Віріальна теорема в DFT. Обчисліть \(T = \operatorname {Tr}(\mathbf {D}\mathbf {T})\). \(V = E_{\text {tot}} - T\). Перевірте \(|V/T + 2| &lt; 10^{-4}\) (у DFT зазвичай краще, ніж у
+HF).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 9:</b></span> Стаціонарність KS-SCF. Обчисліть \(\|\mathbf {F}^{\text {KS}} \mathbf {D} \mathbf {S} - \mathbf {S} \mathbf {D} \mathbf {F}^{\text {KS}}\|_F\). При збіжному розрахунку має
+бути \(&lt; 10^{-8}\).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 10:</b></span> Розкладання veff на складові. Використовуйте <span class="inlinecode"><kbd>mf.get_veff().exc</kbd></span> (енергія), <span class="inlinecode"><kbd>.ecoul</kbd></span> (J), <span
+class="inlinecode"><kbd>.vxc</kbd></span> (матриця). Покажіть, що <span class="inlinecode"><kbd>mf.e_tot</kbd></span> = <kbd>T + Vne + J + Exc + Vnn</kbd> з точністю \(10^{-10}\).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 11:</b></span> Порівняння XC-потенціалу для LDA vs GGA. Запустіть LDA (SVWN) і PBE. Обчисліть \(\mathbf {V}_{\text {xc}}^{\text {LDA}}\) та \(\mathbf {V}_{\text {xc}}^{\text {PBE}}\). Покажіть,
+що \(\|\mathbf {V}_{\text {xc}}^{\text {PBE}}\|_F &lt; \|\mathbf {V}_{\text {xc}}^{\text {LDA}}\|_F\) (GGA «пом’якшує» потенціал).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 12:</b></span> Асимптотична поведінка XC-потенціалу. Для range-separated функціоналів (ωB97X, CAM-B3LYP) отримайте<br />
+<span class="inlinecode"><kbd>mf._numint.rsh_coeff</kbd></span>. Покажіть, що на великих \(r\) XC-потенціал \(\to -1/r\) (як у точному обміні).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 13:</b></span> Самовзаємодія (self-interaction error). Розрахуйте атом <span
+id="lateximage-main-html-155"
+class="lateximagesource"
+><!--
+H–
+--><img
+src="main-html-images/ED2BA977DF27D8E8AD21218C6844933A.svg"
+alt="\ce{H-}"
+style=""
+class="lateximage"
+></span> (два електрони на 1s) з LDA та B3LYP. Покажіть, що LDA дає зв’язаний стан (помилково), а B3LYP — ні (правильно).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 14:</b></span> Фракційна зайнятість у DFT. Для атома <span
+id="lateximage-main-html-156"
+class="lateximagesource"
+><!--
+H
+--><img
+src="main-html-images/787EBCFB2440171F8A4A098726F24748.svg"
+alt="\ce{H}"
+style=""
+class="lateximage"
+></span> отримайте HOMO-енергію \(\varepsilon _{\text {HOMO}}\). Покажіть, що для гібридів \(\varepsilon _{\text {HOMO}} \approx -I\) (іонізаційний потенціал), а для чистих GGA — ні.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 15:</b></span> Перевірка правильності XC-сітки. Збільште рівень сітки:
+</p>
+<p>
+<span class="inlinecode"><kbd>mf.grids.level = 6</kbd></span>.
+</p>
+<p>
+Покажіть, що енергія змінюється менш ніж на \(10^{-7}\) а.о. (перевірка конвергенції).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 16:</b></span> Ручне обчислення густини на сітці. Використовуйте
+</p>
+<p>
+<span class="inlinecode"><kbd>ao_value = mf._numint.eval_ao(mol, grids.coords)</kbd></span>.
+</p>
+<p>
+Обчисліть \(\rho (\mathbf {r}) = \sum _{\mu \nu } D_{\mu \nu } \chi _\mu (\mathbf {r}) \chi _\nu (\mathbf {r})\). Інтегруйте по сітці: \(\sum w_i \rho _i \approx N_e\) (перевірте похибку).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 17:</b></span> Порівняння орбіталей HF та KS. Обчисліть \(\mathbf {C}_{\text {HF}}^T \mathbf {S} \mathbf {C}_{\text {KS}}\). Покажіть, що орбіталі дуже схожі (перекриття \(&gt; 0.99\)), але не
+ідентичні.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 18:</b></span> Частка точного обміну в гібриді. Для B3LYP: \(E_{\text {x}} = 0.8 E_{\text {x}}^{\text {DFT}} + 0.2 E_{\text {x}}^{\text {HF}}\). Обчисліть обидва внески вручну і перевірте
+коефіцієнти.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 19:</b></span> Дисперсійна корекція D3/D4. Запустіть PBE і PBE-D3BJ. Покажіть, що різниця енергії — це саме:
+</p>
+<p>
+<span class="inlinecode"><kbd>mf.energy_nuc() + mf.get_dispersion()</kbd></span>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 20:</b></span> Побудуйте криві потенційної енергії молекули <span
+id="lateximage-main-html-157"
+class="lateximagesource"
+><!--
+F2
+--><img
+src="main-html-images/E4116A4BF803C103B71D194288E38AB1.svg"
+alt="\ce{F2}"
+style=""
+class="lateximage"
+></span> різними функціоналами (<kbd>LDA</kbd>, <kbd>PBE</kbd>, <kbd>B3LYP</kbd>, <kbd>PBE0</kbd>) та порівняйте з експериментом (\(r_e = 1.412\)&nbsp;Å, \(D_e = 1.66\)&nbsp;eV).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 21:</b></span> Дослідіть вплив базисного набору на властивості <span
+id="lateximage-main-html-158"
+class="lateximagesource"
+><!--
+CO
+--><img
+src="main-html-images/1751E01A9C69DE0F6606C49642C8CD6D.svg"
+alt="\ce{CO}"
+style=""
+class="lateximage"
+></span>: розрахуйте \(r_e\), \(D_e\), \(\omega _e\) з базисами <kbd>cc-pVDZ</kbd>, <kbd>cc-pVTZ</kbd>, <kbd>cc-pVQZ</kbd> та екстраполюйте до межі.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 22:</b></span> Порівняйте RKS та UKS підходи для дисоціації <span
+id="lateximage-main-html-159"
+class="lateximagesource"
+><!--
+H2
+--><img
+src="main-html-images/B210D6A401BAC692FAB8840283B0CE59.svg"
+alt="\ce{H2}"
+style=""
+class="lateximage"
+></span>. Поясніть різницю в поведінці енергії на великих відстанях.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 23:</b></span> Розрахуйте перші три збуджені стани <span
+id="lateximage-main-html-160"
+class="lateximagesource"
+><!--
+N2
+--><img
+src="main-html-images/320403B2D8B7F4EAD45738B5A49BE91A.svg"
+alt="\ce{N2}"
+style=""
+class="lateximage"
+></span> методом TD-DFT з різними функціоналами. Порівняйте з експериментальними значеннями.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 24:</b></span> Дослідіть молекулу <span
+id="lateximage-main-html-161"
+class="lateximagesource"
+><!--
+CuH
+--><img
+src="main-html-images/F489D98DB946F1A91D0C48B930C9661D.svg"
+alt="\ce{CuH}"
+style=""
+class="lateximage"
+></span> методами <kbd>PBE</kbd>, <kbd>TPSSh</kbd> та <kbd>B3LYP</kbd>. Який функціонал краще описує зв’язок <span
+id="lateximage-main-html-162"
+class="lateximagesource"
+><!--
+Cu–H
+--><img
+src="main-html-images/D24D841B831AD125202A30349C3B0EB9.svg"
+alt="\ce{Cu-H}"
+style=""
+class="lateximage"
+></span>?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 25:</b></span> Виконайте систематичне дослідження галогенів (<span
+id="lateximage-main-html-163"
+class="lateximagesource"
+><!--
+F2
+--><img
+src="main-html-images/E4116A4BF803C103B71D194288E38AB1.svg"
+alt="\ce{F2}"
+style=""
+class="lateximage"
+></span>, <span
+id="lateximage-main-html-164"
+class="lateximagesource"
+><!--
+Cl2
+--><img
+src="main-html-images/A90738EA4C63520BD782F3E642186BA0.svg"
+alt="\ce{Cl2}"
+style=""
+class="lateximage"
+></span>, <span
+id="lateximage-main-html-165"
+class="lateximagesource"
+><!--
+Br2
+--><img
+src="main-html-images/31D9FC04966B03F6CC7BEC246AFD4E4B.svg"
+alt="\ce{Br2}"
+style=""
+class="lateximage"
+></span>, <span
+id="lateximage-main-html-166"
+class="lateximagesource"
+><!--
+I2
+--><img
+src="main-html-images/ED36024C64D2B12D31E5DC519D013C89.svg"
+alt="\ce{I2}"
+style=""
+class="lateximage"
+></span>) з різними функціоналами. Який функціонал найкраще відтворює експериментальні енергії дисоціації?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 26:</b></span> Побудуйте benchmark для молекул <span
+id="lateximage-main-html-167"
+class="lateximagesource"
+><!--
+H2
+--><img
+src="main-html-images/B210D6A401BAC692FAB8840283B0CE59.svg"
+alt="\ce{H2}"
+style=""
+class="lateximage"
+></span>, <span
+id="lateximage-main-html-168"
+class="lateximagesource"
+><!--
+N2
+--><img
+src="main-html-images/320403B2D8B7F4EAD45738B5A49BE91A.svg"
+alt="\ce{N2}"
+style=""
+class="lateximage"
+></span>, <span
+id="lateximage-main-html-169"
+class="lateximagesource"
+><!--
+CO
+--><img
+src="main-html-images/1751E01A9C69DE0F6606C49642C8CD6D.svg"
+alt="\ce{CO}"
+style=""
+class="lateximage"
+></span> з базисами від <kbd>cc-pVDZ</kbd> до <kbd>aug-cc-pV5Z</kbd>. Визначте, при якому базисі досягається конвергенція з точністю 1&nbsp;mHa.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 27:</b></span> Розрахуйте тестовий набір G2 (8 молекул) функціоналами <kbd>PBE</kbd>, <kbd>B3LYP</kbd>, <kbd>PBE0</kbd>, <kbd>M06-2X</kbd>. Порівняйте MAE, RMSE та визначте найкращий функціонал.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 28:</b></span> Розрахуйте енергії всіх атомів третього періоду (<span
+id="lateximage-main-html-170"
+class="lateximagesource"
+><!--
+Na
+--><img
+src="main-html-images/ACD186AD593922B6B515521E454EBEE3.svg"
+alt="\ce{Na}"
+style=""
+class="lateximage"
+></span>–<span
+id="lateximage-main-html-171"
+class="lateximagesource"
+><!--
+Ar
+--><img
+src="main-html-images/394C5E7E6266A2D4DD34FB3110D952E1.svg"
+alt="\ce{Ar}"
+style=""
+class="lateximage"
+></span>) з функціоналами <kbd>PBE</kbd>, <kbd>B3LYP</kbd> та <kbd>PBE0</kbd>. Порівняйте результати з <kbd>HF</kbd>. Побудуйте графіки.
+</p>
+<p>
+<b>Базис:</b> <kbd>def2-TZVP</kbd>
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 29:</b></span> Для атома Заліза (<span
+id="lateximage-main-html-172"
+class="lateximagesource"
+><!--
+Fe
+--><img
+src="main-html-images/7515033AA4E56F84173849118D1C305F.svg"
+alt="\ce{Fe}"
+style=""
+class="lateximage"
+></span>) порівняйте енергії різних спінових станів (\(2S = 0, 2, 4, 6\)) використовуючи функціонали: <kbd>LDA</kbd>, <kbd>PBE</kbd>, <kbd>TPSS</kbd>, <kbd>B3LYP</kbd>, <kbd>PBE0</kbd>.
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Який спіновий стан є найнижчим для кожного функціоналу?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Який функціонал дає правильний основний стан?
+</p>
+</li>
+</ul>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 30:</b></span> Для атома Неону розрахуйте енергію з функціоналом <kbd>PBE0</kbd> та базисами <kbd>cc-pVDZ</kbd>, <kbd>cc-pVTZ</kbd>, <kbd>cc-pVQZ</kbd>, <kbd>cc-pV5Z</kbd>.
+</p>
+<p>
+Екстраполюйте енергію до базисної межі (CBS) за формулою:
+</p>
+<p>
+\[ E(X) = E_{\text {CBS}} + \frac {A}{X^3} \]
+</p>
+<p>
+де \(X = 2, 3, 4, 5\) для DZ, TZ, QZ, 5Z.
+</p>
+<p>
+Порівняйте з експериментальною енергією <span
+id="lateximage-main-html-173"
+class="lateximagesource"
+><!--
+Ne
+--><img
+src="main-html-images/7171F56EC9E461A0E8E32832F74722D1.svg"
+alt="\ce{Ne}"
+style=""
+class="lateximage"
+></span>: \(-128.547\) eV.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 31:</b></span> Розрахуйте всі \(3d\) перехідні метали (<span
+id="lateximage-main-html-174"
+class="lateximagesource"
+><!--
+Sc
+--><img
+src="main-html-images/54CE9EFA23865FE541BD1C758A339290.svg"
+alt="\ce{Sc}"
+style=""
+class="lateximage"
+></span>–<span
+id="lateximage-main-html-175"
+class="lateximagesource"
+><!--
+Zn
+--><img
+src="main-html-images/5352BEE9DCFDC9DD3453DC0680172C70.svg"
+alt="\ce{Zn}"
+style=""
+class="lateximage"
+></span>) з функціоналом <kbd>TPSSh</kbd>. Проаналізуйте заселеності d-орбіталей.
+</p>
+<p>
+Для яких атомів:
+</p>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> Всі \(d\)-орбіталі рівномірно заселені?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> Є виражена асиметрія \(\alpha /\beta \)?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> Найбільше забруднення спіном?
+</p>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+</main>
+<nav class="botnavigation"><a href="main-html.html" class="linkhome" >
+Головна</a></nav>
+</div><!-- grid -->
+<script src="assets/book.js" defer></script>
+</body>
+</html>

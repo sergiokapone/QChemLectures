@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Квантово-механічні методи обчислення. Використання PySCF | Навчальний посібник</title>
+<meta name="description" content="Навчальний посібник з квантово-механічних обчислень атомів і молекул у PySCF: метод Хартрі–Фока, пост-HF, DFT, молекулярні властивості, коливання, збуджені стани. Код прикладів можна копіювати.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://sergiokapone.github.io/QChemLectures/PyscfBook/">
+<meta property="og:title" content="Квантово-механічні методи обчислення. Використання PySCF">
+<meta property="og:description" content="Навчальний посібник: теорія й готові приклади коду для PySCF.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://sergiokapone.github.io/QChemLectures/PyscfBook/">
+<script>(function(){var r=document.documentElement;try{var t=localStorage.getItem('pyscfbook-theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){r.classList.add('dark');}}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400..700&family=JetBrains+Mono:wght@400;500;700&family=Literata:ital,opsz,wght@0,7..72,300..700;1,7..72,300..700&display=swap">
+<style>
+:root{--ink:#0d1b36;--navy:#002e64;--indigo:#3333b2;--teal:#006766;--muted:#58637a;--page:#fdfdfe;--desk:#e9edf5;--rule:#d5dbe8;
+  --tint:#e8eef7;--card:#fff;--link:#2b2bb0;--gold:#e0b400;--serif:"Literata",Georgia,serif;--sans:"Golos Text","Segoe UI",Roboto,Arial,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;--shadow:0 1px 2px rgba(13,27,54,.08),0 14px 34px -14px rgba(13,27,54,.28)}
+:root.dark{--ink:#e6ebf6;--navy:#9fb8e8;--indigo:#9aa2ff;--teal:#5fd0cb;--muted:#9aa6bf;--page:#121a2c;--desk:#0b1120;--rule:#27324c;
+  --tint:#18233d;--card:#16213a;--link:#9fa6ff;--shadow:0 1px 2px rgba(0,0,0,.4),0 16px 38px -16px rgba(0,0,0,.7)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--desk);color:var(--ink);font:1.02rem/1.65 var(--serif)}
+a{color:var(--link)}
+.wrap{max-width:62rem;margin:0 auto;padding:0 1.2rem 3rem}
+.hero{position:relative;margin:0 -1.2rem;padding:3.2rem 1.2rem 2.6rem;color:#fff;text-align:center;overflow:hidden;
+  background:radial-gradient(1200px 380px at 50% -10%,#3a3ad0 0%,transparent 60%),linear-gradient(160deg,#00224b 0%,#002e64 55%,#14307a 100%)}
+.hero::before{content:"";position:absolute;inset:0;opacity:.18;
+  background:radial-gradient(circle at 20% 30%,#fff 0 1.5px,transparent 2px),radial-gradient(circle at 78% 62%,#fff 0 1.5px,transparent 2px);
+  background-size:70px 70px,110px 110px}
+.hero>*{position:relative}
+.tools{position:absolute;right:1rem;top:.9rem}
+.tbtn{font:600 .78rem var(--sans);color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.35);border-radius:8px;padding:.4rem .75rem;cursor:pointer}
+.tbtn:hover{background:rgba(255,255,255,.22)}
+.eyebrow{font:600 .78rem var(--sans);letter-spacing:.18em;text-transform:uppercase;color:#bcd0ff;margin:0 0 .8rem}
+h1{font:700 clamp(1.8rem,4.6vw,2.9rem)/1.15 var(--sans);margin:0 0 .5rem;letter-spacing:-.01em}
+.sub{font:500 clamp(1.05rem,2.4vw,1.35rem) var(--sans);color:#dbe6ff;margin:0}
+.sub code{font:600 .95em var(--mono);background:rgba(255,255,255,.14);padding:.05em .4em;border-radius:6px}
+.actions{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;margin:1.9rem 0 .4rem}
+.btn{display:inline-flex;align-items:center;gap:.5rem;font:600 .95rem var(--sans);text-decoration:none;color:#fff;border:1px solid rgba(255,255,255,.45);
+  border-radius:10px;padding:.7rem 1.15rem;background:rgba(255,255,255,.08);transition:background .15s,transform .15s}
+.btn:hover{background:rgba(255,255,255,.2);transform:translateY(-1px)}
+.btn.primary{background:var(--gold);border-color:var(--gold);color:#1a1400}
+.btn.primary:hover{background:#f0c818}
+.note{font:.85rem var(--sans);color:#bcd0ff;margin:.9rem 0 0}
+section.card{background:var(--page);border:1px solid var(--rule);border-radius:14px;box-shadow:var(--shadow);padding:1.6rem 1.7rem;margin-top:1.6rem}
+h2{font:700 1.25rem var(--sans);margin:0 0 .9rem;color:var(--navy)}
+.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:1rem;margin-top:1rem}
+.feat div{background:var(--tint);border-radius:10px;padding:.9rem 1rem;font-size:.95rem}
+.feat b{display:block;font:650 .95rem var(--sans);color:var(--indigo);margin-bottom:.2rem}
+.demo{margin:1.1rem 0 0;border:1px solid var(--rule);border-radius:9px;overflow:hidden;font:.8rem/1.6 var(--mono);background:#f7f9fc;color:#1d2433}
+:root.dark .demo{background:#0d1526;color:#dde5f5}
+.demo .h{display:flex;justify-content:space-between;padding:.3rem .8rem;background:#eaeff7;font:600 .7rem var(--sans);letter-spacing:.08em;text-transform:uppercase;color:#3333b2}
+:root.dark .demo .h{background:#16213a;color:#9aa2ff}
+.demo pre{margin:0;padding:.8rem 1rem;overflow-x:auto}
+.k{color:#8a2bb6}.s{color:#1f7a3a}.c{color:#76809a;font-style:italic}.f{color:#2150c8}
+:root.dark .k{color:#c8a2f0}:root.dark .s{color:#9fdc9c}:root.dark .c{color:#7d89a6}:root.dark .f{color:#8db4ff}
+.authors{display:flex;gap:1.2rem;align-items:center}
+.authors img{width:96px;height:96px;border-radius:50%;object-fit:cover;border:3px solid var(--rule)}
+.authors p{margin:.2rem 0 0;color:var(--muted);font-size:.95rem}
+.toc-controls{display:flex;gap:.6rem;margin:0 0 1rem}
+.cbtn{font:600 .78rem var(--sans);color:var(--indigo);background:transparent;border:1px solid var(--rule);border-radius:7px;padding:.35rem .7rem;cursor:pointer}
+.cbtn:hover{border-color:var(--indigo)}
+.part{margin:1.4rem 0 0}
+.part h3{font:700 1.08rem var(--sans);margin:0 0 .5rem;display:flex;flex-wrap:wrap;align-items:baseline;gap:.6rem;
+  border-bottom:2px solid var(--navy);padding-bottom:.35rem}
+.part h3 a{color:var(--ink);text-decoration:none}.part h3 a:hover{color:var(--link)}
+.part-num{font:700 .7rem var(--sans);letter-spacing:.14em;text-transform:uppercase;color:#fff;background:var(--navy);border-radius:5px;padding:.2rem .5rem}
+:root.dark .part-num{color:#0b1120}
+.chapters{list-style:none;margin:0;padding:0}
+.ch{border-bottom:1px solid var(--rule)}
+.ch summary{display:flex;gap:.8rem;align-items:baseline;padding:.55rem .2rem;cursor:pointer;list-style:none}
+.ch summary::-webkit-details-marker{display:none}
+.ch summary::after{content:"+";margin-left:auto;font:600 1rem var(--sans);color:var(--muted)}
+.ch details[open]>summary::after{content:"−"}
+.ch.plain{padding:.55rem .2rem}
+.num{flex:none;min-width:1.7rem;font:700 1.05rem var(--sans);color:var(--indigo)}
+.ch-title{color:var(--ink);text-decoration:none;font:600 1rem var(--sans)}
+.ch-title:hover{color:var(--link);text-decoration:underline}
+.ch code,.subs code,.part code{font:.88em var(--mono)}
+.subs{list-style:none;margin:0 0 .7rem;padding:0 0 0 2.5rem;columns:2 18rem;column-gap:2rem}
+.subs li{break-inside:avoid;padding:.12rem 0;font:.93rem/1.4 var(--sans)}
+.subs a{color:var(--muted);text-decoration:none}.subs a:hover{color:var(--link);text-decoration:underline}
+.snum{color:var(--indigo);font-weight:600;margin-right:.45rem}
+footer{margin-top:2.2rem;text-align:center;font:.85rem var(--sans);color:var(--muted)}
+#top{position:fixed;right:1rem;bottom:1rem;width:2.6rem;height:2.6rem;border-radius:50%;border:0;background:var(--navy);color:#fff;font-size:1.2rem;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .2s}
+:root.dark #top{color:#0b1120}
+#top.on{opacity:.9;pointer-events:auto}
+@media(max-width:560px){.authors{flex-direction:column;text-align:center}.subs{padding-left:.6rem}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <div class="tools"><button class="tbtn" id="theme" type="button" aria-label="Перемкнути тему">Темна тема</button></div>
+  <p class="eyebrow">Навчальний посібник</p>
+  <h1>Квантово-механічні методи обчислення</h1>
+  <p class="sub">Використання <code>PySCF</code></p>
+  <div class="actions">
+    <a class="btn primary" href="../online/index.html">Читати онлайн</a>
+    <a class="btn" href="pyscfBook.pdf">Завантажити PDF</a>
+    <a class="btn" href="https://github.com/sergiokapone/QChemLectures/tree/master/PyscfBook" target="_blank" rel="noopener">Код прикладів на GitHub</a>
+  </div>
+  <p class="note">Онлайн-версія містить усі формули й рисунки книги; код у ній можна копіювати одним натисканням.</p>
+</header>
+
+<section class="card">
+  <h2>Про посібник</h2>
+  <p>Практичне введення до курсу «Квантова хімія та квантово-механічні методи обчислень»: як за допомогою відкритого пакета <a href="https://pyscf.org/" target="_blank" rel="noopener">PySCF</a> (<em>Python-based Simulations of Chemistry Framework</em>) розраховувати електронну структуру, енергії, властивості й спектри атомів та молекул — і розуміти, що саме при цьому обчислюється.</p>
+  <p>Посібник створено для студентів магістратури Навчально-наукового фізико-технічного інституту КПІ ім. Ігоря Сікорського (ОП «E6 Прикладна фізика та наноматеріали»). Теорія йде поруч із робочими прикладами: кожен приклад — окремий файл у <a href="https://github.com/sergiokapone/QChemLectures/tree/master/PyscfBook" target="_blank" rel="noopener">репозиторії</a>.</p>
+  <div class="feat">
+    <div><b>Теорія й код разом</b>Від молекулярного об’єкта й базисних наборів до Хартрі–Фока, пост-HF та DFT, молекулярних властивостей, коливань і збуджених станів.</div>
+    <div><b>Код можна копіювати</b>Кожен блок коду має кнопку «Копіювати»; довгі приклади згортаються, а на файли-приклади є посилання на GitHub.</div>
+    <div><b>Світла й темна тема</b>Зручне читання на екрані та на телефоні; пошук по тексту розділів.</div>
+  </div>
+  <div class="demo" aria-hidden="true"><div class="h"><span>Python</span><span>Копіювати</span></div><pre><span class="k">from</span> pyscf <span class="k">import</span> gto, scf
+mol = gto.<span class="f">M</span>(atom=<span class="s">'H 0 0 0; H 0 0 0.74'</span>, basis=<span class="s">'cc-pvdz'</span>)
+mf = scf.<span class="f">RHF</span>(mol).<span class="f">run</span>()   <span class="c"># енергія Хартрі–Фока</span></pre></div>
+</section>
+
+<section class="card">
+  <h2>Автор</h2>
+  <div class="authors">
+    <img src="https://apd.ipt.kpi.ua/wp-content/uploads/2025/01/MyPhoto2.jpg" alt="Сергій Пономаренко" loading="lazy">
+    <div>
+      <strong><a href="https://apd.ipt.kpi.ua/kafedra/stuff/ponomarenko/" target="_blank" rel="noopener">Пономаренко Сергій Миколайович</a></strong>
+      <p>Кандидат фізико-математичних наук, доцент кафедри прикладної фізики КПІ ім. Ігоря Сікорського.</p>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="toc">
+  <h2>Зміст</h2>
+  <div class="toc-controls">
+    <button type="button" class="cbtn" id="open-all">Розгорнути все</button>
+    <button type="button" class="cbtn" id="close-all">Згорнути все</button>
+  </div>
+<ul class="chapters front">
+<li class="ch plain"><a class="ch-title" href="../online/preface.html#autosec-7">Передмова</a></li>
+</ul>
+<section class="part">
+<h3><span class="part-num">Частина I</span><a href="../online/welcome.html#autosec-25">Вступ до PySCF: основи та перші кроки</a></h3>
+<ul class="chapters">
+<li class="ch"><details>
+<summary><span class="num">1</span><a class="ch-title" href="../online/welcome.html#autosec-26">Знайомство з PySCF</a></summary>
+<ul class="subs">
+<li><a href="../online/welcome.html#autosec-27"><span class="snum">1.1</span>PySCF: концепція та філософія</a></li>
+<li><a href="../online/welcome.html#autosec-28"><span class="snum">1.2</span>Основні можливості PySCF</a></li>
+<li><a href="../online/welcome.html#autosec-29"><span class="snum">1.3</span>Архітектура і дизайн PySCF</a></li>
+<li><a href="../online/welcome.html#autosec-36"><span class="snum">1.4</span>Порівняння з іншими програмами</a></li>
+<li><a href="../online/welcome.html#autosec-40"><span class="snum">1.5</span>Встановлення PySCF</a></li>
+<li><a href="../online/welcome.html#autosec-58"><span class="snum">1.6</span>Базова структура програми на PySCF</a></li>
+<li><a href="../online/welcome.html#autosec-62"><span class="snum">1.7</span>Система одиниць та конвенції</a></li>
+<li><a href="../online/welcome.html#autosec-71"><span class="snum">1.8</span>Документація та ресурси</a></li>
+<li><a href="../online/welcome.html#autosec-76">Резюме</a></li>
+<li><a href="../online/welcome.html#autosec-77">Контрольні запитання та завдання</a></li>
+</ul>
+</details></li>
+<li class="ch"><details>
+<summary><span class="num">2</span><a class="ch-title" href="../online/mole.html#autosec-84">Базові об’єкти <code>PySCF</code></a></summary>
+<ul class="subs">
+<li><a href="../online/mole.html#autosec-85"><span class="snum">2.1</span>Молекулярний об’єкт (Mole)</a></li>
+<li><a href="../online/mole.html#autosec-109"><span class="snum">2.2</span>Періодичний об’єкт (Cell)</a></li>
+<li><a href="../online/mole.html#autosec-117"><span class="snum">2.3</span>Базисні набори в <code>PySCF</code></a></li>
+<li><a href="../online/mole.html#autosec-128"><span class="snum">2.4</span>Симетрія в атомних розрахунках</a></li>
+<li><a href="../online/mole.html#autosec-134"><span class="snum">2.5</span>Спін та мультиплетність</a></li>
+<li><a href="../online/mole.html#autosec-138"><span class="snum">2.6</span>Типова схема розрахунків у <code>PySCF</code></a></li>
+<li><a href="../online/mole.html#autosec-139">Резюме</a></li>
+<li><a href="../online/mole.html#autosec-140">Контрольні запитання та завдання</a></li>
+</ul>
+</details></li>
+</ul></section>
+<section class="part">
+<h3><span class="part-num">Частина II</span><a href="../online/hartree-fock.html#autosec-147">Ab Initio методи: від Хартрі-Фока до пост-HF і DFT</a></h3>
+<ul class="chapters">
+<li class="ch"><details>
+<summary><span class="num">3</span><a class="ch-title" href="../online/hartree-fock.html#autosec-148">Метод Хартрі-Фока</a></summary>
+<ul class="subs">
+<li><a href="../online/hartree-fock.html#autosec-149"><span class="snum">3.1</span>Теоретичні основи методу Хартрі–Фока</a></li>
+<li><a href="../online/hartree-fock.html#autosec-155"><span class="snum">3.2</span>SFC-процедура</a></li>
+<li><a href="../online/hartree-fock.html#autosec-160"><span class="snum">3.3</span>Які бувають базиси</a></li>
+<li><a href="../online/hartree-fock.html#autosec-169"><span class="snum">3.4</span>Варіанти методу Хартрі–Фока</a></li>
+<li><a href="../online/hartree-fock.html#autosec-195"><span class="snum">3.5</span>Метод UHF та спінове забруднення</a></li>
+<li><a href="../online/hartree-fock.html#autosec-205"><span class="snum">3.6</span>Прості атомні системи</a></li>
+<li><a href="../online/hartree-fock.html#autosec-212"><span class="snum">3.7</span>Атоми другого періоду (Li–Ne)</a></li>
+<li><a href="../online/hartree-fock.html#autosec-248"><span class="snum">3.8</span>Енергія, орбіталі та електронна густина</a></li>
+<li><a href="../online/hartree-fock.html#autosec-278">Резюме</a></li>
+<li><a href="../online/hartree-fock.html#autosec-279">Контрольні запитання та завдання</a></li>
+</ul>
+</details></li>
+<li class="ch"><details>
+<summary><span class="num">4</span><a class="ch-title" href="../online/diatomic.html#autosec-314">Метод Хартрі–Фока для простих молекул</a></summary>
+<ul class="subs">
+<li><a href="../online/diatomic.html#autosec-319"><span class="snum">4.1</span>Наближення Борна–Опенгеймера</a></li>
+<li><a href="../online/diatomic.html#autosec-320"><span class="snum">4.2</span>Орбіталі і електронні стани молекул</a></li>
+<li><a href="../online/diatomic.html#autosec-332"><span class="snum">4.3</span>Модельні молекули: \(\mathrm {H_{2}^{+}}\) та \(\mathrm {H_{2}}\)</a></li>
+<li><a href="../online/diatomic.html#autosec-345"><span class="snum">4.4</span>Іон молекули водню \(\mathrm {H_{2}^{+}}\)</a></li>
+<li><a href="../online/diatomic.html#autosec-382"><span class="snum">4.5</span>Крива потенціальної енергії</a></li>
+<li><a href="../online/diatomic.html#autosec-402"><span class="snum">4.6</span>Молекула водню \(\mathrm {H_{2}}\)</a></li>
+<li><a href="../online/diatomic.html#autosec-435"><span class="snum">4.7</span>Дипольний момент молекул</a></li>
+<li><a href="../online/diatomic.html#autosec-463">Резюме</a></li>
+<li><a href="../online/diatomic.html#autosec-464">Контрольні запитання та завдання</a></li>
+</ul>
+</details></li>
+<li class="ch"><details>
+<summary><span class="num">5</span><a class="ch-title" href="../online/post-hf.html#autosec-519">Пост-Хартрі-Фоківські методи</a></summary>
+<ul class="subs">
+<li><a href="../online/post-hf.html#autosec-520"><span class="snum">5.1</span>Вступ до електронної кореляції</a></li>
+<li><a href="../online/post-hf.html#autosec-531"><span class="snum">5.2</span>Теорія збурень Møller–Plesset (MP2)</a></li>
+<li><a href="../online/post-hf.html#autosec-548"><span class="snum">5.3</span>Основи методу конфігураційної взаємодії</a></li>
+<li><a href="../online/post-hf.html#autosec-565"><span class="snum">5.4</span>Метод зв’язаних кластерів</a></li>
+<li><a href="../online/post-hf.html#autosec-586"><span class="snum">5.5</span>Метод повного активного простору конфігурацій</a></li>
+<li><a href="../online/post-hf.html#autosec-608"><span class="snum">5.6</span>Функціонал енергії та натуральні орбіталі</a></li>
+<li><a href="../online/post-hf.html#autosec-616"><span class="snum">5.7</span>Межі наближень і рівняння Шредінґера</a></li>
+<li><a href="../online/post-hf.html#autosec-623"><span class="snum">5.8</span>Корисні посилання</a></li>
+<li><a href="../online/post-hf.html#autosec-624">Резюме</a></li>
+<li><a href="../online/post-hf.html#autosec-626">Контрольні запитання та завдання</a></li>
+</ul>
+</details></li>
+<li class="ch"><details>
+<summary><span class="num">6</span><a class="ch-title" href="../online/dft.html#autosec-663">Теорія функціоналу густини (DFT)</a></summary>
+<ul class="subs">
+<li><a href="../online/dft.html#autosec-664"><span class="snum">6.1</span>Основи теорії функціоналу густини</a></li>
+<li><a href="../online/dft.html#autosec-675"><span class="snum">6.2</span>Базова структура DFT розрахунку</a></li>
+<li><a href="../online/dft.html#autosec-683"><span class="snum">6.3</span>Функціонали обміну-кореляції</a></li>
+<li><a href="../online/dft.html#autosec-714"><span class="snum">6.4</span>Практичні рекомендації</a></li>
+<li><a href="../online/dft.html#autosec-716">Резюме</a></li>
+<li><a href="../online/dft.html#autosec-717">Контрольні запитання та завдання</a></li>
+</ul>
+</details></li>
+</ul></section>
+<section class="part">
+<h3><span class="part-num">Частина III</span><a href="../online/response.html#autosec-764">Властивості молекул</a></h3>
+<ul class="chapters">
+<li class="ch"><details>
+<summary><span class="num">7</span><a class="ch-title" href="../online/response.html#autosec-765">Молекулярні властивості як похідні енергії</a></summary>
+<ul class="subs">
+<li><a href="../online/response.html#autosec-766"><span class="snum">7.1</span>Молекулярні властивості як похідні енергії</a></li>
+<li><a href="../online/response.html#autosec-773"><span class="snum">7.2</span>Чисельні та аналітичні похідні</a></li>
+<li><a href="../online/response.html#autosec-777"><span class="snum">7.3</span>Варіаційні методи та залежність енергії від параметрів</a></li>
+<li><a href="../online/response.html#autosec-778"><span class="snum">7.4</span>Аналітичні похідні в методі Хартрі-Фока</a></li>
+<li><a href="../online/response.html#autosec-800"><span class="snum">7.5</span>Поляризовність у методі HF</a></li>
+<li><a href="../online/response.html#autosec-812"><span class="snum">7.6</span>Ядерний гесіан у методі HF</a></li>
+<li><a href="../online/response.html#autosec-816"><span class="snum">7.7</span>Оптимізація геометрії</a></li>
+<li><a href="../online/response.html#autosec-824">Контрольні запитання та завдання</a></li>
+</ul>
+</details></li>
+<li class="ch"><details>
+<summary><span class="num">8</span><a class="ch-title" href="../online/vibrations.html#autosec-851">Коливальні властивості молекул</a></summary>
+<ul class="subs">
+<li><a href="../online/vibrations.html#autosec-854"><span class="snum">8.1</span>Гессіан та нормальні моди</a></li>
+<li><a href="../online/vibrations.html#autosec-876"><span class="snum">8.2</span>Інфрачервоні (ІЧ) спектри</a></li>
+<li><a href="../online/vibrations.html#autosec-907"><span class="snum">8.3</span>Термохімія та нульова енергія</a></li>
+<li><a href="../online/vibrations.html#autosec-919"><span class="snum">8.4</span>Перехідні стани та уявні частоти</a></li>
+<li><a href="../online/vibrations.html#autosec-927">Резюме</a></li>
+<li><a href="../online/vibrations.html#autosec-928">Контрольні запитання та завдання</a></li>
+</ul>
+</details></li>
+<li class="ch"><details>
+<summary><span class="num">9</span><a class="ch-title" href="../online/excited-states.html#autosec-941">Збуджені стани та UV/VIS спектроскопія</a></summary>
+<ul class="subs">
+<li><a href="../online/excited-states.html#autosec-942"><span class="snum">9.1</span>Спектроскопічні властивості: перехідні дипольні моменти і сили осцилятора</a></li>
+<li><a href="../online/excited-states.html#autosec-948"><span class="snum">9.2</span>Збуджені стани в рамках методу Хартрі–Фока</a></li>
+<li><a href="../online/excited-states.html#autosec-954"><span class="snum">9.3</span>Часозалежна теорія функціонала густини (TD-DFT)</a></li>
+<li><a href="../online/excited-states.html#autosec-958"><span class="snum">9.4</span>Збуджені стани у методах конфігураційної взаємодії</a></li>
+<li><a href="../online/excited-states.html#autosec-959"><span class="snum">9.5</span>Метод рівнянь руху (EOM)</a></li>
+<li><a href="../online/excited-states.html#autosec-973"><span class="snum">9.6</span>Збуджені стани у CASSCF / NEVPT2</a></li>
+<li><a href="../online/excited-states.html#autosec-974"><span class="snum">9.7</span>Рекомендації з вибору методу</a></li>
+<li><a href="../online/excited-states.html#autosec-975">Резюме</a></li>
+<li><a href="../online/excited-states.html#autosec-976">Контрольні запитання та завдання</a></li>
+</ul>
+</details></li>
+</ul></section>
+<section class="part appendix"><h3><span class="part-num">Додатково</span>Додатки та література</h3><ul class="chapters">
+<li class="ch"><details>
+<summary><a class="ch-title" href="../online/appendices.html#autosec-991">Додатки</a></summary>
+<ul class="subs">
+<li><a href="../online/appendices.html#autosec-992"><span class="snum">А</span>Список абревіатур</a></li>
+<li><a href="../online/appendices.html#autosec-993"><span class="snum">Б</span>Молекулярно-орбітальне (МО) представлення</a></li>
+<li><a href="../online/appendices.html#autosec-999"><span class="snum">В</span>Метод DIIS та прискорення збіжності SCF</a></li>
+<li><a href="../online/appendices.html#autosec-1000"><span class="snum">Г</span>Проблеми збіжності SCF та їх усунення</a></li>
+</ul>
+</details></li>
+<li class="ch plain"><a class="ch-title" href="../online/bibliography.html#autosec-1020">Література</a></li>
+</ul></section>
+</section>
+
+<footer>Квантово-механічні методи обчислення (PySCF) &nbsp;|&nbsp; Кафедра прикладної фізики, КПІ ім. Ігоря Сікорського</footer>
+</div>
+<button id="top" type="button" aria-label="Нагору">↑</button>
+<script>
+(function(){
+  var root=document.documentElement,btn=document.getElementById('theme');
+  function label(){btn.textContent=root.classList.contains('dark')?'Світла тема':'Темна тема';}
+  label();
+  btn.addEventListener('click',function(){var d=root.classList.toggle('dark');try{localStorage.setItem('pyscfbook-theme',d?'dark':'light');}catch(e){}label();});
+  function all(o){document.querySelectorAll('#toc details').forEach(function(d){d.open=o;});}
+  document.getElementById('open-all').addEventListener('click',function(){all(true);});
+  document.getElementById('close-all').addEventListener('click',function(){all(false);});
+  var top=document.getElementById('top');
+  addEventListener('scroll',function(){top.classList.toggle('on',scrollY>600);},{passive:true});
+  top.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'});});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2588 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="generator" content="LaTeX Lwarp package" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Квантово-механічні методи обчислення — Збуджені стани та UV/VIS спектроскопія</title>
+<link rel="stylesheet" type="text/css" href="assets/conspect.css" />
+<script>
+// Lwarp MathJax emulation code
+//
+// Based on code by Davide P. Cervone.
+// Equation numbering: https://github.com/mathjax/MathJax/issues/2427
+// Starred and ifnextchar macros: https://github.com/mathjax/MathJax/issues/2428
+// \left, \right delimiters: https://github.com/mathjax/MathJax/issues/2535
+//
+// Modified by Brian Dunn to adjust equation numbering and add subequations.
+//
+// LaTeX can use \seteqnumber{subequations?}{section}{number} before each equation.
+// subequations? is 0 usually, 1 if inside subequations.
+// section is a string printed as-is, or empty.
+// number is auto-incremented by MathJax between equations.
+//
+MathJax = {
+subequations: "0",
+section: "",
+loader: {
+load: ['[tex]/tagformat', '[tex]/textmacros'],
+},
+startup: {
+ready() {
+// These would be replaced by import commands if you wanted to make
+// a proper extension.
+const Configuration = MathJax._.input.tex.Configuration.Configuration;
+const CommandMap = MathJax._.input.tex.SymbolMap.CommandMap;
+const Macro = MathJax._.input.tex.Symbol.Macro;
+const TexError = MathJax._.input.tex.TexError.default;
+const ParseUtil = MathJax._.input.tex.ParseUtil.default;
+const expandable = MathJax._.util.Options.expandable;
+// Insert the replacement string into the TeX string, and check
+// that there haven't been too many maxro substitutions (prevents
+// infinite loops).
+const useArgument = (parser, text) => {
+parser.string = ParseUtil.addArgs(parser, text, parser.string.slice(parser.i));
+parser.i = 0;
+if (++parser.macroCount > parser.configuration.options.maxMacros) {
+throw new TexError('MaxMacroSub1',
+'MathJax maximum macro substitution count exceeded; ' +
+'is there a recursive macro call?');
+}
+}
+// Create the command map for:
+// \ifstar, \ifnextchar, \ifblank, \ifstrequal, \gsub, \seteqnumber
+new CommandMap('Lwarp-macros', {
+ifstar: 'IfstarFunction',
+ifnextchar: 'IfnextcharFunction',
+ifblank: 'IfblankFunction',
+ifstrequal: 'IfstrequalFunction',
+gsubstitute: 'GsubstituteFunction',
+seteqnumber: 'SeteqnumberFunction'
+}, {
+// This function implements an ifstar macro.
+IfstarFunction(parser, name) {
+const resultstar = parser.GetArgument(name);
+const resultnostar = parser.GetArgument(name);
+const star = parser.GetStar(); // true if there is a *
+useArgument(parser, star ? resultstar : resultnostar);
+},
+// This function implements an ifnextchar macro.
+IfnextcharFunction(parser, name) {
+let whichchar = parser.GetArgument(name);
+if (whichchar.match(/^(?:0x[0-9A-F]+|[0-9]+)$/i)) {
+// $ syntax highlighting
+whichchar = String.fromCodePoint(parseInt(whichchar));
+}
+const resultnextchar = parser.GetArgument(name);
+const resultnotnextchar = parser.GetArgument(name);
+const gotchar = (parser.GetNext() === whichchar);
+useArgument(parser, gotchar ? resultnextchar : resultnotnextchar);
+},
+// This function implements an ifblank macro.
+IfblankFunction(parser, name) {
+const blankarg = parser.GetArgument(name);
+const resultblank = parser.GetArgument(name);
+const resultnotblank = parser.GetArgument(name);
+const isblank = (blankarg.trim() == "");
+useArgument(parser, isblank ? resultblank : resultnotblank);
+},
+// This function implements an ifstrequal macro.
+IfstrequalFunction(parser, name) {
+const strequalfirst = parser.GetArgument(name);
+const strequalsecond = parser.GetArgument(name);
+const resultequal = parser.GetArgument(name);
+const resultnotequal = parser.GetArgument(name);
+const isequal = (strequalfirst == strequalsecond);
+useArgument(parser, isequal ? resultequal : resultnotequal);
+},
+// This function implements a gsub macro.
+GsubstituteFunction(parser, name) {
+const gsubfirst = parser.GetArgument(name);
+const gsubsecond = parser.GetArgument(name);
+const gsubthird = parser.GetArgument(name);
+let gsubresult=gsubfirst.replace(gsubsecond, gsubthird);
+useArgument(parser, gsubresult);
+},
+// This function modifies the equation numbers.
+SeteqnumberFunction(parser, name) {
+// Get the macro parameters
+const star = parser.GetStar(); // true if there is a *
+const optBrackets = parser.GetBrackets(name); // contents of optional brackets
+const newsubequations = parser.GetArgument(name); // the subequations argument
+const neweqsection = parser.GetArgument(name); // the eq section argument
+const neweqnumber = parser.GetArgument(name); // the eq number argument
+MathJax.config.subequations=newsubequations ; // a string with boolean meaning
+MathJax.config.section=neweqsection ; // a string with numeric meaning
+parser.tags.counter = parser.tags.allCounter = neweqnumber ;
+}
+});
+// Create the Lwarp-macros package
+Configuration.create('Lwarp-macros', {
+handler: {macro: ['Lwarp-macros']}
+});
+MathJax.startup.defaultReady();
+// For forward references:
+MathJax.startup.input[0].preFilters.add(({math}) => {
+if (math.inputData.recompile){
+MathJax.config.subequations = math.inputData.recompile.subequations;
+MathJax.config.section = math.inputData.recompile.section;
+}
+});
+MathJax.startup.input[0].postFilters.add(({math}) => {
+if (math.inputData.recompile){
+math.inputData.recompile.subequations = MathJax.config.subequations;
+math.inputData.recompile.section = MathJax.config.section;
+}
+});
+// For \left, \right with unicode-math:
+const {DelimiterMap} = MathJax._.input.tex.SymbolMap;
+const {Symbol} = MathJax._.input.tex.Symbol;
+const {MapHandler} = MathJax._.input.tex.MapHandler;
+const delimiter = MapHandler.getMap('delimiter');
+delimiter.add('\\lBrack', new Symbol('\\lBrack', '\u27E6'));
+delimiter.add('\\rBrack', new Symbol('\\rBrack', '\u27E7'));
+delimiter.add('\\lAngle', new Symbol('\\lAngle', '\u27EA'));
+delimiter.add('\\rAngle', new Symbol('\\rAngle', '\u27EB'));
+delimiter.add('\\lbrbrak', new Symbol('\\lbrbrak', '\u2772'));
+delimiter.add('\\rbrbrak', new Symbol('\\rbrbrak', '\u2773'));
+delimiter.add('\\lbag', new Symbol('\\lbag', '\u27C5'));
+delimiter.add('\\rbag', new Symbol('\\rbag', '\u27C6'));
+delimiter.add('\\llparenthesis', new Symbol('\\llparenthesis', '\u2987'));
+delimiter.add('\\rrparenthesis', new Symbol('\\rrparenthesis', '\u2988'));
+delimiter.add('\\llangle', new Symbol('\\llangle', '\u2989'));
+delimiter.add('\\rrangle', new Symbol('\\rrangle', '\u298A'));
+delimiter.add('\\Lbrbrak', new Symbol('\\Lbrbrak', '\u27EC'));
+delimiter.add('\\Rbrbrak', new Symbol('\\Rbrbrak', '\u27ED'));
+delimiter.add('\\lBrace', new Symbol('\\lBrace', '\u2983'));
+delimiter.add('\\rBrace', new Symbol('\\rBrace', '\u2984'));
+delimiter.add('\\lParen', new Symbol('\\lParen', '\u2985'));
+delimiter.add('\\rParen', new Symbol('\\rParen', '\u2986'));
+delimiter.add('\\lbrackubar', new Symbol('\\lbrackubar', '\u298B'));
+delimiter.add('\\rbrackubar', new Symbol('\\rbrackubar', '\u298C'));
+delimiter.add('\\lbrackultick', new Symbol('\\lbrackultick', '\u298D'));
+delimiter.add('\\rbracklrtick', new Symbol('\\rbracklrtick', '\u298E'));
+delimiter.add('\\lbracklltick', new Symbol('\\lbracklltick', '\u298F'));
+delimiter.add('\\rbrackurtick', new Symbol('\\rbrackurtick', '\u2990'));
+delimiter.add('\\langledot', new Symbol('\\langledot', '\u2991'));
+delimiter.add('\\rangledot', new Symbol('\\rangledot', '\u2992'));
+delimiter.add('\\lparenless', new Symbol('\\lparenless', '\u2993'));
+delimiter.add('\\rparengtr', new Symbol('\\rparengtr', '\u2994'));
+delimiter.add('\\Lparengtr', new Symbol('\\Lparengtr', '\u2995'));
+delimiter.add('\\Rparenless', new Symbol('\\Rparenless', '\u2996'));
+delimiter.add('\\lblkbrbrak', new Symbol('\\lblkbrbrak', '\u2997'));
+delimiter.add('\\rblkbrbrak', new Symbol('\\rblkbrbrak', '\u2998'));
+delimiter.add('\\lvzigzag', new Symbol('\\lvzigzag', '\u29D8'));
+delimiter.add('\\rvzigzag', new Symbol('\\rvzigzag', '\u29D9'));
+delimiter.add('\\Lvzigzag', new Symbol('\\Lvzigzag', '\u29DA'));
+delimiter.add('\\Rvzigzag', new Symbol('\\Rvzigzag', '\u29DB'));
+delimiter.add('\\lcurvyangle', new Symbol('\\lcurvyangle', '\u29FC'));
+delimiter.add('\\rcurvyangle', new Symbol('\\rcurvyangle', '\u29FD'));
+delimiter.add('\\Vvert', new Symbol('\\Vvert', '\u2980'));
+} // ready
+}, // startup
+tex: {
+packages: {'[+]': ['tagformat', 'Lwarp-macros', 'textmacros']},
+tags: "ams",
+tagformat: {
+number: function (n) {
+if(MathJax.config.subequations==0)
+return(MathJax.config.section + n);
+else
+return(MathJax.config.section + String.fromCharCode(96+n));
+},
+},
+}
+}
+</script>
+<script
+id="MathJax-script"
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
+></script>
+</head>
+<body>
+<a id="main-html-autopage-939"></a>
+<div class="pagegrid">
+<nav class="topnavigation"><a href="main-html.html" class="linkhome" >
+Головна</a></nav>
+<div class="sidetoccontainer">
+<nav class="sidetoc">
+<div class="sidetoctitle">
+<p>
+<span class="sidetocthetitle">Квантово-механічні методи обчислення</span>
+</p>
+<p class="sidetoc-meta"><a href="../PyscfBook/index.html">Про посібник</a><span aria-hidden="true">·</span><a href="../PyscfBook/pyscfBook.pdf">PDF</a></p>
+</div>
+<div class="sidetoccontents">
+<p>
+<a href="main-html.html" class="linkhome" >
+Головна</a>
+</p>
+<p>
+<a href="preface.html#autosec-7" class="tocchapter" >
+Передмова</a>
+</p>
+<p>
+<a href="preface.html#autosec-8" class="tocsection" >
+Актуальність квантово-механічних обчислень</a>
+</p>
+<p>
+<a href="preface.html#autosec-9" class="tocsection" >
+Передумови</a>
+</p>
+<p>
+<a href="preface.html#autosec-13" class="tocsection" >
+Організація навчальних матеріалів</a>
+</p>
+<p>
+<a href="preface.html#autosec-19" class="tocsection" >
+Як користуватися посібником</a>
+</p>
+<p>
+<a href="preface.html#autosec-20" class="tocsection" >
+Зворотний зв’язок</a>
+</p>
+<p>
+<a href="preface.html#autosec-21" class="tocsection" >
+Ліцензія та використання</a>
+</p>
+<p>
+<a href="welcome.html#autosec-25" class="tocpart" >
+<span class="sectionnumber">I</span><span class="toctitle">&#x2003;Вступ до PySCF: основи та перші кроки</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-26" class="tocchapter" >
+<span class="sectionnumber">1</span><span class="toctitle">&#x2003;Знайомство з PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-27" class="tocsection" >
+<span class="sectionnumber">1.1</span><span class="toctitle">&#x2003;PySCF: концепція та філософія</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-28" class="tocsection" >
+<span class="sectionnumber">1.2</span><span class="toctitle">&#x2003;Основні можливості PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-29" class="tocsection" >
+<span class="sectionnumber">1.3</span><span class="toctitle">&#x2003;Архітектура і дизайн PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-36" class="tocsection" >
+<span class="sectionnumber">1.4</span><span class="toctitle">&#x2003;Порівняння з іншими програмами</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-40" class="tocsection" >
+<span class="sectionnumber">1.5</span><span class="toctitle">&#x2003;Встановлення PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-58" class="tocsection" >
+<span class="sectionnumber">1.6</span><span class="toctitle">&#x2003;Базова структура програми на PySCF</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-62" class="tocsection" >
+<span class="sectionnumber">1.7</span><span class="toctitle">&#x2003;Система одиниць та конвенції</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-71" class="tocsection" >
+<span class="sectionnumber">1.8</span><span class="toctitle">&#x2003;Документація та ресурси</span></a>
+</p>
+<p>
+<a href="welcome.html#autosec-76" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="welcome.html#autosec-77" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="mole.html#autosec-84" class="tocchapter" >
+<span class="sectionnumber">2</span><span class="toctitle">&#x2003;Базові об’єкти <kbd>PySCF</kbd></span></a>
+</p>
+<p>
+<a href="mole.html#autosec-85" class="tocsection" >
+<span class="sectionnumber">2.1</span><span class="toctitle">&#x2003;Молекулярний об’єкт (Mole)</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-109" class="tocsection" >
+<span class="sectionnumber">2.2</span><span class="toctitle">&#x2003;Періодичний об’єкт (Cell)</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-117" class="tocsection" >
+<span class="sectionnumber">2.3</span><span class="toctitle">&#x2003;Базисні набори в <kbd>PySCF</kbd></span></a>
+</p>
+<p>
+<a href="mole.html#autosec-128" class="tocsection" >
+<span class="sectionnumber">2.4</span><span class="toctitle">&#x2003;Симетрія в атомних розрахунках</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-134" class="tocsection" >
+<span class="sectionnumber">2.5</span><span class="toctitle">&#x2003;Спін та мультиплетність</span></a>
+</p>
+<p>
+<a href="mole.html#autosec-138" class="tocsection" >
+<span class="sectionnumber">2.6</span><span class="toctitle">&#x2003;Типова схема розрахунків у <kbd>PySCF</kbd></span></a>
+</p>
+<p>
+<a href="mole.html#autosec-139" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="mole.html#autosec-140" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-147" class="tocpart" >
+<span class="sectionnumber">II</span><span class="toctitle">&#x2003;Ab Initio методи: від Хартрі-Фока до пост-HF і DFT</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-148" class="tocchapter" >
+<span class="sectionnumber">3</span><span class="toctitle">&#x2003;Метод Хартрі-Фока</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-149" class="tocsection" >
+<span class="sectionnumber">3.1</span><span class="toctitle">&#x2003;Теоретичні основи методу Хартрі–Фока</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-155" class="tocsection" >
+<span class="sectionnumber">3.2</span><span class="toctitle">&#x2003;SFC-процедура</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-160" class="tocsection" >
+<span class="sectionnumber">3.3</span><span class="toctitle">&#x2003;Які бувають базиси</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-169" class="tocsection" >
+<span class="sectionnumber">3.4</span><span class="toctitle">&#x2003;Варіанти методу Хартрі–Фока</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-195" class="tocsection" >
+<span class="sectionnumber">3.5</span><span class="toctitle">&#x2003;Метод UHF та спінове забруднення</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-205" class="tocsection" >
+<span class="sectionnumber">3.6</span><span class="toctitle">&#x2003;Прості атомні системи</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-212" class="tocsection" >
+<span class="sectionnumber">3.7</span><span class="toctitle">&#x2003;Атоми другого періоду (Li–Ne)</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-248" class="tocsection" >
+<span class="sectionnumber">3.8</span><span class="toctitle">&#x2003;Енергія, орбіталі та електронна густина</span></a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-278" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="hartree-fock.html#autosec-279" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="diatomic.html#autosec-314" class="tocchapter" >
+<span class="sectionnumber">4</span><span class="toctitle">&#x2003;Метод Хартрі–Фока для простих молекул</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-319" class="tocsection" >
+<span class="sectionnumber">4.1</span><span class="toctitle">&#x2003;Наближення Борна–Опенгеймера</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-320" class="tocsection" >
+<span class="sectionnumber">4.2</span><span class="toctitle">&#x2003;Орбіталі і електронні стани молекул</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-332" class="tocsection" >
+<span class="sectionnumber">4.3</span><span class="toctitle">&#x2003;Модельні молекули: \(\mathrm {H_{2}^{+}}\) та \(\mathrm {H_{2}}\)</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-345" class="tocsection" >
+<span class="sectionnumber">4.4</span><span class="toctitle">&#x2003;Іон молекули водню \(\mathrm {H_{2}^{+}}\)</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-382" class="tocsection" >
+<span class="sectionnumber">4.5</span><span class="toctitle">&#x2003;Крива потенціальної енергії</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-402" class="tocsection" >
+<span class="sectionnumber">4.6</span><span class="toctitle">&#x2003;Молекула водню \(\mathrm {H_{2}}\)</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-435" class="tocsection" >
+<span class="sectionnumber">4.7</span><span class="toctitle">&#x2003;Дипольний момент молекул</span></a>
+</p>
+<p>
+<a href="diatomic.html#autosec-463" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="diatomic.html#autosec-464" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="post-hf.html#autosec-519" class="tocchapter" >
+<span class="sectionnumber">5</span><span class="toctitle">&#x2003;Пост-Хартрі-Фоківські методи</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-520" class="tocsection" >
+<span class="sectionnumber">5.1</span><span class="toctitle">&#x2003;Вступ до електронної кореляції</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-531" class="tocsection" >
+<span class="sectionnumber">5.2</span><span class="toctitle">&#x2003;Теорія збурень Møller–Plesset (MP2)</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-548" class="tocsection" >
+<span class="sectionnumber">5.3</span><span class="toctitle">&#x2003;Основи методу конфігураційної взаємодії</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-565" class="tocsection" >
+<span class="sectionnumber">5.4</span><span class="toctitle">&#x2003;Метод зв’язаних кластерів</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-586" class="tocsection" >
+<span class="sectionnumber">5.5</span><span class="toctitle">&#x2003;Метод повного активного простору конфігурацій</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-608" class="tocsection" >
+<span class="sectionnumber">5.6</span><span class="toctitle">&#x2003;Функціонал енергії та натуральні орбіталі</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-616" class="tocsection" >
+<span class="sectionnumber">5.7</span><span class="toctitle">&#x2003;Межі наближень і рівняння Шредінґера</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-623" class="tocsection" >
+<span class="sectionnumber">5.8</span><span class="toctitle">&#x2003;Корисні посилання</span></a>
+</p>
+<p>
+<a href="post-hf.html#autosec-624" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="post-hf.html#autosec-626" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="dft.html#autosec-663" class="tocchapter" >
+<span class="sectionnumber">6</span><span class="toctitle">&#x2003;Теорія функціоналу густини (DFT)</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-664" class="tocsection" >
+<span class="sectionnumber">6.1</span><span class="toctitle">&#x2003;Основи теорії функціоналу густини</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-675" class="tocsection" >
+<span class="sectionnumber">6.2</span><span class="toctitle">&#x2003;Базова структура DFT розрахунку</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-683" class="tocsection" >
+<span class="sectionnumber">6.3</span><span class="toctitle">&#x2003;Функціонали обміну-кореляції</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-714" class="tocsection" >
+<span class="sectionnumber">6.4</span><span class="toctitle">&#x2003;Практичні рекомендації</span></a>
+</p>
+<p>
+<a href="dft.html#autosec-716" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="dft.html#autosec-717" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="response.html#autosec-764" class="tocpart" >
+<span class="sectionnumber">III</span><span class="toctitle">&#x2003;Властивості молекул</span></a>
+</p>
+<p>
+<a href="response.html#autosec-765" class="tocchapter" >
+<span class="sectionnumber">7</span><span class="toctitle">&#x2003;Молекулярні властивості як похідні енергії</span></a>
+</p>
+<p>
+<a href="response.html#autosec-766" class="tocsection" >
+<span class="sectionnumber">7.1</span><span class="toctitle">&#x2003;Молекулярні властивості як похідні енергії</span></a>
+</p>
+<p>
+<a href="response.html#autosec-773" class="tocsection" >
+<span class="sectionnumber">7.2</span><span class="toctitle">&#x2003;Чисельні та аналітичні похідні</span></a>
+</p>
+<p>
+<a href="response.html#autosec-777" class="tocsection" >
+<span class="sectionnumber">7.3</span><span class="toctitle">&#x2003;Варіаційні методи та залежність енергії від параметрів</span></a>
+</p>
+<p>
+<a href="response.html#autosec-778" class="tocsection" >
+<span class="sectionnumber">7.4</span><span class="toctitle">&#x2003;Аналітичні похідні в методі Хартрі-Фока</span></a>
+</p>
+<p>
+<a href="response.html#autosec-800" class="tocsection" >
+<span class="sectionnumber">7.5</span><span class="toctitle">&#x2003;Поляризовність у методі HF</span></a>
+</p>
+<p>
+<a href="response.html#autosec-812" class="tocsection" >
+<span class="sectionnumber">7.6</span><span class="toctitle">&#x2003;Ядерний гесіан у методі HF</span></a>
+</p>
+<p>
+<a href="response.html#autosec-816" class="tocsection" >
+<span class="sectionnumber">7.7</span><span class="toctitle">&#x2003;Оптимізація геометрії</span></a>
+</p>
+<p>
+<a href="response.html#autosec-824" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="vibrations.html#autosec-851" class="tocchapter" >
+<span class="sectionnumber">8</span><span class="toctitle">&#x2003;Коливальні властивості молекул</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-854" class="tocsection" >
+<span class="sectionnumber">8.1</span><span class="toctitle">&#x2003;Гессіан та нормальні моди</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-876" class="tocsection" >
+<span class="sectionnumber">8.2</span><span class="toctitle">&#x2003;Інфрачервоні (ІЧ) спектри</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-907" class="tocsection" >
+<span class="sectionnumber">8.3</span><span class="toctitle">&#x2003;Термохімія та нульова енергія</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-919" class="tocsection" >
+<span class="sectionnumber">8.4</span><span class="toctitle">&#x2003;Перехідні стани та уявні частоти</span></a>
+</p>
+<p>
+<a href="vibrations.html#autosec-927" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="vibrations.html#autosec-928" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="excited-states.html#autosec-941" class="tocchapter" >
+<span class="sectionnumber">9</span><span class="toctitle">&#x2003;Збуджені стани та UV/VIS спектроскопія</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-942" class="tocsection" >
+<span class="sectionnumber">9.1</span><span class="toctitle">&#x2003;Спектроскопічні властивості: перехідні дипольні моменти і сили осцилятора</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-948" class="tocsection" >
+<span class="sectionnumber">9.2</span><span class="toctitle">&#x2003;Збуджені стани в рамках методу Хартрі–Фока</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-954" class="tocsection" >
+<span class="sectionnumber">9.3</span><span class="toctitle">&#x2003;Часозалежна теорія функціонала густини (TD-DFT)</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-958" class="tocsection" >
+<span class="sectionnumber">9.4</span><span class="toctitle">&#x2003;Збуджені стани у методах конфігураційної взаємодії</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-959" class="tocsection" >
+<span class="sectionnumber">9.5</span><span class="toctitle">&#x2003;Метод рівнянь руху (EOM)</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-973" class="tocsection" >
+<span class="sectionnumber">9.6</span><span class="toctitle">&#x2003;Збуджені стани у CASSCF / NEVPT2</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-974" class="tocsection" >
+<span class="sectionnumber">9.7</span><span class="toctitle">&#x2003;Рекомендації з вибору методу</span></a>
+</p>
+<p>
+<a href="excited-states.html#autosec-975" class="tocsection" >
+Резюме</a>
+</p>
+<p>
+<a href="excited-states.html#autosec-976" class="tocsection" >
+Контрольні запитання та завдання</a>
+</p>
+<p>
+<a href="appendices.html#autosec-991" class="tocchapter" >
+Додатки</a>
+</p>
+<p>
+<a href="appendices.html#autosec-992" class="tocsection" >
+<span class="sectionnumber">А</span><span class="toctitle">&#x2003;Список абревіатур</span></a>
+</p>
+<p>
+<a href="appendices.html#autosec-993" class="tocsection" >
+<span class="sectionnumber">Б</span><span class="toctitle">&#x2003;Молекулярно-орбітальне (МО) представлення</span></a>
+</p>
+<p>
+<a href="appendices.html#autosec-999" class="tocsection" >
+<span class="sectionnumber">В</span><span class="toctitle">&#x2003;Метод DIIS та прискорення збіжності SCF</span></a>
+</p>
+<p>
+<a href="appendices.html#autosec-1000" class="tocsection" >
+<span class="sectionnumber">Г</span><span class="toctitle">&#x2003;Проблеми збіжності SCF та їх усунення</span></a>
+</p>
+<p>
+<a href="bibliography.html#autosec-1020" class="tocchapter" >
+Література</a>
+</p>
+</div>
+</nav>
+</div>
+<main class="bodycontainer" data-pagefind-body data-pagefind-meta="title[data-title]" data-title="Збуджені стани та UV/VIS спектроскопія">
+<section class="textbody">
+<h1 data-pagefind-ignore>Квантово-механічні методи обчислення</h1>
+<!--MathJax customizations:-->
+<div data-nosnippet
+style="display:none"
+>
+\(\newcommand{\footnotename}{footnote}\)
+\(\def \LWRfootnote {1}\)
+\(\newcommand {\footnote }[2][\LWRfootnote ]{{}^{\mathrm {#1}}}\)
+\(\newcommand {\footnotemark }[1][\LWRfootnote ]{{}^{\mathrm {#1}}}\)
+\(\let \LWRorighspace \hspace \)
+\(\renewcommand {\hspace }{\ifstar \LWRorighspace \LWRorighspace }\)
+\(\newcommand {\TextOrMath }[2]{#2}\)
+\(\newcommand {\mathnormal }[1]{{#1}}\)
+\(\newcommand \ensuremath [1]{#1}\)
+\(\newcommand {\LWRframebox }[2][]{\fbox {#2}} \newcommand {\framebox }[1][]{\LWRframebox } \)
+\(\newcommand {\setlength }[2]{}\)
+\(\newcommand {\addtolength }[2]{}\)
+\(\newcommand {\setcounter }[2]{}\)
+\(\newcommand {\addtocounter }[2]{}\)
+\(\newcommand {\arabic }[1]{}\)
+\(\newcommand {\number }[1]{}\)
+\(\newcommand {\noalign }[1]{\text {#1}\notag \\}\)
+\(\newcommand {\cline }[1]{}\)
+\(\newcommand {\directlua }[1]{\text {(directlua)}}\)
+\(\newcommand {\luatexdirectlua }[1]{\text {(directlua)}}\)
+\(\newcommand {\protect }{}\)
+\(\def \LWRabsorbnumber #1 {}\)
+\(\def \LWRabsorbquotenumber &quot;#1 {}\)
+\(\newcommand {\LWRabsorboption }[1][]{}\)
+\(\newcommand {\LWRabsorbtwooptions }[1][]{\LWRabsorboption }\)
+\(\def \mathchar {\ifnextchar &quot;\LWRabsorbquotenumber \LWRabsorbnumber }\)
+\(\def \mathcode #1={\mathchar }\)
+\(\let \delcode \mathcode \)
+\(\let \delimiter \mathchar \)
+\(\def \oe {\unicode {x0153}}\)
+\(\def \OE {\unicode {x0152}}\)
+\(\def \ae {\unicode {x00E6}}\)
+\(\def \AE {\unicode {x00C6}}\)
+\(\def \aa {\unicode {x00E5}}\)
+\(\def \AA {\unicode {x00C5}}\)
+\(\def \o {\unicode {x00F8}}\)
+\(\def \O {\unicode {x00D8}}\)
+\(\def \l {\unicode {x0142}}\)
+\(\def \L {\unicode {x0141}}\)
+\(\def \ss {\unicode {x00DF}}\)
+\(\def \SS {\unicode {x1E9E}}\)
+\(\def \dag {\unicode {x2020}}\)
+\(\def \ddag {\unicode {x2021}}\)
+\(\def \P {\unicode {x00B6}}\)
+\(\def \copyright {\unicode {x00A9}}\)
+\(\def \pounds {\unicode {x00A3}}\)
+\(\let \LWRref \ref \)
+\(\renewcommand {\ref }{\ifstar \LWRref \LWRref }\)
+\( \newcommand {\multicolumn }[3]{#3}\)
+\(\require {textcomp}\)
+\(\require {colortbl}\)
+\(\let \LWRorigcolumncolor \columncolor \)
+\(\renewcommand {\columncolor }[2][named]{\LWRorigcolumncolor [#1]{#2}\LWRabsorbtwooptions }\)
+\(\let \LWRorigrowcolor \rowcolor \)
+\(\renewcommand {\rowcolor }[2][named]{\LWRorigrowcolor [#1]{#2}\LWRabsorbtwooptions }\)
+\(\let \LWRorigcellcolor \cellcolor \)
+\(\renewcommand {\cellcolor }[2][named]{\LWRorigcellcolor [#1]{#2}\LWRabsorbtwooptions }\)
+\(\newcommand {\intertext }[1]{\text {#1}\notag \\}\)
+\(\let \Hat \hat \)
+\(\let \Check \check \)
+\(\let \Tilde \tilde \)
+\(\let \Acute \acute \)
+\(\let \Grave \grave \)
+\(\let \Dot \dot \)
+\(\let \Ddot \ddot \)
+\(\let \Breve \breve \)
+\(\let \Bar \bar \)
+\(\let \Vec \vec \)
+\(\let \symnormal \mathit \)
+\(\let \symliteral \mathrm \)
+\(\let \symbb \mathbb \)
+\(\let \symbbit \mathbb \)
+\(\let \symcal \mathcal \)
+\(\let \symscr \mathscr \)
+\(\let \symfrak \mathfrak \)
+\(\let \symsfup \mathsf \)
+\(\let \symsfit \mathit \)
+\(\let \symbfsf \mathbf \)
+\(\let \symbfup \mathbf \)
+\(\newcommand {\symbfit }[1]{\boldsymbol {#1}}\)
+\(\let \symbfcal \mathcal \)
+\(\let \symbfscr \mathscr \)
+\(\let \symbffrak \mathfrak \)
+\(\let \symbfsfup \mathbf \)
+\(\newcommand {\symbfsfit }[1]{\boldsymbol {#1}}\)
+\(\let \symup \mathrm \)
+\(\let \symbf \mathbf \)
+\(\let \symit \mathit \)
+\(\let \symtt \mathtt \)
+\(\let \symbffrac \mathbffrac \)
+\(\newcommand {\mathfence }[1]{\mathord {#1}}\)
+\(\newcommand {\mathover }[1]{#1}\)
+\(\newcommand {\mathunder }[1]{#1}\)
+\(\newcommand {\mathaccent }[1]{#1}\)
+\(\newcommand {\mathbotaccent }[1]{#1}\)
+\(\newcommand {\mathalpha }[1]{\mathord {#1}}\)
+\(\def\upAlpha{\unicode{x0391}}\)
+\(\def\upBeta{\unicode{x0392}}\)
+\(\def\upGamma{\unicode{x0393}}\)
+\(\def\upDigamma{\unicode{x03DC}}\)
+\(\def\upDelta{\unicode{x0394}}\)
+\(\def\upEpsilon{\unicode{x0395}}\)
+\(\def\upZeta{\unicode{x0396}}\)
+\(\def\upEta{\unicode{x0397}}\)
+\(\def\upTheta{\unicode{x0398}}\)
+\(\def\upVartheta{\unicode{x03F4}}\)
+\(\def\upIota{\unicode{x0399}}\)
+\(\def\upKappa{\unicode{x039A}}\)
+\(\def\upLambda{\unicode{x039B}}\)
+\(\def\upMu{\unicode{x039C}}\)
+\(\def\upNu{\unicode{x039D}}\)
+\(\def\upXi{\unicode{x039E}}\)
+\(\def\upOmicron{\unicode{x039F}}\)
+\(\def\upPi{\unicode{x03A0}}\)
+\(\def\upVarpi{\unicode{x03D6}}\)
+\(\def\upRho{\unicode{x03A1}}\)
+\(\def\upSigma{\unicode{x03A3}}\)
+\(\def\upTau{\unicode{x03A4}}\)
+\(\def\upUpsilon{\unicode{x03A5}}\)
+\(\def\upPhi{\unicode{x03A6}}\)
+\(\def\upChi{\unicode{x03A7}}\)
+\(\def\upPsi{\unicode{x03A8}}\)
+\(\def\upOmega{\unicode{x03A9}}\)
+\(\def\itAlpha{\unicode{x1D6E2}}\)
+\(\def\itBeta{\unicode{x1D6E3}}\)
+\(\def\itGamma{\unicode{x1D6E4}}\)
+\(\def\itDigamma{\mathit{\unicode{x03DC}}}\)
+\(\def\itDelta{\unicode{x1D6E5}}\)
+\(\def\itEpsilon{\unicode{x1D6E6}}\)
+\(\def\itZeta{\unicode{x1D6E7}}\)
+\(\def\itEta{\unicode{x1D6E8}}\)
+\(\def\itTheta{\unicode{x1D6E9}}\)
+\(\def\itVartheta{\unicode{x1D6F3}}\)
+\(\def\itIota{\unicode{x1D6EA}}\)
+\(\def\itKappa{\unicode{x1D6EB}}\)
+\(\def\itLambda{\unicode{x1D6EC}}\)
+\(\def\itMu{\unicode{x1D6ED}}\)
+\(\def\itNu{\unicode{x1D6EE}}\)
+\(\def\itXi{\unicode{x1D6EF}}\)
+\(\def\itOmicron{\unicode{x1D6F0}}\)
+\(\def\itPi{\unicode{x1D6F1}}\)
+\(\def\itRho{\unicode{x1D6F2}}\)
+\(\def\itSigma{\unicode{x1D6F4}}\)
+\(\def\itTau{\unicode{x1D6F5}}\)
+\(\def\itUpsilon{\unicode{x1D6F6}}\)
+\(\def\itPhi{\unicode{x1D6F7}}\)
+\(\def\itChi{\unicode{x1D6F8}}\)
+\(\def\itPsi{\unicode{x1D6F9}}\)
+\(\def\itOmega{\unicode{x1D6FA}}\)
+\(\def\upalpha{\unicode{x03B1}}\)
+\(\def\upbeta{\unicode{x03B2}}\)
+\(\def\upvarbeta{\unicode{x03D0}}\)
+\(\def\upgamma{\unicode{x03B3}}\)
+\(\def\updigamma{\unicode{x03DD}}\)
+\(\def\updelta{\unicode{x03B4}}\)
+\(\def\upepsilon{\unicode{x03F5}}\)
+\(\def\upvarepsilon{\unicode{x03B5}}\)
+\(\def\upzeta{\unicode{x03B6}}\)
+\(\def\upeta{\unicode{x03B7}}\)
+\(\def\uptheta{\unicode{x03B8}}\)
+\(\def\upvartheta{\unicode{x03D1}}\)
+\(\def\upiota{\unicode{x03B9}}\)
+\(\def\upkappa{\unicode{x03BA}}\)
+\(\def\upvarkappa{\unicode{x03F0}}\)
+\(\def\uplambda{\unicode{x03BB}}\)
+\(\def\upmu{\unicode{x03BC}}\)
+\(\def\upnu{\unicode{x03BD}}\)
+\(\def\upxi{\unicode{x03BE}}\)
+\(\def\upomicron{\unicode{x03BF}}\)
+\(\def\uppi{\unicode{x03C0}}\)
+\(\def\upvarpi{\unicode{x03D6}}\)
+\(\def\uprho{\unicode{x03C1}}\)
+\(\def\upvarrho{\unicode{x03F1}}\)
+\(\def\upsigma{\unicode{x03C3}}\)
+\(\def\upvarsigma{\unicode{x03C2}}\)
+\(\def\uptau{\unicode{x03C4}}\)
+\(\def\upupsilon{\unicode{x03C5}}\)
+\(\def\upphi{\unicode{x03D5}}\)
+\(\def\upvarphi{\unicode{x03C6}}\)
+\(\def\upchi{\unicode{x03C7}}\)
+\(\def\uppsi{\unicode{x03C8}}\)
+\(\def\upomega{\unicode{x03C9}}\)
+\(\def\italpha{\unicode{x1D6FC}}\)
+\(\def\itbeta{\unicode{x1D6FD}}\)
+\(\def\itvarbeta{\unicode{x03D0}}\)
+\(\def\itgamma{\unicode{x1D6FE}}\)
+\(\def\itdigamma{\mathit{\unicode{x03DD}}}\)
+\(\def\itdelta{\unicode{x1D6FF}}\)
+\(\def\itepsilon{\unicode{x1D716}}\)
+\(\def\itvarepsilon{\unicode{x1D700}}\)
+\(\def\itzeta{\unicode{x1D701}}\)
+\(\def\iteta{\unicode{x1D702}}\)
+\(\def\ittheta{\unicode{x1D703}}\)
+\(\def\itvartheta{\unicode{x1D717}}\)
+\(\def\itiota{\unicode{x1D704}}\)
+\(\def\itkappa{\unicode{x1D705}}\)
+\(\def\itvarkappa{\unicode{x1D718}}\)
+\(\def\itlambda{\unicode{x1D706}}\)
+\(\def\itmu{\unicode{x1D707}}\)
+\(\def\itnu{\unicode{x1D708}}\)
+\(\def\itxi{\unicode{x1D709}}\)
+\(\def\itomicron{\unicode{x1D70A}}\)
+\(\def\itpi{\unicode{x1D70B}}\)
+\(\def\itvarpi{\unicode{x1D71B}}\)
+\(\def\itrho{\unicode{x1D70C}}\)
+\(\def\itvarrho{\unicode{x1D71A}}\)
+\(\def\itsigma{\unicode{x1D70E}}\)
+\(\def\itvarsigma{\unicode{x1D70D}}\)
+\(\def\ittau{\unicode{x1D70F}}\)
+\(\def\itupsilon{\unicode{x1D710}}\)
+\(\def\itphi{\unicode{x1D719}}\)
+\(\def\itvarphi{\unicode{x1D711}}\)
+\(\def\itchi{\unicode{x1D712}}\)
+\(\def\itpsi{\unicode{x1D713}}\)
+\(\def\itomega{\unicode{x1D714}}\)
+\(\let \lparen (\)
+\(\let \rparen )\)
+\(\newcommand {\cuberoot }[1]{\,{}^3\!\!\sqrt {#1}}\,\)
+\(\newcommand {\fourthroot }[1]{\,{}^4\!\!\sqrt {#1}}\,\)
+\(\newcommand {\longdivision }[1]{\mathord {\unicode {x027CC}#1}}\)
+\(\newcommand {\mathcomma }{,}\)
+\(\newcommand {\mathcolon }{:}\)
+\(\newcommand {\mathsemicolon }{;}\)
+\(\newcommand {\overbracket }[1]{\mathinner {\overline {\ulcorner {#1}\urcorner }}}\)
+\(\newcommand {\underbracket }[1]{\mathinner {\underline {\llcorner {#1}\lrcorner }}}\)
+\(\newcommand {\overbar }[1]{\mathord {#1\unicode {x00305}}}\)
+\(\newcommand {\ovhook }[1]{\mathord {#1\unicode {x00309}}}\)
+\(\newcommand {\ocirc }[1]{\mathord {#1\unicode {x0030A}}}\)
+\(\newcommand {\candra }[1]{\mathord {#1\unicode {x00310}}}\)
+\(\newcommand {\oturnedcomma }[1]{\mathord {#1\unicode {x00312}}}\)
+\(\newcommand {\ocommatopright }[1]{\mathord {#1\unicode {x00315}}}\)
+\(\newcommand {\droang }[1]{\mathord {#1\unicode {x0031A}}}\)
+\(\newcommand {\leftharpoonaccent }[1]{\mathord {#1\unicode {x020D0}}}\)
+\(\newcommand {\rightharpoonaccent }[1]{\mathord {#1\unicode {x020D1}}}\)
+\(\newcommand {\vertoverlay }[1]{\mathord {#1\unicode {x020D2}}}\)
+\(\newcommand {\leftarrowaccent }[1]{\mathord {#1\unicode {x020D0}}}\)
+\(\newcommand {\annuity }[1]{\mathord {#1\unicode {x020E7}}}\)
+\(\newcommand {\widebridgeabove }[1]{\mathord {#1\unicode {x020E9}}}\)
+\(\newcommand {\asteraccent }[1]{\mathord {#1\unicode {x020F0}}}\)
+\(\newcommand {\threeunderdot }[1]{\mathord {#1\unicode {x020E8}}}\)
+\(\newcommand {\Bbbsum }{\mathop {\unicode {x2140}}\limits }\)
+\(\newcommand {\oiint }{\mathop {\unicode {x222F}}\limits }\)
+\(\newcommand {\oiiint }{\mathop {\unicode {x2230}}\limits }\)
+\(\newcommand {\intclockwise }{\mathop {\unicode {x2231}}\limits }\)
+\(\newcommand {\ointclockwise }{\mathop {\unicode {x2232}}\limits }\)
+\(\newcommand {\ointctrclockwise }{\mathop {\unicode {x2233}}\limits }\)
+\(\newcommand {\varointclockwise }{\mathop {\unicode {x2232}}\limits }\)
+\(\newcommand {\leftouterjoin }{\mathop {\unicode {x27D5}}\limits }\)
+\(\newcommand {\rightouterjoin }{\mathop {\unicode {x27D6}}\limits }\)
+\(\newcommand {\fullouterjoin }{\mathop {\unicode {x27D7}}\limits }\)
+\(\newcommand {\bigbot }{\mathop {\unicode {x27D8}}\limits }\)
+\(\newcommand {\bigtop }{\mathop {\unicode {x27D9}}\limits }\)
+\(\newcommand {\xsol }{\mathop {\unicode {x29F8}}\limits }\)
+\(\newcommand {\xbsol }{\mathop {\unicode {x29F9}}\limits }\)
+\(\newcommand {\bigcupdot }{\mathop {\unicode {x2A03}}\limits }\)
+\(\newcommand {\bigsqcap }{\mathop {\unicode {x2A05}}\limits }\)
+\(\newcommand {\conjquant }{\mathop {\unicode {x2A07}}\limits }\)
+\(\newcommand {\disjquant }{\mathop {\unicode {x2A08}}\limits }\)
+\(\newcommand {\bigtimes }{\mathop {\unicode {x2A09}}\limits }\)
+\(\newcommand {\modtwosum }{\mathop {\unicode {x2A0A}}\limits }\)
+\(\newcommand {\sumint }{\mathop {\unicode {x2A0B}}\limits }\)
+\(\newcommand {\intbar }{\mathop {\unicode {x2A0D}}\limits }\)
+\(\newcommand {\intBar }{\mathop {\unicode {x2A0E}}\limits }\)
+\(\newcommand {\fint }{\mathop {\unicode {x2A0F}}\limits }\)
+\(\newcommand {\cirfnint }{\mathop {\unicode {x2A10}}\limits }\)
+\(\newcommand {\awint }{\mathop {\unicode {x2A11}}\limits }\)
+\(\newcommand {\rppolint }{\mathop {\unicode {x2A12}}\limits }\)
+\(\newcommand {\scpolint }{\mathop {\unicode {x2A13}}\limits }\)
+\(\newcommand {\npolint }{\mathop {\unicode {x2A14}}\limits }\)
+\(\newcommand {\pointint }{\mathop {\unicode {x2A15}}\limits }\)
+\(\newcommand {\sqint }{\mathop {\unicode {x2A16}}\limits }\)
+\(\newcommand {\intlarhk }{\mathop {\unicode {x2A17}}\limits }\)
+\(\newcommand {\intx }{\mathop {\unicode {x2A18}}\limits }\)
+\(\newcommand {\intcap }{\mathop {\unicode {x2A19}}\limits }\)
+\(\newcommand {\intcup }{\mathop {\unicode {x2A1A}}\limits }\)
+\(\newcommand {\upint }{\mathop {\unicode {x2A1B}}\limits }\)
+\(\newcommand {\lowint }{\mathop {\unicode {x2A1C}}\limits }\)
+\(\newcommand {\bigtriangleleft }{\mathop {\unicode {x2A1E}}\limits }\)
+\(\newcommand {\zcmp }{\mathop {\unicode {x2A1F}}\limits }\)
+\(\newcommand {\zpipe }{\mathop {\unicode {x2A20}}\limits }\)
+\(\newcommand {\zproject }{\mathop {\unicode {x2A21}}\limits }\)
+\(\newcommand {\biginterleave }{\mathop {\unicode {x2AFC}}\limits }\)
+\(\newcommand {\bigtalloblong }{\mathop {\unicode {x2AFF}}\limits }\)
+\(\newcommand {\arabicmaj }{\mathop {\unicode {x1EEF0}}\limits }\)
+\(\newcommand {\arabichad }{\mathop {\unicode {x1EEF1}}\limits }\)
+\(\newcommand {\nicefrac }[3][]{\mathinner {{}^{#2}\!/\!_{#3}}}\)
+\(\require {mhchem}\)
+\(\newcommand {\LWRnicearrayarray }[1]{\begin {array}{#1}}\)
+\(\def \LWRnicearrayarrayopt #1[#2] {\begin {array}{#1}}\)
+\(\newenvironment {NiceArray}[2][]{\ifnextchar [{\LWRnicearrayarrayopt {#2}}{\LWRnicearrayarray {#2}}}{\end {array}}\)
+\(\newcommand {\LWRnicearraywithdelimtwo }[2][]{\ifnextchar [{\LWRnicearrayarrayopt {#2}}{\LWRnicearrayarray {#2}}}\)
+\(\newenvironment {NiceArrayWithDelims}[2]{\def \LWRnicearrayrightdelim {\right #2}\left #1\LWRnicearraywithdelimtwo }{\end {array}\LWRnicearrayrightdelim }\)
+\(\newenvironment {pNiceArray} {\begin {NiceArrayWithDelims}{(}{)}} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {bNiceArray} {\begin {NiceArrayWithDelims}{[}{]}} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {BNiceArray} {\begin {NiceArrayWithDelims}{\{}{\}}} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {vNiceArray} {\begin {NiceArrayWithDelims}{\vert }{\vert }} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {VNiceArray} {\begin {NiceArrayWithDelims}{\Vert }{\Vert }} {\end {NiceArrayWithDelims}} \)
+\(\newenvironment {NiceMatrix}[1][]{\begin {matrix}}{\end {matrix}}\)
+\(\newenvironment {pNiceMatrix}[1][]{\begin {pmatrix}}{\end {pmatrix}}\)
+\(\newenvironment {bNiceMatrix}[1][]{\begin {bmatrix}}{\end {bmatrix}}\)
+\(\newenvironment {BNiceMatrix}[1][]{\begin {Bmatrix}}{\end {Bmatrix}}\)
+\(\newenvironment {vNiceMatrix}[1][]{\begin {vmatrix}}{\end {vmatrix}}\)
+\(\newenvironment {VNiceMatrix}[1][]{\begin {Vmatrix}}{\end {Vmatrix}}\)
+\(\newcommand {\LWRnicematrixBlock }[1]{#1}\)
+\(\def \LWRnicematrixBlockopt &lt;#1&gt;#2{#2}\)
+\(\newcommand {\Block }[2][]{\ifnextchar &lt;\LWRnicematrixBlockopt \LWRnicematrixBlock }\)
+\(\newcommand {\diagbox }[2]{\begin {array}{l}\hfill \quad #2\\\hline #1\quad \hfill \end {array}}\)
+\(\let \hdottedline \hdashline \)
+\(\newcommand {\Hline }[1][]{\hline }\)
+\(\newcommand {\CodeBefore }{}\)
+\(\newcommand {\Body }{}\)
+\(\newcommand {\CodeAfter }{}\)
+\(\newcommand {\line }[3][]{}\)
+\(\newcommand {\RowStyle }[2][]{}\)
+\(\newcommand {\LWRSubMatrix }[1][]{}\)
+\(\newcommand {\SubMatrix }[4]{\LWRSubMatrix }\)
+\(\newcommand {\OverBrace }[4][]{}\)
+\(\newcommand {\UnderBrace }[4][]{}\)
+\(\newcommand {\HBrace }[3][]{}\)
+\(\newcommand {\VBrace }[3][]{}\)
+\(\newcommand {\ShowCellNames }{}\)
+\(\newcommand {\tabularnote }[2][]{}\)
+\(\newcommand {\cellcolor }[3][]{}\)
+\(\newcommand {\rowcolor }[3][]{}\)
+\(\newcommand {\LWRrowcolors }[1][]{}\)
+\(\newcommand {\rowcolors }[4][]{\LWRrowcolors }\)
+\(\newcommand {\rowlistcolors }[3][]{\LWRrowcolors }\)
+\(\newcommand {\columncolor }[3][]{}\)
+\(\newcommand {\rectanglecolor }[4][]{}\)
+\(\newcommand {\arraycolor }[2][]{}\)
+\(\newcommand {\chessboardcolors }[3][]{}\)
+\(\newcommand {\ldots }[1][]{\dots }\)
+\(\newcommand {\Cdots }[1][]{\cdots }\)
+\(\newcommand {\Vdots }[1][]{\vdots }\)
+\(\newcommand {\Ddots }[1][]{\ddots }\)
+\(\newcommand {\Iddots }[1][]{\mathinner {\unicode {x22F0}}}\)
+\(\newcommand {\Hdotsfor }[1]{\ldots }\)
+\(\newcommand {\Vdotsfor }[1]{\vdots }\)
+\(\newcommand {\AutoNiceMatrix }[2]{\text {(AutoNiceMatrix #1)}}\)
+\(\let \pAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \bAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \BAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \vAutoNiceMatrix \AutoNiceMatrix \)
+\(\let \VAutoNiceMatrix \AutoNiceMatrix \)
+\(\newcommand {\toprule }[1][]{\hline }\)
+\(\let \midrule \toprule \)
+\(\let \bottomrule \toprule \)
+\(\def \LWRbooktabscmidruleparen (#1)#2{}\)
+\(\newcommand {\LWRbooktabscmidrulenoparen }[1]{}\)
+\(\newcommand {\cmidrule }[1][]{\ifnextchar (\LWRbooktabscmidruleparen \LWRbooktabscmidrulenoparen }\)
+\(\newcommand {\morecmidrules }{}\)
+\(\newcommand {\specialrule }[3]{\hline }\)
+\(\newcommand {\addlinespace }[1][]{}\)
+\(\newcommand {\LWRsubmultirow }[2][]{#2}\)
+\(\newcommand {\LWRmultirow }[2][]{\LWRsubmultirow }\)
+\(\newcommand {\multirow }[2][]{\LWRmultirow }\)
+\(\newcommand {\mrowcell }{}\)
+\(\newcommand {\mcolrowcell }{}\)
+\(\newcommand {\STneed }[1]{}\)
+\(\DeclareMathOperator {\const }{const}\)
+\(\DeclareMathOperator {\Div }{div}\)
+\(\DeclareMathOperator {\Rot }{rot}\)
+\(\DeclareMathOperator {\Grad }{grad}\)
+\(\DeclareMathOperator {\inv }{inv}\)
+\(\DeclareMathOperator {\Tr }{Tr}\)
+\(\newcommand {\emf }{ℰ}\)
+\(\newcommand {\tikzmarknode }[2]{#2}\)
+\(\newcommand {\tikzmark }[1]{}\)
+\(\newcommand {\enquote }[1]{«#1»}\)
+\(\newcommand {\allowbreak }{}\)
+\(\newcommand {\mitlambda }{\lambda }\)
+\(\newcommand {\mitomega }{\omega }\)
+\(\newcommand {\mittheta }{\theta }\)
+\(\newcommand {\mitphi }{\varphi }\)
+\(\newcommand {\tcbhighmath }[1]{\boxed {#1}}\)
+\(\newcommand {\Efield }{\mathbf {E}}\)
+\(\newcommand {\Dfield }{\mathbf {D}}\)
+\(\newcommand {\Bfield }{\mathbf {B}}\)
+\(\newcommand {\Hfield }{\mathbf {H}}\)
+\(\newcommand {\ket }[1]{\left | #1 \right \rangle }\)
+\(\newcommand {\bra }[1]{\left \langle #1 \right |}\)
+\(\newcommand {\opbraket }[3]{\left \langle #1 \middle | #2 \middle | #3 \right \rangle }\)
+\(\newcommand {\diff }[2]{\frac {\partial #1}{\partial #2}}\)
+\(\newcommand {\ddiff }[2]{\frac {\partial ^2 #1}{\partial #2^2}}\)
+\(\newcommand {\grad }{\mathbf {\nabla }}\)
+\(\newcommand {\rot }{\mathbf {\nabla }\times }\)
+\(\newcommand {\divg }{\mathbf {\nabla }\cdot }\)
+\(\newcommand {\Laplasian }{\Delta }\)
+\(\newcommand {\EMF }{\mathcal {E}}\)
+\(\newcommand {\vxi }{\vec {\xi }}\)
+\(\newcommand {\vr }{\vec {r}}\)
+\(\newcommand {\vphi }{\varphi }\)
+\(\newcommand {\veps }{\varepsilon }\)
+\(\newcommand {\eff }{\mathrm {eff}}\)
+\(\newcommand {\PySCF }{\texttt {PySCF}}\)
+\(\newcommand {\vect }[1]{\mathbf {#1}}\)
+\(\newcommand {\symbf }[1]{\mathbf {#1}}\)
+\(\DeclareMathOperator {\sh }{sh}\)
+\(\DeclareMathOperator {\ch }{ch}\)
+\(\DeclareMathOperator {\tg }{tg}\)
+\(\DeclareMathOperator {\ctg }{ctg}\)
+\(\DeclareMathOperator {\arctg }{arctg}\)
+\(\DeclareMathOperator {\arcctg }{arcctg}\)
+\(\DeclareMathOperator {\cth }{cth}\)
+\(\DeclareMathOperator {\cosec }{cosec}\)
+\(\let \symsf \symsfup \)
+\(\def\Alpha{\unicode{x0391}}\)
+\(\def\Beta{\unicode{x0392}}\)
+\(\def\Gamma{\unicode{x0393}}\)
+\(\def\Digamma{\unicode{x03DC}}\)
+\(\def\Delta{\unicode{x0394}}\)
+\(\def\Epsilon{\unicode{x0395}}\)
+\(\def\Zeta{\unicode{x0396}}\)
+\(\def\Eta{\unicode{x0397}}\)
+\(\def\Theta{\unicode{x0398}}\)
+\(\def\Vartheta{\unicode{x03F4}}\)
+\(\def\Iota{\unicode{x0399}}\)
+\(\def\Kappa{\unicode{x039A}}\)
+\(\def\Lambda{\unicode{x039B}}\)
+\(\def\Mu{\unicode{x039C}}\)
+\(\def\Nu{\unicode{x039D}}\)
+\(\def\Xi{\unicode{x039E}}\)
+\(\def\Omicron{\unicode{x039F}}\)
+\(\def\Pi{\unicode{x03A0}}\)
+\(\def\Varpi{\unicode{x03D6}}\)
+\(\def\Rho{\unicode{x03A1}}\)
+\(\def\Sigma{\unicode{x03A3}}\)
+\(\def\Tau{\unicode{x03A4}}\)
+\(\def\Upsilon{\unicode{x03A5}}\)
+\(\def\Phi{\unicode{x03A6}}\)
+\(\def\Chi{\unicode{x03A7}}\)
+\(\def\Psi{\unicode{x03A8}}\)
+\(\def\Omega{\unicode{x03A9}}\)
+\(\def\alpha{\unicode{x1D6FC}}\)
+\(\def\beta{\unicode{x1D6FD}}\)
+\(\def\varbeta{\unicode{x03D0}}\)
+\(\def\gamma{\unicode{x1D6FE}}\)
+\(\def\digamma{\mathit{\unicode{x03DD}}}\)
+\(\def\delta{\unicode{x1D6FF}}\)
+\(\def\epsilon{\unicode{x1D716}}\)
+\(\def\varepsilon{\unicode{x1D700}}\)
+\(\def\zeta{\unicode{x1D701}}\)
+\(\def\eta{\unicode{x1D702}}\)
+\(\def\theta{\unicode{x1D703}}\)
+\(\def\vartheta{\unicode{x1D717}}\)
+\(\def\iota{\unicode{x1D704}}\)
+\(\def\kappa{\unicode{x1D705}}\)
+\(\def\varkappa{\unicode{x1D718}}\)
+\(\def\lambda{\unicode{x1D706}}\)
+\(\def\mu{\unicode{x1D707}}\)
+\(\def\nu{\unicode{x1D708}}\)
+\(\def\xi{\unicode{x1D709}}\)
+\(\def\omicron{\unicode{x1D70A}}\)
+\(\def\pi{\unicode{x1D70B}}\)
+\(\def\varpi{\unicode{x1D71B}}\)
+\(\def\rho{\unicode{x1D70C}}\)
+\(\def\varrho{\unicode{x1D71A}}\)
+\(\def\sigma{\unicode{x1D70E}}\)
+\(\def\varsigma{\unicode{x1D70D}}\)
+\(\def\tau{\unicode{x1D70F}}\)
+\(\def\upsilon{\unicode{x1D710}}\)
+\(\def\phi{\unicode{x1D719}}\)
+\(\def\varphi{\unicode{x1D711}}\)
+\(\def\chi{\unicode{x1D712}}\)
+\(\def\psi{\unicode{x1D713}}\)
+\(\def\omega{\unicode{x1D714}}\)
+</div>
+<!--
+...... chapter Збуджені стани та UV/VIS спектроскопія ......
+-->
+<h3 id="autosec-941"><span class="sectionnumber">9&#x2003;</span>Збуджені стани та UV/VIS спектроскопія</h3>
+<a id="main-html-autopage-941"></a>
+<a id="main-html-autofile-10"></a>
+<p>
+Збуджені стани — це інші власні функції того ж гамільтоніана:
+</p>
+<p>
+\[ \hat {H} |\Psi _I\rangle = E_I |\Psi _I\rangle , \qquad I = 0, 1, 2, \dots . \]
+</p>
+<p>
+Таким чином, збуджені стани — це ті самі розв’язки рівняння Шредінґера, але з більшою енергією, ніж основний стан.
+</p>
+<p>
+До цього моменту ми розглядали методи, які описують молекули в їхньому найнижчому енергетичному стані — основному стані. Hartree-Fock, MP2, CCSD(T) — усі вони оптимізують хвильову функцію або амплітуди збуджень таким чином, щоб отримати найменшу
+можливу енергію.
+</p>
+<p>
+Однак більшість цікавих фізичних і хімічних явищ відбувається саме за участі <em>збуджених станів</em> — квантових станів з енергією вищою за основний:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <b>Оптичні спектри:</b> молекула поглинає фотон і переходить у збуджений стан, потім повертається назад, випромінюючи світло (флуоресценція, фосфоресценція).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Фотохімія:</b> хімічні реакції, що відбуваються під дією світла (фотосинтез, фотокаталіз, зір).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Електронні властивості матеріалів:</b> напівпровідники, органічні світлодіоди (OLED), сонячні елементи — всі вони працюють завдяки переходам між основним і збудженими станами.
+</p>
+</li>
+</ul>
+<p>
+Тому вміння точно описувати збуджені стани є критично важливим для сучасної квантової хімії.
+</p>
+<p>
+У цьому розділі ми розглянемо:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Чому методи для основного стану не можуть «побачити» збуджені стани.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Дві фундаментальні ідеології пошуку збуджених станів: варіаційний підхід і метод рівнянь руху.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Як конкретні методи (CIS, CISD, EOM-CCSD, CASSCF, NEVPT2) реалізують ці ідеї.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Коли який метод використовувати для отримання надійних результатів.
+</p>
+</li>
+</ul>
+<!--
+...... section Спектроскопічні властивості: перехідні дипольні моменти і сили осцилятора ......
+-->
+<h4 id="autosec-942"><span class="sectionnumber">&#xA7;&#x202F;9.1&#x2003;</span>Спектроскопічні властивості: перехідні дипольні моменти і сили осцилятора</h4>
+<a id="main-html-autopage-942"></a>
+<p>
+Оптичні переходи в молекулах описуються операторами дипольного моменту, які пов’язують основний стан \(\ket {0}\) зі збудженими станами \(\ket {n}\). Величина цієї взаємодії визначає інтенсивність спектральної лінії.
+</p>
+<p>
+Існує два принципово різні підходи до опису збуджених станів у квантовій хімії, що відрізняються тим, <em>як</em> шукаються енергії \(E_I\) або частоти переходів&nbsp;\(\omega _{0n}\).
+</p>
+<!--
+...... paragraph 1. Власні стани гамільтоніана. ......
+-->
+<p>
+<span class="paragraph" id="autosec-943">1. Власні стани гамільтоніана.</span>
+<a id="main-html-autopage-943"></a>
+Методи типу <kbd>FCI</kbd>, <kbd>CISD</kbd>, <kbd>CASSCF</kbd> безпосередньо розв’язують стаціонарне рівняння Шредінґера
+</p>
+<p>
+\[ \hat {H}_0|\Psi _I\rangle = E_I|\Psi _I\rangle \]
+</p>
+<p>
+у повному або скороченому просторі детермінантів. Такі підходи дають усі можливі власні енергії системи, тобто визначають її <em>власні частоти</em>, навіть без зовнішнього поля. Це подібно до аналізу натягнутої струни: ми можемо обчислити, які ноти вона здатна
+відтворити, не торкаючись її.
+</p>
+<!--
+...... paragraph 2. Відгук системи на збурення. ......
+-->
+<p>
+<span class="paragraph" id="autosec-944">2. Відгук системи на збурення.</span>
+<a id="main-html-autopage-944"></a>
+Методи <kbd>TDHF</kbd> (або <kbd>RPA</kbd>), <kbd>TDDFT</kbd>, <kbd>EOM-CCSD</kbd> не шукають усі власні стани безпосередньо, а визначають, як хвильова функція або густина реагує на прикладене поле&nbsp;\(\mathbf {E}(t)\) електромагнітної хвилі.
+Якщо система перебуває під дією зовнішнього періодичного поля хвилі, гамільтоніан набуває вигляду
+</p>
+<p>
+\[ \hat {H}(t) = \hat {H}_0 + \hat {V}(t), \]
+</p>
+<p>
+де \(\hat {H}_0\) — гамільтоніан незбуреної системи, а \(\hat {V}(t) = -\vect {\mu }\cdot \Efield (t)\) — оператор взаємодії із зовнішнім електричним полем, зазвичай гармонічним за часом:
+</p>
+<p>
+\[ \hat {V}(t) = \hat {V}e^{-i\omega t} + \hat {V}^\dagger e^{i\omega t}. \]
+</p>
+<p>
+У такому випадку розв’язується вже <b>нестаціонарне рівняння Шредінґера</b>
+</p>
+<p>
+\[ i\hbar \frac {\partial }{\partial t}\Psi (t) = \hat {H}(t)\Psi (t). \]
+</p>
+<p>
+Шукаємо розв’язок у вигляді малої варіації від основного стану:
+</p>
+<p>
+\[ \Psi (t) = \Psi _0 + \delta \Psi (t), \]
+</p>
+<p>
+де \(\Psi _0\) — хвильова функція основного стану (розв’язок стаціонарного рівняння Шредінґера), а \(\delta \Psi (t)\) — хвильова функція <em>відгуку</em>, що описує зміну стану системи під дією зовнішнього поля.
+</p>
+<p>
+У таких підходах збуджені стани з’являються як <em>резонансні частоти відгуку</em> системи:
+</p>
+<p>
+\[ \delta \Psi (t) = e^{-i\omega t} \left ( \sum _{ia} X_{ia}\,\Phi _i^a + \frac {1}{4}\sum _{ijab} X_{ij}^{ab}\,\Phi _{ij}^{ab} - \sum _{ia} Y_{ia}\,\Phi _a^i - \frac {1}{4}\sum _{ijab} Y_{ij}^{ab}\,\Phi
+_{ab}^{ij} + \cdots \right ), \]
+</p>
+<p>
+де:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> \(\Phi _i^a\) — детермінант, отриманий із \(\Psi _0\) заміною зайнятої орбіталі \(i\) на віртуальну \(a\), \(\Phi _{ij}^{ab}\) — детермінант, у якому дві зайняті орбіталі \(i,j\) замінені двома віртуальними \(a,b\)
+&#x2026;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(X_{ia}\) — амплітуди <em>збудження</em> (ступінь участі переходу \(i\!\to \!a\));
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(Y_{ia}\) — амплітуди <em>релаксації</em> або <em>деекзитації</em>, що враховують зворотний вплив поля (\(a\!\to \!i\)).
+</p>
+</li>
+</ul>
+<p>
+Власні частоти&nbsp;\(\omega \) цього рівняння є енергіями збуджених станів, а пари векторів \((X,Y)\) описують їх електронну структуру.
+</p>
+<p>
+Фізично це еквівалентно тому, що ми «збуджуємо» струну та спостерігаємо, на яких частотах вона резонує — саме ці частоти відповідають оптичним переходам.
+</p>
+<div class="center">
+<table>
+<tr style="display:none"><th>.</th></tr>
+<tr class="hline">
+<td colspan="1" class="tdc tvertbarl tvertbarr" style="background:#F9F9F9; border-left: 1px solid black; border-right: 1px solid black"><b>Тип підходу</b></td>
+<td colspan="1" class="tdc tvertbarr" style="background:#F9F9F9; border-right: 1px solid black"><b>Приклад методів</b></td>
+<td colspan="1" class="tdc tvertbarr" style="background:#F9F9F9; border-right: 1px solid black"><b>Що обчислюється</b></td>
+<td colspan="1" class="tdc tvertbarr" style="background:#F9F9F9; border-right: 1px solid black"><b>Фізична аналогія</b></td>
+</tr>
+<tr class="hline">
+<td class="tdp tvertbarl tvertbarr tdleft" style="border-left: 1px solid black; border-right: 1px solid black">
+<p>
+Власні стани
+</p>
+</td>
+<td class="tdp tvertbarr tdleft" style="border-right: 1px solid black">
+<p>
+<kbd>FCI</kbd>, <kbd>CISD</kbd>, <kbd>CASSCF</kbd>
+</p>
+</td>
+<td class="tdp tvertbarr tdleft" style="border-right: 1px solid black">
+<p>
+Енергії \(E_I\) як власні значення \(\hat {H}_0\)
+</p>
+</td>
+<td class="tdp tvertbarr tdleft" style="border-right: 1px solid black">
+<p>
+Визначення власних частот струни
+</p>
+</td>
+</tr>
+<tr class="hline">
+<td class="tdp tvertbarl tvertbarr tdleft" style="background:#F9F9F9; border-left: 1px solid black; border-right: 1px solid black">
+<p>
+Відгук на поле
+</p>
+</td>
+<td class="tdp tvertbarr tdleft" style="background:#F9F9F9; border-right: 1px solid black">
+<p>
+<kbd>TDHF</kbd>, <kbd>TDDFT</kbd>, <kbd>EOM-CCSD</kbd>
+</p>
+</td>
+<td class="tdp tvertbarr tdleft" style="background:#F9F9F9; border-right: 1px solid black">
+<p>
+Резонансні частоти \(\omega _{0n}\) відгуку системи
+</p>
+</td>
+<td class="tdp tvertbarr tdleft" style="background:#F9F9F9; border-right: 1px solid black">
+<p>
+Збудження струни зовнішньою силою
+</p>
+</td>
+</tr>
+<tr class="hline" aria-hidden="true">
+<td class="tdp tdleft">
+</td>
+<td class="tdp tdleft">
+</td>
+<td class="tdp tdleft">
+</td>
+<td class="tdp tdleft">
+</td>
+</tr>
+</table>
+</div>
+<p>
+Таким чином, перший клас методів описує «внутрішні» властивості системи, а другий — її «спектроскопічну» поведінку у полі.
+</p>
+<p>
+Після визначення енергій збуджених станів або резонансних частот відгуку природним наступним кроком є розгляд <b>інтенсивностей оптичних переходів</b>. Не кожен дозволений за симетрією перехід проявляється у спектрі з однаковою силою — це залежить від
+величини перехідного дипольного моменту між станами. Саме в рамках другого підходу — методів відгуку на зовнішнє поле — можна отримати не лише енергії збуджених станів&nbsp;\(\omega _{0n}\), а й визначити, <em>які з них будуть видимі у спектрі</em>.
+Взаємодія хвильової функції з електричним полем дає змогу обчислити ефективність збудження кожного переходу, що кількісно описується <em>силами осцилятора</em>. Ці величини безпосередньо визначають експериментальні інтенсивності
+</p>
+<p>
+Імовірність переходу з основного стану \(0\) у збуджений \(n\) визначається матрицею дипольного моменту:
+</p>
+<p>
+\[ \boldsymbol {\mu }_{0n} = \langle 0 | \hat {\boldsymbol {\mu }} | n \rangle , \quad \hat {\boldsymbol {\mu }} = -\sum _i e \mathbf {r}_i. \]
+</p>
+<p>
+<b>Сила осцилятора</b> \(f_{0n}\) (безрозмірна величина, пропорційна інтенсивності лінії) визначається формулою:
+</p>
+<p>
+\[ f_{0n} = \frac {2}{3}\,\omega _{0n}\,|\boldsymbol {\mu }_{0n}|^2, \]
+</p>
+<p>
+де \(\omega _{0n}\)&nbsp;— енергія переходу (в атомних одиницях).
+</p>
+<p>
+В експериментальній спектроскопії ця величина прямо пов’язана з інтегральною інтенсивністю смуги в УФ/видимому діапазоні. Якщо \(f_{0n}\) велике, лінія інтенсивна; якщо мале — перехід слабкий або заборонений.
+</p>
+<div class="cb-comment">
+<p>
+<b>Коментар</b>
+</p>
+<p>
+У більш загальному випадку <em>сила осцилятора</em> визначається для переходу між будь-якими станами \(|i\rangle \) і \(|j\rangle \) з \(E_j &gt; E_i\):
+</p>
+<p>
+\[ f_{ij} = \frac {2}{3} \omega _{ij} |\boldsymbol {\mu }_{ij}|^2, \qquad \boldsymbol {\mu }_{ij} = \langle i | \hat {\boldsymbol {\mu }} | j \rangle , \qquad \omega _{ij} = E_j - E_i &gt; 0. \]
+</p>
+<p>
+Якщо \(i=0\), то \(f_{0n}\) відповідає <b>поглинанню</b> (<em>absorption</em>) — інтенсивність лінії в УФ/видимому спектрі.
+</p>
+<p>
+Для <b>випромінювання</b> (<em>emission</em>), наприклад, флуоресценції \(n \to 0\), сила осцилятора визначається як \(f_{n0} = f_{0n}\) (за принципом детального балансу), а енергія фотона — \(\hbar \omega = E_n - E_0\).
+</p>
+<p>
+У більшості молекулярних розрахунків (особливо в лінійній абсорбційній спектроскопії) розглядаються лише переходи з <b>основного стану</b>, тобто \(f_{0n}\). Тому на практиці саме ці величини виводяться в програмах.
+</p>
+</div>
+<p>
+При електронному збудженні молекули одночасно змінюється і рух ядер. Тому реальна спектральна лінія складається з купи вібраційних компонентів, що відповідають переходам між вібраційними рівнями різних електронних поверхонь. Такий сукупний процес називають
+<em>віброною</em> (vibronic) транзицією.
+</p>
+<!--
+...... paragraph Принцип Франка–Кондона. ......
+-->
+<p>
+<span class="paragraph" id="autosec-947">Принцип Франка–Кондона.</span>
+<a id="main-html-autopage-947"></a>
+Електронний перехід відбувається швидко (\(\sim 10^{-15}\)&nbsp;с) в порівнянні з рухом ядер (\(\sim 10^{-14}\)&nbsp;с) (вертикальний перехід), тому ймовірність потрапити із вібраційного рівня \(v\) основного стану у вібраційний рівень \(v&apos;\)
+збудженого визначається перекриттям вібраційних хвильових функцій:
+</p>
+<p>
+\[ FC_{v\to v&apos;} = \bigl |\langle \chi _v^{(0)}(Q) | \chi _{v&apos;}^{(n)}(Q) \rangle \bigr |^2. \]
+</p>
+<p>
+Інтенсивність кожної лінії обчислюється як добуток електронної сили осцилятора і FC-фактора:
+</p>
+<p>
+\[ I_{v\to v&apos;} \propto f_{0n}\, FC_{v\to v&apos;}. \]
+</p>
+<p>
+де <em>Франк-Кондонівський фактор</em>:
+</p>
+<p>
+\[ \boxed {FC_{0 v&apos;} = \bigl | \langle \chi _0^{(0)}(Q) | \chi _{v&apos;}^{(n)}(Q) \rangle \bigr |^2} \]
+</p>
+<p>
+— ймовірність коливального переходу при <em>вертикальному</em> електронному збудженні, індекс \(v&apos;\) позначає коливальний рівень <b>збудженого електронного стану</b> \(|n\rangle \), тоді як \(v=0\) — коливальний рівень <b>основного
+стану</b> \(|0\rangle \). Перехід \(v=0 \to v&apos;=0\) відповідає нульовій вібраційній смузі, а \(v=0 \to v&apos;&gt;0\) — лініям вібраційної прогресії, що виникають через зсув рівноважної геометрії між станами.
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> \(FC_{00} \approx 1\) — геометрія не змінюється.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(FC_{0v&apos;} &gt; 0\) для \(v&apos; &gt; 0\) — зсув рівноважної конфігурації, обчислюється через гессіани \(S_0\) і \(S_1\) + нормальні координати.
+</p>
+</li>
+</ul>
+<div class="cb-comment">
+<p>
+<b>Коментар</b>
+</p>
+<p>
+У більшості випадків електронне збудження переводить молекулу у <em>зв’язаний збуджений стан</em> \(|n\rangle \), потенціальна поверхня якого \(E_n(Q)\) має мінімум. Тоді молекула залишається стабільною, і виникають дискретні переходи \(0 \to n\), які
+проявляються як вузькі смуги в УФ/видимому спектрі.
+</p>
+<p>
+Однак можливі ситуації, коли \(E_n(Q)\) є <b>дисоціативною</b> поверхнею — тобто не має мінімуму і веде до розриву хімічного зв’язку:
+</p>
+<p>
+\[ \mathrm {AB} + h\nu \;\longrightarrow \; \mathrm {A} + \mathrm {B}. \]
+</p>
+<p>
+Такі переходи називаються <em>фотодисоціаційними</em>. Вони не мають чіткої енергетичної лінії, а утворюють неперервний спектр поглинання.
+</p>
+<p>
+Формально формула сили осцилятора залишається справедливою:
+</p>
+<p>
+\[ f_{0n} = \frac {2}{3}\,\omega _{0n}\,|\boldsymbol {\mu }_{0n}|^2, \]
+</p>
+<p>
+але при переходах у континуум \(|n\rangle \to |E\rangle \) дискретну суму заміщують інтегралом:
+</p>
+<p>
+\[ \sum _n f_{0n} \;\;\longrightarrow \;\; \int f_{0E}\, dE, \]
+</p>
+<p>
+де \(f_{0E}\)&nbsp;— диференціальна сила осцилятора на одиницю енергетичного інтервалу.
+</p>
+<p>
+У спектроскопічному експерименті це відповідає широким або безструктурним смугам поглинання, характерним для <b>предисоціативних</b> і <b>дисоціативних</b> станів.
+</p>
+</div>
+<!--
+...... section Збуджені стани в рамках методу Хартрі–Фока ......
+-->
+<h4 id="autosec-948"><span class="sectionnumber">&#xA7;&#x202F;9.2&#x2003;</span>Збуджені стани в рамках методу Хартрі–Фока</h4>
+<a id="main-html-autopage-948"></a>
+<p>
+Метод Хартрі–Фока у своїй стандартній формі призначений для опису <b>основного стану</b> системи — стану з найменшою можливою енергією. Під час самозгодженої процедури (SCF) електрони заповнюють орбіталі починаючи з найнижчих енергій, і програма
+автоматично знаходить конфігурацію, що мінімізує повну енергію:
+</p>
+<p>
+\[ E_0 = \min _{\Phi } \langle \Phi | \hat {H} | \Phi \rangle , \]
+</p>
+<p>
+де \(\Phi \) — це одно-детермінантна хвильова функція (детермінант Слейтера). Отже, звичайний HF-розрахунок завжди повертає <em>основний стан</em>.
+</p>
+<!--
+...... subsection Метод максимального перекриття ......
+-->
+<h5 id="autosec-949">Метод максимального перекриття</h5>
+<a id="main-html-autopage-949"></a>
+<p>
+Для опису <b>збуджених станів</b> потрібно враховувати мультиплетність системи та іноді примусово фіксувати електронну конфігурацію:
+</p>
+<p>
+<b>Триплетні стани.</b> Для атома гелію триплетний стан \(1s2s\) можна отримати простим встановленням параметра <span class="inlinecode"><kbd>spin = 2</kbd></span>, що відповідає двом неспареним електронам. Оскільки триплетна конфігурація
+вимагає, щоб електрони мали паралельні спіни і знаходилися на різних орбіталях, SCF-процедура автоматично знаходить конфігурацію \(1s2s\) без додаткових втручань.
+</p>
+<div class="cb-comment">
+<p>
+<b>Коментар</b>
+</p>
+<p>
+Такий стан є <b>метастабільним</b>: перехід у синглетний основний стан \({}^1S_0\) заборонений за спіновим правилом відбору (\(\Delta S = 0\)). Енергія триплетного рівня становить приблизно \(19{,}82\)&nbsp;еВ над основним станом, а час життя —
+близько \(8 \times 10^3\)&nbsp;с, що робить його одним із найстійкіших збуджених станів серед легких атомів. Переходи між синглетними та триплетними рівнями відбуваються лише завдяки <b>спін-орбітальній взаємодії</b>, яка слабко змішує стани з різними
+\(S\) і тим самим дозволяє дуже повільні (заборонені у першому наближенні) радіаційні переходи.
+</p>
+</div>
+<p>
+<b>Синглетні збуджені стани.</b> Для збудженого синглету \(1s2s\) ситуація складніша. Параметр <span class="inlinecode"><kbd>spin = 0</kbd></span> означає лише, що кількість альфа- та бета-електронів однакова, але не визначає, <em>які саме
+орбіталі</em> вони займають. Тому звичайна SCF-процедура знову поверне основний стан \(1s^2\), оскільки він енергетично вигідніший.
+</p>
+<p>
+Щоб отримати збуджений синглет, необхідно <b>зафіксувати електронну конфігурацію</b> і не дозволити системі сповзти до основного стану. Для цього використовується <b>метод MOM (Maximum Overlap Method)</b>, який на кожній ітерації SCF обирає
+орбіталі з найбільшим перекриттям з орбіталями попередньої ітерації:
+</p>
+<p>
+\[ O_{ij} = \left | \langle \phi _i^{(n)} \mid \phi _j^{(n-1)} \rangle \right |^2. \]
+</p>
+<p>
+Завдяки цьому MOM утримує бажану конфігурацію (наприклад, \(1s2s\)) і не дозволяє хвильовій функції сповзати до основного стану (\(1s^2\)).
+</p>
+<p>
+Отриманий результат називають <b>самоузгодженим збудженим детермінантом</b> (self-consistent excited determinant). Такий детермінант <em>не є справжнім власним станом гамільтоніана</em> \(\hat {H}\), оскільки він не задовольняє рівняння Шредінґера
+точно:
+</p>
+<p>
+\[ \hat {H}\Phi \ne E\Phi . \]
+</p>
+<p>
+Метод Хартрі–Фока обмежує хвильову функцію лише одним детермінантом, тоді як справжній власний стан гамільтоніана — це, взагалі кажучи, комбінація багатьох детермінантів (багатоконфігураційна хвильова функція). Тому <b>енергії збуджених станів, як і
+основного, систематично завищені</b> порівняно з експериментом.
+</p>
+<p>
+Проте такі стани мають практичну цінність. Їх енергії та орбіталі дозволяють:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> побачити, <b>де локалізований збуджений електрон</b> — наприклад, у гелію при переході \(1s \to 2s\) один електрон залишається поблизу ядра, а інший зміщується далі, змінюючи розподіл електронної густини
+\(\rho (\mathbf {r})\);
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> оцінити <b>енергетичні інтервали між станами</b>
+</p>
+<p>
+\[ \Delta E = E_{\text {збудж}} - E_{\text {основ}}, \]
+</p>
+<p>
+які відповідають спостережуваним спектральним лініям у дослідах поглинання чи випромінювання.
+</p>
+</li>
+</ul>
+<p>
+Приклад реалізації MOM-розрахунку для атома гелію наведено у файлі <span class="codebutton"><a href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/ExcitedStates/code/he_excited_states_mom.py"
+target="_blank" ><kbd>he_excited_states_mom.py</kbd></a></span>.
+</p>
+<!--
+...... subsection Часозалежний Хартрі–Фок (TDHF) ......
+-->
+<h5 id="autosec-950"><span class="sectionnumber">9.2.1&#x2003;</span>Часозалежний Хартрі–Фок (TDHF)</h5>
+<a id="main-html-autopage-950"></a>
+<p>
+Стаціонарне рівняння має вигляд
+</p>
+<p>
+\[ \hat F[D_0]\,\phi _i(\mathbf r) = \varepsilon _i\,\phi _i(\mathbf r), \]
+</p>
+<p>
+де оператор Фока \(\hat F[D_0]\) функціонально залежить від густини \(D_0(\mathbf r)\).
+</p>
+<p>
+У часозалежному випадку (TDHF) ми дозволяємо орбіталям змінюватися з часом:
+</p>
+<p>
+\[ i\frac {\partial }{\partial t}\phi _i(\mathbf r,t) = \hat F[D(t)]\,\phi _i(\mathbf r,t). \]
+</p>
+<p>
+Це — <b>часозалежне рівняння Хартрі–Фока</b>, але з ефективним оператором Фока, який сам залежить від поточної густини.
+</p>
+<p>
+TDHF є формою <em>лінійного відгуку</em> Хартрі–Фока, еквівалентною <b>RPA</b> у замкнутій оболонці.
+</p>
+<p>
+Означимо одночастинкову матрицю густини у базисі орбіталей:
+</p>
+<p>
+\[ D_{\mu \nu }(t) = \sum _{i}^{N} C_{\mu i}(t) C_{\nu i}^*(t) \]
+</p>
+<p>
+а \(C_{\mu i}(t)\) — коефіцієнти розкладу орбіталей \(\phi _i = \sum _{\mu =1}^{M} C_{\mu i} (t)\,\chi _\mu (\vect {r})\),
+</p>
+<p>
+Диференціюючи за часом і підставляючи TDHF-рівняння, отримуємо:
+</p>
+<p>
+\[ \boxed {i\frac {\partial D}{\partial t} = [F[D], D]}. \]
+</p>
+<p>
+Це — рівняння руху для матриці густини в методі TDHF.
+</p>
+<p>
+Комутатор \([F,D]\) гарантує, що еволюція зберігає ортонормованість орбіталей та число частинок (оскільки \(\mathrm {Tr}[D]\) не змінюється в часі).
+</p>
+<p>
+<b>Гармонічний ansatz і перехід до RPA-матриці.</b> Пошук гармонічних рішень
+</p>
+<p>
+\[ \delta D(t)=X\,e^{-i\omega t}+Y^*\,e^{i\omega t} \]
+</p>
+<p>
+приводить до алгебраїчної задачі на власні значення у підпросторі переходів \(i\to a\):
+</p>
+<p>
+\[ \begin {pmatrix} A &amp; B \\ -B^* &amp; -A^* \end {pmatrix} \begin {pmatrix} X \\ Y \end {pmatrix} =\omega \begin {pmatrix} X \\ Y \end {pmatrix}. \]
+</p>
+<p>
+<b>Елементи блоків \(A\) і \(B\) (хімічний запис).</b> У HF-орбітальному базисі (індекси \(i,j\) — зайняті, \(a,b\) — віртуальні):
+</p>
+<p>
+\[ A_{ia,jb}=(\varepsilon _a-\varepsilon _i)\,\delta _{ij}\delta _{ab} +\langle aj\Vert ib\rangle , \qquad B_{ia,jb}=\langle ab\Vert ij\rangle , \]
+</p>
+<p>
+де \(\varepsilon _p\) — орбітальні енергії, а \(\langle pq\Vert rs\rangle \) — антисиметризовані двоелектронні інтеграли.
+</p>
+<p>
+<b>Фізичний сенс.</b>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> \(X_{ia}\) — амплітуди <em>збудження</em> (скільки вкладує перехід \(i\to a\));
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(Y_{ia}\) — амплітуди <em>релаксації</em> (скільки вкладує перехід \(a\to i\));
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(\omega &gt;0\) — частоти власних коливань густини, які інтерпретуються як енергії електронних збуджень.
+</p>
+</li>
+</ul>
+<p>
+TDHF є формою <em>лінійного відгуку</em> методу Хартрі–Фока. Розв’язки \(\omega _I &gt; 0\) дають частоти електронних переходів, а пари векторів \((X_I, Y_I)\) визначають характер збудження. Метод <kbd>TDHF</kbd> є попередником сучасних методів
+лінійного відгуку, таких як <kbd>EOM-CCSD</kbd> або <kbd>TDDFT</kbd>.
+</p>
+<!--
+...... subsection Практична реалізація TDHF у PySCF ......
+-->
+<h5 id="autosec-951"><span class="sectionnumber">9.2.2&#x2003;</span>Практична реалізація TDHF у <kbd>PySCF</kbd></h5>
+<a id="main-html-autopage-951"></a>
+<p>
+Мінімальний код, який демонструє використання методу <kbd>TDHF</kbd>:
+</p>
+<div class="codeblock code-python code-long" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">30 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">import</span><span class="tk-w"> </span><span class="tk-nn">numpy</span><span class="tk-w"> </span><span class="tk-k">as</span><span class="tk-w"> </span><span class="tk-nn">np</span>
+<span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span>
+<span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.data</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">nist</span>
+<span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.tdscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">TDHF</span>
+
+<span class="tk-c1"># 1. Задаємо молекулу</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">Mole</span><span class="tk-p">()</span>
+<span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">atom</span> <span class="tk-o">=</span> <span class="tk-s1">'''</span>
+<span class="tk-s1">O  0.000000  0.000000  0.000000</span>
+<span class="tk-s1">H  0.000000  0.757160  0.586260</span>
+<span class="tk-s1">H  0.000000 -0.757160  0.586260</span>
+<span class="tk-s1">'''</span>
+<span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">basis</span> <span class="tk-o">=</span> <span class="tk-s1">'6-31G'</span>
+<span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">verbose</span> <span class="tk-o">=</span> <span class="tk-mi">0</span>
+<span class="tk-n">mol</span><span class="tk-o">.</span><span class="tk-n">build</span><span class="tk-p">()</span>
+
+<span class="tk-c1"># 2. Розв'язуємо рівняння Хартрі–Фока</span>
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">run</span><span class="tk-p">()</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"Енергія HF = </span><span class="tk-si">{</span><span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">e_tot</span><span class="tk-si">:</span><span class="tk-s2">.6f</span><span class="tk-si">}</span><span class="tk-s2"> Hartree</span><span class="tk-se">\n</span><span class="tk-s2">"</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># 3. TDHF</span>
+<span class="tk-n">td</span> <span class="tk-o">=</span> <span class="tk-n">TDHF</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">)</span>
+<span class="tk-n">td</span><span class="tk-o">.</span><span class="tk-n">nstates</span> <span class="tk-o">=</span> <span class="tk-mi">5</span>
+<span class="tk-n">td</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+
+<span class="tk-c1"># 4. Енергії збуджених станів</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-s2">"=== Збуджені стани TDHF ==="</span><span class="tk-p">)</span>
+<span class="tk-k">for</span> <span class="tk-n">i</span><span class="tk-p">,</span> <span class="tk-n">e</span> <span class="tk-ow">in</span> <span class="tk-nb">enumerate</span><span class="tk-p">(</span><span class="tk-n">td</span><span class="tk-o">.</span><span class="tk-n">e</span><span class="tk-p">):</span>
+    <span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"Стан </span><span class="tk-si">{</span><span class="tk-n">i</span><span class="tk-o">+</span><span class="tk-mi">1</span><span class="tk-si">}</span><span class="tk-s2">:  ω = </span><span class="tk-si">{</span><span class="tk-n">e</span><span class="tk-si">:</span><span class="tk-s2">.6f</span><span class="tk-si">}</span><span class="tk-s2"> Hartree  = </span><span class="tk-si">{</span><span class="tk-n">e</span><span class="tk-o">*</span><span class="tk-n">nist</span><span class="tk-o">.</span><span class="tk-n">HARTREE2EV</span><span class="tk-si">:</span><span class="tk-s2">.3f</span><span class="tk-si">}</span><span class="tk-s2"> eV"</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+У файлі <span class="codebutton"><a href="https://github.com/sergiokapone/QChemLectures/blob/master/PyscfBook/ExcitedStates/code/tddft_h2o_analysis.py" target="_blank" ><kbd>tddft_h2o_analysis.py</kbd></a></span>
+наведено приклад розрахунку збуджених станів у молекулі води. У програмній реалізації вектори \(X_I\) та \(Y_I\) зберігаються у масивах <span class="inlinecode"><kbd>td.xy[0]</kbd></span> і <span
+class="inlinecode"><kbd>td.xy[1]</kbd></span>.
+</p>
+<!--
+...... paragraph Фізичний зміст результатів. ......
+-->
+<p>
+<span class="paragraph" id="autosec-952">Фізичний зміст результатів.</span>
+<a id="main-html-autopage-952"></a>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> \(\omega _I\) — енергії збуджень (у <span class="inlinecode"><kbd>td.e</kbd></span>) — відповідають експериментальним частотам переходів в УФ–Видимій області.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(X_I\) — амплітуди збудження: описують основний внесок переходу \(i \to a\), тобто який електрон і на яку орбіталь перейшов.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(Y_I\) — амплітуди роззбудження: враховують взаємодію переходів і зворотні коливання густини.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(|X|^2 - |Y|^2 = 1\) — умова нормалізації TDHF-векторів.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Відношення \(|Y|/|X|\) — міра колективності збудження: якщо воно мале (\(\ll 1\)), то збудження майже одноелектронне (типу HOMO\(\to \)LUMO); якщо велике, то в переході бере участь кілька орбіталей одночасно.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Орбітальні різниці \(\Delta \varepsilon = \varepsilon _a - \varepsilon _i\) порівнюються з енергіями збудження \(\omega _I\), що дозволяє оцінити вплив електронної кореляції.
+</p>
+</li>
+</ul>
+<!--
+...... paragraph Інтерпретація. ......
+-->
+<p>
+<span class="paragraph" id="autosec-953">Інтерпретація.</span>
+<a id="main-html-autopage-953"></a>
+</p>
+<p>
+Таким чином, результати <kbd>TDHF</kbd> дозволяють:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> отримати енергії збуджених станів \(\omega _I\),
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> проаналізувати домінантні електронні переходи \(i \to a\),
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> оцінити колективність і кореляційність переходів за співвідношенням \(|Y|/|X|\),
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> порівняти з наближенням різниць орбітальних енергій \(\Delta \varepsilon = \varepsilon _a - \varepsilon _i\).
+</p>
+</li>
+</ul>
+<p>
+<kbd>TDHF</kbd> є концептуальним попередником методів лінійного відгуку <kbd>EOM-CCSD</kbd> і <kbd>TDDFT</kbd>, але в сучасних обчисленнях часто використовується для перевірки коректності опису збуджених станів та як тест на узгодженість
+<kbd>SCF</kbd>-рішення.
+</p>
+<!--
+...... section Часозалежна теорія функціонала густини (TD-DFT) ......
+-->
+<h4 id="autosec-954"><span class="sectionnumber">&#xA7;&#x202F;9.3&#x2003;</span>Часозалежна теорія функціонала густини (TD-DFT)</h4>
+<a id="main-html-autopage-954"></a>
+<p>
+<b>TD-DFT</b> — найпоширеніший метод розрахунку електронних збуджених станів, особливо для органічних та наномолекул. Він базується на розширенні звичайної <kbd>DFT</kbd> до часозалежних процесів відповідно до теореми Рунге–Ґросса.
+</p>
+<!--
+...... subsection Основні рівняння ......
+-->
+<h5 id="autosec-955"><span class="sectionnumber">9.3.1&#x2003;</span>Основні рівняння</h5>
+<a id="main-html-autopage-955"></a>
+<p>
+Задача збуджених станів у TD-DFT формулюється як задача на власні значення:
+</p>
+<p>
+\[ \begin {pmatrix} \mathbf {A} &amp; \mathbf {B} \\ -\mathbf {B} &amp; -\mathbf {A} \end {pmatrix} \begin {pmatrix} \mathbf {X} \\ \mathbf {Y} \end {pmatrix} = \omega \begin {pmatrix} \mathbf {X} \\ \mathbf {Y}
+\end {pmatrix}, \]
+</p>
+<p>
+де матриці \(\mathbf {A}, \mathbf {B}\) мають елементи
+</p>
+<p>
+\[ A_{ia,jb} = (\epsilon _a - \epsilon _i)\delta _{ij}\delta _{ab} + \langle ib || aj \rangle + f^{\text {xc}}_{ia,jb}, \quad B_{ia,jb} = \langle ij || ab \rangle + f^{\text {xc}}_{ia,bj}. \]
+</p>
+<p>
+Тут:
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> \(i,j\) — індекси зайнятих орбіталей, \(a,b\) — віртуальних;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(\epsilon _p\) — енергії орбіталей Кона–Шема;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(f^{\text {xc}}\) — обмінно-кореляційне ядро;
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(\omega \) — частоти (енергії) переходів.
+</p>
+</li>
+</ul>
+<p>
+Величини \(\mathbf {X}\) та \(\mathbf {Y}\) є амплітудами збудження та релаксації:
+</p>
+<p>
+\[ X_{ia} \sim \langle \Phi _i^a | \Psi _n \rangle , \quad Y_{ia} \sim \langle \Phi _a^i | \Psi _n \rangle . \]
+</p>
+<p>
+Якщо знехтувати матрицею \(\mathbf {B}\), отримуємо наближення <b>Tamm–Dancoff (TDA)</b>:
+</p>
+<p>
+\[ \mathbf {A}\mathbf {X} = \omega \mathbf {X}. \]
+</p>
+<p>
+Це наближення стабілізує обчислення і часто використовується у практиці.
+</p>
+<!--
+...... subsubsection Сила осцилятора ......
+-->
+<h6 id="autosec-956">Сила осцилятора</h6>
+<a id="main-html-autopage-956"></a>
+<p>
+Імовірність переходу з основного стану у збуджений \(n\)-й стан визначається <em>матрицею дипольного моменту</em>:
+</p>
+<p>
+\[ \boldsymbol {\mu }_{0n} = \langle 0 | \hat {\boldsymbol {\mu }} | n \rangle , \quad \hat {\boldsymbol {\mu }} = -e\sum _i \mathbf {r}_i. \]
+</p>
+<p>
+Величина <b>сили осцилятора</b> \(f_{0n}\) (безрозмірна, пропорційна інтенсивності смуги):
+</p>
+<p>
+\[ f_{0n} = \frac {2}{3}\,\omega _{0n}\,|\boldsymbol {\mu }_{0n}|^2. \]
+</p>
+<p>
+У TD-DFT її можна обчислити безпосередньо через перехідні моменти диполя:
+</p>
+<p>
+\[ \boldsymbol {\mu }_{0n} = \sum _{ia} (X_{ia} + Y_{ia}) \langle \phi _i | \mathbf {r} | \phi _a \rangle . \]
+</p>
+<p>
+Тому сила осцилятора відображає як електронну структуру, так і характер збудження (локальне, перенесення заряду тощо).
+</p>
+<!--
+...... subsection Реалізація в PySCF ......
+-->
+<h5 id="autosec-957"><span class="sectionnumber">9.3.2&#x2003;</span>Реалізація в <kbd>PySCF</kbd></h5>
+<a id="main-html-autopage-957"></a>
+<div class="codeblock code-python code-long" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">35 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span><span class="tk-p">,</span> <span class="tk-n">tddft</span><span class="tk-p">,</span> <span class="tk-n">data</span>
+<span class="tk-kn">import</span><span class="tk-w"> </span><span class="tk-nn">numpy</span><span class="tk-w"> </span><span class="tk-k">as</span><span class="tk-w"> </span><span class="tk-nn">np</span>
+
+<span class="tk-c1"># === 1. Геометрія молекули ===</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span>
+    <span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'H 0 0 0; F 0 0 1.1'</span><span class="tk-p">,</span>
+    <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'6-31G'</span><span class="tk-p">,</span>
+<span class="tk-p">)</span>
+
+<span class="tk-c1"># === 2. Розрахунок основного стану DFT ===</span>
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RKS</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span>
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">xc</span> <span class="tk-o">=</span> <span class="tk-s1">'B3LYP'</span>
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+
+<span class="tk-c1"># === 3. TD-DFT (збуджені стани) ===</span>
+<span class="tk-n">td</span> <span class="tk-o">=</span> <span class="tk-n">tddft</span><span class="tk-o">.</span><span class="tk-n">TDDFT</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">)</span>
+<span class="tk-n">td</span><span class="tk-o">.</span><span class="tk-n">nstates</span> <span class="tk-o">=</span> <span class="tk-mi">6</span>
+<span class="tk-n">td</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+
+<span class="tk-c1"># === 4. Перехідні дипольні моменти ===</span>
+<span class="tk-n">tdm</span> <span class="tk-o">=</span> <span class="tk-n">td</span><span class="tk-o">.</span><span class="tk-n">transition_dipole</span><span class="tk-p">()</span>
+
+<span class="tk-c1"># === 5. Сили осцилятора ===</span>
+<span class="tk-n">osc</span> <span class="tk-o">=</span> <span class="tk-p">[]</span>
+<span class="tk-k">for</span> <span class="tk-n">i</span><span class="tk-p">,</span> <span class="tk-n">e</span> <span class="tk-ow">in</span> <span class="tk-nb">enumerate</span><span class="tk-p">(</span><span class="tk-n">td</span><span class="tk-o">.</span><span class="tk-n">e</span><span class="tk-p">):</span>
+    <span class="tk-n">mu2</span> <span class="tk-o">=</span> <span class="tk-n">np</span><span class="tk-o">.</span><span class="tk-n">dot</span><span class="tk-p">(</span><span class="tk-n">tdm</span><span class="tk-p">[</span><span class="tk-n">i</span><span class="tk-p">],</span> <span class="tk-n">tdm</span><span class="tk-p">[</span><span class="tk-n">i</span><span class="tk-p">])</span>
+    <span class="tk-n">f_i</span> <span class="tk-o">=</span> <span class="tk-p">(</span><span class="tk-mf">2.0</span> <span class="tk-o">/</span> <span class="tk-mf">3.0</span><span class="tk-p">)</span> <span class="tk-o">*</span> <span class="tk-n">e</span> <span class="tk-o">*</span> <span class="tk-n">mu2</span>
+    <span class="tk-n">osc</span><span class="tk-o">.</span><span class="tk-n">append</span><span class="tk-p">(</span><span class="tk-n">f_i</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># === 6. Виведення результатів ===</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-s2">"Стан | Енергія (eV) | Сила осцилятора"</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-s2">"-------------------------------------"</span><span class="tk-p">)</span>
+<span class="tk-k">for</span> <span class="tk-n">i</span><span class="tk-p">,</span> <span class="tk-n">e</span> <span class="tk-ow">in</span> <span class="tk-nb">enumerate</span><span class="tk-p">(</span><span class="tk-n">td</span><span class="tk-o">.</span><span class="tk-n">e</span><span class="tk-p">):</span>
+    <span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"</span><span class="tk-si">{</span><span class="tk-n">i</span><span class="tk-o">+</span><span class="tk-mi">1</span><span class="tk-si">:</span><span class="tk-s2">4d</span><span class="tk-si">}</span><span class="tk-s2"> | </span><span class="tk-si">{</span><span class="tk-n">e</span><span class="tk-w"> </span><span class="tk-o">*</span><span class="tk-w"> </span><span class="tk-n">data</span><span class="tk-o">.</span><span class="tk-n">nist</span><span class="tk-o">.</span><span class="tk-n">HARTREE2EV</span><span class="tk-si">:</span><span class="tk-s2">10.4f</span><span class="tk-si">}</span><span class="tk-s2"> | </span><span class="tk-si">{</span><span class="tk-n">osc</span><span class="tk-p">[</span><span class="tk-n">i</span><span class="tk-p">]</span><span class="tk-si">:</span><span class="tk-s2">10.5f</span><span class="tk-si">}</span><span class="tk-s2">"</span><span class="tk-p">)</span></code></pre>
+</div>
+<!--
+...... section Збуджені стани у методах конфігураційної взаємодії ......
+-->
+<h4 id="autosec-958"><span class="sectionnumber">&#xA7;&#x202F;9.4&#x2003;</span>Збуджені стани у методах конфігураційної взаємодії</h4>
+<a id="main-html-autopage-958"></a>
+<p>
+Методи <kbd>CI</kbd> природним чином дозволяють отримувати не лише енергію основного стану, а й енергії збуджених станів тієї ж симетрії.
+</p>
+<p>
+Хвильова функція кожного стану в методі <kbd>CI</kbd> записується у вигляді лінійної комбінації детермінантів:
+</p>
+<p>
+\[ \Psi _I = \sum _K c_{IK} \Phi _K, \]
+</p>
+<p>
+де \(\Phi _K\) — детермінанти (конфігурації), утворені шляхом одно-, дво- чи багатократних збуджень електронів із референсного детермінанта Хартрі–Фока. Коефіцієнти \(c_{IK}\) визначають внесок кожної конфігурації у хвильову функцію даного стану.
+</p>
+<p>
+Підставивши цей розклад у рівняння Шредінгера, одержуємо матричну задачу на власні значення:
+</p>
+<span class="hidden"> \(\seteqnumber{0}{9.}{0}\)</span>
+<!--
+H c𝐼 = 𝐸𝐼 c𝐼, 𝐼 = 0, 1, 2, … , (9.1) --><a id="eq:CI-secular"></a><!--
+-->
+<p>
+\begin{equation}
+\label {eq:CI-secular} \mathbf {H}\,\mathbf {c}_I = E_I\,\mathbf {c}_I, \qquad I = 0, 1, 2, \dots ,
+\end{equation}
+</p>
+<p>
+яку називають <b>секулярним рівнянням</b>.
+</p>
+<p>
+Діагоналізація гамільтоніана \(\mathbf {H}\) у просторі вибраних конфігурацій дає всі власні стани системи одночасно:
+</p>
+<p>
+\[ E_0 &lt; E_1 &lt; E_2 &lt; \dots , \]
+</p>
+<p>
+де \(E_0\) відповідає основному стану, а \(E_1, E_2, \dots \) — енергіям збуджених станів. Таким чином, на відміну від більшості інших пост-Хартрі–Фоківських методів, підхід <kbd>CI</kbd> не потребує окремого формулювання рівнянь для збуджених станів —
+вони природно випливають із розв’язку секулярного рівняння&nbsp;<span class="textup">(<a href="excited-states.html#eq:CI-secular">9.1</a>)</span>. Для великих систем обчислення всіх власних значень стає надзвичайно дорогим.
+</p>
+<p>
+У практичній реалізації методів <kbd>CI</kbd> (зокрема, у пакеті <kbd>PySCF</kbd>) обчислення збуджених станів не потребує жодних додаткових рівнянь чи процедур. Достатньо задати кількість шуканих власних значень (енергій) через параметр <span
+class="inlinecode"><kbd>nroots</kbd></span>. Наприклад, наведений нижче фрагмент коду демонструє, як отримати п’ять найнижчих <span class="inlinecode"><kbd>myci.nroots = 5</kbd></span> збуджених станів (разом з основним).
+</p>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">19 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">import</span><span class="tk-w"> </span><span class="tk-nn">numpy</span><span class="tk-w"> </span><span class="tk-k">as</span><span class="tk-w"> </span><span class="tk-nn">np</span>
+<span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span><span class="tk-p">,</span> <span class="tk-n">ci</span>
+<span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.data</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">nist</span>
+
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'''O  0.000000  0.000000  0.000000</span>
+<span class="tk-s1">                  H  0.000000  0.757160  0.586260</span>
+<span class="tk-s1">                  H  0.000000 -0.757160  0.586260'''</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'6-31G'</span><span class="tk-p">)</span>
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">run</span><span class="tk-p">()</span>
+
+<span class="tk-n">myci</span> <span class="tk-o">=</span> <span class="tk-n">ci</span><span class="tk-o">.</span><span class="tk-n">CISD</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">)</span>
+<span class="tk-n">myci</span><span class="tk-o">.</span><span class="tk-n">nroots</span> <span class="tk-o">=</span> <span class="tk-mi">5</span>
+
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-s1">'</span><span class="tk-se">\n</span><span class="tk-s1">Енергії CISD станів:'</span><span class="tk-p">)</span>
+<span class="tk-n">e_corr</span><span class="tk-p">,</span> <span class="tk-n">c</span> <span class="tk-o">=</span> <span class="tk-n">myci</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>  <span class="tk-c1"># e_corr --- кореляційні енергії станів</span>
+<span class="tk-n">e_tot</span> <span class="tk-o">=</span> <span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">e_tot</span> <span class="tk-o">+</span> <span class="tk-n">e_corr</span>
+<span class="tk-k">for</span> <span class="tk-n">i</span><span class="tk-p">,</span> <span class="tk-n">Etot</span> <span class="tk-ow">in</span> <span class="tk-nb">enumerate</span><span class="tk-p">(</span><span class="tk-n">e_tot</span><span class="tk-p">):</span>
+    <span class="tk-n">delta</span> <span class="tk-o">=</span> <span class="tk-p">(</span><span class="tk-n">Etot</span> <span class="tk-o">-</span> <span class="tk-n">e_tot</span><span class="tk-p">[</span><span class="tk-mi">0</span><span class="tk-p">])</span> <span class="tk-o">*</span> <span class="tk-n">nist</span><span class="tk-o">.</span><span class="tk-n">HARTREE2EV</span>
+    <span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"Стан </span><span class="tk-si">{</span><span class="tk-n">i</span><span class="tk-si">}</span><span class="tk-s2">: E = </span><span class="tk-si">{</span><span class="tk-n">Etot</span><span class="tk-si">:</span><span class="tk-s2">.8f</span><span class="tk-si">}</span><span class="tk-s2"> Ha, ΔE = </span><span class="tk-si">{</span><span class="tk-n">delta</span><span class="tk-si">:</span><span class="tk-s2">.3f</span><span class="tk-si">}</span><span class="tk-s2"> eV"</span><span class="tk-p">)</span></code></pre>
+</div>
+<div class="cb-comment">
+<p>
+<b>Зауваження</b>
+</p>
+<p>
+Метод <kbd>CISD</kbd> обчислює кілька найнижчих станів, які впорядковані за енергією, але не враховує симетрію молекули автоматично. Це може призводити до змішування станів із різними типами збуджень (наприклад, синглетів і триплетів або різних незвідних
+представлень точкової групи симетрії). Для систематичного аналізу оптичних переходів, особливо для обчислення сил осцилятора \(f_{0n}\) та коректного врахування симетрії, рекомендуються методи <kbd>TD-DFT</kbd>, <kbd>EOM-CCSD</kbd> або
+<kbd>CASSCF/NEVPT2</kbd>, які забезпечують вищу точність і фізичну ясність.
+</p>
+</div>
+<!--
+...... section Метод рівнянь руху (EOM) ......
+-->
+<h4 id="autosec-959"><span class="sectionnumber">&#xA7;&#x202F;9.5&#x2003;</span>Метод рівнянь руху (EOM)</h4>
+<a id="main-html-autopage-959"></a>
+<p>
+Метод <kbd>EOM</kbd> (<em>Equation of Motion</em>) — це узагальнення ідеї, що збуджені стани можна розглядати як «збурення» над <b>скорельованим основним станом</b>, отриманим у методі зв’язаних кластерів&nbsp;(<kbd>CC</kbd>). На відміну від
+варіаційних підходів, <kbd>EOM</kbd> не мінімізує енергію напряму, а шукає оператори, які переводять основний стан у збуджений.
+</p>
+<!--
+...... subsection Основне рівняння методу EOM-CCSD ......
+-->
+<h5 id="autosec-960"><span class="sectionnumber">9.5.1&#x2003;</span>Основне рівняння методу <kbd>EOM-CCSD</kbd></h5>
+<a id="main-html-autopage-960"></a>
+<p>
+Після того, як для основного стану розв’язано рівняння <kbd>CCSD</kbd>, відомими стають амплітуди \(\{t_i^a, t_{ij}^{ab}\}\), що задають оператор кореляції \(\hat {T}\) і енергію \(E_0\). Наступний крок — опис збуджених станів на основі вже
+скорельованого вакууму \(e^{\hat {T}}|\Phi _0\rangle \).
+</p>
+<!--
+...... paragraph Хвильова функція збудженого стану. ......
+-->
+<p>
+<span class="paragraph" id="autosec-961">Хвильова функція збудженого стану.</span>
+<a id="main-html-autopage-961"></a>
+У методі <kbd>EOM-CCSD</kbd> хвильову функцію \(I\)-го збудженого стану записують у вигляді:
+</p>
+<p>
+\[ |\Psi _I\rangle = \hat {R}_I e^{\hat {T}}|\Phi _0\rangle , \]
+</p>
+<p>
+де \(|\Phi _0\rangle \) — детермінант Хартрі–Фока, а оператор \(\hat {R}_I\) створює всі можливі одно- і двозбудження над скорельованим основним станом.
+</p>
+<!--
+...... paragraph Структура оператора . ......
+-->
+<p>
+<span class="paragraph" id="autosec-962">Структура оператора \(\hat {R}_I\).</span>
+<a id="main-html-autopage-962"></a>
+У наближенні <kbd>EOM-CCSD</kbd> цей оператор має вигляд:
+</p>
+<p>
+\[ \hat {R}_I = r_0 + \sum _{i,a} r_i^a \hat {a}_a^\dagger \hat {a}_i + \frac {1}{4}\sum _{i&lt;j,a&lt;b} r_{ij}^{ab} \hat {a}_a^\dagger \hat {a}_b^\dagger \hat {a}_j \hat {a}_i. \]
+</p>
+<p>
+Коефіцієнти \(r_i^a\) та \(r_{ij}^{ab}\) — це <b>амплітуди збудження</b>, які показують, які саме електрони переходять на які орбіталі під час утворення збудженого стану.
+</p>
+<!--
+...... paragraph Рівняння для амплітуд. ......
+-->
+<p>
+<span class="paragraph" id="autosec-963">Рівняння для амплітуд.</span>
+<a id="main-html-autopage-963"></a>
+Підставивши хвильову функцію у рівняння Шредінгера, після стандартного перетворення отримаємо:
+</p>
+<p>
+\[ [\bar {H}, \hat {R}_I]|\Phi _0\rangle = \omega _I \hat {R}_I|\Phi _0\rangle , \qquad \bar {H} = e^{-\hat {T}}\hat {H}e^{\hat {T}}. \]
+</p>
+<p>
+Це — основне рівняння методу <kbd>EOM-CCSD</kbd>. Його розв’язок дає енергії збудження \(\omega _I = E_I - E_0\) та відповідні оператори \(\hat {R}_I\).
+</p>
+<!--
+...... paragraph Матрична форма. ......
+-->
+<p>
+<span class="paragraph" id="autosec-964">Матрична форма.</span>
+<a id="main-html-autopage-964"></a>
+Якщо спроєктувати це рівняння на базис одно- і двозбуджених детермінантів \(\{|\Phi _\mu \rangle \}\), отримаємо матричну задачу власних значень:
+</p>
+<p>
+\[ \sum _\nu A_{\mu \nu } r_\nu = \omega _I r_\mu , \qquad A_{\mu \nu } = \langle \Phi _\mu | [\bar {H}, \hat {\tau }_\nu ] | \Phi _0\rangle . \]
+</p>
+<p>
+Матриця \(\mathbf {A}\) тут є <b>представленням ефективного гамільтоніана</b> у просторі збуджених детермінантів, а вектор \(r\) — набором шуканих амплітуд.
+</p>
+<!--
+...... paragraph Як розв’язують задачу на практиці. ......
+-->
+<p>
+<span class="paragraph" id="autosec-965">Як розв’язують задачу на практиці.</span>
+<a id="main-html-autopage-965"></a>
+Матриця \(\mathbf {A}\) дуже велика, тому її <b>не будують явно</b>. Замість цього програмно реалізують лише операцію її дії на довільний вектор \(r\):
+</p>
+<p>
+\[ \mathbf {A}\mathbf {r} \;=\; \langle \Phi _\mu | [\bar {H}, \hat {R}] | \Phi _0\rangle , \]
+</p>
+<p>
+тобто обчислюють результат множення без зберігання всіх елементів \(A_{\mu \nu }\). Далі кілька найменших власних значень \(\omega _I\) знаходять ітераційним методом, найчастіше за допомогою <b>алгоритму Дейвідсона</b>. Такий підхід дозволяє
+обчислити лише потрібні енергії переходів без повного діагоналізування величезної матриці.
+</p>
+<!--
+...... paragraph Фізичний зміст. ......
+-->
+<p>
+<span class="paragraph" id="autosec-966">Фізичний зміст.</span>
+<a id="main-html-autopage-966"></a>
+Оператор \(\hat {R}_I\) визначає структуру збудженого стану — які електрони і як саме беруть участь у переході, а власне значення \(\omega _I\) дає енергію цього переходу від основного стану. Таким чином, метод <kbd>EOM-CCSD</kbd> дозволяє описати
+збуджені стани на основі скорельованого основного стану <kbd>CC</kbd>, не розв’язуючи повну задачу Шредінгера для кожного стану окремо.
+</p>
+<!--
+...... paragraph Підсумок. ......
+-->
+<p>
+<span class="paragraph" id="autosec-967">Підсумок.</span>
+<a id="main-html-autopage-967"></a>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> \(\hat {T}\) — описує кореляцію основного стану.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> \(\hat {R}_I\) — генерує збуджений стан.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Рівняння \([\bar {H}, \hat {R}_I] = \omega _I \hat {R}_I\) визначає як структуру, так і енергію збудженого стану.
+</p>
+</li>
+</ul>
+<!--
+...... subsection Практичні властивості методу EOM ......
+-->
+<h5 id="autosec-968"><span class="sectionnumber">9.5.2&#x2003;</span>Практичні властивості методу <kbd>EOM</kbd></h5>
+<a id="main-html-autopage-968"></a>
+<p>
+Метод <kbd>EOM</kbd> розглядає збуджені стани як власні коливання скорельованої хвильової функції основного стану, одержаної в методі <kbd>CC</kbd>. Пошук енергій збудження \(\omega _I = E_I - E_0\) зводиться до розв’язання лінійного рівняння для
+перетвореного гамільтоніана \(\bar {H} = e^{-\hat {T}}\hat {H}e^{\hat {T}}\). Таким чином, <kbd>EOM</kbd> не вводить жодних зовнішніх полів — збудження є внутрішніми коливаннями самої скорельованої системи.
+</p>
+<!--
+...... paragraph Переваги: ......
+-->
+<p>
+<span class="paragraph" id="autosec-969">Переваги:</span>
+<a id="main-html-autopage-969"></a>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Використовує скорельований основний стан <kbd>CC</kbd>, тому точніший за методи на основі HF.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Безпосередньо дає енергії переходів \(\omega _I\), не потребуючи побудови всіх повних хвильових функцій.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Зберігає властивість <b>size-extensivity</b> — енергія правильно масштабується з розміром системи.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Є уніфікованим підходом: одним формалізмом описуються збудження, іонізація та приєднання електрона.
+</p>
+</li>
+</ul>
+<!--
+...... paragraph Обмеження: ......
+-->
+<p>
+<span class="paragraph" id="autosec-970">Обмеження:</span>
+<a id="main-html-autopage-970"></a>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> Не є варіаційним методом — обчислені енергії можуть бути нижчими за точні.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Потребує попереднього розв’язку рівнянь <kbd>CC</kbd> для основного стану.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Точність обмежена рівнем збуджень у базовому наближенні (наприклад, <kbd>EOM-CCSD</kbd> враховує лише одно- і двозбудження).
+</p>
+</li>
+</ul>
+<!--
+...... paragraph Обмеження: ......
+-->
+<p>
+<span class="paragraph" id="autosec-971">Обмеження:</span>
+<a id="main-html-autopage-971"></a>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <b>EOM-EE-CCSD</b> — енергії електронно-збуджених станів.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>EOM-IP-CCSD</b> — енергії іонізацій (видалення одного електрона).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>EOM-EA-CCSD</b> — енергії приєднання електрона.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>EOM-CC3, EOM-CCSDT</b> — врахування потрійних збуджень.
+</p>
+</li>
+</ul>
+<!--
+...... subsection Приклад: молекула води ......
+-->
+<h5 id="autosec-972"><span class="sectionnumber">9.5.3&#x2003;</span>Приклад: молекула води</h5>
+<a id="main-html-autopage-972"></a>
+<div class="codeblock code-python" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">26 рядків</span></div>
+<pre class="code"><code><span class="tk-kn">import</span><span class="tk-w"> </span><span class="tk-nn">numpy</span><span class="tk-w"> </span><span class="tk-k">as</span><span class="tk-w"> </span><span class="tk-nn">np</span>
+<span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span><span class="tk-p">,</span> <span class="tk-n">cc</span>
+<span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.data</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">nist</span>
+
+<span class="tk-c1"># Побудова молекули</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'''O  0.000000  0.000000  0.000000</span>
+<span class="tk-s1">                  H  0.000000  0.757160  0.586260</span>
+<span class="tk-s1">                  H  0.000000 -0.757160  0.586260'''</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'6-31G'</span><span class="tk-p">,</span>
+                  <span class="tk-p">)</span>
+
+<span class="tk-c1"># SCF</span>
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">run</span><span class="tk-p">()</span>
+
+<span class="tk-c1"># CCSD</span>
+<span class="tk-n">ccsd</span> <span class="tk-o">=</span> <span class="tk-n">cc</span><span class="tk-o">.</span><span class="tk-n">CCSD</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">run</span><span class="tk-p">()</span>
+
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"converged SCF energy = </span><span class="tk-si">{</span><span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">e_tot</span><span class="tk-si">}</span><span class="tk-s2">"</span><span class="tk-p">)</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"E(CCSD) = </span><span class="tk-si">{</span><span class="tk-n">ccsd</span><span class="tk-o">.</span><span class="tk-n">e_tot</span><span class="tk-si">}</span><span class="tk-s2">  E_corr = </span><span class="tk-si">{</span><span class="tk-n">ccsd</span><span class="tk-o">.</span><span class="tk-n">e_corr</span><span class="tk-si">}</span><span class="tk-s2">"</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># Збуджені стани EOM-CCSD (синглети)</span>
+<span class="tk-n">e</span><span class="tk-p">,</span> <span class="tk-n">v</span> <span class="tk-o">=</span> <span class="tk-n">ccsd</span><span class="tk-o">.</span><span class="tk-n">eomee_ccsd_singlet</span><span class="tk-p">(</span><span class="tk-n">nroots</span><span class="tk-o">=</span><span class="tk-mi">4</span><span class="tk-p">)</span>
+
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-s2">"EOM-CCSD енергії збудження (eV):"</span><span class="tk-p">)</span>
+<span class="tk-k">for</span> <span class="tk-n">i</span><span class="tk-p">,</span> <span class="tk-n">ei</span> <span class="tk-ow">in</span> <span class="tk-nb">enumerate</span><span class="tk-p">(</span><span class="tk-n">e</span><span class="tk-p">):</span>
+    <span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"Стан </span><span class="tk-si">{</span><span class="tk-n">i</span><span class="tk-o">+</span><span class="tk-mi">1</span><span class="tk-si">}</span><span class="tk-s2">: E = </span><span class="tk-si">{</span><span class="tk-n">ccsd</span><span class="tk-o">.</span><span class="tk-n">e_tot</span><span class="tk-o">+</span><span class="tk-n">ei</span><span class="tk-si">:</span><span class="tk-s2">.8f</span><span class="tk-si">}</span><span class="tk-s2"> Ha, ΔE = </span><span class="tk-si">{</span><span class="tk-n">ei</span><span class="tk-w"> </span><span class="tk-o">*</span><span class="tk-w"> </span><span class="tk-n">nist</span><span class="tk-o">.</span><span class="tk-n">HARTREE2EV</span><span class="tk-si">:</span><span class="tk-s2">.4f</span><span class="tk-si">}</span><span class="tk-s2"> eV"</span><span class="tk-p">)</span></code></pre>
+</div>
+<p>
+Результати показують, що <kbd>EOM-CCSD</kbd> правильно відтворює порядок і величину енергій низьколежних електронних переходів, з типовою похибкою близько 0.2 еВ порівняно з експериментом.
+</p>
+<!--
+...... section Збуджені стани у CASSCF / NEVPT2 ......
+-->
+<h4 id="autosec-973"><span class="sectionnumber">&#xA7;&#x202F;9.6&#x2003;</span>Збуджені стани у CASSCF / NEVPT2</h4>
+<a id="main-html-autopage-973"></a>
+<p>
+<b>Збуджені стани в методі <kbd>CASSCF</kbd></b> отримуються безпосередньо як різні власні стани гамільтоніана у вибраному активному просторі. На відміну від методів теорії відгуку, жодних спеціальних операторів збудження не вводиться — усі стани
+(основний і збуджені) випливають із тієї ж самої секулярної задачі, аналогічно до <kbd>CI</kbd>, але з одночасною оптимізацією орбіталей. У багатостановому підході (<kbd>state-averaged CASSCF</kbd>) орбіталі оптимізуються спільно для кількох станів, що
+дозволяє стабільно отримати послідовність енергій:
+</p>
+<p>
+\[ E_0 &lt; E_1 &lt; E_2 &lt; \dots \]
+</p>
+<p>
+і коректно описати збудження навіть у випадках близьких або вироджених рівнів.
+</p>
+<p>
+Після цього кожен із отриманих станів може бути уточнений методом <kbd>NEVPT2</kbd>, який додає динамічну кореляцію. Розрахунок <kbd>NEVPT2</kbd> проводиться окремо для кожного стану, оскільки поправка до енергії залежить від відповідного вектора
+коефіцієнтів \(c_i\) у хвильовій функції:
+</p>
+<p>
+\[ E_i^{\text {NEVPT2}} = E_i^{\text {CASSCF}} + \Delta E_i^{\text {corr}}. \]
+</p>
+<p>
+Таким чином, повний набір енергій збуджених станів формується послідовно — спершу на рівні <kbd>CASSCF</kbd>, а потім із урахуванням кореляційних поправок <kbd>NEVPT2</kbd>.
+</p>
+<div class="codeblock code-python code-long" data-lang="python" data-nosnippet>
+<div class="code-head"><span class="code-lang">Python</span><span class="code-lines">43 рядки</span></div>
+<pre class="code"><code><span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">gto</span><span class="tk-p">,</span> <span class="tk-n">scf</span><span class="tk-p">,</span> <span class="tk-n">mcscf</span><span class="tk-p">,</span> <span class="tk-n">mrpt</span>
+<span class="tk-kn">from</span><span class="tk-w"> </span><span class="tk-nn">pyscf.data</span><span class="tk-w"> </span><span class="tk-kn">import</span> <span class="tk-n">nist</span>
+
+<span class="tk-c1"># Молекула: ВОДА</span>
+<span class="tk-n">mol</span> <span class="tk-o">=</span> <span class="tk-n">gto</span><span class="tk-o">.</span><span class="tk-n">M</span><span class="tk-p">(</span><span class="tk-n">atom</span><span class="tk-o">=</span><span class="tk-s1">'''O  0.000000  0.000000  0.000000</span>
+<span class="tk-s1">                  H  0.000000  0.757160  0.586260</span>
+<span class="tk-s1">                  H  0.000000 -0.757160  0.586260'''</span><span class="tk-p">,</span> <span class="tk-n">basis</span><span class="tk-o">=</span><span class="tk-s1">'6-31G'</span><span class="tk-p">,</span> <span class="tk-n">verbose</span><span class="tk-o">=</span><span class="tk-mi">0</span><span class="tk-p">)</span>
+<span class="tk-n">mf</span> <span class="tk-o">=</span> <span class="tk-n">scf</span><span class="tk-o">.</span><span class="tk-n">RHF</span><span class="tk-p">(</span><span class="tk-n">mol</span><span class="tk-p">)</span>
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">verbose</span> <span class="tk-o">=</span> <span class="tk-mi">0</span>
+<span class="tk-n">mf</span><span class="tk-o">.</span><span class="tk-n">run</span><span class="tk-p">()</span>
+
+<span class="tk-c1"># State-averaged CASSCF для 5 станів</span>
+<span class="tk-n">nstates</span> <span class="tk-o">=</span> <span class="tk-mi">5</span>
+<span class="tk-n">mc</span> <span class="tk-o">=</span> <span class="tk-n">mcscf</span><span class="tk-o">.</span><span class="tk-n">CASSCF</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">,</span> <span class="tk-mi">6</span><span class="tk-p">,</span> <span class="tk-mi">8</span><span class="tk-p">)</span><span class="tk-o">.</span><span class="tk-n">state_average</span><span class="tk-p">([</span><span class="tk-mi">1</span><span class="tk-o">/</span><span class="tk-n">nstates</span><span class="tk-p">]</span><span class="tk-o">*</span><span class="tk-n">nstates</span><span class="tk-p">)</span>
+<span class="tk-n">mc</span><span class="tk-o">.</span><span class="tk-n">verbose</span> <span class="tk-o">=</span> <span class="tk-mi">0</span>
+<span class="tk-n">mc</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-s2">"</span><span class="tk-se">\n</span><span class="tk-s2">CASCF енергії:"</span><span class="tk-p">)</span>
+<span class="tk-k">for</span> <span class="tk-n">i</span><span class="tk-p">,</span> <span class="tk-n">e</span> <span class="tk-ow">in</span> <span class="tk-nb">enumerate</span><span class="tk-p">(</span><span class="tk-n">mc</span><span class="tk-o">.</span><span class="tk-n">e_states</span><span class="tk-p">):</span>
+    <span class="tk-n">delta_e</span> <span class="tk-o">=</span> <span class="tk-p">(</span><span class="tk-n">e</span> <span class="tk-o">-</span> <span class="tk-n">mc</span><span class="tk-o">.</span><span class="tk-n">e_states</span><span class="tk-p">[</span><span class="tk-mi">0</span><span class="tk-p">])</span> <span class="tk-o">*</span> <span class="tk-n">nist</span><span class="tk-o">.</span><span class="tk-n">HARTREE2EV</span>
+    <span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"  Стан </span><span class="tk-si">{</span><span class="tk-n">i</span><span class="tk-si">}</span><span class="tk-s2">: E = </span><span class="tk-si">{</span><span class="tk-n">e</span><span class="tk-si">:</span><span class="tk-s2">.8f</span><span class="tk-si">}</span><span class="tk-s2"> Ha, ΔE = </span><span class="tk-si">{</span><span class="tk-n">delta_e</span><span class="tk-si">:</span><span class="tk-s2">.3f</span><span class="tk-si">}</span><span class="tk-s2"> eV"</span><span class="tk-p">)</span>
+
+<span class="tk-c1"># NEVPT2 для кожного стану</span>
+<span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-s2">"</span><span class="tk-se">\n</span><span class="tk-s2">NEVPT2 енергії:"</span><span class="tk-p">)</span>
+<span class="tk-n">nevpt_energies</span> <span class="tk-o">=</span> <span class="tk-p">[]</span>
+<span class="tk-k">for</span> <span class="tk-n">root</span> <span class="tk-ow">in</span> <span class="tk-nb">range</span><span class="tk-p">(</span><span class="tk-n">nstates</span><span class="tk-p">):</span>
+    <span class="tk-c1"># CASCI для конкретного стану</span>
+    <span class="tk-n">casci</span> <span class="tk-o">=</span> <span class="tk-n">mcscf</span><span class="tk-o">.</span><span class="tk-n">CASCI</span><span class="tk-p">(</span><span class="tk-n">mf</span><span class="tk-p">,</span> <span class="tk-mi">6</span><span class="tk-p">,</span> <span class="tk-mi">8</span><span class="tk-p">)</span>
+    <span class="tk-n">casci</span><span class="tk-o">.</span><span class="tk-n">verbose</span> <span class="tk-o">=</span> <span class="tk-mi">0</span>
+    <span class="tk-n">casci</span><span class="tk-o">.</span><span class="tk-n">mo_coeff</span> <span class="tk-o">=</span> <span class="tk-n">mc</span><span class="tk-o">.</span><span class="tk-n">mo_coeff</span>
+    <span class="tk-n">casci</span><span class="tk-o">.</span><span class="tk-n">ci</span> <span class="tk-o">=</span> <span class="tk-n">mc</span><span class="tk-o">.</span><span class="tk-n">ci</span><span class="tk-p">[</span><span class="tk-n">root</span><span class="tk-p">]</span>
+    <span class="tk-n">casci</span><span class="tk-o">.</span><span class="tk-n">fcisolver</span><span class="tk-o">.</span><span class="tk-n">nroots</span> <span class="tk-o">=</span> <span class="tk-mi">1</span>
+
+    <span class="tk-c1"># NEVPT2</span>
+    <span class="tk-n">nevpt</span> <span class="tk-o">=</span> <span class="tk-n">mrpt</span><span class="tk-o">.</span><span class="tk-n">NEVPT</span><span class="tk-p">(</span><span class="tk-n">casci</span><span class="tk-p">)</span>
+    <span class="tk-n">nevpt</span><span class="tk-o">.</span><span class="tk-n">verbose</span> <span class="tk-o">=</span> <span class="tk-mi">0</span>
+    <span class="tk-n">e_corr</span> <span class="tk-o">=</span> <span class="tk-n">nevpt</span><span class="tk-o">.</span><span class="tk-n">kernel</span><span class="tk-p">()</span>
+    <span class="tk-n">e_tot</span> <span class="tk-o">=</span> <span class="tk-n">mc</span><span class="tk-o">.</span><span class="tk-n">e_states</span><span class="tk-p">[</span><span class="tk-n">root</span><span class="tk-p">]</span> <span class="tk-o">+</span> <span class="tk-n">e_corr</span>
+    <span class="tk-n">nevpt_energies</span><span class="tk-o">.</span><span class="tk-n">append</span><span class="tk-p">(</span><span class="tk-n">e_tot</span><span class="tk-p">)</span>
+
+    <span class="tk-n">delta_e</span> <span class="tk-o">=</span> <span class="tk-p">(</span><span class="tk-n">e_tot</span> <span class="tk-o">-</span> <span class="tk-n">nevpt_energies</span><span class="tk-p">[</span><span class="tk-mi">0</span><span class="tk-p">])</span> <span class="tk-o">*</span> <span class="tk-n">nist</span><span class="tk-o">.</span><span class="tk-n">HARTREE2EV</span>
+    <span class="tk-nb">print</span><span class="tk-p">(</span><span class="tk-sa">f</span><span class="tk-s2">"  Стан </span><span class="tk-si">{</span><span class="tk-n">root</span><span class="tk-si">}</span><span class="tk-s2">: E = </span><span class="tk-si">{</span><span class="tk-n">e_tot</span><span class="tk-si">:</span><span class="tk-s2">.8f</span><span class="tk-si">}</span><span class="tk-s2"> Ha, ΔE = </span><span class="tk-si">{</span><span class="tk-n">delta_e</span><span class="tk-si">:</span><span class="tk-s2">.3f</span><span class="tk-si">}</span><span class="tk-s2"> eV"</span><span class="tk-p">)</span></code></pre>
+</div>
+<!--
+...... section Рекомендації з вибору методу ......
+-->
+<h4 id="autosec-974"><span class="sectionnumber">&#xA7;&#x202F;9.7&#x2003;</span>Рекомендації з вибору методу</h4>
+<a id="main-html-autopage-974"></a>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <b>Одноконфігураційні системи</b> (молекули із закритими оболонками, органічні сполуки):
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">–</span> Для попереднього якісного аналізу — <kbd>CIS</kbd>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">–</span> Для високоточного опису енергетики збуджених станів — <kbd>EOM-CCSD</kbd>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">–</span> Для великих систем або спектрів з багатьма станами — <kbd>TDDFT</kbd> (розглядається у наступному розділі).
+</p>
+</li>
+</ul>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Багатоконфігураційні системи</b> (дисоціаційні процеси, радикали, перехідні метали, вироджені стани):
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">–</span> Для якісного опису основного та збуджених станів — <kbd>CASSCF</kbd>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">–</span> Для кількісного уточнення енергій, з урахуванням динамічної кореляції — <kbd>NEVPT2</kbd>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">–</span> За потреби більшої точності (у малих системах) — <kbd>MRCI</kbd>.
+</p>
+</li>
+</ul>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Оптичні переходи та спектри поглинання:</b>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">–</span> Для малих і середніх молекул — <kbd>EOM-CCSD</kbd>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">–</span> Для великих систем — <kbd>TDDFT</kbd>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">–</span> Для сильно вироджених станів або переходів з мультиконфігураційним характером — <kbd>CASSCF/NEVPT2</kbd>.
+</p>
+</li>
+</ul>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Загальні міркування:</b>
+</p>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">–</span> <kbd>EOM-CCSD</kbd> — найкращий баланс між точністю та масштабованістю.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">–</span> <kbd>CASSCF</kbd>/<kbd>NEVPT2</kbd> — вибір для систем з вираженою статичною кореляцією.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">–</span> <kbd>TDDFT</kbd> — оптимальний компроміс для великих систем із численними збудженнями.
+</p>
+</li>
+</ul>
+</li>
+</ul>
+<!--
+...... section Резюме ......
+-->
+<h4 id="autosec-975">Резюме</h4>
+<a id="main-html-autopage-975"></a>
+<ul class="itemize" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">•</span> <b>Збуджені стани</b> — це власні функції того ж гамільтоніана, що й основний стан, але з вищими власними значеннями енергії. Їх опис потребує методів, здатних відтворити не лише мінімум, а й повний спектр
+енергетичних рівнів.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Варіаційні методи</b> (CIS, CISD, CASSCF) визначають збуджені стани як інші власні вектори гамільтоніана в обмеженому просторі конфігурацій. Вони безпосередньо дають хвильові функції кожного стану.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>Методи рівнянь руху</b> (<kbd>EOM-CC</kbd>) формулюють задачу для операторів, що породжують збудження над скорельованим основним станом, забезпечуючи точні енергії переходів \(\omega _I = E_I - E_0\).
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> <b>CASSCF</b> забезпечує природний опис мультиконфігураційних збуджених станів, а <b>NEVPT2</b> додає динамічну кореляцію, уточнюючи енергії без порушення ортогональності між станами.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Для <b>одноконфігураційних систем</b> (закриті оболонки, невеликі органічні молекули) доцільні методи <kbd>EOM-CCSD</kbd> або <kbd>TDDFT</kbd>; для <b>мультиконфігураційних систем</b> (радикали,
+перехідні метали, дисоціація) — <kbd>CASSCF</kbd>/<kbd>NEVPT2</kbd>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">•</span> Точне моделювання збуджених станів є ключем до розуміння <em>оптичних переходів, фотохімічних реакцій, люмінесценції та електронної структури матеріалів</em>.
+</p>
+</li>
+</ul>
+<!--
+...... section Контрольні запитання та завдання ......
+-->
+<h4 id="autosec-976">Контрольні запитання та завдання</h4>
+<a id="main-html-autopage-976"></a>
+<!--
+...... subsection Контрольні запитання ......
+-->
+<h5 id="autosec-977">Контрольні запитання</h5>
+<a id="main-html-autopage-977"></a>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker">1.</span> Які основні методи використовуються для обчислення збуджених станів у квантовій хімії? Порівняйте однодіагональні (<kbd>CIS</kbd>) та багатоконфігураційні підходи.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">2.</span> Поясніть суть методу <kbd>TD-DFT</kbd> для розрахунку збуджених станів. Як він пов’язаний з рівняннями Кона–Шема?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">3.</span> Що таке осциляторна сила (oscillator strength) у спектроскопії? Як вона обчислюється для електронних переходів?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">4.</span> Опишіть наближення Тамма-Данкова (<kbd>TDA</kbd>) в контексті <kbd>TD-DFT</kbd>. Коли його доцільно застосовувати?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">5.</span> Які переваги та недоліки методу <kbd>EOM-CCSD</kbd> для збуджених станів порівняно з <kbd>TD-DFT</kbd>?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">6.</span> Як у <kbd>PySCF</kbd> реалізовано розрахунок <kbd>UV/VIS</kbd> спектрів? Наведіть приклад ініціалізації <kbd>TDDFT</kbd>-об’єкта.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">7.</span> Поясніть роль перехідних дипольних моментів у моделюванні спектрів поглинання.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">8.</span> Чим відрізняються синглетні та триплетні збуджені стани? Як обчислювати триплети в <kbd>TD-DFT</kbd>?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">9.</span> Які фактори впливають на точність передбачення піків у <kbd>UV/VIS</kbd> спектрах (базис, функціонал, розчинник)?
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker">10.</span> Опишіть процедуру присвоєння (assignment) піків у спектрі: <kbd>HOMO-LUMO</kbd>, charge-transfer тощо.
+</p>
+</li>
+</ul>
+<!--
+...... subsection Практичні завдання ......
+-->
+<h5 id="autosec-978">Практичні завдання</h5>
+<a id="main-html-autopage-978"></a>
+<ul class="enumerate" style="list-style-type:none">
+<li>
+<p>
+<span class="listmarker"><b>Задача 1:</b></span> <b>Розрахунок збуджених станів для етилену</b>.
+</p>
+<p>
+Обчисліть перші 5 збуджених станів молекули <span
+id="lateximage-main-html-200"
+class="lateximagesource"
+><!--
+C2
+H4
+--><img
+src="main-html-images/71059745FAE4E04A49EF562A4651B8AA.svg"
+alt="\ce{C2H4}"
+style=""
+class="lateximage"
+></span> методом <kbd>TD-DFT</kbd> з функціоналом <kbd>B3LYP</kbd>. Виведіть енергії переходів, осциляторні сили. <b>Базис:</b> <kbd>6-31g*</kbd>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 2:</b></span> <b>Порівняння методів для формальдегіду</b>.
+</p>
+<p>
+Для молекули <span
+id="lateximage-main-html-201"
+class="lateximagesource"
+><!--
+H2
+CO
+--><img
+src="main-html-images/DFA4370582DD59BE9D8CA547C698578A.svg"
+alt="\ce{H2CO}"
+style=""
+class="lateximage"
+></span> обчисліть <kbd>UV/VIS</kbd> спектр методами <kbd>CIS</kbd> та <kbd>TD-DFT</kbd> (<kbd>PBE</kbd>). Порівняйте енергії переходів та осциляторні сили з експериментом. Побудуйте симульований спектр. <b>Базис:</b> <kbd>cc-pvdz</kbd>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 3:</b></span> <b>Вплив функціоналу на спектр бензену</b>.
+</p>
+<p>
+Обчисліть спектр поглинання молекули <span
+id="lateximage-main-html-202"
+class="lateximagesource"
+><!--
+C6
+H6
+--><img
+src="main-html-images/4E2489BE57594A937E494BD720AEEC93.svg"
+alt="\ce{C6H6}"
+style=""
+class="lateximage"
+></span> з функціоналами <kbd>LDA</kbd>, <kbd>PBE</kbd>, <kbd>B3LYP</kbd>. Порівняйте положення піків та інтенсивності. Оцініть charge-transfer ефекти. <b>Базис:</b> <kbd>def2-svp</kbd>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 4:</b></span> <b>Триплетні стани для кисню</b>.
+</p>
+<p>
+Для молекули <span
+id="lateximage-main-html-203"
+class="lateximagesource"
+><!--
+O2
+--><img
+src="main-html-images/29404E849785FA970A0C17CC1758E215.svg"
+alt="\ce{O2}"
+style=""
+class="lateximage"
+></span> (триплетний основний стан) обчисліть перші синглетні та триплетні збуджені стани методом <kbd>TD-DFT</kbd>. Порівняйте з літературними даними. <b>Базис:</b> <kbd>aug-cc-pvdz</kbd>.
+</p>
+</li>
+<li>
+<p>
+<span class="listmarker"><b>Задача 5:</b></span> <b>Симуляція спектра з урахуванням розчинника</b>.
+</p>
+<p>
+Для молекули ацетону (<span
+id="lateximage-main-html-204"
+class="lateximagesource"
+><!--
+(CH3
+)2
+CO
+--><img
+src="main-html-images/741EAB992C8343EED4668FF87425C4A3.svg"
+alt="\ce{(CH3)2CO}"
+style=""
+class="lateximage"
+></span>) обчисліть <kbd>UV/VIS</kbd> спектр у газовій фазі та в розчиннику (вода) методом <kbd>TD-DFT</kbd> з <kbd>PCM</kbd>. Порівняйте зсув піків (solvatochromism). <b>Метод:</b> <kbd>B3LYP</kbd>, базис <kbd>6-31g*</kbd>.
+</p>
+</li>
+</ul>
+</section>
+</main>
+<nav class="botnavigation"><a href="main-html.html" class="linkhome" >
+Головна</a></nav>
+</div><!-- grid -->
+<script src="assets/book.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="10.35pt" height="10.108pt" viewBox="0 0 10.35 10.108" version="1.2">
+<defs>
+<g>
+<symbol overflow="visible" id="glyph0-0">
+<path style="stroke:none;" d="M.09-.09l7.39 0l0-7.53l-7.39 0zM.7-1.11l0-5.5l2.75 2.73zM1.05-.7l2.73-2.75l2.75 2.75zM1.05-7.03l5.48 0l-2.75 2.75zM4.12-3.88l2.76-2.73l0 5.5zM4.12-3.88"/>
+</symbol>
+<symbol overflow="visible" id="glyph0-1">
+<path style="stroke:none;" d="M .56 -3.38 C .56 -1.33 2.09 .22 3.88 .22 C 5.69 .22 7.19 -1.36 7.19 -3.38 C 7.19 -5.41 5.69 -7.03 3.88 -7.03 C 2.08 -7.03 .56 -5.44 .56 -3.38 Z M 1.58 -3.52 C 1.58 -6.09 3.05 -6.78 3.88 -6.78 C 4.73 -6.78 6.16 -6.08 6.16 -3.52 C 6.16 -.88 4.8 -.05 3.88 -.05 C 2.92 -.05 1.58 -.92 1.58 -3.52 Z M 1.58 -3.52"/>
+</symbol>
+<symbol overflow="visible" id="glyph1-0">
+<path style="stroke:none;" d="M.06-.06l5.16 0l0-5.27l-5.16 0zM.48-.78l0-3.84l1.93 1.92zM.73-.48l1.91-1.93l1.92 1.93zM.73-4.91l3.83 0l-1.92 1.93zM2.89-2.7l1.92-1.92l0 3.84zM2.89-2.7"/>
+</symbol>
+<symbol overflow="visible" id="glyph1-1">
+<path style="stroke:none;" d="M .34 0 L 2.94 0 L 3.12 -1.22 L 2.95 -1.22 C 2.92 -1 2.88 -.7 2.8 -.59 C 2.75 -.53 2.3 -.53 2.14 -.53 L .89 -.53 L 1.62 -1.25 C 2.7 -2.22 3.12 -2.59 3.12 -3.3 C 3.12 -4.08 2.5 -4.64 1.66 -4.64 C .86 -4.64 .34 -4 .34 -3.38 C .34 -2.98 .7 -2.98 .72 -2.98 C .84 -2.98 1.08 -3.08 1.08 -3.36 C 1.08 -3.55 .95 -3.72 .7 -3.72 C .66 -3.72 .64 -3.72 .62 -3.72 C .78 -4.17 1.16 -4.42 1.56 -4.42 C 2.19 -4.42 2.5 -3.86 2.5 -3.3 C 2.5 -2.73 2.14 -2.19 1.77 -1.75 L .42 -.27 C .34 -.19 .34 -.17 .34 0 Z M .34 0"/>
+</symbol>
+</g>
+<clipPath id="clip1">
+  <path d="M7 5l3.02 0l0 4.66l-3.02 0zM7 5"/>
+</clipPath>
+</defs>
+<g id="surface1">
+<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
+  <use xlink:href="#glyph0-1" x="-0.847" y="7.578"/>
+</g>
+<g clip-path="url(#clip1)" clip-rule="nonzero">
+<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
+  <use xlink:href="#glyph1-1" x="6.894" y="9.67"/>
+</g>
+</g>
+</g>
+</svg>
